@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ngya-reçu</title>
+
+    <style>
+        @page {
+            size: a7 portrait;
+        }
+    </style>
+</head>
+<body>
+    
+    <div style="margin: auto;">
+    <CENTER>
+        <br> 
+        REPUBLIQUE DEMOCRAIQUE DU CONGO<br>
+        CENTRE DE FORMATION NGIYA<br/>
+        RECU DE PAIEMENT N° : {{paie.id}} <br/>
+        <img src="mediafiles/ngi.png" width="80px" alt="qrcode"/><br>
+    </CENTER>
+    <div style="margin-left: 15px;">
+        <br/>N° Aprenant : {{paie.aprenant.id}} 
+        <br/> Nom : {{paie.aprenant.nom}}
+        <br/>Post-Nom : {{paie.aprenant.postnom}} 
+        <br/> Prénom : {{paie.aprenant.prenom}} 
+        <br/> Motif :  {{etat}} Frais {{paie.frais.designation}} 
+        <br/>Montant : {{paie.montant}} usd
+        <br/> Date :  {{paie.createdat}} 
+        <br/> Caissier :  {{noms}} 
+    <CENTER>
+        <table>
+            <th>Signature du caissier      et sceau</th>
+            <th><img src="mediafiles/recu/{{img}}" width="80px" alt="qrcode"/></th>
+        </table>
+        
+    </CENTER>
+    <br>
+    <CENTER>
+        <p>NB: Les frais payés ne sont pas remboursables.</p> <hr>
+    </CENTER>
+
+    <CENTER>
+        <p> AVENUE DE LA POST N° 1B, LIMETE RESIDENTIEL REF.12ème RUE EN DIAGONALE DE LA POST</p>
+    </CENTER>
+    </div>
+    
+    </div>
+    
+</body>
+</html>

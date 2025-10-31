@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+
+<div class="col-lg-12 grid-margin stretch-card">
+    <div class="card">
+            <div class="page-header">
+              <div style="margin-left:15px">
+                <h4 class="card-title" >Gestion des utilisateurs</h4>
+                
+              </div>
+              <a href="{% url 'fUser' %}" class="btn btn-inverse-success mr-2">Ajouter un utilisateur</a>
+              <nav aria-label="breadcrumb">
+                <form action="" method="post" class="forms-sample breadcrumb">
+                  {% csrf_token %}
+                  <div class="form-group">
+                    <input type="text" style="color:white" class="form-control" name="rech" id="rech" placeholder="Recherche ...">
+                  </div>
+                </form>
+              </nav>
+            </div>
+      <div class="card-body">
+        <div class="table-responsive">
+          <table class="table table-striped" style="color:white">
+            <thead>
+              <tr>
+                <th style="color:white"> Id </th>
+                <th style="color:white"> Nom utilisateur </th>
+                <th style="color:white"> Nom complet </th>
+                <th style="color:white"> Profile </th>
+                <th style="color:white"> Email </th>
+                <th style="color:white"> Actions </th>
+              </tr>
+            </thead>
+            <tbody>
+                {% for u in users %}
+              <tr>
+                <td class="py-1">
+                {{forloop.counter}}
+                </td>
+                <td> {{u.username}} </td>
+                <td>
+                     {{u.noms}} 
+                </td>
+                <td> {{u.profile}}  </td>
+                <td> {{u.email}} </td>
+                <td>
+                    <a href="{% url 'deleteUser' u.id %}" onclick="return confirm('Etes-vous sûr de vouloir supprimer?')"> <i class="mdi mdi-delete"></i></a>
+                    <a href="{% url 'modifierUser' u.id%}"><i class="mdi mdi-table-edit"></i></a>
+                </td>
+               
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+          <br>
+          {% if pages.has_previous %}
+                <a href="?page=1">&laquo;</a>
+                <a href="?page={{ pages.previous_page_number }}"><span class="badge badge-info ">Précédent</span></a>
+          {% endif %}
+                page {{ pages.number }} sur {{ pages.paginator.num_pages }}
+                <span class="badge badge-info pull-right">{{compte}}</span>
+          
+                {% if pages.has_next %}
+                   <a href="?page={{ pages.next_page_number }}"><span class="badge badge-info ">Suivant</span></a>
+                   <a href="?page={{compte}}">&raquo;</a>
+                {% else %}
+                {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+{% endblock content %}
