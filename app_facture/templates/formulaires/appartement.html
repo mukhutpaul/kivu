@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<div class="content-wrapper">
+    <div class="row">
+              <div class="col-md-6 grid-margin stretch-card">
+
+                 <div class="card">
+                  <div class="card-body">
+                    <h4 class="card-title">Formulaire Appartement</h4>
+                    <form class="forms-sample" method="post" action="{% url 'addAppartement' %}">
+                       {% csrf_token %}
+                      <div class="form-group">
+                        <label for="exampleInputUsername1">Nom</label>
+                        <input type="text" name="nom" style="color:white" class="form-control" id="exampleInputUsername1" placeholder="Appartement">
+                      </div>
+
+                      <button type="submit" class="btn btn-primary mr-2">Valider</button>
+                    </form>
+                  </div>
+                </div>
+                
+              </div>
+              <div class="col-md-6 grid-margin">
+                <div class="card">
+                  <div class="card-body">
+                   
+                    {% if msg %}
+                          
+                    <div class="form-group">
+                      <label class="badge badge-danger">{{msg}}</label>
+                    </div>
+                      {% elif msok %}
+                    <div class="form-group">
+                      <label class="badge badge-success">{{msok}}</label>
+                    </div>
+                    {% endif %}
+                     <a href="{% url 'appartement' %}"  class="btn btn-outline-light btn-rounded get-started-btn">Retour</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+</div>
+
+{% endblock content %}
+
+
+
+
+
+             

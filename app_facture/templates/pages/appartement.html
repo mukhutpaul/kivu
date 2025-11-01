@@ -18,7 +18,7 @@
                       </div>
                       <div class="col-3 col-sm-2 col-xl-2 pl-0 text-center">
                         <span>
-                          <a href="https://www.bootstrapdash.com/product/corona-admin-template/" target="_blank" class="btn btn-outline-light btn-rounded get-started-btn">Générer</a>
+                          <a href="{% url 'fAppartement' %}"  class="btn btn-outline-light btn-rounded get-started-btn">Ajout Appartement</a>
                         </span>
                       </div>
                     </div>
@@ -28,32 +28,7 @@
 
               <div class="row">
               <div class="col-md-6 grid-margin stretch-card">
-                <div class="card">
-                  <div class="card-body">
-                    <h4 class="card-title">Formulaire Appartement</h4>
-                    <form class="forms-sample" method="post" action="{% url 'addAppartement' %}">
-                       {% csrf_token %}
-                      <div class="form-group">
-                        <label for="exampleInputUsername1">Nom</label>
-                        <input type="text" name="nom" style="color:white" class="form-control" id="exampleInputUsername1" placeholder="Appartement">
-                      </div>
-
-                    {% if msg %}
-                          
-                    <div class="form-group">
-                      <label class="badge badge-danger">{{msg}}</label>
-                    </div>
-                      {% elif msok %}
-                    <div class="form-group">
-                      <label class="badge badge-success">{{msok}}</label>
-                    </div>
-                    {% endif %}
-                     
-                    
-                      <button type="submit" class="btn btn-primary mr-2">Valider</button>
-                    </form>
-                  </div>
-                </div>
+                
               </div>
               <div class="col-md-6 grid-margin">
                 <div class="card">
@@ -64,8 +39,6 @@
                       <div class="form-group">
                         <input type="text" style="color:white" class="form-control" name="rech" id="exampleInputUsername1" placeholder="Rechece...">
                       </div>
-                     
-
                     </form>
                   </div>
                 </div>
@@ -75,23 +48,28 @@
           
             <div class="row">
               {% for ap in appartement %}
-              <div class="col-xl-3 col-sm-6 grid-margin stretch-card">
+              <div class="col-xl-6 col-sm-6 grid-margin stretch-card">
                 <div class="card">
                   <div class="card-body">
                     <div class="row">
                       <div class="col-9">
                         <div class="d-flex align-items-center align-self-start">
-                          <h3 class="mb-0">$12.34</h3>
-                          <p class="text-success ml-2 mb-0 font-weight-medium">+3.5%</p>
+                          <p class="mb-0">{{ap.nom}}</hp>
+                          
                         </div>
                       </div>
                       <div class="col-3">
                         <div class="icon icon-box-success ">
-                          <span class="mdi mdi-arrow-top-right icon-item"></span>
+                          <a href="{% url 'modAppartement' ap.id %}" style="text-align:right"  class="btn btn-outline-light btn-rounded get-ended-btn">Modifier</a>
                         </div>
                       </div>
                     </div>
-                    <h6 class="text-muted font-weight-normal">{{ap.nom}}</h6>
+                    <h6 class="text-muted font-weight-normal">Produits :</h6>
+                    <div class="row">
+                      <a href="{% url 'deleteAppartement' ap.id %}" onclick="return confirm('Etes-vous sûr de vouloir supprimer?')"  class="btn btn-outline-black btn-danger  btn-rounded get-ended-btn">Supprimer</a>
+                  
+                    </div>
+                    
                   </div>
                 </div>
               </div>
@@ -102,6 +80,7 @@
             
              <br>
              </div>
+          {% if appartement %}
           {% if pages.has_previous %}
                 <a href="?page=1">&laquo;</a>
                 <a href="?page={{ pages.previous_page_number }}"><span class="badge badge-info ">Préc</span></a>
@@ -114,5 +93,7 @@
                    <a href="?page={{compte}}">&raquo;</a>
                 {% else %}
                 {% endif %}
+
+           {% endif %}
 
 {% endblock content %}

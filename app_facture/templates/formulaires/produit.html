@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<div class="content-wrapper">
+    <div class="row">
+              <div class="col-md-6 grid-margin stretch-card">
+
+                 <div class="card">
+                  <div class="card-body">
+                    <h4 class="card-title">Formulaire Produit</h4>
+                    <form class="forms-sample" method="post" action="{% url 'addProduit' %}">
+                       {% csrf_token %}
+                      <div class="form-group">
+                        <label for="exampleInputUsername1">Nom</label>
+                        <input type="text" name="nom" style="color:white" class="form-control" id="exampleInputUsername1" placeholder="Nom produit">
+                      </div>
+                      <div class="form-group">
+                        <label for="exampleInputUsername1">Prix Unitaire</label>
+                        <input type="number" name="pu" style="color:white" class="form-control" id="exampleInputUsername1" placeholder="Prix">
+                      </div>
+
+                    <div class="form-group">
+                      <label>Appartement</label>
+                      <select class="js-example-basic-single" style="width:100%" name="appartement">
+                        <option value="">---selecionner---</option>
+                        {% for ap in appart  %}
+                        <option value="{{ap.id}}">{{ap.nom}}</option>
+                        {% endfor %}
+                      </select>
+                    </div>
+                      <button type="submit" class="btn btn-primary mr-2">Valider</button>
+                    </form>
+                  </div>
+                </div>
+                
+              </div>
+              <div class="col-md-6 grid-margin">
+                <div class="card">
+                  <div class="card-body">
+                   
+                    {% if msg %}
+                          
+                    <div class="form-group">
+                      <label class="badge badge-danger">{{msg}}</label>
+                    </div>
+                      {% elif msok %}
+                    <div class="form-group">
+                      <label class="badge badge-success">{{msok}}</label>
+                    </div>
+                    {% endif %}
+                     <a href="{% url 'appartement' %}" target="_blank" class="btn btn-outline-light btn-rounded get-started-btn">Retour</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+</div>
+
+{% endblock content %}
+
+
+
+
+
+             

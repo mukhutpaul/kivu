@@ -17,17 +17,36 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
-from app_facture.views import addAppartement, appartement, facture, home, produit
+from app_facture.views import addAppartement, addProduit, appartement, deleteAppartement, deleteProduit, fAppartement, fProduit, facture, home, modAppartement, modProduit, produit, updateAppartement, updateProduit
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('',home, name="home"),
     path('facture/',facture, name="facture"),
-    path('produit/',produit, name="produit"),
     
-    #Appartemen
+    
+    #Appartement
     path('appartement/',appartement, name="appartement"),
     path('addAppartement/',addAppartement, name="addAppartement"),
+    
+    path('fAppartement/',fAppartement, name="fAppartement"),
+    path('modAppartement/<int:id>',modAppartement, name="modAppartement"),
+    path('updateAppartement/<int:id>',updateAppartement, name="updateAppartement"),
+    path('deleteAppartement/<int:id>',deleteAppartement, name="deleteAppartement"),
+    
+    
+    #Produit
+    path('produit/',produit, name="produit"),
+    path('addProduit/',addProduit, name="addProduit"),
+    
+    path('fProduit/',fProduit, name="fProduit"),
+    path('modProduit/<int:id>',modProduit, name="modProduit"),
+    path('updateProduit/<int:id>',updateProduit, name="updateProduit"),
+    path('deleteProduit/<int:id>',deleteProduit, name="deleteProduit"),
+    
+    
+    
+    
     
     
     
