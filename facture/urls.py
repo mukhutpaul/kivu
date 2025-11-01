@@ -17,12 +17,12 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
-from app_facture.views import addAppartement, addProduit, appartement, deleteAppartement, deleteProduit, fAppartement, fProduit, facture, home, modAppartement, modProduit, produit, updateAppartement, updateProduit
+from app_facture.views import addAppartement, addFacture, addProduit, addUser, appartement, deleteAppartement, deleteProduit, deleteUser, fAppartement, fProduit, fUser, facture, home, log_out, login, modAppartement, modProduit, modifierUser, produit, sign_in, updateAppartement, updateProduit, users
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('',home, name="home"),
-    path('facture/',facture, name="facture"),
+    path('home/',home, name="home"),
+    
     
     
     #Appartement
@@ -44,7 +44,22 @@ urlpatterns = [
     path('updateProduit/<int:id>',updateProduit, name="updateProduit"),
     path('deleteProduit/<int:id>',deleteProduit, name="deleteProduit"),
     
+    ##USERS
+    path('deleteUser<int:id>/',deleteUser, name="deleteUser"),
+    path('users/',users, name="users"),
+    path('fUser/',fUser, name="fUser"),
+    path('addUser/',addUser, name="addUser"),
+    path('modifierUser<int:id>/',modifierUser, name="modifierUser"),
     
+        
+   #User root
+   path('', login, name="login"),
+   path('sign_in/', sign_in, name="sign_in"),
+   path('log_out/',log_out, name="log_out"),
+   
+   ##FACTURES
+    path('facture/',facture, name="facture"),
+    path('addFacture/',addFacture, name="addFacture"),
     
     
     

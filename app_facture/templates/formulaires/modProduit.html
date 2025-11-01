@@ -7,7 +7,7 @@
 
                  <div class="card">
                   <div class="card-body">
-                    <h4 class="card-title">Formulaire Produit {{pr.id}}</h4>
+                    <h4 class="card-title">Formulaire Produit</h4>
                     <form class="forms-sample" method="post" action="{% url 'updateProduit' pr.id %}">
                        {% csrf_token %}
                       <div class="form-group">

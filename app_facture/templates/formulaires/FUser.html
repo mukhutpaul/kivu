@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<div class="col-12 grid-margin stretch-card">
+    <div class="card">
+      <div class="card-body">
+        <h4 class="card-title">Formulaire d'ajout des utilisateurs</h4>
+        <p class="card-description"> Information </p>
+        <form class="forms-sample" method="post" action="{% url 'addUser' %}">
+            {% csrf_token %}
+        <div class="row">
+            <div class="col-6">
+                    <div class="form-group">
+                        <label>Profile</label>
+                        <select class="js-example-basic-single" style="width:100%" name="profile">
+                          <option value="">--------------</option>
+                          {% if user %}
+
+                          {% else %}
+                          <option value="">--------------</option>
+                          {% endif %}
+                          
+                          {% for p in pro %}
+                          <option value="{{user.profile.id}}">{{user.profile.name}}</option>
+                          <option value="{{p.id}}">{{p.name}}</option>
+                          {% endfor %}
+                        </select>
+                   </div>
+
+                   <div class="form-group">
+                    <label for="exampleInputCity1">Nom utilisateur</label>
+                    <input type="text" value="{{user.username}}" style="color:white" class="form-control" id="exampleInputCity1" placeholder="username" name="username">
+                  </div>
+                  {% comment %} {% if user %} {% endcomment %}
+                  {% comment %} {% else %} {% endcomment %}
+                   <div class="form-group">
+                    <label for="exampleInputCity1">Mot de passse</label>
+                    <input type="text"  style="color:white" class="form-control" id="exampleInputCity1" placeholder="Mot de passe" name="password">
+                  </div>
+                  {% comment %} {% endif %} {% endcomment %}
+            </div>
+
+            <div class="col-6">
+                <div class="form-group">
+                    <label for="exampleInputCity1">E-mail</label>
+                    <input type="email" value="{{user.email}}"  style="color:white" class="form-control" id="exampleInputCity1" placeholder="E-mail" name="email">
+                </div>
+
+                <div class="form-group">
+                    <label for="exampleInputCity1">Noms</label>
+                    <input type="text" value="{{user.noms}}" style="color:white" class="form-control" id="exampleInputCity1" placeholder="noms" name="noms">
+                  </div>
+                   
+               {% if msg %}
+                    <script>
+                          Swal.fire({
+                                icon: "error",
+                                title: "Erreur",
+                                text: ('{{msg}}') ,
+                              });   
+                              
+                              
+                    </script>
+               <div class="form-group">
+                <label class="badge badge-danger">{{msg}}</label>
+               </div>
+              {% elif msok  %}
+              
+              <script>
+                  Swal.fire({
+                    icon: "success",
+                    title: "Erreur",
+                    text: ('{{msok}}'),
+                }); 
+                </script>
+                <label class="badge badge-danger">Opération réussie</label>
+              {% endif %}
+            </div>
+        </div>
+
+          <button type="submit" class="btn btn-primary mr-2">{% if user %} Modifier{% else %}Enregistrer {% endif %}</button>
+          <a class="btn btn-primary mr-2" style ="color:white" href="{% url 'users' %}">Retour</a>
+        </form>
+      </div>
+    </div>
+  </div>
+
+{% endblock content %}
