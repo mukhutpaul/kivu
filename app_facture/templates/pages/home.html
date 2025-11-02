@@ -27,7 +27,7 @@
             <div class="col-9">
               <div class="d-flex align-items-center align-self-start">
                 <h3 class="mb-0">{{totalFacture}}</h3>
-                <p class="text-success ml-2 mb-0 font-weight-medium">Factures</p>
+                <p class="text-success ml-2 mb-0 font-weight-medium">Nombre Fact journalier</p>
               </div>
             </div>
             <div class="col-3">
@@ -57,7 +57,7 @@
               </div>
             </div>
           </div>
-             <h6 class="text-success font-weight-normal">Recetes Journalières</h6>
+             <h6 class="text-success font-weight-normal">Recettes Journalières</h6>
         </div>
       </div>
     </div>
@@ -111,47 +111,47 @@
     <div class="col-md-4 grid-margin stretch-card">
       <div class="card">
         <div class="card-body">
-          <h4 class="card-title">Effectif</h4>
-          <canvas id="transaction-history" class="transaction-chart"></canvas>
+          <h4 class="card-title">Autres details</h4>
+          {% comment %} <canvas id="transaction-history" class="transaction-chart"></canvas> {% endcomment %}
           <div class="bg-gray-dark d-flex d-md-block d-xl-flex flex-row py-3 px-4 px-md-3 px-xl-4 rounded mt-3">
             <div class="text-md-center text-xl-left">
-              <h6 class="mb-1">Hommes</h6>
-              <p class="text-muted mb-0">Total</p>
+              <h6 class="mb-1">Nombre des produits</h6>
+              <p class="text-muted mb-0">Total : </p>
             </div>
             <div class="align-self-center flex-grow text-right text-md-center text-xl-right py-md-2 py-xl-0">
-              <h6 class="font-weight-bold mb-0">{{nbrhomme}}</h6>
+              <h6 class="font-weight-bold mb-0">{{nbrp}}</h6>
             </div>
           </div>
           <div class="bg-gray-dark d-flex d-md-block d-xl-flex flex-row py-3 px-4 px-md-3 px-xl-4 rounded mt-3">
             <div class="text-md-center text-xl-left">
-              <h6 class="mb-1 ">Femmes</h6>
+              <h6 class="mb-1 ">Nombre des Facturs</h6>
               
-              <p class="text-muted mb-0">Total</p>
+              <p class="text-muted mb-0">Total : </p>
             </div>
             <div class="align-self-center flex-grow text-right text-md-center text-xl-right py-md-2 py-xl-0">
-              <h6 class="font-weight-bold mb-0">{{nbrFemme}}</h6>
+              <h6 class="font-weight-bold mb-0">{{totalFacture}}</h6>
             </div>
           </div>
 
            <div class="bg-gray-dark d-flex d-md-block d-xl-flex flex-row py-3 px-4 px-md-3 px-xl-4 rounded mt-3">
             <div class="text-md-center text-xl-left">
-              <h6 class="mb-1 ">Femmes</h6>
+              <h6 class="mb-1 ">Nombre Factures Mensuelles</h6>
               
-              <p class="text-muted mb-0">Total</p>
+              <p class="text-muted mb-0">Total : </p>
             </div>
             <div class="align-self-center flex-grow text-right text-md-center text-xl-right py-md-2 py-xl-0">
-              <h6 class="font-weight-bold mb-0">{{nbrFemme}}</h6>
+              <h6 class="font-weight-bold mb-0">{{totalFactureM}}</h6>
             </div>
           </div>
 
            <div class="bg-gray-dark d-flex d-md-block d-xl-flex flex-row py-3 px-4 px-md-3 px-xl-4 rounded mt-3">
             <div class="text-md-center text-xl-left">
-              <h6 class="mb-1 ">Femmes</h6>
+              <h6 class="mb-1 ">Nombre de factures annuelles</h6>
               
-              <p class="text-muted mb-0">Total</p>
+              <p class="text-muted mb-0">Total : </p>
             </div>
             <div class="align-self-center flex-grow text-right text-md-center text-xl-right py-md-2 py-xl-0">
-              <h6 class="font-weight-bold mb-0">{{nbrFemme}}</h6>
+              <h6 class="font-weight-bold mb-0">{{totalFactureA}}</h6>
             </div>
           </div>
           

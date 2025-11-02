@@ -21,11 +21,14 @@ from app_facture.utils import render_to_pdf
 def home(request):
     
     ap = Appartement.objects.all()
+    nbrp = Produit.objects.all().count()
        
     mois = datetime.date.today().month
     annee = datetime.date.today().year
     
-    totalFacture = Facture.objects.all().count()
+    totalFacture = Facture.objects.filter(createdAt__date=datetime.date.today()).count()
+    totalFactureM = Facture.objects.filter(createdAt__date__month= mois,createdAt__date__year=annee).count()
+    totalFactureA = Facture.objects.filter(createdAt__date__year=annee).count()
     factj = Facture.objects.filter(createdAt__date=datetime.date.today())
     factm = Facture.objects.filter(createdAt__date__month= mois,createdAt__date__year=annee)
     factan = Facture.objects.filter(createdAt__date__year=annee)
@@ -62,6 +65,9 @@ def home(request):
         "totalFacture": totalFacture,
         "sommeMois":sommeMois,
         "somme": somme,
+        'nbrp':nbrp,
+        'totalFactureM':totalFactureM,
+        'totalFactureA':totalFactureA,
         "sommeAn":sommeAn
     }
     
