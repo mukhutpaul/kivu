@@ -21,12 +21,7 @@ from app_facture.utils import render_to_pdf
 def home(request):
     
     ap = Appartement.objects.all()
-    
-    for a in ap:
-        dfa = Detail_facture.objects.filter(produit__appartement=a).values('produit__appartement').order_by('produit__appartement').annotate(total_price=Sum())
-        
-        print(dfa)
-        
+       
     mois = datetime.date.today().month
     annee = datetime.date.today().year
     
@@ -609,7 +604,7 @@ def facture(request):
     ctx = {
         'compte' : compte,
         'facture' : pages,
-        'lapr': 'active',
+        'lfact': 'active',
         'somme':somme,
         'facture_total_jour':nbr,
         "noms": request.user.noms,
