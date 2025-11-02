@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect
+from app_facture.models import Detail_facture
 from app_facture.models.appartement import Appartement
 from django.core.paginator import Paginator
 from django.http import HttpResponseRedirect
@@ -7,6 +8,12 @@ from app_facture.models.produit import Produit
 from app_facture.models.user import Profile, User
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate,login as auth_login, logout
+import qrcode
+from django.db.models import Avg
+from time import time
+import json
+from datetime import datetime
+from app_facture.utils import render_to_pdf
 
 # Create your views here.
 @login_required(login_url="sign_in")
@@ -610,6 +617,185 @@ def deleteAppartement(request,id):
     p = Appartement.objects.get(pk=id)
     p.delete()
     return HttpResponseRedirect('/appartement/')
+
+
+
+################################# DETAILS FACTURE ############################
+
+@login_required(login_url="sign_in")
+def detaiFacture(request,id):
+    sel_facture = Facture.objects.get(id = id)
+    liste_produit = Produit.objects.all()
+    total = 0
+    data_liste =[]
+    data_produit = []
+    sommefac = 0
+    
+    fact = Facture.objects.filter(id=sel_facture.id)
+    
+    
+    
+    for lp in liste_produit:
+        list_sans_fac = Detail_facture.objects.filter(facture_id=sel_facture.id,produit_id=lp.id) 
+        
+        if list_sans_fac:
+            pass
+        else:
+            data_produit.append(
+                {
+                    'id': lp.id,
+                    'nom': lp.nom
+                }
+                )
+            print("#####",lp)
+
+    if request.method == "POST":
+        rech = request.POST['rech']
+        p = Paginator(Detail_facture.objects.filter(produit__nom__contains=rech,facture_id=sel_facture.id),20)
+        page = request.GET.get('page')
+        list_facture =p.get_page(page)
+        compte = len(list_facture)
+        if rech == '':
+             compte = len(Detail_facture.objects.filter(facture_id=sel_facture.id))  
+        
+    else:
+        p = Paginator(Detail_facture.objects.filter(facture_id=sel_facture.id), 20)
+        page = request.GET.get('page')
+        list_facture =p.get_page(page)
+        compte = len(Detail_facture.objects.filter(facture_id=sel_facture.id))
+    
+    for t in list_facture:
+        sommefac = sommefac + t.produit.pu * t.quantite
+        data_liste.append(
+            {
+                'id': t.id,
+                'produit': t.produit,
+                'pu': t.produit.pu,
+                'qte': t.quantite,
+                'total': t.produit.pu * t.quantite
+            }
+            )
+        print(data_liste)
+    
+    
+    ctx = {
+        'sel_facture': sel_facture,
+        'list_facture': data_liste,
+        'Llist_facture': 'active',
+        'liste_produit':data_produit,
+        'sommefac':sommefac,
+        'compte':compte,
+        'total':total
+    }
+    return render(request,'pages/detailFacture.html',ctx)
+
+@login_required(login_url="sign_in")
+def deletedetailFacture(request,id):
+    df = Detail_facture.objects.get(pk=id)
+    dt = Facture.objects.get(pk=df.facture.id)
+    df.delete()
+    id_facture = dt.id
+    return redirect('/detaiFacture/'+str(id_facture))
+
+@login_required(login_url="sign_in")
+def addDetailFacture(request):
+    if request.method == 'POST':
+        msg = None
+        produit = request.POST.get("produit",None)
+        qte = request.POST.get("qte",0)
+        facture = request.POST.get("facture",None)
+
+        
+        pro = Produit.objects.get(pk=produit)
+        fact = Facture.objects.get(pk=facture)
+       
+     
+        pr = Detail_facture(
+            produit = pro,
+            facture =fact,
+            quantite = qte,
+                    
+            ) 
+        pr.save()
+        return HttpResponseRedirect('/detaiFacture/'+facture)
+    
+    return HttpResponseRedirect('/detaiFacture/'+facture)
+
+@login_required(login_url="sign_in")
+def print_facture(request,id):
+    sel_facture = Facture.objects.get(id = id)
+    liste_produit = Produit.objects.all()
+    total = 0
+    data_liste =[]
+    data_produit = []
+    
+    sommefac = 0
+    
+    fact = Facture.objects.filter(id=sel_facture.id)
+    
+    
+    for lp in liste_produit:
+        list_sans_fac = Detail_facture.objects.filter(facture_id=sel_facture.id,produit_id=lp.id) 
+        
+        if list_sans_fac:
+            pass
+        else:
+            data_produit.append(
+                {
+                    'id': lp.id,
+                    'nom': lp.nom
+                }
+                )
+            print("#####",lp)
+
+    if request.method == "POST":
+        rech = request.POST['rech']
+        p = Paginator(Detail_facture.objects.filter(produit__nom__contains=rech,facture_id=sel_facture.id),20)
+        page = request.GET.get('page')
+        list_facture =p.get_page(page)
+        compte = len(list_facture)
+        if rech == '':
+             compte = len(Detail_facture.objects.filter(facture_id=sel_facture.id))  
+        
+    else:
+        p = Paginator(Detail_facture.objects.filter(facture_id=sel_facture.id), 20)
+        page = request.GET.get('page')
+        list_facture =p.get_page(page)
+        compte = len(Detail_facture.objects.filter(facture_id=sel_facture.id))
+    
+    for t in list_facture:
+        sommefac = sommefac + t.produit.pu * t.quantite
+        data_liste.append(
+            {
+                'id': t.id,
+                'produit': t.produit,
+                'pu': t.produit.pu,
+                'qte': t.quantite,
+                'total': t.produit.pu * t.quantite
+            }
+            )
+        print(data_liste)
+    
+
+    img = qrcode.make(data_liste)
+    img_name = 'facture' + str(time())+'.png'
+    img.save("mediafiles/facture/" + img_name)
+    ctx = {
+        'sel_facture': sel_facture,
+        'list_facture': data_liste,
+        'Llist_facture': 'active',
+        'liste_produit':data_produit,
+        'sommefac':sommefac,
+        'compte':compte,
+        'total':total,
+        'img': img_name,
+        "produit": data_liste,
+        "noms": request.user.noms
+    }   
+    pdf = render_to_pdf("facture/facture.html", ctx, 200)
+    sel_facture.imprimer = True
+    sel_facture.save()
+    return pdf
 
 
 

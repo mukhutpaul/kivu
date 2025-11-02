@@ -17,7 +17,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
-from app_facture.views import addAppartement, addFacture, addProduit, addUser, appartement, deleteAppartement, deleteProduit, deleteUser, fAppartement, fProduit, fUser, facture, home, log_out, login, modAppartement, modProduit, modifierUser, produit, sign_in, updateAppartement, updateProduit, users
+from app_facture.views import addAppartement, addDetailFacture, addFacture, addProduit, addUser, appartement, deleteAppartement, deleteProduit, deleteUser, deletedetailFacture, detaiFacture, fAppartement, fProduit, fUser, facture, home, log_out, login, modAppartement, modProduit, modifierUser, print_facture, produit, sign_in, updateAppartement, updateProduit, users
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -60,6 +60,21 @@ urlpatterns = [
    ##FACTURES
     path('facture/',facture, name="facture"),
     path('addFacture/',addFacture, name="addFacture"),
+    
+    ##DETAIL FACTURES
+    path('detaiFacture/<int:id>',detaiFacture, name="detaiFacture"),
+    path('deletedetailFacture/<int:id>',deletedetailFacture, name="deletedetailFacture"),
+    path('addDetailFacture/',addDetailFacture, name="addDetailFacture"),
+    
+    
+    ###Imprimer facture
+    path('print_facture/<int:id>',print_facture, name="print_facture"),
+    
+    
+    
+   
+    
+    
     
     
     

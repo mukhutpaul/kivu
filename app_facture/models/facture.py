@@ -8,6 +8,7 @@ from app_facture.models.user import User
 class Facture(models.Model):
     createdAt = models.DateTimeField(auto_now=True)
     updatedAt = models.DateTimeField(null=True)
+    imprimer = models.BooleanField(default=False)
     user = models.ForeignKey(User,on_delete=models.DO_NOTHING,default=1)
    
     

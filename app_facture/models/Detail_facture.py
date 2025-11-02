@@ -13,7 +13,7 @@ class Detail_facture(models.Model):
     quantite = models.IntegerField()
     
     createdAt = models.DateTimeField(auto_now=True)
-    updatedAt = models.DateTimeField()
+    updatedAt = models.DateTimeField(null=True)
     
-    def __str__(self):
-        return self.nom +" "+ self.pu
+    def __int__(self):
+        return self.id

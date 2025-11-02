@@ -62,12 +62,12 @@
                       </div>
                       <div class="col-3">
                         <div class="icon icon-box-success">
-                          <a href="" style="text-align:right"  class="btn btn-outline-light btn-rounded get-ended-btn">Details</a>
+                          <a href="{% url 'detaiFacture' f.id %}" style="text-align:right"  class="btn btn-outline-light btn-rounded get-ended-btn">Details</a>
                         </div>
                       </div>
                     </div>
                     <h6 class="text-muted font-weight-normal">Total :</h6>
-                    <a href="" style="text-align:right"  class="btn btn-outline-light btn-rounded get-ended-btn">Imprimer</a>
+                    <a href="{% url 'print_facture' f.id %}" style="text-align:right"  class="btn btn-outline-light btn-rounded get-ended-btn">Imprimer</a>
                   </div>
                 </div>
               </div>

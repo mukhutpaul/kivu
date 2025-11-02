@@ -1,0 +1,116 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+ <div class="row">
+              <div class="col-md-6 grid-margin stretch-card">
+                <div class="card">
+                  <div class="card-body">
+                    <h4 class="card-title">Ajout Produits</h4>
+                    <form class="forms-sample" method="post" Action="{% url 'addDetailFacture'%}">
+                      {% csrf_token %}
+                    <div class="form-group">
+                        
+                        <select class="js-example-basic-single" style="width:100%" name="produit" required>
+                          <option value="">------Sélectionner le produit--------</option>
+                          {% for p in liste_produit %}
+                          <option value="{{p.id}}">{{p.nom}}</option>
+                          {% endfor %}
+                        </select>
+                   </div>
+                   <div class="form-group">
+                        <input type="hidden" name="facture" value="{{sel_facture.id}}"/>
+                        <input type="number" required style="color:white; width:30%" class="form-control" name="qte" id="exampleInputUsername1" placeholder="Quantité">
+                      </div>
+                   <button type="submit" class="btn btn-primary btn-rounded mr-2">Valider</button>
+
+                    </form>
+                  </div>
+                </div>
+                
+              </div>
+              <div class="col-md-6 grid-margin">
+                <div class="card">
+                  <div class="card-body">
+                    <h4 class="card-title">Facture N° : {{sel_facture.id}}</h4>
+                    <p class="card-description"> Date : {{sel_facture.createdAt}} </p>
+                    <form class="forms-sample" method="post">
+                      {% csrf_token %}
+                      <div class="form-group">
+                        <input type="text" style="color:white" class="form-control" name="rech" id="exampleInputUsername1" placeholder="Rechece...">
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              </div>
+     </div>
+      {% if list_facture %}
+      <div class="row">
+              <div class="col-md-6 grid-margin stretch-card">
+                <div class="card">
+                  <div class="card-body">
+                    <h4 class="card-title">Produits de la Fact-{{sel_facture.id}}</h4>
+                    <table class="table">
+                        <thead>
+                          <tr>
+                            <th>Produit</th>
+                            <th>Prix</th>
+                            <th>Quantité</th>
+                            <th>Total</th>
+                            {% if sel_facture.imprimer == False %}
+                            <th>Actions</th>
+                            {% endif %}
+                          </tr>
+                        </thead>
+                        <tbody>
+                         {% for f in list_facture %}
+                          <tr>
+                            <td>{{f.produit}}</td>
+                            <td>{{f.pu}}</td>
+                            <td>{{f.qte}}</td>
+                            <td>{{f.total}} Fc</td>
+                             {% if sel_facture.imprimer == False %}
+                            <td>
+                              <a href="{% url 'deletedetailFacture' f.id %}" onclick="return confirm('Etes-vous sûr de vouloir supprimer?')"> <i class="mdi mdi-delete"></i></a>
+                            </td>
+                            {% endif %}
+                          </tr>
+                        {% endfor %}
+                        </tbody>
+                      </table>
+                      {% if list_facture.has_previous %}
+                <a href="?page=1">&laquo;</a>
+                <a href="?page={{ list_facture.previous_page_number }}"><span class="badge badge-info ">Précédent</span></a>
+          {% endif %}
+                page {{ list_facture.number }} sur {{ list_facture.paginator.num_pages }}
+                <span class="badge badge-info pull-right">{{compte}}</span>
+          
+                {% if list_facture.has_next %}
+                   <a href="?page={{ list_facture.next_page_number }}"><span class="badge badge-info ">Suivant</span></a>
+                   <a href="?page={{compte}}">&raquo;</a>
+                {% else %}
+                {% endif %}
+                  </div>
+                </div>
+                
+              </div>
+              <div class="col-md-6 grid-margin">
+                <div class="card">
+                  <div class="card-body">
+                    <h4 class="card-title">Sommation facture: {{sommefac}} Fc</h4>
+                    
+                     <a href="{% url 'print_facture' sel_facture.id %}" class="btn btn-primary btn-rounded mr-2">Imprimer Facture</a>
+                     <a href="{% url 'facture' %}" class="btn btn-primary btn-rounded mr-2">Voir vos factures</a>
+                   
+                  </div>
+                </div>
+              </div>
+     </div>
+
+      {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+{% endblock content %}
