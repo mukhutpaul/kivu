@@ -9,43 +9,70 @@ from app_facture.models.user import Profile, User
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate,login as auth_login, logout
 import qrcode
+from django.db.models import Sum
 from django.db.models import Avg
 from time import time
 import json
-from datetime import datetime
+import datetime
 from app_facture.utils import render_to_pdf
 
 # Create your views here.
 @login_required(login_url="sign_in")
 def home(request):
-    nbrhomme = 0
+    
+    ap = Appartement.objects.all()
+    
+    for a in ap:
+        dfa = Detail_facture.objects.filter(produit__appartement=a).values('produit__appartement').order_by('produit__appartement').annotate(total_price=Sum())
+        
+        print(dfa)
+        
+    mois = datetime.date.today().month
+    annee = datetime.date.today().year
+    
+    totalFacture = Facture.objects.all().count()
+    factj = Facture.objects.filter(createdAt__date=datetime.date.today())
+    factm = Facture.objects.filter(createdAt__date__month= mois,createdAt__date__year=annee)
+    factan = Facture.objects.filter(createdAt__date__year=annee)
+    #print("MUKHUT",factm)
+    
+    somme = 0
+    for f in factj:
+        factd = Detail_facture.objects.filter(facture_id=f.id)
+        
+        for fd in factd:
+            
+            somme = somme + fd.produit.pu * fd.quantite
+    
+    sommeMois = 0
+    for f in factm:
+        factd = Detail_facture.objects.filter(facture_id=f.id)
+        
+        for fd in factd:
+            
+            sommeMois = sommeMois + fd.produit.pu * fd.quantite
+    
+    sommeAn = 0
+    for f in factan:
+        factd = Detail_facture.objects.filter(facture_id=f.id)
+        
+        for fd in factd:
+            
+            sommeAn = sommeAn + fd.produit.pu * fd.quantite
+    
     nbrFemme = 0
 
     ctx ={
         'hm':'active',
-        "noms": request.user.noms,
-        "username": request.user.username,
-        'nbrhomme':nbrhomme,
-        "profile": request.user.profile,
-        'nbrFemme':nbrFemme,
+        "totalFacture": totalFacture,
+        "sommeMois":sommeMois,
+        "somme": somme,
+        "sommeAn":sommeAn
     }
     
     return render(request,"pages/home.html",ctx)
 
-@login_required(login_url="sign_in")
-def facture(request):
-    nbrhomme = 0
-    nbrFemme = 0
 
-    ctx ={
-        'lfact':'active',
-        'nbrhomme':nbrhomme,
-        'nbrFemme':nbrFemme,
-        "noms": request.user.noms,
-        "profile": request.user.profile,
-    }
-    
-    return render(request,"pages/facture.html",ctx)
 
 
 #APPARTEMENT
@@ -529,7 +556,28 @@ def log_out(request):
 @login_required(login_url="sign_in")
 def facture(request):
     facture = Facture.objects.all()
-    print("MUKHUT",request.user.profile)
+    datafac = []
+    datej = datetime.date.today()
+    nbr=0
+    if request.user.profile.id == 3:
+        factj = Facture.objects.filter(createdAt__date=datej,user=request.user)
+        nbr = Facture.objects.filter(createdAt__date=datej,user=request.user).count()
+    else:
+        factj = Facture.objects.filter(createdAt__date=datej)
+        nbr = Facture.objects.filter(createdAt__date=datej).count()
+    
+    
+    somme = 0
+    for f in factj:
+        factd = Detail_facture.objects.filter(facture_id=f.id)
+        
+        for fd in factd:
+            
+            somme = somme + fd.produit.pu * fd.quantite
+    
+    
+        
+        
     if request.method == "POST":
         rech = request.POST['rech']
         if request.user.profile.id == 3:
@@ -554,7 +602,7 @@ def facture(request):
             pages =p.get_page(page)
             compte = len(pages)
         else:
-            p = Paginator(Facture.objects.all().order_by('-id'), 4)
+            p = Paginator(Facture.objects.all().order_by('-id'), 12)
             page = request.GET.get('page')
             pages =p.get_page(page)
             compte = len(Appartement.objects.all())
@@ -562,6 +610,8 @@ def facture(request):
         'compte' : compte,
         'facture' : pages,
         'lapr': 'active',
+        'somme':somme,
+        'facture_total_jour':nbr,
         "noms": request.user.noms,
         "profile": request.user.profile,
         'pages':pages
@@ -794,6 +844,7 @@ def print_facture(request,id):
     }   
     pdf = render_to_pdf("facture/facture.html", ctx, 200)
     sel_facture.imprimer = True
+    sel_facture.total = sommefac
     sel_facture.save()
     return pdf
 

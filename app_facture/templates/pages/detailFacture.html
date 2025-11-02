@@ -78,7 +78,7 @@
                         {% endfor %}
                         </tbody>
                       </table>
-                      {% if list_facture.has_previous %}
+            {% if list_facture.has_previous %}
                 <a href="?page=1">&laquo;</a>
                 <a href="?page={{ list_facture.previous_page_number }}"><span class="badge badge-info ">Précédent</span></a>
           {% endif %}
