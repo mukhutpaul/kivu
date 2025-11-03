@@ -21,8 +21,7 @@ from app_facture.utils import render_to_pdf
 def home(request):
     
     ap = Appartement.objects.all()
-    nbrp = Produit.objects.all().count()
-       
+    nbrp = Produit.objects.all().count() 
     mois = datetime.date.today().month
     annee = datetime.date.today().year
     
@@ -41,7 +40,6 @@ def home(request):
         for fd in factd:
             
             somme = somme + fd.produit.pu * fd.quantite
-    
     sommeMois = 0
     for f in factm:
         factd = Detail_facture.objects.filter(facture_id=f.id)

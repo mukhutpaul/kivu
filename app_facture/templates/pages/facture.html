@@ -18,7 +18,9 @@
                       </div>
                       <div class="col-3 col-sm-2 col-xl-2 pl-0 text-center">
                         <span>
+                          {% if request.user.profile.id == 3%}
                           <a href="{% url 'addFacture' %}" class="btn btn-outline-light btn-rounded get-started-btn">Générer</a>
+                           {% endif %}
                         </span>
                       </div>
                     </div>
