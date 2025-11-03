@@ -351,7 +351,7 @@ def users(request):
         pages =p.get_page(page)
         compte = len(pages)
         if rech == '':
-             compte = len(User.objects.filter(centre=ct))  
+             compte = len(User.objects.all())  
         
     else:
         p = Paginator(User.objects.all().order_by('-id'), 20)
@@ -583,12 +583,12 @@ def facture(request):
     if request.method == "POST":
         rech = request.POST['rech']
         if request.user.profile.id == 3:
-            p = Paginator(Facture.objects.filter(id__contains=rech,user=request.user),12)
+            p = Paginator(Facture.objects.filter(id__contains=rech,user=request.user),16)
             page = request.GET.get('page')
             pages =p.get_page(page)
             compte = len(pages)
         else :
-            p = Paginator(Facture.objects.filter(id__contains=rech),12)
+            p = Paginator(Facture.objects.filter(id__contains=rech),16)
             page = request.GET.get('page')
             pages =p.get_page(page)
             compte = len(pages)
@@ -599,12 +599,12 @@ def facture(request):
             compte = len(Facture.objects.all())  
     else:
         if request.user.profile.id == 3:  
-            p = Paginator(Facture.objects.filter(user=request.user.id).order_by('-id'),12)
+            p = Paginator(Facture.objects.filter(user=request.user.id).order_by('-id'),16)
             page = request.GET.get('page')
             pages =p.get_page(page)
             compte = len(pages)
         else:
-            p = Paginator(Facture.objects.all().order_by('-id'), 12)
+            p = Paginator(Facture.objects.all().order_by('-id'), 16)
             page = request.GET.get('page')
             pages =p.get_page(page)
             compte = len(Appartement.objects.all())
