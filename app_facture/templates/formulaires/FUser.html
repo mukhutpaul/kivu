@@ -31,7 +31,7 @@
 
                    <div class="form-group">
                     <label for="exampleInputCity1">Nom utilisateur</label>
-                    <input type="text" value="{{user.username}}" style="color:white" class="form-control" id="exampleInputCity1" placeholder="username" name="username">
+                    <input type="text"  style="color:white" class="form-control" id="exampleInputCity1" placeholder="username" name="username">
                   </div>
                   {% comment %} {% if user %} {% endcomment %}
                   {% comment %} {% else %} {% endcomment %}
@@ -45,12 +45,12 @@
             <div class="col-6">
                 <div class="form-group">
                     <label for="exampleInputCity1">E-mail</label>
-                    <input type="email" value="{{user.email}}"  style="color:white" class="form-control" id="exampleInputCity1" placeholder="E-mail" name="email">
+                    <input type="email"   style="color:white" class="form-control" id="exampleInputCity1" placeholder="E-mail" name="email">
                 </div>
 
                 <div class="form-group">
                     <label for="exampleInputCity1">Noms</label>
-                    <input type="text" value="{{user.noms}}" style="color:white" class="form-control" id="exampleInputCity1" placeholder="noms" name="noms">
+                    <input type="text"  style="color:white" class="form-control" id="exampleInputCity1" placeholder="noms" name="noms">
                   </div>
                    
                {% if msg %}
@@ -80,7 +80,7 @@
             </div>
         </div>
 
-          <button type="submit" class="btn btn-primary mr-2">{% if user %} Modifier{% else %}Enregistrer {% endif %}</button>
+          <button type="submit" class="btn btn-primary mr-2">Enregistrer</button>
           <a class="btn btn-primary mr-2" style ="color:white" href="{% url 'users' %}">Retour</a>
         </form>
       </div>
