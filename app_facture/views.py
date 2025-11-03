@@ -199,7 +199,9 @@ def deleteAppartement(request,id):
 #PRODUIT
 @login_required(login_url="sign_in")
 def produit(request):
+    tot_produit=0
     produit = Produit.objects.all()
+    tot_produit = Produit.objects.all().count()
     
     if request.method == "POST":
         rech = request.POST['rech']
@@ -219,6 +221,7 @@ def produit(request):
         'compte' : compte,
         'produit' : pages,
         'lproduit': 'active',
+        'tot_produit':tot_produit,
         "noms": request.user.noms,
         "profile": request.user.profile,
         'pages':pages
