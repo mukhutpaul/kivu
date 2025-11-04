@@ -19,7 +19,7 @@
       </div>
     </div>
   </div>
-  {% if request.user.profile.id == 1 or request.user.profile.id == 2 %}
+  {% if request.user.profile.id == 1 or request.user.profile.id == 2 or request.user.is_staff %}
   <div class="row">
     <div class="col-xl-3 col-sm-6 grid-margin stretch-card">
       <div class="card">

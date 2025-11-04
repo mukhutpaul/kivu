@@ -96,7 +96,7 @@
              
             </a>
           </li>
-          {% if request.user.profile.id == 1 or request.user.profile.id == 2 or request.user.profile.id == 4 %}
+          {% if request.user.profile.id == 1 or request.user.profile.id == 2 or request.user.profile.id == 4 or request.user.is_staff %}
            <li class="nav-item menu-items {{lapr}}">
             <a class="nav-link" href="{% url 'appartement' %}">
               <span class="menu-icon">
@@ -116,7 +116,7 @@
           </li>
           {% endif %}
 
-           {% if request.user.profile.id == 1 or request.user.profile.id == 2 or request.user.profile.id == 3 %}
+           {% if request.user.profile.id == 1 or request.user.profile.id == 2 or request.user.profile.id == 3 or request.user.is_staff %}
           <li class="nav-item menu-items {{lfact}}">
             <a class="nav-link" href="{% url 'facture' %}">
               <span class="menu-icon">
@@ -143,7 +143,7 @@
               </ul>
             </div>
           </li> {% endcomment %}
-          {% if request.user.profile.id == 1 or request.user.profile.id == 2  %}
+          {% if request.user.profile.id == 1 or request.user.profile.id == 2 or request.user.is_staff %}
   
            <li class="nav-item menu-items {{luser}}">
             <a class="nav-link" href="{% url 'users' %}">
