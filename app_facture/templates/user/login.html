@@ -27,7 +27,9 @@
             <div class="card col-lg-4 mx-auto">
               <div class="card-body px-5 py-5">
                 <h3 class="card-title text-left mb-3">Connexion</h3>
-                <img class="img-fluid rounded-circle" src="{% static 'images/logo1.jpg' %}" alt="">
+                
+                <img class="img-fluid rounded-circle" src="{% static 'images/logo2.jpg' %}" alt="">
+                
                 <form method="post" action="{% url 'sign_in' %}">
                     {% csrf_token %}
                   <div class="form-group">
