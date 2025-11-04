@@ -128,9 +128,15 @@ def addAppartement(request):
         msg = None
         msok = None
         nom = request.POST.get("nom",None)
+        
+        ver_nom = Appartement.objects.filter(nom=nom)
+        
+        
  
         if nom == '':
             msg ="Veuillez remplir le nom"
+        elif len(nom)>0:
+            msg ="Un appartement portant ce nom existe déjà"
         else:
             ap = Appartement(
                 nom = nom.upper(),
@@ -251,11 +257,15 @@ def addProduit(request):
         nom = request.POST.get("nom",None)
         pu = request.POST.get("pu",0)
         appartement = request.POST.get("appartement",None)
+        
+        ver_nom_prod = Produit.objects.filter(nom=nom)
  
         if nom == '':
             msg ="Veuillez remplir le nom"
         elif len(pu) <= 0:
             msg ="Veuillez remplir le pu"
+        elif len(ver_nom_prod)>0:
+            msg ="Un produit porte déjà ce nom"
         elif not pu.isnumeric():
             msg ="Prix doit être un numérique"
         elif appartement == '':
@@ -639,7 +649,11 @@ def updateAppartement(request,id):
 
 def deleteAppartement(request,id):
     p = Appartement.objects.get(pk=id)
-    p.delete()
+    prod = Produit.objects.filter(appartement__id = p.id)
+    if len(prod) > 0:
+        return HttpResponseRedirect('/appartement/')
+    else:
+        p.delete()
     return HttpResponseRedirect('/appartement/')
 
 
