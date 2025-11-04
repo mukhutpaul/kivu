@@ -6,16 +6,18 @@
 <div class="col-12 grid-margin stretch-card">
     <div class="card">
       <div class="card-body">
-        <h4 class="card-title">Formulaire d'ajout des utilisateurs</h4>
-        <p class="card-description"> Information </p>
-        <form class="forms-sample" method="post" action="{% url 'addUser' %}">
+        <h4 class="card-title">Modification Utilisateur {{user}}</h4>
+        <p class="card-description">Information </p>
+        <form class="forms-sample" method="post" action="{% url 'updateUser' user.id %}">
             {% csrf_token %}
         <div class="row">
             <div class="col-6">
                     <div class="form-group">
                         <label>Profile</label>
                         <select class="js-example-basic-single" style="width:100%" name="profile" required>
-                          <option value="">--------------</option>
+
+                          <option value="{% if user.profile %} {{user.profile.id}} {% endif %}">{{user.profile}}</option>
+
                           {% if user %}
 
                           {% else %}
@@ -31,26 +33,26 @@
 
                    <div class="form-group">
                     <label for="exampleInputCity1">Nom utilisateur</label>
-                    <input type="text"  style="color:white" required class="form-control" id="exampleInputCity1" placeholder="username" name="username">
+                    <input type="text"  required value="{{user.username}}" style="color:white" class="form-control" id="exampleInputCity1" placeholder="username" name="username">
                   </div>
                   {% comment %} {% if user %} {% endcomment %}
                   {% comment %} {% else %} {% endcomment %}
-                   <div class="form-group">
+                   {% comment %} <div class="form-group">
                     <label for="exampleInputCity1">Mot de passse</label>
-                    <input type="text"  style="color:white" required class="form-control" id="exampleInputCity1" placeholder="Mot de passe" name="password">
-                  </div>
+                    <input type="text"  style="color:white" class="form-control" id="exampleInputCity1" placeholder="Mot de passe" name="password">
+                  </div> {% endcomment %}
                   {% comment %} {% endif %} {% endcomment %}
             </div>
 
             <div class="col-6">
                 <div class="form-group">
                     <label for="exampleInputCity1">E-mail</label>
-                    <input type="email"   style="color:white" required class="form-control" id="exampleInputCity1" placeholder="E-mail" name="email">
+                    <input type="email" required value="{{user.email}}"  style="color:white" class="form-control" id="exampleInputCity1" placeholder="E-mail" name="email">
                 </div>
 
                 <div class="form-group">
                     <label for="exampleInputCity1">Noms</label>
-                    <input type="text"  style="color:white" required class="form-control" id="exampleInputCity1" placeholder="noms" name="noms">
+                    <input type="text" required value="{{user.noms}}" style="color:white" class="form-control" id="exampleInputCity1" placeholder="noms" name="noms">
                   </div>
                    
                {% if msg %}
@@ -80,7 +82,7 @@
             </div>
         </div>
 
-          <button type="submit" class="btn btn-primary mr-2">Enregistrer</button>
+          <button type="submit" class="btn btn-primary mr-2">Modifier</button>
           <a class="btn btn-primary mr-2" style ="color:white" href="{% url 'users' %}">Retour</a>
         </form>
       </div>

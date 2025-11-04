@@ -283,7 +283,7 @@ def addProduit(request):
 
 @login_required(login_url="sign_in")
 def modProduit(request,id):
-    pr= Produit.objects.get(pk=id)
+    pr= Produit.objects.get(id=id)
     appart = Appartement.objects.all()
     
     ctx ={
@@ -294,50 +294,22 @@ def modProduit(request,id):
     }
     return render(request,'formulaires/modProduit.html',ctx)
 
-@login_required(login_url="sign_in")
-def updateProduit(request,id):
-    appart = Appartement.objects.all()
-    pr = Produit.objects.get(pk=id)
-    print(pr.id)
-    if request.method == 'POST':
-        msg = None
-        msok =None
-        
-        nom = request.POST.get("nom",None)
-        pu = request.POST.get("pu",0)
-        appartement = request.POST.get("appartement",None)
-     
-        if nom == '':
-            msg ="Veuillez remplir le nom"
-        elif len(pu) <= 0:
-            msg ="Veuillez remplir le pu"
-        elif not pu.isnumeric():
-            msg ="Prix doit être un numérique"
-        elif appartement == '':
-            msg ="Veuillez remplir le appartement"
-        else: 
-            apr = Appartement.objects.get(pk=appartement)
-            pr.nom = nom.upper()
-            pr.appartement = apr
-            pr.pu = pu
-           
-            pr.save()
-            msok = nom +" modifié avec succès"
-            return HttpResponseRedirect('/produit/')
-    ctx ={
-        'msg':msg,
-        'msok': msok,
-        'appart':appart,
-        "noms": request.user.noms,
-        "profile": request.user.profile, 
-    }
-    return render(request,'formulaires/modProduit.html',ctx)
 
 @login_required(login_url="sign_in")
 def deleteProduit(request,id):
+    message= None
+    request.session['message'] = message 
     p = Produit.objects.get(pk=id)
-    p.delete()
-    return HttpResponseRedirect('/produit/')
+    dt = Detail_facture.objects.filter(produit__id=p.id)
+    if len(dt)>0:
+        message = "Impossible de supprimer ce produit car il figure déjà dans une ou plusieur facture"
+        return HttpResponseRedirect('/produit/')
+    else:
+        p.delete()
+        return HttpResponseRedirect('/produit/')
+  
+        
+
 
 ###############USERS##############################""
 ##UTILISATEURS
@@ -515,7 +487,7 @@ def modifierUser(request,id):
         'user': user,
         'pro': profile
     }
-    return render(request,'formulaires/FUser.html',ctx)
+    return render(request,'formulaires/FUserMod.html',ctx)
 
 
 # USER AUTHENTIFICATION
@@ -745,9 +717,17 @@ def detaiFacture(request,id):
 def deletedetailFacture(request,id):
     df = Detail_facture.objects.get(pk=id)
     dt = Facture.objects.get(pk=df.facture.id)
-    df.delete()
     id_facture = dt.id
-    return redirect('/detaiFacture/'+str(id_facture))
+    try:
+        if dt.imprimer == True :
+            
+            return redirect('/detaiFacture/'+str(id_facture))
+        else:
+            df.delete()
+            return redirect('/detaiFacture/'+str(id_facture))
+   
+    except FileNotFoundError:
+        print("File not found.")
 
 @login_required(login_url="sign_in")
 def addDetailFacture(request):
@@ -772,6 +752,9 @@ def addDetailFacture(request):
         return HttpResponseRedirect('/detaiFacture/'+facture)
     
     return HttpResponseRedirect('/detaiFacture/'+facture)
+
+##################################################################
+#IMPRESSION FACTURE#########################################"####"
 
 @login_required(login_url="sign_in")
 def print_facture(request,id):
@@ -849,6 +832,92 @@ def print_facture(request,id):
     sel_facture.total = sommefac
     sel_facture.save()
     return pdf
+
+##############Update user #################################
+
+@login_required(login_url="sign_in")
+def updateUser(request,id):
+    user= User.objects.get(pk=id)
+    
+    if request.method == 'POST':
+        profiles = Profile.objects.all()
+        msg = None
+        msok =None
+        profile = request.POST.get("profile",None)
+        noms = request.POST.get("noms",None)
+        username = request.POST.get("username",None)
+        email = request.POST.get("email",None)
+        #password = request.POST.get("password",None)
+
+        if email =='':
+            msg = "Veuillez remplir le mail"
+            profiles = Profile.objects.all()
+        elif profile=='':
+            msg="Veuillez choisir le profile"
+            profiles = Profile.objects.all()
+    
+        elif noms=='':
+            msg="Veuillez remplir les noms"
+            profiles = Profile.objects.all()
+        elif username =='':
+            msg="Veuillez remplir le nom utilisateur"
+            profiles = Profile.objects.all()
+        else:
+            pro = Profile.objects.get(pk=profile)
+            
+            
+            user.noms = noms.upper()
+            user.profile = pro
+            user.username = username.upper()
+            user.email = email
+            user.is_active = True
+            
+            #user.set_password(password)
+            user.save()
+            msok = username+ " a été modifié"
+            
+            return HttpResponseRedirect('/users/')
+        
+    return render(request,'formulaire/FUser.html',{'msg':msg,'msok':msok,'pro':profiles})
+
+@login_required(login_url="sign_in")
+def updateProduit(request,id):
+    appart = Appartement.objects.all()
+    pr = Produit.objects.get(pk=id)
+
+    if request.method == 'POST':
+        msg = None
+        msok =None
+        
+        nom = request.POST.get("nom",None)
+        pu = request.POST.get("pu",0)
+        appartement = request.POST.get("appartement",None)
+     
+        if nom == '':
+            msg ="Veuillez remplir le nom"
+        elif len(pu) <= 0:
+            msg ="Veuillez remplir le pu"
+
+        elif appartement == '':
+            msg ="Veuillez remplir le appartement"
+        else: 
+            apr = Appartement.objects.get(pk=appartement)
+            pr.nom = nom.upper()
+            pr.appartement = apr
+            pr.pu = pu
+           
+            pr.save()
+            msok = nom +" modifié avec succès"
+            return HttpResponseRedirect('/produit/')
+    ctx ={
+        'msg':msg,
+        'msok': msok,
+        'appart':appart,
+        "noms": request.user.noms,
+        "profile": request.user.profile, 
+    }
+    return render(request,'formulaires/modProduit.html',ctx)
+
 
 
 

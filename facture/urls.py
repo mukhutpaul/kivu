@@ -17,7 +17,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
-from app_facture.views import addAppartement, addDetailFacture, addFacture, addProduit, addUser, appartement, deleteAppartement, deleteProduit, deleteUser, deletedetailFacture, detaiFacture, fAppartement, fProduit, fUser, facture, home, log_out, login, modAppartement, modProduit, modifierUser, print_facture, produit, sign_in, updateAppartement, updateProduit, users
+from app_facture.views import addAppartement, addDetailFacture, addFacture, addProduit, addUser, appartement, deleteAppartement, deleteProduit, deleteUser, deletedetailFacture, detaiFacture, fAppartement, fProduit, fUser, facture, home, log_out, login, modAppartement, modProduit, modifierUser, print_facture, produit, sign_in, updateAppartement, updateProduit, updateUser, users
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -40,8 +40,8 @@ urlpatterns = [
     path('addProduit/',addProduit, name="addProduit"),
     
     path('fProduit/',fProduit, name="fProduit"),
-    path('modProduit/<int:id>',modProduit, name="modProduit"),
-    path('updateProduit/<int:id>',updateProduit, name="updateProduit"),
+    path('modProduit<int:id>/',modProduit, name="modProduit"),
+    path('updateProduit<int:id>/',updateProduit, name="updateProduit"),
     path('deleteProduit/<int:id>',deleteProduit, name="deleteProduit"),
     
     ##USERS
@@ -50,6 +50,9 @@ urlpatterns = [
     path('fUser/',fUser, name="fUser"),
     path('addUser/',addUser, name="addUser"),
     path('modifierUser<int:id>/',modifierUser, name="modifierUser"),
+    path('updateUser<int:id>/',updateUser, name="updateUser"),
+    
+    
     
         
    #User root

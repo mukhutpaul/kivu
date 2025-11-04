@@ -12,16 +12,16 @@
                        {% csrf_token %}
                       <div class="form-group">
                         <label for="exampleInputUsername1">Nom</label>
-                        <input type="text" name="nom" style="color:white" class="form-control" id="exampleInputUsername1" placeholder="Nom produit">
+                        <input type="text" name="nom" required style="color:white" class="form-control" id="exampleInputUsername1" placeholder="Nom produit">
                       </div>
                       <div class="form-group">
                         <label for="exampleInputUsername1">Prix Unitaire</label>
-                        <input type="number" name="pu" style="color:white" class="form-control" id="exampleInputUsername1" placeholder="Prix">
+                        <input type="number" name="pu" required style="color:white" class="form-control" id="exampleInputUsername1" placeholder="Prix">
                       </div>
 
                     <div class="form-group">
                       <label>Appartement</label>
-                      <select class="js-example-basic-single" style="width:100%" name="appartement">
+                      <select class="js-example-basic-single" required style="width:100%" name="appartement">
                         <option value="">---selecionner---</option>
                         {% for ap in appart  %}
                         <option value="{{ap.id}}">{{ap.nom}}</option>
