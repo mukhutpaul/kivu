@@ -127,19 +127,19 @@ def addAppartement(request):
     if request.method == 'POST':
         msg = None
         msok = None
-        nom = request.POST.get("nom",None)
+        noms = request.POST.get("nom",None)
         
-        ver_nom = Appartement.objects.filter(nom=nom)
+        ver_nom = Appartement.objects.filter(nom=noms.upper())
         
         
  
-        if nom == '':
+        if noms == '':
             msg ="Veuillez remplir le nom"
-        elif len(nom)>0:
+        elif len(ver_nom) > 0:
             msg ="Un appartement portant ce nom existe déjà"
         else:
             ap = Appartement(
-                nom = nom.upper(),
+                nom = noms.upper(),
             )
             ap.save()
             msok = "Opération réussie"
@@ -258,7 +258,7 @@ def addProduit(request):
         pu = request.POST.get("pu",0)
         appartement = request.POST.get("appartement",None)
         
-        ver_nom_prod = Produit.objects.filter(nom=nom)
+        ver_nom_prod = Produit.objects.filter(nom=nom.upper())
  
         if nom == '':
             msg ="Veuillez remplir le nom"
