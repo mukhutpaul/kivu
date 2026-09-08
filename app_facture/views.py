@@ -4694,7 +4694,7 @@ def rapport_mensuel_tva(request):
     # ======================================================
     # RAPPORT
     # ======================================================
-
+    noms = request.user.noms or request.user.username
     context = {
 
         # --------------------------------------------------
@@ -4721,6 +4721,7 @@ def rapport_mensuel_tva(request):
         "total_ht": total_ht,
         "total_tva": total_tva,
         "total_ttc": total_ttc,
+        "noms": noms,
 
         # --------------------------------------------------
         # Contrôle

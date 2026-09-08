@@ -5,349 +5,94 @@
 
 <div class="content-wrapper">
 
-<!-- ===================================================== -->
-<!-- EN-TÊTE -->
-<!-- ===================================================== -->
+    <!-- ===================================================== -->
+    <!-- EN-TÊTE -->
+    <!-- ===================================================== -->
 
-<div class="row">
-    <div class="col-12 grid-margin stretch-card">
+    <div class="row">
+        <div class="col-12 grid-margin stretch-card">
 
-        <div class="card corona-gradient-card">
-            <div class="card-body py-3 px-3 px-sm-4">
+            <div class="card corona-gradient-card">
+                <div class="card-body py-3 px-3 px-sm-4">
 
-                <div class="row align-items-center">
+                    <div class="row align-items-center">
 
-                    <div class="col-3 col-sm-2 col-xl-1 text-center">
-
-                        <img
-                            src="{% static 'images/dashboard/Group126@2x.png' %}"
-                            class="gradient-corona-img img-fluid"
-                            alt="Facturation"
-                            style="max-height:80px;"
-                        >
-
-                    </div>
-
-                    <div class="col-6 col-sm-7 col-xl-8">
-
-                        <h4 class="mb-1">
-                            Gestion des factures
-                        </h4>
-
-                        <p class="mb-0 font-weight-normal d-none d-sm-block">
-                            Créez, consultez et validez vos factures.
-                        </p>
-
-                    </div>
-
-                    <div class="col-3 col-sm-3 col-xl-3 text-right">
-
-                        {% if request.user.profile.id == 3 %}
-
-                            <a
-                                href="{% url 'addFacture' %}"
-                                class="btn btn-outline-light btn-rounded"
+                        <div class="col-3 col-sm-2 col-xl-1 text-center">
+                            <img
+                                src="{% static 'images/dashboard/Group126@2x.png' %}"
+                                class="gradient-corona-img img-fluid"
+                                alt="Facturation"
+                                style="max-height:80px;"
                             >
-                                <i class="mdi mdi-plus mr-1"></i>
-                                Nouvelle facture
-                            </a>
+                        </div>
 
-                        {% endif %}
+                        <div class="col-6 col-sm-7 col-xl-8">
 
-                    </div>
+                            <h4 class="mb-1">
+                                Gestion des factures
+                            </h4>
 
-                </div>
+                            <p class="mb-0 font-weight-normal d-none d-sm-block">
+                                Créez, consultez et validez vos factures.
+                            </p>
 
-            </div>
-        </div>
+                        </div>
 
-    </div>
-</div>
+                        <div class="col-3 col-sm-3 col-xl-3 text-right">
 
+                            {% if request.user.profile.id == 3 %}
 
-<!-- ===================================================== -->
-<!-- STATISTIQUE FACTURES -->
-<!-- ===================================================== -->
+                                <a
+                                    href="{% url 'addFacture' %}"
+                                    class="btn btn-outline-light btn-rounded"
+                                >
+                                    <i class="mdi mdi-plus mr-1"></i>
+                                    Nouvelle facture
+                                </a>
 
-<div class="row">
-
-    <div class="col-12 grid-margin stretch-card">
-
-        <div class="card">
-
-            <div class="card-body">
-
-                <div class="row align-items-center">
-
-                    <div class="col-md-6">
-
-                        <div class="d-flex align-items-center">
-
-                            <div class="icon icon-box-primary mr-4">
-                                <i class="mdi mdi-file-document-outline"></i>
-                            </div>
-
-                            <div>
-
-                                <p class="text-muted mb-1">
-                                    Factures aujourd'hui
-                                </p>
-
-                                <h2 class="font-weight-bold mb-0">
-                                    {{ facture_total_jour }}
-                                </h2>
-
-                            </div>
+                            {% endif %}
 
                         </div>
 
                     </div>
 
-
-                    <div class="col-md-6 mt-3 mt-md-0 text-md-right">
-
-                        <span class="text-muted">
-                            <i class="mdi mdi-calendar-today mr-1"></i>
-                            Activité du jour
-                        </span>
-
-                        <p class="text-muted small mb-0 mt-1">
-                            Nombre de factures enregistrées aujourd'hui
-                        </p>
-
-                    </div>
-
                 </div>
-
             </div>
 
         </div>
-
     </div>
 
-</div>
 
+    <!-- ===================================================== -->
+    <!-- STATISTIQUES -->
+    <!-- ===================================================== -->
 
-<!-- ===================================================== -->
-<!-- RECHERCHE -->
-<!-- ===================================================== -->
+    <div class="row">
 
-<div class="row">
+        <!-- Nombre factures -->
+        <div class="col-md-4 grid-margin stretch-card">
 
-    <div class="col-12 grid-margin stretch-card">
-
-        <div class="card">
-
-            <div class="card-body">
-
-                <div class="row align-items-center">
-
-                    <div class="col-md-5">
-
-                        <h4 class="card-title mb-1">
-                            Liste des factures
-                        </h4>
-
-                        <p class="text-muted mb-0">
-                            {{ compte }} facture(s) enregistrée(s)
-                        </p>
-
-                    </div>
-
-
-                    <div class="col-md-7 mt-3 mt-md-0">
-
-                        <form
-                            method="get"
-                            class="d-flex"
-                        >
-
-                            <div class="input-group">
-
-                                <div class="input-group-prepend">
-
-                                    <span class="input-group-text">
-                                        <i class="mdi mdi-magnify"></i>
-                                    </span>
-
-                                </div>
-
-                                <input
-                                    type="text"
-                                    class="form-control"
-                                    name="q"
-                                    value="{{ recherche }}"
-                                    placeholder="Rechercher une facture..."
-                                >
-
-                                <div class="input-group-append">
-
-                                    <button
-                                        type="submit"
-                                        class="btn btn-primary"
-                                    >
-                                        Rechercher
-                                    </button>
-
-                                </div>
-
-                            </div>
-
-                        </form>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </div>
-
-    </div>
-
-</div>
-
-
-<!-- ===================================================== -->
-<!-- LISTE DES FACTURES -->
-<!-- ===================================================== -->
-
-<div class="row">
-
-    {% for f in facture %}
-
-        <div class="col-xl-4 col-lg-6 col-md-6 grid-margin stretch-card">
-
-            <div class="card h-100">
+            <div class="card">
 
                 <div class="card-body">
 
-                    <!-- HEADER CARTE -->
-
-                    <div class="d-flex justify-content-between align-items-start mb-3">
+                    <div class="d-flex justify-content-between align-items-center">
 
                         <div>
 
-                            <span class="text-muted small">
-                                FACTURE
-                            </span>
+                            <p class="text-muted mb-1">
+                                Factures aujourd'hui
+                            </p>
 
                             <h3 class="font-weight-bold mb-0">
-                                #{{ f.id }}
+                                {{ facture_total_jour }}
                             </h3>
 
                         </div>
 
-
-                        {% if f.imprimer %}
-
-                            <span class="badge badge-success px-3 py-2">
-
-                                <i class="mdi mdi-check-circle mr-1"></i>
-
-                                Validée
-
-                            </span>
-
-                        {% else %}
-
-                            <span class="badge badge-warning px-3 py-2">
-
-                                <i class="mdi mdi-clock-outline mr-1"></i>
-
-                                Brouillon
-
-                            </span>
-
-                        {% endif %}
-
-                    </div>
-
-
-                    <!-- DATE / FACTURIER -->
-
-                    <div class="mb-3">
-
-                        <div class="d-flex align-items-center text-muted small mb-1">
-
-                            <i class="mdi mdi-calendar-outline mr-2"></i>
-
-                            {{ f.createdAt|date:"d/m/Y H:i" }}
-
+                        <div class="icon icon-box-success">
+                            <i class="mdi mdi-file-document-outline"></i>
                         </div>
-
-
-                        {% if f.user %}
-
-                            <div class="d-flex align-items-center text-muted small">
-
-                                <i class="mdi mdi-account-outline mr-2"></i>
-
-                                {{ f.user.noms }}
-
-                            </div>
-
-                        {% endif %}
-
-                    </div>
-
-
-                    <hr>
-
-
-                    <!-- ================================================= -->
-                    <!-- MONTANTS -->
-                    <!-- ================================================= -->
-
-                    <div class="mb-3">
-
-                        <div class="d-flex justify-content-between align-items-center">
-
-                            <span class="text-muted">
-                                Total TTC
-                            </span>
-
-                            <span class="h4 mb-0 font-weight-bold">
-
-                                {{ f.total_ttc|default:"0.00"|floatformat:2 }}
-
-                                <small>FC</small>
-
-                            </span>
-
-                        </div>
-
-                    </div>
-
-
-                    <!-- ================================================= -->
-                    <!-- ACTIONS -->
-                    <!-- ================================================= -->
-
-                    <div class="d-flex justify-content-between mt-4">
-
-                        <a
-                            href="{% url 'detaiFacture' f.id %}"
-                            class="btn btn-outline-primary btn-rounded"
-                        >
-
-                            <i class="mdi mdi-eye-outline mr-1"></i>
-
-                            Détails
-
-                        </a>
-
-
-                        <a
-                            href="{% url 'print_facture' f.id %}"
-                            class="btn btn-primary btn-rounded"
-                        >
-
-                            <i class="mdi mdi-printer-outline mr-1"></i>
-
-                            Imprimer
-
-                        </a>
 
                     </div>
 
@@ -357,142 +102,149 @@
 
         </div>
 
-    {% empty %}
 
-        <!-- ================================================= -->
-        <!-- AUCUNE FACTURE -->
-        <!-- ================================================= -->
-
-        <div class="col-12">
-
-            <div class="card">
-
-                <div class="card-body text-center py-5">
-
-                    <div class="mb-3">
-
-                        <i
-                            class="mdi mdi-file-document-outline"
-                            style="font-size:60px; opacity:0.4;"
-                        ></i>
-
-                    </div>
-
-                    <h4>
-                        Aucune facture trouvée
-                    </h4>
-
-                    <p class="text-muted mb-0">
-
-                        {% if recherche %}
-
-                            Aucune facture ne correspond à
-                            « {{ recherche }} ».
-
-                        {% else %}
-
-                            Aucune facture n'a encore été créée.
-
-                        {% endif %}
-
-                    </p>
-
-                </div>
-
-            </div>
-
-        </div>
-
-    {% endfor %}
-
-</div>
-
-
-<!-- ===================================================== -->
-<!-- PAGINATION -->
-<!-- ===================================================== -->
-
-{% if facture.paginator.num_pages > 1 %}
-
-    <div class="row">
-
-        <div class="col-12">
+        <!-- CA TTC -->
+        <div class="col-md-4 grid-margin stretch-card">
 
             <div class="card">
 
                 <div class="card-body">
 
-                    <div class="d-flex justify-content-between align-items-center flex-wrap">
+                    <div class="d-flex justify-content-between align-items-center">
 
-                        <div class="text-muted mb-2 mb-md-0">
+                        <div>
 
-                            Page
-                            <strong>{{ facture.number }}</strong>
-                            sur
-                            <strong>{{ facture.paginator.num_pages }}</strong>
+                            <p class="text-muted mb-1">
+                                CA TTC du jour
+                            </p>
+
+                            <h3 class="font-weight-bold mb-0">
+                                {{ somme|floatformat:2 }}
+                                <small class="text-muted">FC</small>
+                            </h3>
+
+                        </div>
+
+                        <div class="icon icon-box-primary">
+                            <i class="mdi mdi-cash-multiple"></i>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- TVA -->
+        <div class="col-md-4 grid-margin stretch-card">
+
+            <div class="card">
+
+                <div class="card-body">
+
+                    <div class="d-flex justify-content-between align-items-center">
+
+                        <div>
+
+                            <p class="text-muted mb-1">
+                                TVA collectée
+                            </p>
+
+                            <h3 class="font-weight-bold mb-0">
+                                {{ tva_jour|default:"0.00"|floatformat:2 }}
+                                <small class="text-muted">FC</small>
+                            </h3>
+
+                        </div>
+
+                        <div class="icon icon-box-warning">
+                            <i class="mdi mdi-percent-outline"></i>
+                        </div>
+
+                    </div>
+
+                    <small class="text-muted">
+                        Taux TVA : 16 %
+                    </small>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ===================================================== -->
+    <!-- RECHERCHE -->
+    <!-- ===================================================== -->
+
+    <div class="row">
+
+        <div class="col-12 grid-margin stretch-card">
+
+            <div class="card">
+
+                <div class="card-body">
+
+                    <div class="row align-items-center">
+
+                        <div class="col-md-5">
+
+                            <h4 class="card-title mb-1">
+                                Liste des factures
+                            </h4>
+
+                            <p class="text-muted mb-0">
+                                {{ compte }} facture(s) enregistrée(s)
+                            </p>
 
                         </div>
 
 
-                        <div>
+                        <div class="col-md-7 mt-3 mt-md-0">
 
-                            {% if facture.has_previous %}
+                            <form
+                                method="get"
+                                class="d-flex"
+                            >
 
-                                <a
-                                    href="?page=1{% if recherche %}&q={{ recherche|urlencode }}{% endif %}"
-                                    class="btn btn-outline-secondary btn-sm mr-1"
-                                >
+                                <div class="input-group">
 
-                                    <i class="mdi mdi-page-first"></i>
+                                    <div class="input-group-prepend">
 
-                                </a>
+                                        <span class="input-group-text">
+                                            <i class="mdi mdi-magnify"></i>
+                                        </span>
 
+                                    </div>
 
-                                <a
-                                    href="?page={{ facture.previous_page_number }}{% if recherche %}&q={{ recherche|urlencode }}{% endif %}"
-                                    class="btn btn-outline-primary btn-sm mr-1"
-                                >
+                                    <input
+                                        type="text"
+                                        class="form-control"
+                                        name="q"
+                                        value="{{ recherche }}"
+                                        placeholder="Rechercher une facture..."
+                                    >
 
-                                    <i class="mdi mdi-chevron-left"></i>
+                                    <div class="input-group-append">
 
-                                    Précédent
+                                        <button
+                                            type="submit"
+                                            class="btn btn-primary"
+                                        >
+                                            Rechercher
+                                        </button>
 
-                                </a>
+                                    </div>
 
-                            {% endif %}
+                                </div>
 
-
-                            <span class="btn btn-primary btn-sm mr-1">
-
-                                {{ facture.number }}
-
-                            </span>
-
-
-                            {% if facture.has_next %}
-
-                                <a
-                                    href="?page={{ facture.next_page_number }}{% if recherche %}&q={{ recherche|urlencode }}{% endif %}"
-                                    class="btn btn-outline-primary btn-sm mr-1"
-                                >
-
-                                    Suivant
-
-                                    <i class="mdi mdi-chevron-right"></i>
-
-                                </a>
-
-
-                                <a
-                                    href="?page={{ facture.paginator.num_pages }}{% if recherche %}&q={{ recherche|urlencode }}{% endif %}"
-                                    class="btn btn-outline-secondary btn-sm"
-                                >
-
-                                    <i class="mdi mdi-page-last"></i>
-
-                                </a>
-
-                            {% endif %}
+                            </form>
 
                         </div>
 
@@ -506,7 +258,314 @@
 
     </div>
 
-{% endif %}
+
+    <!-- ===================================================== -->
+    <!-- LISTE DES FACTURES -->
+    <!-- ===================================================== -->
+
+    <div class="row">
+
+        {% for f in facture %}
+
+            <div class="col-xl-4 col-lg-6 col-md-6 grid-margin stretch-card">
+
+                <div class="card h-100">
+
+                    <div class="card-body">
+
+                        <!-- HEADER CARTE -->
+
+                        <div class="d-flex justify-content-between align-items-start mb-3">
+
+                            <div>
+
+                                <span class="text-muted small">
+                                    FACTURE
+                                </span>
+
+                                <h3 class="font-weight-bold mb-0">
+                                    #{{ f.id }}
+                                </h3>
+
+                            </div>
+
+
+                            {% if f.imprimer %}
+
+                                <span class="badge badge-success px-3 py-2">
+                                    <i class="mdi mdi-check-circle mr-1"></i>
+                                    Validée
+                                </span>
+
+                            {% else %}
+
+                                <span class="badge badge-warning px-3 py-2">
+                                    <i class="mdi mdi-clock-outline mr-1"></i>
+                                    Brouillon
+                                </span>
+
+                            {% endif %}
+
+                        </div>
+
+
+                        <!-- DATE / FACTURIER -->
+
+                        <div class="mb-3">
+
+                            <div class="d-flex align-items-center text-muted small mb-1">
+
+                                <i class="mdi mdi-calendar-outline mr-2"></i>
+
+                                {{ f.createdAt|date:"d/m/Y H:i" }}
+
+                            </div>
+
+
+                            {% if f.user %}
+
+                                <div class="d-flex align-items-center text-muted small">
+
+                                    <i class="mdi mdi-account-outline mr-2"></i>
+
+                                    {{ f.user.noms }}
+
+                                </div>
+
+                            {% endif %}
+
+                        </div>
+
+
+                        <hr>
+
+
+                        <!-- MONTANTS -->
+
+                        <div class="mb-3">
+
+                            <div class="d-flex justify-content-between mb-2">
+
+                                <span class="text-muted">
+                                    Total HT
+                                </span>
+
+                                <strong>
+                                    {{ f.total_ht|default:"0.00"|floatformat:2 }}
+                                    FC
+                                </strong>
+
+                            </div>
+
+
+                            <div class="d-flex justify-content-between mb-2">
+
+                                <span class="text-muted">
+                                    TVA (16 %)
+                                </span>
+
+                                <strong class="text-warning">
+
+                                    {{ f.total_tva|default:"0.00"|floatformat:2 }}
+                                    FC
+
+                                </strong>
+
+                            </div>
+
+
+                            <div class="d-flex justify-content-between align-items-center mt-3 p-3 rounded"
+                                 style="background: rgba(255,255,255,0.04);">
+
+                                <span class="font-weight-bold">
+                                    Total TTC
+                                </span>
+
+                                <span class="h4 mb-0 font-weight-bold">
+
+                                    {{ f.total_ttc|default:"0.00"|floatformat:2 }}
+                                    <small>FC</small>
+
+                                </span>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- ACTIONS -->
+
+                        <div class="d-flex justify-content-between mt-4">
+
+                            <a
+                                href="{% url 'detaiFacture' f.id %}"
+                                class="btn btn-outline-primary btn-rounded"
+                            >
+
+                                <i class="mdi mdi-eye-outline mr-1"></i>
+
+                                Détails
+
+                            </a>
+
+
+                            <a
+                                href="{% url 'print_facture' f.id %}"
+                                class="btn btn-primary btn-rounded"
+                            >
+
+                                <i class="mdi mdi-printer-outline mr-1"></i>
+
+                                Imprimer
+
+                            </a>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        {% empty %}
+
+            <!-- AUCUNE FACTURE -->
+
+            <div class="col-12">
+
+                <div class="card">
+
+                    <div class="card-body text-center py-5">
+
+                        <div class="mb-3">
+
+                            <i
+                                class="mdi mdi-file-document-outline"
+                                style="font-size:60px; opacity:0.4;"
+                            ></i>
+
+                        </div>
+
+                        <h4>
+                            Aucune facture trouvée
+                        </h4>
+
+                        <p class="text-muted mb-0">
+
+                            {% if recherche %}
+
+                                Aucune facture ne correspond à
+                                « {{ recherche }} ».
+
+                            {% else %}
+
+                                Aucune facture n'a encore été créée.
+
+                            {% endif %}
+
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        {% endfor %}
+
+    </div>
+
+
+    <!-- ===================================================== -->
+    <!-- PAGINATION -->
+    <!-- ===================================================== -->
+
+    {% if facture.paginator.num_pages > 1 %}
+
+        <div class="row">
+
+            <div class="col-12">
+
+                <div class="card">
+
+                    <div class="card-body">
+
+                        <div class="d-flex justify-content-between align-items-center flex-wrap">
+
+                            <div class="text-muted mb-2 mb-md-0">
+
+                                Page
+                                <strong>{{ facture.number }}</strong>
+                                sur
+                                <strong>{{ facture.paginator.num_pages }}</strong>
+
+                            </div>
+
+
+                            <div>
+
+                                {% if facture.has_previous %}
+
+                                    <a
+                                        href="?page=1{% if recherche %}&q={{ recherche|urlencode }}{% endif %}"
+                                        class="btn btn-outline-secondary btn-sm mr-1"
+                                    >
+                                        <i class="mdi mdi-page-first"></i>
+                                    </a>
+
+
+                                    <a
+                                        href="?page={{ facture.previous_page_number }}{% if recherche %}&q={{ recherche|urlencode }}{% endif %}"
+                                        class="btn btn-outline-primary btn-sm mr-1"
+                                    >
+                                        <i class="mdi mdi-chevron-left"></i>
+                                        Précédent
+                                    </a>
+
+                                {% endif %}
+
+
+                                <span class="btn btn-primary btn-sm mr-1">
+
+                                    {{ facture.number }}
+
+                                </span>
+
+
+                                {% if facture.has_next %}
+
+                                    <a
+                                        href="?page={{ facture.next_page_number }}{% if recherche %}&q={{ recherche|urlencode }}{% endif %}"
+                                        class="btn btn-outline-primary btn-sm mr-1"
+                                    >
+                                        Suivant
+                                        <i class="mdi mdi-chevron-right"></i>
+                                    </a>
+
+
+                                    <a
+                                        href="?page={{ facture.paginator.num_pages }}{% if recherche %}&q={{ recherche|urlencode }}{% endif %}"
+                                        class="btn btn-outline-secondary btn-sm"
+                                    >
+                                        <i class="mdi mdi-page-last"></i>
+                                    </a>
+
+                                {% endif %}
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    {% endif %}
 
 
 </div>
