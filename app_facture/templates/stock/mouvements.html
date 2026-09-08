@@ -1,0 +1,2037 @@
+
+{% extends "base.html" %}
+
+{% block content %}
+
+<style>
+
+/* =====================================================
+   RECHERCHE
+===================================================== */
+
+.movement-search-card {
+    border: 0;
+    border-radius: 10px;
+    box-shadow: 0 4px 18px rgba(0,0,0,0.15);
+}
+
+.movement-search-input {
+    color: #ffffff !important;
+    background-color: #191c24 !important;
+    border-color: rgba(255,255,255,0.12) !important;
+}
+
+.movement-search-input::placeholder {
+    color: rgba(255,255,255,0.55) !important;
+    opacity: 1;
+}
+
+.movement-search-input:focus {
+    color: #ffffff !important;
+    background-color: #191c24 !important;
+    border-color: #17a2b8 !important;
+    box-shadow: 0 0 0 0.15rem rgba(23,162,184,0.15) !important;
+}
+
+.movement-search-icon {
+    background-color: #191c24 !important;
+    color: #17a2b8 !important;
+    border-color: rgba(255,255,255,0.12) !important;
+}
+
+
+/* =====================================================
+   EN-TÊTE
+===================================================== */
+
+.stock-header-card {
+
+    border: 0;
+
+    border-radius: 10px;
+
+    overflow: hidden;
+
+}
+
+
+.stock-title {
+
+    font-size: 22px;
+
+    font-weight: 700;
+
+    color: #ffffff;
+
+}
+
+
+.stock-subtitle {
+
+    color: #b8b8b8;
+
+    font-size: 13px;
+
+}
+
+
+/* =====================================================
+   STATISTIQUES
+===================================================== */
+
+.stat-card {
+
+    border: 0;
+
+    border-radius: 10px;
+
+    box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+
+}
+
+
+.stat-label {
+
+    display: block;
+
+    color: #bdbdbd;
+
+    font-size: 13px;
+
+    margin-bottom: 6px;
+
+}
+
+
+.stat-value {
+
+    color: #ffffff;
+
+    font-size: 28px;
+
+    font-weight: 700;
+
+    margin-bottom: 2px;
+
+}
+
+
+.stat-title {
+
+    color: #ffffff;
+
+    font-weight: 600;
+
+    margin-bottom: 4px;
+
+}
+
+
+.stat-description {
+
+    color: #999999;
+
+    font-size: 12px;
+
+}
+
+
+.stat-icon {
+
+    width: 52px;
+
+    height: 52px;
+
+    border-radius: 10px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+}
+
+
+.stat-icon i {
+
+    font-size: 25px;
+
+    color: #ffffff;
+
+}
+
+
+.stat-icon.bg-info {
+
+    background: #17a2b8;
+
+}
+
+
+.stat-icon.bg-success {
+
+    background: #28a745;
+
+}
+
+
+.stat-icon.bg-warning {
+
+    background: #f6c23e;
+
+}
+
+
+/* =====================================================
+   CARTE TABLEAU
+===================================================== */
+
+.movement-card {
+
+    border: 0;
+
+    border-radius: 10px;
+
+    overflow: hidden;
+
+    box-shadow: 0 4px 18px rgba(0,0,0,0.15);
+
+}
+
+
+.movement-card-header {
+
+    padding: 22px 24px;
+
+    background: transparent;
+
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+
+}
+
+
+.movement-title {
+
+    color: #ffffff;
+
+    font-size: 18px;
+
+    font-weight: 700;
+
+}
+
+
+.movement-description {
+
+    color: #a5a5a5;
+
+    font-size: 13px;
+
+}
+
+
+.movement-counter {
+
+    background: rgba(255,255,255,0.08);
+
+    color: #ffffff;
+
+    border-radius: 20px;
+
+    padding: 8px 15px;
+
+    font-size: 12px;
+
+    font-weight: 600;
+
+}
+
+
+/* =====================================================
+   TABLEAU
+===================================================== */
+
+.movement-table-wrapper {
+
+    width: 100%;
+
+}
+
+
+.movement-table {
+
+    color: #ffffff;
+
+    min-width: 1250px;
+
+}
+
+
+.movement-table thead {
+
+    background: rgba(255,255,255,0.04);
+
+}
+
+
+.movement-table thead th {
+
+    color: #cfcfcf !important;
+
+    font-size: 11px;
+
+    font-weight: 700;
+
+    text-transform: uppercase;
+
+    letter-spacing: 0.5px;
+
+    padding: 17px 14px;
+
+    border: 0;
+
+    white-space: nowrap;
+
+}
+
+
+.movement-table tbody tr {
+
+    border-bottom: 1px solid rgba(255,255,255,0.07);
+
+    transition: background 0.2s ease;
+
+}
+
+
+.movement-table tbody tr:hover {
+
+    background: rgba(255,255,255,0.04);
+
+}
+
+
+.movement-table tbody td {
+
+    color: #ffffff !important;
+
+    padding: 17px 14px;
+
+    vertical-align: middle;
+
+    border: 0;
+
+}
+
+
+/* =====================================================
+   DATE
+===================================================== */
+
+.date-container {
+
+    display: flex;
+
+    flex-direction: column;
+
+}
+
+
+.date-main {
+
+    color: #ffffff;
+
+    font-size: 13px;
+
+    font-weight: 600;
+
+}
+
+
+.date-time {
+
+    color: #999999;
+
+    font-size: 11px;
+
+    margin-top: 3px;
+
+}
+
+
+/* =====================================================
+   PRODUIT
+===================================================== */
+
+.product-container {
+
+    display: flex;
+
+    flex-direction: column;
+
+    min-width: 150px;
+
+}
+
+
+.product-name {
+
+    color: #ffffff;
+
+    font-size: 14px;
+
+    font-weight: 700;
+
+}
+
+
+.product-location {
+
+    color: #a7a7a7;
+
+    font-size: 11px;
+
+    margin-top: 4px;
+
+}
+
+
+.product-location i {
+
+    color: #17a2b8;
+
+}
+
+
+/* =====================================================
+   LOT
+===================================================== */
+
+.lot-badge {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    background: rgba(255,255,255,0.08);
+
+    color: #ffffff;
+
+    border-radius: 5px;
+
+    padding: 7px 10px;
+
+    font-size: 11px;
+
+    white-space: nowrap;
+
+}
+
+
+.lot-default {
+
+    color: #cccccc;
+
+    font-size: 12px;
+
+}
+
+
+/* =====================================================
+   OPÉRATION
+===================================================== */
+
+.operation-badge {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    border-radius: 20px;
+
+    padding: 7px 12px;
+
+    font-size: 11px;
+
+    font-weight: 700;
+
+    white-space: nowrap;
+
+}
+
+
+.operation-entry {
+
+    background: rgba(40,167,69,0.18);
+
+    color: #55d879;
+
+}
+
+
+.operation-exit {
+
+    background: rgba(220,53,69,0.18);
+
+    color: #ff6b7a;
+
+}
+
+
+.operation-adjustment {
+
+    background: rgba(246,194,62,0.18);
+
+    color: #ffd45c;
+
+}
+
+
+.operation-other {
+
+    background: rgba(108,117,125,0.20);
+
+    color: #dddddd;
+
+}
+
+
+/* =====================================================
+   QUANTITÉ
+===================================================== */
+
+.quantity {
+
+    font-size: 15px;
+
+    font-weight: 800;
+
+    color: #ffffff;
+
+}
+
+
+.quantity-entry {
+
+    color: #55d879;
+
+}
+
+
+.quantity-exit {
+
+    color: #ff6b7a;
+
+}
+
+
+/* =====================================================
+   STOCK AVANT
+===================================================== */
+
+.stock-value {
+
+    display: inline-block;
+
+    background: rgba(255,255,255,0.08);
+
+    color: #ffffff;
+
+    padding: 7px 12px;
+
+    border-radius: 5px;
+
+    font-size: 12px;
+
+    font-weight: 600;
+
+}
+
+
+/* =====================================================
+   STOCK APRÈS
+===================================================== */
+
+.stock-after {
+
+    display: inline-block;
+
+    padding: 7px 12px;
+
+    border-radius: 5px;
+
+    font-size: 12px;
+
+    font-weight: 700;
+
+}
+
+
+.stock-after-entry {
+
+    background: rgba(40,167,69,0.18);
+
+    color: #55d879;
+
+}
+
+
+.stock-after-exit {
+
+    background: rgba(220,53,69,0.18);
+
+    color: #ff6b7a;
+
+}
+
+
+.stock-after-adjustment {
+
+    background: rgba(23,162,184,0.18);
+
+    color: #55d7e8;
+
+}
+
+
+/* =====================================================
+   UTILISATEUR
+===================================================== */
+
+.user-container {
+
+    display: flex;
+
+    align-items: center;
+
+    min-width: 150px;
+
+}
+
+
+.user-avatar {
+
+    width: 34px;
+
+    height: 34px;
+
+    border-radius: 50%;
+
+    background: rgba(255,255,255,0.10);
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    margin-right: 9px;
+
+}
+
+
+.user-avatar i {
+
+    color: #ffffff;
+
+    font-size: 17px;
+
+}
+
+
+.user-name {
+
+    display: block;
+
+    color: #ffffff;
+
+    font-size: 12px;
+
+}
+
+
+.user-login {
+
+    display: block;
+
+    color: #888888;
+
+    font-size: 10px;
+
+    margin-top: 2px;
+
+}
+
+
+/* =====================================================
+   MOTIF
+===================================================== */
+
+.motif-container {
+
+    display: flex;
+
+    align-items: center;
+
+    max-width: 230px;
+
+}
+
+
+.motif-container i {
+
+    color: #999999;
+
+    margin-right: 7px;
+
+}
+
+
+.motif-text {
+
+    color: #dddddd;
+
+    font-size: 12px;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+
+    white-space: nowrap;
+
+}
+
+
+.motif-empty {
+
+    color: #777777;
+
+    font-size: 11px;
+
+    font-style: italic;
+
+}
+
+
+/* =====================================================
+   ÉTAT VIDE
+===================================================== */
+
+.empty-state {
+
+    text-align: center;
+
+    padding: 70px 25px;
+
+}
+
+
+.empty-icon {
+
+    width: 90px;
+
+    height: 90px;
+
+    border-radius: 50%;
+
+    background: rgba(255,255,255,0.06);
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    margin: 0 auto 20px;
+
+}
+
+
+.empty-icon i {
+
+    color: #888888;
+
+    font-size: 45px;
+
+}
+
+
+.empty-state h5 {
+
+    color: #ffffff;
+
+    font-weight: 700;
+
+    margin-bottom: 10px;
+
+}
+
+
+.empty-state p {
+
+    color: #999999;
+
+    font-size: 13px;
+
+    max-width: 500px;
+
+    margin: 0 auto;
+
+}
+
+
+/* =====================================================
+   LÉGENDE
+===================================================== */
+
+.legend-card {
+
+    border: 0;
+
+    border-radius: 10px;
+
+}
+
+
+.legend-title {
+
+    color: #ffffff;
+
+    font-size: 13px;
+
+}
+
+
+.legend-item {
+
+    color: #bdbdbd;
+
+    font-size: 12px;
+
+    margin-right: 25px;
+
+    margin-bottom: 5px;
+
+}
+
+
+/* =====================================================
+   PAGINATION
+===================================================== */
+
+.movement-pagination-card {
+
+    border: 0;
+
+    border-radius: 10px;
+
+}
+
+
+/* =====================================================
+   RESPONSIVE
+===================================================== */
+
+@media (max-width: 768px) {
+
+    .movement-card-header {
+
+        padding: 18px;
+
+    }
+
+    .stock-title {
+
+        font-size: 19px;
+
+    }
+
+    .movement-table {
+
+        min-width: 1200px;
+
+    }
+
+}
+
+</style>
+
+
+<div class="content-wrapper">
+
+
+    <!-- =====================================================
+         EN-TÊTE
+    ====================================================== -->
+
+    <div class="row mb-4">
+
+        <div class="col-12">
+
+            <div class="card stock-header-card">
+
+                <div class="card-body">
+
+                    <div class="d-flex flex-wrap justify-content-between align-items-center">
+
+
+                        <div class="mb-3 mb-md-0">
+
+                            <h4 class="stock-title mb-2">
+
+                                Mouvements de stock
+
+                            </h4>
+
+                            <p class="stock-subtitle mb-0">
+
+                                Consultez l'historique des entrées, sorties et ajustements de stock.
+
+                            </p>
+
+                        </div>
+
+
+                        <div class="d-flex flex-wrap">
+
+
+                            <a href="{% url 'stock' %}"
+                               class="btn btn-outline-info mr-2 mb-2">
+
+                                <i class="mdi mdi-warehouse mr-1"></i>
+
+                                Stock
+
+                            </a>
+
+
+                            <a href="{% url 'entree_stock' %}"
+                               class="btn btn-success mr-2 mb-2">
+
+                                <i class="mdi mdi-plus-circle mr-1"></i>
+
+                                Nouvelle entrée
+
+                            </a>
+
+
+                            <a href="{% url 'sortie_stock' %}"
+                               class="btn btn-danger mb-2">
+
+                                <i class="mdi mdi-minus-circle mr-1"></i>
+
+                                Nouvelle sortie
+
+                            </a>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         MESSAGES
+    ====================================================== -->
+
+    {% if messages %}
+
+        <div class="row mb-4">
+
+            <div class="col-12">
+
+                {% for message in messages %}
+
+                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show">
+
+                        {{ message }}
+
+                        <button type="button"
+                                class="close"
+                                data-dismiss="alert"
+                                aria-label="Fermer">
+
+                            <span aria-hidden="true">&times;</span>
+
+                        </button>
+
+                    </div>
+
+                {% endfor %}
+
+            </div>
+
+        </div>
+
+    {% endif %}
+
+
+    <!-- =====================================================
+         STATISTIQUES
+    ====================================================== -->
+
+    <div class="row mb-4">
+
+
+        <!-- TOTAL -->
+
+        <div class="col-lg-4 col-md-6 grid-margin stretch-card">
+
+            <div class="card stat-card">
+
+                <div class="card-body">
+
+                    <div class="d-flex justify-content-between align-items-center">
+
+                        <div>
+
+                            <span class="stat-label">
+
+                                Total des mouvements
+
+                            </span>
+
+                            <h3 class="stat-value">
+
+                                {{ mouvements|length }}
+
+                            </h3>
+
+                            <span class="stat-description">
+
+                                opérations affichées
+
+                            </span>
+
+                        </div>
+
+
+                        <div class="stat-icon bg-info">
+
+                            <i class="mdi mdi-swap-vertical"></i>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- GESTION -->
+
+        <div class="col-lg-4 col-md-6 grid-margin stretch-card">
+
+            <div class="card stat-card">
+
+                <div class="card-body">
+
+                    <div class="d-flex justify-content-between align-items-center">
+
+                        <div>
+
+                            <span class="stat-label">
+
+                                Gestion du stock
+
+                            </span>
+
+                            <h5 class="stat-title">
+
+                                Entrées et sorties
+
+                            </h5>
+
+                            <span class="stat-description">
+
+                                Suivi des mouvements de produits
+
+                            </span>
+
+                        </div>
+
+
+                        <div class="stat-icon bg-success">
+
+                            <i class="mdi mdi-package-variant"></i>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- TRAÇABILITÉ -->
+
+        <div class="col-lg-4 col-md-12 grid-margin stretch-card">
+
+            <div class="card stat-card">
+
+                <div class="card-body">
+
+                    <div class="d-flex justify-content-between align-items-center">
+
+                        <div>
+
+                            <span class="stat-label">
+
+                                Traçabilité
+
+                            </span>
+
+                            <h5 class="stat-title">
+
+                                Historique sécurisé
+
+                            </h5>
+
+                            <span class="stat-description">
+
+                                Utilisateur, lot, quantité et date
+
+                            </span>
+
+                        </div>
+
+
+                        <div class="stat-icon bg-warning">
+
+                            <i class="mdi mdi-history"></i>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         RECHERCHE
+    ====================================================== -->
+
+    <div class="row mb-4">
+
+        <div class="col-12">
+
+            <div class="card movement-search-card">
+
+                <div class="card-body">
+
+                    <form method="GET"
+                          action="{% url 'mouvements_stock' %}">
+
+                        <div class="row align-items-center">
+
+
+                            <!-- CHAMP -->
+
+                            <div class="col-lg-9 col-md-8 mb-2 mb-md-0">
+
+                                <div class="input-group">
+
+                                    <div class="input-group-prepend">
+
+                                        <span class="input-group-text movement-search-icon">
+
+                                            <i class="mdi mdi-magnify"></i>
+
+                                        </span>
+
+                                    </div>
+
+
+                                    <input
+                                        type="text"
+                                        name="rech"
+                                        value="{{ rech }}"
+                                        class="form-control movement-search-input"
+                                        placeholder="Rechercher par produit, lot, utilisateur ou motif..."
+                                        autocomplete="off"
+                                    >
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- BOUTONS -->
+
+                            <div class="col-lg-3 col-md-4">
+
+                                <div class="d-flex">
+
+
+                                    <button
+                                        type="submit"
+                                        class="btn btn-primary btn-rounded mr-2"
+                                    >
+
+                                        <i class="mdi mdi-magnify mr-1"></i>
+
+                                        Rechercher
+
+                                    </button>
+
+
+                                    {% if rech %}
+
+                                        <a
+                                            href="{% url 'mouvements_stock' %}"
+                                            class="btn btn-outline-secondary btn-rounded"
+                                            title="Effacer la recherche"
+                                        >
+
+                                            <i class="mdi mdi-close"></i>
+
+                                        </a>
+
+                                    {% endif %}
+
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         MESSAGE DE RECHERCHE
+    ====================================================== -->
+
+    {% if rech %}
+
+        <div class="row mb-4">
+
+            <div class="col-12">
+
+                <div class="alert alert-info">
+
+                    <i class="mdi mdi-information-outline mr-1"></i>
+
+                    Résultats de recherche pour :
+
+                    <strong>"{{ rech }}"</strong>
+
+                    <span class="ml-2">
+
+                        — {{ mouvements|length }} mouvement(s)
+
+                    </span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    {% endif %}
+
+
+    <!-- =====================================================
+         TABLEAU
+    ====================================================== -->
+
+    <div class="row">
+
+        <div class="col-12">
+
+            <div class="card movement-card">
+
+
+                <!-- EN-TÊTE -->
+
+                <div class="card-header movement-card-header">
+
+                    <div class="d-flex flex-wrap justify-content-between align-items-center">
+
+                        <div>
+
+                            <h5 class="movement-title mb-1">
+
+                                Historique des opérations
+
+                            </h5>
+
+                            <p class="movement-description mb-0">
+
+                                Toutes les opérations effectuées sur les stocks.
+
+                            </p>
+
+                        </div>
+
+
+                        <div class="movement-counter mt-2 mt-md-0">
+
+                            <i class="mdi mdi-database-outline mr-1"></i>
+
+                            {{ mouvements|length }} mouvement(s)
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="card-body p-0">
+
+
+                    {% if mouvements %}
+
+
+                        <!-- =================================================
+                             TABLEAU RESPONSIVE
+                        ================================================== -->
+
+                        <div class="table-responsive movement-table-wrapper">
+
+                            <table class="table movement-table mb-0">
+
+
+                                <thead>
+
+                                    <tr>
+
+                                        <th>
+                                            Date
+                                        </th>
+
+                                        <th>
+                                            Produit
+                                        </th>
+
+                                        <th>
+                                            Lot
+                                        </th>
+
+                                        <th class="text-center">
+                                            Opération
+                                        </th>
+
+                                        <th class="text-center">
+                                            Quantité
+                                        </th>
+
+                                        <th class="text-center">
+                                            Avant
+                                        </th>
+
+                                        <th class="text-center">
+                                            Après
+                                        </th>
+
+                                        <th>
+                                            Utilisateur
+                                        </th>
+
+                                        <th>
+                                            Motif
+                                        </th>
+
+                                    </tr>
+
+                                </thead>
+
+
+                                <tbody>
+
+
+                                    {% for mouvement in mouvements %}
+
+
+                                        <tr>
+
+
+                                            <!-- DATE -->
+
+                                            <td>
+
+                                                <div class="date-container">
+
+                                                    <span class="date-main">
+
+                                                        {{ mouvement.createdAt|date:"d/m/Y" }}
+
+                                                    </span>
+
+                                                    <span class="date-time">
+
+                                                        {{ mouvement.createdAt|date:"H:i" }}
+
+                                                    </span>
+
+                                                </div>
+
+                                            </td>
+
+
+                                            <!-- PRODUIT -->
+
+                                            <td>
+
+                                                <div class="product-container">
+
+                                                    <strong class="product-name">
+
+                                                        {{ mouvement.produit.nom }}
+
+                                                    </strong>
+
+
+                                                    {% if mouvement.produit.appartement %}
+
+                                                        <span class="product-location">
+
+                                                            <i class="mdi mdi-map-marker-outline"></i>
+
+                                                            {{ mouvement.produit.appartement.nom }}
+
+                                                        </span>
+
+                                                    {% endif %}
+
+                                                </div>
+
+                                            </td>
+
+
+                                            <!-- LOT -->
+
+                                            <td>
+
+                                                {% if mouvement.lot.numero %}
+
+                                                    <span class="lot-badge">
+
+                                                        <i class="mdi mdi-barcode mr-1"></i>
+
+                                                        {{ mouvement.lot.numero }}
+
+                                                    </span>
+
+                                                {% else %}
+
+                                                    <span class="lot-default">
+
+                                                        Lot #{{ mouvement.lot.id }}
+
+                                                    </span>
+
+                                                {% endif %}
+
+                                            </td>
+
+
+                                            <!-- OPÉRATION -->
+
+                                            <td class="text-center">
+
+                                                {% if mouvement.type == "ENTREE" %}
+
+                                                    <span class="operation-badge operation-entry">
+
+                                                        <i class="mdi mdi-arrow-down-bold mr-1"></i>
+
+                                                        Entrée
+
+                                                    </span>
+
+
+                                                {% elif mouvement.type == "SORTIE" %}
+
+                                                    <span class="operation-badge operation-exit">
+
+                                                        <i class="mdi mdi-arrow-up-bold mr-1"></i>
+
+                                                        Sortie
+
+                                                    </span>
+
+
+                                                {% elif mouvement.type == "AJUSTEMENT" %}
+
+                                                    <span class="operation-badge operation-adjustment">
+
+                                                        <i class="mdi mdi-tune mr-1"></i>
+
+                                                        Ajustement
+
+                                                    </span>
+
+
+                                                {% else %}
+
+                                                    <span class="operation-badge operation-other">
+
+                                                        {{ mouvement.type }}
+
+                                                    </span>
+
+                                                {% endif %}
+
+                                            </td>
+
+
+                                            <!-- QUANTITÉ -->
+
+                                            <td class="text-center">
+
+                                                {% if mouvement.type == "ENTREE" %}
+
+                                                    <span class="quantity quantity-entry">
+
+                                                        +{{ mouvement.quantite }}
+
+                                                    </span>
+
+
+                                                {% elif mouvement.type == "SORTIE" %}
+
+                                                    <span class="quantity quantity-exit">
+
+                                                        -{{ mouvement.quantite }}
+
+                                                    </span>
+
+
+                                                {% else %}
+
+                                                    <span class="quantity">
+
+                                                        {{ mouvement.quantite }}
+
+                                                    </span>
+
+                                                {% endif %}
+
+                                            </td>
+
+
+                                            <!-- AVANT -->
+
+                                            <td class="text-center">
+
+                                                <span class="stock-value">
+
+                                                    {{ mouvement.stock_avant }}
+
+                                                </span>
+
+                                            </td>
+
+
+                                            <!-- APRÈS -->
+
+                                            <td class="text-center">
+
+                                                {% if mouvement.type == "ENTREE" %}
+
+                                                    <span class="stock-after stock-after-entry">
+
+                                                        {{ mouvement.stock_apres }}
+
+                                                    </span>
+
+
+                                                {% elif mouvement.type == "SORTIE" %}
+
+                                                    <span class="stock-after stock-after-exit">
+
+                                                        {{ mouvement.stock_apres }}
+
+                                                    </span>
+
+
+                                                {% else %}
+
+                                                    <span class="stock-after stock-after-adjustment">
+
+                                                        {{ mouvement.stock_apres }}
+
+                                                    </span>
+
+                                                {% endif %}
+
+                                            </td>
+
+
+                                            <!-- UTILISATEUR -->
+
+                                            <td>
+
+                                                <div class="user-container">
+
+                                                    <div class="user-avatar">
+
+                                                        <i class="mdi mdi-account"></i>
+
+                                                    </div>
+
+
+                                                    <div>
+
+                                                        <strong class="user-name">
+
+                                                            {% if mouvement.user.noms %}
+
+                                                                {{ mouvement.user.noms }}
+
+                                                            {% else %}
+
+                                                                {{ mouvement.user.username }}
+
+                                                            {% endif %}
+
+                                                        </strong>
+
+
+                                                        <span class="user-login">
+
+                                                            @{{ mouvement.user.username }}
+
+                                                        </span>
+
+                                                    </div>
+
+                                                </div>
+
+                                            </td>
+
+
+                                            <!-- MOTIF -->
+
+                                            <td>
+
+                                                {% if mouvement.motif %}
+
+                                                    <div class="motif-container">
+
+                                                        <i class="mdi mdi-text-box-outline"></i>
+
+                                                        <span
+                                                            class="motif-text"
+                                                            title="{{ mouvement.motif }}"
+                                                        >
+
+                                                            {{ mouvement.motif }}
+
+                                                        </span>
+
+                                                    </div>
+
+                                                {% else %}
+
+                                                    <span class="motif-empty">
+
+                                                        Aucun motif
+
+                                                    </span>
+
+                                                {% endif %}
+
+                                            </td>
+
+
+                                        </tr>
+
+
+                                    {% endfor %}
+
+
+                                </tbody>
+
+                            </table>
+
+                        </div>
+
+
+                    {% else %}
+
+
+                        <!-- =================================================
+                             AUCUN MOUVEMENT
+                        ================================================== -->
+
+                        <div class="empty-state">
+
+
+                            <div class="empty-icon">
+
+                                <i class="mdi mdi-clipboard-text-clock-outline"></i>
+
+                            </div>
+
+
+                            {% if rech %}
+
+                                <h5>
+
+                                    Aucun résultat
+
+                                </h5>
+
+
+                                <p>
+
+                                    Aucun mouvement ne correspond à la recherche
+
+                                    <strong>"{{ rech }}"</strong>.
+
+                                </p>
+
+
+                                <a
+                                    href="{% url 'mouvements_stock' %}"
+                                    class="btn btn-outline-primary"
+                                >
+
+                                    <i class="mdi mdi-refresh mr-1"></i>
+
+                                    Afficher tous les mouvements
+
+                                </a>
+
+
+                            {% else %}
+
+                                <h5>
+
+                                    Aucun mouvement enregistré
+
+                                </h5>
+
+
+                                <p>
+
+                                    Aucun mouvement de stock n'a encore été enregistré.
+
+                                    Les entrées et sorties apparaîtront ici.
+
+                                </p>
+
+
+                                <div class="mt-3">
+
+                                    <a
+                                        href="{% url 'entree_stock' %}"
+                                        class="btn btn-success mr-2"
+                                    >
+
+                                        <i class="mdi mdi-plus-circle mr-1"></i>
+
+                                        Enregistrer une entrée
+
+                                    </a>
+
+
+                                    <a
+                                        href="{% url 'sortie_stock' %}"
+                                        class="btn btn-danger"
+                                    >
+
+                                        <i class="mdi mdi-minus-circle mr-1"></i>
+
+                                        Enregistrer une sortie
+
+                                    </a>
+
+                                </div>
+
+                            {% endif %}
+
+
+                        </div>
+
+
+                    {% endif %}
+
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         PAGINATION
+    ====================================================== -->
+
+    {% if page_obj and page_obj.has_other_pages %}
+
+        <div class="row mt-4">
+
+            <div class="col-12">
+
+                <div class="card movement-pagination-card">
+
+                    <div class="card-body">
+
+                        <div class="d-flex justify-content-between align-items-center flex-wrap">
+
+
+                            <div class="mb-2">
+
+                                <p class="text-muted mb-0">
+
+                                    Page
+
+                                    <strong>
+
+                                        {{ page_obj.number }}
+
+                                    </strong>
+
+                                    sur
+
+                                    <strong>
+
+                                        {{ page_obj.paginator.num_pages }}
+
+                                    </strong>
+
+                                    — {{ page_obj.paginator.count }} mouvement(s)
+
+                                </p>
+
+                            </div>
+
+
+                            <nav>
+
+                                <ul class="pagination pagination-sm mb-0">
+
+
+                                    {% if page_obj.has_previous %}
+
+                                        <li class="page-item">
+
+                                            <a
+                                                class="page-link"
+                                                href="?rech={{ rech|urlencode }}&page=1"
+                                            >
+
+                                                <i class="mdi mdi-chevron-double-left"></i>
+
+                                            </a>
+
+                                        </li>
+
+
+                                        <li class="page-item">
+
+                                            <a
+                                                class="page-link"
+                                                href="?rech={{ rech|urlencode }}&page={{ page_obj.previous_page_number }}"
+                                            >
+
+                                                <i class="mdi mdi-chevron-left"></i>
+
+                                            </a>
+
+                                        </li>
+
+                                    {% endif %}
+
+
+                                    {% for num in page_obj.paginator.page_range %}
+
+                                        {% if num == page_obj.number %}
+
+                                            <li class="page-item active">
+
+                                                <span class="page-link">
+
+                                                    {{ num }}
+
+                                                </span>
+
+                                            </li>
+
+                                        {% elif num >= page_obj.number|add:"-2" and num <= page_obj.number|add:"2" %}
+
+                                            <li class="page-item">
+
+                                                <a
+                                                    class="page-link"
+                                                    href="?rech={{ rech|urlencode }}&page={{ num }}"
+                                                >
+
+                                                    {{ num }}
+
+                                                </a>
+
+                                            </li>
+
+                                        {% endif %}
+
+                                    {% endfor %}
+
+
+                                    {% if page_obj.has_next %}
+
+                                        <li class="page-item">
+
+                                            <a
+                                                class="page-link"
+                                                href="?rech={{ rech|urlencode }}&page={{ page_obj.next_page_number }}"
+                                            >
+
+                                                <i class="mdi mdi-chevron-right"></i>
+
+                                            </a>
+
+                                        </li>
+
+
+                                        <li class="page-item">
+
+                                            <a
+                                                class="page-link"
+                                                href="?rech={{ rech|urlencode }}&page={{ page_obj.paginator.num_pages }}"
+                                            >
+
+                                                <i class="mdi mdi-chevron-double-right"></i>
+
+                                            </a>
+
+                                        </li>
+
+                                    {% endif %}
+
+
+                                </ul>
+
+                            </nav>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    {% endif %}
+
+
+    <!-- =====================================================
+         LÉGENDE
+    ====================================================== -->
+
+    {% if mouvements %}
+
+        <div class="row mt-4">
+
+            <div class="col-12">
+
+                <div class="card legend-card">
+
+                    <div class="card-body">
+
+                        <div class="d-flex flex-wrap align-items-center">
+
+
+                            <strong class="legend-title mr-4">
+
+                                <i class="mdi mdi-information-outline mr-1"></i>
+
+                                Légende
+
+                            </strong>
+
+
+                            <span class="legend-item">
+
+                                <strong class="text-success">
+
+                                    + Quantité
+
+                                </strong>
+
+                                = entrée
+
+                            </span>
+
+
+                            <span class="legend-item">
+
+                                <strong class="text-danger">
+
+                                    - Quantité
+
+                                </strong>
+
+                                = sortie
+
+                            </span>
+
+
+                            <span class="legend-item">
+
+                                <span class="operation-badge operation-adjustment">
+
+                                    Ajustement
+
+                                </span>
+
+                                = correction du stock
+
+                            </span>
+
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    {% endif %}
+
+
+</div>
+
+
+{% endblock %}

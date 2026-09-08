@@ -1,0 +1,591 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+<div class="content-wrapper">
+
+    <div class="row justify-content-center">
+
+        <!-- =========================
+             FORMULAIRE
+        ========================== -->
+        <div class="col-md-9 col-lg-8 grid-margin stretch-card">
+
+            <div class="card shadow-sm">
+
+                <div class="card-body p-4">
+
+                    <!-- En-tête -->
+                    <div class="mb-4">
+
+                        <h4 class="card-title mb-2">
+                            <i class="mdi mdi-package-up mr-2"></i>
+                            Sortie de stock
+                        </h4>
+
+                        <p class="card-description mb-0">
+                            Enregistrer une nouvelle sortie de produit du stock
+                        </p>
+
+                    </div>
+
+                    <hr class="mb-4">
+
+
+                    <form class="forms-sample"
+                          method="post"
+                          action="{% url 'sortie_stock' %}">
+
+                        {% csrf_token %}
+
+
+                        <!-- =========================
+                             PRODUIT
+                        ========================== -->
+
+                        <div class="form-group mb-4">
+
+                            <label for="produit"
+                                   class="text-white font-weight-bold">
+
+                                Produit <span class="text-danger">*</span>
+
+                            </label>
+
+                            <select
+                                class="js-example-basic-single"
+                                required
+                                style="width:100%"
+                                name="produit"
+                                id="produit">
+
+                                <option value="">
+                                    --- Sélectionner un produit ---
+                                </option>
+
+                                {% for produit in produits %}
+
+                                    <option value="{{ produit.id }}">
+
+                                        {{ produit.nom }}
+
+                                        {% if produit.quantite %}
+                                            — Stock disponible : {{ produit.quantite }}
+                                        {% else %}
+                                            — Stock disponible : 0
+                                        {% endif %}
+
+                                    </option>
+
+                                {% endfor %}
+
+                            </select>
+
+                            <small class="text-muted">
+                                Recherchez directement le produit dans la liste.
+                            </small>
+
+                        </div>
+
+
+                        <!-- =========================
+                             QUANTITÉ
+                        ========================== -->
+
+                        <div class="form-group mb-4">
+
+                            <label for="quantite"
+                                   class="text-white font-weight-bold">
+
+                                Quantité à sortir
+                                <span class="text-danger">*</span>
+
+                            </label>
+
+                            <input
+                                type="number"
+                                name="quantite"
+                                class="form-control text-white"
+                                id="quantite"
+                                placeholder="Exemple : 10"
+                                min="0.01"
+                                step="0.01"
+                                required>
+
+                            <small class="text-muted">
+                                Indiquez la quantité à retirer du stock.
+                            </small>
+
+                        </div>
+
+
+                        <!-- =========================
+                             MOTIF
+                        ========================== -->
+
+                        <div class="form-group mb-4">
+
+                            <label for="motif"
+                                   class="text-white font-weight-bold">
+
+                                Motif de la sortie
+
+                            </label>
+
+                            <textarea
+                                name="motif"
+                                class="form-control text-white"
+                                id="motif"
+                                rows="4"
+                                placeholder="Exemple : Produit endommagé, perte, utilisation interne, produit expiré..."></textarea>
+
+                            <small class="text-muted">
+                                Précisez la raison de la sortie pour assurer une bonne traçabilité.
+                            </small>
+
+                        </div>
+
+
+                        <!-- =========================
+                             INFORMATION LOTS
+                        ========================== -->
+
+                        <div class="alert alert-warning shadow-sm mb-4">
+
+                            <div class="d-flex align-items-start">
+
+                                <i class="mdi mdi-alert-outline mr-3"
+                                   style="font-size: 24px;">
+                                </i>
+
+                                <div>
+
+                                    <strong>
+                                        Gestion automatique des lots
+                                    </strong>
+
+                                    <p class="mb-0 mt-1">
+
+                                        Le système retire automatiquement la quantité
+                                        du lot dont la date de péremption est la plus proche.
+
+                                    </p>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- =========================
+                             AVERTISSEMENT
+                        ========================== -->
+
+                        <div class="alert alert-danger shadow-sm mb-4">
+
+                            <div class="d-flex align-items-start">
+
+                                <i class="mdi mdi-alert-circle-outline mr-3"
+                                   style="font-size: 24px;">
+                                </i>
+
+                                <div>
+
+                                    <strong>
+                                        Attention
+                                    </strong>
+
+                                    <p class="mb-0 mt-1">
+
+                                        Cette opération diminuera définitivement
+                                        le stock disponible. Vérifiez le produit
+                                        et la quantité avant de confirmer.
+
+                                    </p>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- =========================
+                             BOUTONS
+                        ========================== -->
+
+                        <div class="d-flex justify-content-end align-items-center">
+
+                            <a
+                                href="{% url 'stock' %}"
+                                class="btn btn-outline-secondary mr-2">
+
+                                <i class="mdi mdi-close mr-1"></i>
+
+                                Annuler
+
+                            </a>
+
+
+                            <button
+                                type="submit"
+                                class="btn btn-danger">
+
+                                <i class="mdi mdi-content-save mr-1"></i>
+
+                                Enregistrer la sortie
+
+                            </button>
+
+                        </div>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- =========================
+             MESSAGES
+        ========================== -->
+
+        <div class="col-md-9 col-lg-8 grid-margin">
+
+            {% if msg %}
+
+                <div class="alert alert-danger shadow-sm">
+
+                    <i class="mdi mdi-alert-circle-outline mr-2"></i>
+
+                    {{ msg }}
+
+                </div>
+
+            {% elif msok %}
+
+                <div class="alert alert-success shadow-sm">
+
+                    <i class="mdi mdi-check-circle-outline mr-2"></i>
+
+                    {{ msok }}
+
+                </div>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =========================
+     STYLE
+========================== -->
+
+<style>
+
+    /* =========================================
+       LIBELLÉS
+    ========================================= */
+
+    .form-group label {
+
+        margin-bottom: 8px;
+
+        font-size: 14px;
+
+    }
+
+
+    /* =========================================
+       CHAMPS
+    ========================================= */
+
+    .form-control {
+
+        border-radius: 6px;
+
+        min-height: 45px;
+
+    }
+
+
+    /* Texte saisi en blanc */
+
+    .form-control.text-white {
+
+        color: #ffffff !important;
+
+    }
+
+
+    /* Texte indicatif */
+
+    .form-control.text-white::placeholder {
+
+        color: rgba(255, 255, 255, 0.55) !important;
+
+    }
+
+
+    /* Zone de texte */
+
+    textarea.form-control.text-white {
+
+        color: #ffffff !important;
+
+    }
+
+
+    /* =========================================
+       ICÔNES
+    ========================================= */
+
+    .card-title i {
+
+        font-size: 22px;
+
+        vertical-align: middle;
+
+        color: #dc3545;
+
+    }
+
+
+    /* =========================================
+       CARTE
+    ========================================= */
+
+    .card {
+
+        border-radius: 10px;
+
+        overflow: hidden;
+
+    }
+
+
+    /* =========================================
+       BOUTONS
+    ========================================= */
+
+    .btn {
+
+        border-radius: 6px;
+
+    }
+
+
+    /* Bouton de sortie */
+
+    .btn-danger {
+
+        background-color: #dc3545;
+
+        border-color: #dc3545;
+
+    }
+
+
+    .btn-danger:hover {
+
+        background-color: #c82333;
+
+        border-color: #bd2130;
+
+    }
+
+
+    /* =========================================
+       SELECT2
+    ========================================= */
+
+    .select2-container {
+
+        width: 100% !important;
+
+    }
+
+
+    .select2-container--default
+    .select2-selection--single {
+
+        height: 45px !important;
+
+        border-radius: 6px !important;
+
+        border: 1px solid #444 !important;
+
+        background-color: transparent !important;
+
+    }
+
+
+    .select2-container--default
+    .select2-selection--single
+    .select2-selection__rendered {
+
+        color: #ffffff !important;
+
+        line-height: 43px !important;
+
+        padding-left: 14px !important;
+
+    }
+
+
+    .select2-container--default
+    .select2-selection--single
+    .select2-selection__placeholder {
+
+        color: rgba(255, 255, 255, 0.55) !important;
+
+    }
+
+
+    .select2-container--default
+    .select2-selection--single
+    .select2-selection__arrow {
+
+        height: 43px !important;
+
+    }
+
+
+    /* =========================================
+       LISTE DES PRODUITS
+    ========================================= */
+
+    .select2-dropdown {
+
+        background-color: #2a2a2a !important;
+
+        border: 1px solid #444 !important;
+
+    }
+
+
+    .select2-results__option {
+
+        color: #ffffff !important;
+
+        padding: 10px 14px !important;
+
+    }
+
+
+    .select2-container--default
+    .select2-results__option--highlighted[aria-selected] {
+
+        background-color: #dc3545 !important;
+
+        color: #ffffff !important;
+
+    }
+
+
+    /* =========================================
+       RECHERCHE DES PRODUITS
+    ========================================= */
+
+    .select2-search--dropdown {
+
+        background-color: #2a2a2a !important;
+
+        padding: 10px !important;
+
+    }
+
+
+    .select2-search--dropdown
+    .select2-search__field {
+
+        background-color: #333 !important;
+
+        color: #ffffff !important;
+
+        border: 1px solid #555 !important;
+
+        border-radius: 5px !important;
+
+        padding: 8px !important;
+
+    }
+
+
+    .select2-search--dropdown
+    .select2-search__field::placeholder {
+
+        color: rgba(255, 255, 255, 0.55) !important;
+
+    }
+
+
+    /* =========================================
+       ALERTES
+    ========================================= */
+
+    .alert {
+
+        border-radius: 7px;
+
+    }
+
+
+    .alert-warning {
+
+        color: #856404;
+
+    }
+
+
+    .alert-danger {
+
+        color: #721c24;
+
+    }
+
+
+    /* =========================================
+       RESPONSIVE
+    ========================================= */
+
+    @media (max-width: 768px) {
+
+        .card-body {
+
+            padding: 20px !important;
+
+        }
+
+        .d-flex.justify-content-end {
+
+            flex-direction: column;
+
+            align-items: stretch !important;
+
+        }
+
+        .d-flex.justify-content-end .btn {
+
+            width: 100%;
+
+            margin-right: 0 !important;
+
+            margin-bottom: 10px;
+
+        }
+
+    }
+
+</style>
+
+
+{% endblock content %}

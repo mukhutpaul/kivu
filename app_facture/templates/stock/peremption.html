@@ -1,0 +1,1514 @@
+
+{% extends "base.html" %}
+
+{% block content %}
+
+<style>
+
+    /* ==========================================================
+       PAGE
+    ========================================================== */
+
+    .peremption-page {
+        padding-top: 25px;
+        padding-bottom: 40px;
+    }
+
+
+    /* ==========================================================
+       HEADER
+    ========================================================== */
+
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+        gap: 15px;
+        flex-wrap: wrap;
+        padding-top: 5px;
+    }
+
+    .page-title {
+        color: #ffffff;
+        font-size: 24px;
+        font-weight: 600;
+        margin: 0;
+    }
+
+    .page-subtitle {
+        color: #9e9e9e;
+        margin: 7px 0 0;
+        font-size: 14px;
+    }
+
+    .header-actions {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+
+    .header-actions .btn {
+        border-radius: 7px;
+        font-size: 13px;
+        font-weight: 500;
+        padding: 9px 14px;
+    }
+
+
+    /* ==========================================================
+       STATISTIQUES
+    ========================================================== */
+
+    .stat-card {
+        border-radius: 10px;
+        padding: 18px;
+        margin-bottom: 20px;
+        background: #191c24;
+        border: 1px solid rgba(255,255,255,0.06);
+        height: 100%;
+    }
+
+    .stat-label {
+        color: #9e9e9e;
+        font-size: 13px;
+        margin-bottom: 7px;
+    }
+
+    .stat-value {
+        color: #ffffff;
+        font-size: 25px;
+        font-weight: 600;
+    }
+
+    .stat-icon {
+        float: right;
+        width: 42px;
+        height: 42px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 21px;
+    }
+
+    .icon-danger {
+        background: rgba(244, 67, 54, 0.15);
+        color: #f44336;
+    }
+
+    .icon-warning {
+        background: rgba(255, 152, 0, 0.15);
+        color: #ff9800;
+    }
+
+    .icon-info {
+        background: rgba(3, 169, 244, 0.15);
+        color: #03a9f4;
+    }
+
+
+    /* ==========================================================
+       RECHERCHE
+    ========================================================== */
+
+    .search-card {
+        background: #191c24;
+        border-radius: 10px;
+        border: 1px solid rgba(255,255,255,0.06);
+        margin-bottom: 25px;
+    }
+
+    .search-card .card-body {
+        padding: 18px 20px;
+    }
+
+    .search-label {
+        color: #ffffff;
+        font-size: 13px;
+        font-weight: 600;
+        margin-bottom: 8px;
+    }
+
+    .search-input {
+        height: 42px;
+        background: #20232d;
+        border: 1px solid rgba(255,255,255,0.08);
+        color: #ffffff;
+        border-radius: 7px;
+    }
+
+    .search-input:focus {
+        background: #20232d;
+        color: #ffffff;
+        border-color: #2196f3;
+        box-shadow: 0 0 0 2px rgba(33,150,243,0.10);
+    }
+
+    .search-input::placeholder {
+        color: #777d87;
+    }
+
+    .search-icon {
+        background: #20232d;
+        border: 1px solid rgba(255,255,255,0.08);
+        color: #8f939b;
+        border-radius: 7px 0 0 7px;
+    }
+
+    .search-btn {
+        height: 42px;
+        border-radius: 7px;
+        padding-left: 18px;
+        padding-right: 18px;
+        font-size: 13px;
+        font-weight: 500;
+    }
+
+    .clear-search {
+        height: 42px;
+        border-radius: 7px;
+        font-size: 13px;
+    }
+
+    .search-result-info {
+        color: #8f939b;
+        font-size: 12px;
+        margin-top: 10px;
+    }
+
+    .search-result-info strong {
+        color: #ffffff;
+    }
+
+
+    /* ==========================================================
+       TABLEAU
+    ========================================================== */
+
+    .table-card {
+        background: #191c24;
+        border-radius: 10px;
+        border: 1px solid rgba(255,255,255,0.06);
+        overflow: hidden;
+    }
+
+    .table-header {
+        padding: 18px 20px;
+        border-bottom: 1px solid rgba(255,255,255,0.06);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    .table-header-title {
+        color: #ffffff;
+        font-size: 16px;
+        font-weight: 600;
+        margin: 0;
+    }
+
+    .table-header-info {
+        color: #9e9e9e;
+        font-size: 13px;
+    }
+
+    .table-responsive {
+        overflow-x: auto;
+    }
+
+    .peremption-table {
+        width: 100%;
+        margin: 0;
+        border-collapse: collapse;
+    }
+
+    .peremption-table thead th {
+        background: #20232d;
+        color: #bfc2c8;
+        font-size: 12px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+        padding: 14px 16px;
+        border: none;
+        white-space: nowrap;
+    }
+
+    .peremption-table tbody td {
+        color: #ffffff;
+        padding: 14px 16px;
+        border-top: 1px solid rgba(255,255,255,0.05);
+        vertical-align: middle;
+        font-size: 13px;
+    }
+
+    .peremption-table tbody tr {
+        transition: background 0.15s ease;
+    }
+
+    .peremption-table tbody tr:hover {
+        background: rgba(255,255,255,0.025);
+    }
+
+
+    /* ==========================================================
+       PRODUIT
+    ========================================================== */
+
+    .product-name {
+        color: #ffffff;
+        font-weight: 600;
+        font-size: 14px;
+        margin-bottom: 3px;
+    }
+
+    .product-location {
+        color: #8f939b;
+        font-size: 12px;
+    }
+
+
+    /* ==========================================================
+       LOT
+    ========================================================== */
+
+    .lot-badge {
+        display: inline-block;
+        padding: 5px 8px;
+        border-radius: 5px;
+        background: rgba(255,255,255,0.07);
+        color: #ffffff;
+        font-size: 12px;
+    }
+
+
+    /* ==========================================================
+       QUANTITE
+    ========================================================== */
+
+    .quantity {
+        color: #ffffff;
+        font-weight: 600;
+    }
+
+    .quantity-label {
+        color: #777d87;
+        font-size: 11px;
+    }
+
+
+    /* ==========================================================
+       DATE
+    ========================================================== */
+
+    .expiry-date {
+        color: #ffffff;
+        font-weight: 500;
+        white-space: nowrap;
+    }
+
+    .expiry-date i {
+        margin-right: 5px;
+    }
+
+
+    /* ==========================================================
+       BADGES
+    ========================================================== */
+
+    .status-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        padding: 6px 9px;
+        border-radius: 20px;
+        font-size: 11px;
+        font-weight: 600;
+        white-space: nowrap;
+    }
+
+    .status-danger {
+        background: rgba(244, 67, 54, 0.15);
+        color: #ff6b61;
+        border: 1px solid rgba(244, 67, 54, 0.25);
+    }
+
+    .status-warning {
+        background: rgba(255, 152, 0, 0.15);
+        color: #ffb74d;
+        border: 1px solid rgba(255, 152, 0, 0.25);
+    }
+
+
+    /* ==========================================================
+       JOURS RESTANTS
+    ========================================================== */
+
+    .days-left {
+        font-weight: 600;
+        white-space: nowrap;
+    }
+
+    .days-danger {
+        color: #ff5c5c;
+    }
+
+    .days-warning {
+        color: #ffb347;
+    }
+
+    .days-expired {
+        color: #f44336;
+    }
+
+
+    /* ==========================================================
+       ACTIONS
+    ========================================================== */
+
+    .action-buttons {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        white-space: nowrap;
+    }
+
+    .action-btn {
+        width: 32px;
+        height: 32px;
+        border-radius: 6px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid rgba(255,255,255,0.08);
+        background: rgba(255,255,255,0.04);
+        color: #ffffff;
+        transition: all 0.2s ease;
+        text-decoration: none;
+    }
+
+    .action-btn:hover {
+        color: #ffffff;
+        background: rgba(255,255,255,0.1);
+        text-decoration: none;
+    }
+
+    .action-view:hover {
+        background: rgba(3, 169, 244, 0.15);
+        border-color: rgba(3, 169, 244, 0.3);
+        color: #29b6f6;
+    }
+
+    .action-entry:hover {
+        background: rgba(76, 175, 80, 0.15);
+        border-color: rgba(76, 175, 80, 0.3);
+        color: #66bb6a;
+    }
+
+    .action-exit:hover {
+        background: rgba(244, 67, 54, 0.15);
+        border-color: rgba(244, 67, 54, 0.3);
+        color: #ef5350;
+    }
+
+
+    /* ==========================================================
+       ETAT VIDE
+    ========================================================== */
+
+    .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+    }
+
+    .empty-state i {
+        font-size: 55px;
+        color: #4caf50;
+        margin-bottom: 15px;
+    }
+
+    .empty-state h5 {
+        color: #ffffff;
+        margin-bottom: 8px;
+    }
+
+    .empty-state p {
+        color: #8f939b;
+        margin: 0;
+    }
+
+
+    /* ==========================================================
+       PAGINATION
+    ========================================================== */
+
+    .pagination-container {
+        padding: 18px 20px;
+        border-top: 1px solid rgba(255,255,255,0.06);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 15px;
+        flex-wrap: wrap;
+    }
+
+    .pagination-info {
+        color: #8f939b;
+        font-size: 13px;
+    }
+
+    .pagination {
+        margin: 0;
+        gap: 4px;
+    }
+
+    .pagination .page-item .page-link {
+        background: #20232d;
+        color: #bfc2c8;
+        border: 1px solid rgba(255,255,255,0.06);
+        border-radius: 6px;
+        min-width: 34px;
+        height: 34px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+        padding: 5px 9px;
+    }
+
+    .pagination .page-item .page-link:hover {
+        background: #292d38;
+        color: #ffffff;
+    }
+
+    .pagination .page-item.active .page-link {
+        background: #2196f3;
+        border-color: #2196f3;
+        color: #ffffff;
+    }
+
+    .pagination .page-item.disabled .page-link {
+        opacity: 0.35;
+        cursor: not-allowed;
+    }
+
+
+    /* ==========================================================
+       LEGENDE
+    ========================================================== */
+
+    .legend {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        flex-wrap: wrap;
+        padding: 15px 20px;
+        border-top: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .legend-title {
+        color: #8f939b;
+        font-size: 12px;
+    }
+
+    .legend-item {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        color: #bfc2c8;
+        font-size: 12px;
+    }
+
+    .legend-dot {
+        width: 9px;
+        height: 9px;
+        border-radius: 50%;
+    }
+
+    .legend-red {
+        background: #f44336;
+    }
+
+    .legend-orange {
+        background: #ff9800;
+    }
+
+
+    /* ==========================================================
+       RESPONSIVE
+    ========================================================== */
+
+    @media (max-width: 768px) {
+
+        .peremption-page {
+            padding-top: 15px;
+        }
+
+        .page-title {
+            font-size: 20px;
+        }
+
+        .pagination-container {
+            justify-content: center;
+        }
+
+        .pagination-info {
+            width: 100%;
+            text-align: center;
+        }
+
+        .search-btn {
+            width: 100%;
+        }
+
+    }
+
+</style>
+
+
+<div class="content-wrapper peremption-page">
+
+
+    <!-- ==========================================================
+         HEADER
+    ========================================================== -->
+
+    <div class="page-header">
+
+        <div>
+
+            <h3 class="page-title">
+
+                <i class="mdi mdi-calendar-alert text-danger mr-2"></i>
+
+                Produits proches de la péremption
+
+            </h3>
+
+            <p class="page-subtitle">
+
+                Produits périmés ou arrivant à expiration dans les 4 prochains mois.
+
+            </p>
+
+        </div>
+
+
+        <div class="header-actions">
+
+            <a href="{% url 'stock' %}"
+               class="btn btn-outline-info">
+
+                <i class="mdi mdi-warehouse mr-1"></i>
+
+                Stock général
+
+            </a>
+
+
+            <a href="{% url 'mouvements_stock' %}"
+               class="btn btn-outline-secondary">
+
+                <i class="mdi mdi-swap-vertical mr-1"></i>
+
+                Mouvements
+
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <!-- ==========================================================
+         STATISTIQUES
+    ========================================================== -->
+
+    <div class="row">
+
+
+        <!-- TOTAL -->
+
+        <div class="col-md-4">
+
+            <div class="stat-card">
+
+                <div class="stat-icon icon-info">
+
+                    <i class="mdi mdi-package-variant"></i>
+
+                </div>
+
+                <div class="stat-label">
+
+                    Lots à surveiller
+
+                </div>
+
+                <div class="stat-value">
+
+                    {{ total_peremption }}
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- PERIMES -->
+
+        <div class="col-md-4">
+
+            <div class="stat-card">
+
+                <div class="stat-icon icon-danger">
+
+                    <i class="mdi mdi-alert-circle"></i>
+
+                </div>
+
+                <div class="stat-label">
+
+                    Produits périmés
+
+                </div>
+
+                <div class="stat-value">
+
+                    {{ total_perimes }}
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- PERIODE -->
+
+        <div class="col-md-4">
+
+            <div class="stat-card">
+
+                <div class="stat-icon icon-warning">
+
+                    <i class="mdi mdi-calendar-clock"></i>
+
+                </div>
+
+                <div class="stat-label">
+
+                    Période de surveillance
+
+                </div>
+
+                <div class="stat-value"
+                     style="font-size: 20px;">
+
+                    4 mois
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ==========================================================
+         RECHERCHE
+    ========================================================== -->
+
+    <div class="search-card">
+
+        <div class="card-body">
+
+            <form method="GET"
+                  action="{% url 'produits_peremption' %}">
+
+                <div class="row align-items-end">
+
+                    <div class="col-md-9">
+
+                        <div class="search-label">
+
+                            <i class="mdi mdi-magnify mr-1"></i>
+
+                            Rechercher un produit
+
+                        </div>
+
+                        <div class="input-group">
+
+                            <div class="input-group-prepend">
+
+                                <span class="input-group-text search-icon">
+
+                                    <i class="mdi mdi-magnify"></i>
+
+                                </span>
+
+                            </div>
+
+                            <input
+                                type="text"
+                                name="rech"
+                                value="{{ rech }}"
+                                class="form-control search-input"
+                                placeholder="Nom du produit, appartement ou numéro de lot..."
+                                autocomplete="off"
+                            >
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="col-md-3 mt-3 mt-md-0">
+
+                        <div class="d-flex">
+
+                            <button
+                                type="submit"
+                                class="btn btn-primary search-btn mr-2"
+                            >
+
+                                <i class="mdi mdi-magnify mr-1"></i>
+
+                                Rechercher
+
+                            </button>
+
+
+                            {% if rech %}
+
+                            <a
+                                href="{% url 'produits_peremption' %}"
+                                class="btn btn-outline-secondary clear-search"
+                                title="Effacer la recherche"
+                            >
+
+                                <i class="mdi mdi-close"></i>
+
+                            </a>
+
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                {% if rech %}
+
+                <div class="search-result-info">
+
+                    <i class="mdi mdi-information-outline mr-1"></i>
+
+                    Résultats pour :
+
+                    <strong>
+                        "{{ rech }}"
+                    </strong>
+
+                    — {{ page_obj.paginator.count }} lot(s)
+
+                </div>
+
+                {% endif %}
+
+            </form>
+
+        </div>
+
+    </div>
+
+
+    <!-- ==========================================================
+         TABLEAU
+    ========================================================== -->
+
+    <div class="table-card">
+
+
+        <!-- HEADER TABLEAU -->
+
+        <div class="table-header">
+
+            <div>
+
+                <h4 class="table-header-title">
+
+                    <i class="mdi mdi-format-list-bulleted mr-2"></i>
+
+                    Liste des produits
+
+                </h4>
+
+            </div>
+
+
+            <div class="table-header-info">
+
+                {% if page_obj.paginator.count > 0 %}
+
+                    Page {{ page_obj.number }}
+                    sur {{ page_obj.paginator.num_pages }}
+
+                {% else %}
+
+                    Aucun résultat
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+
+        {% if produits_peremption %}
+
+
+            <!-- ==================================================
+                 TABLE
+            =================================================== -->
+
+            <div class="table-responsive">
+
+                <table class="peremption-table">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>#</th>
+
+                            <th>
+                                Produit
+                            </th>
+
+                            <th>
+                                Lot
+                            </th>
+
+                            <th>
+                                Quantité
+                            </th>
+
+                            <th>
+                                Péremption
+                            </th>
+
+                            <th>
+                                Jours restants
+                            </th>
+
+                            <th>
+                                Priorité
+                            </th>
+
+                            <th>
+                                Actions
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                        {% for item in produits_peremption %}
+
+                            <tr>
+
+
+                                <!-- NUMERO -->
+
+                                <td>
+
+                                    <span style="color:#777d87;">
+
+                                        {{ forloop.counter0|add:page_obj.start_index }}
+
+                                    </span>
+
+                                </td>
+
+
+                                <!-- PRODUIT -->
+
+                                <td>
+
+                                    <div class="product-name">
+
+                                        {{ item.produit.nom }}
+
+                                    </div>
+
+
+                                    {% if item.appartement %}
+
+                                        <div class="product-location">
+
+                                            <i class="mdi mdi-map-marker-outline mr-1"></i>
+
+                                            {{ item.appartement.nom }}
+
+                                        </div>
+
+                                    {% endif %}
+
+                                </td>
+
+
+                                <!-- LOT -->
+
+                                <td>
+
+                                    <span class="lot-badge">
+
+                                        {% if item.lot.numero %}
+
+                                            {{ item.lot.numero }}
+
+                                        {% else %}
+
+                                            LOT #{{ item.lot.id }}
+
+                                        {% endif %}
+
+                                    </span>
+
+                                </td>
+
+
+                                <!-- QUANTITE -->
+
+                                <td>
+
+                                    <div class="quantity">
+
+                                        {{ item.lot.quantite|floatformat:2 }}
+
+                                    </div>
+
+                                    <div class="quantity-label">
+
+                                        unité(s)
+
+                                    </div>
+
+                                </td>
+
+
+                                <!-- DATE -->
+
+                                <td>
+
+                                    <div class="expiry-date">
+
+                                        <i class="mdi mdi-calendar"></i>
+
+                                        {{ item.date_peremption|date:"d/m/Y" }}
+
+                                    </div>
+
+                                </td>
+
+
+                                <!-- JOURS RESTANTS -->
+
+                                <td>
+
+                                    {% if item.jours_restants < 0 %}
+
+                                        <div class="days-left days-expired">
+
+                                            <i class="mdi mdi-alert-circle"></i>
+
+                                            Expiré depuis
+
+                                            {{ item.jours_restants|stringformat:"d"|slice:"1:" }}
+
+                                            jour(s)
+
+                                        </div>
+
+
+                                    {% elif item.jours_restants == 0 %}
+
+                                        <div class="days-left days-expired">
+
+                                            <i class="mdi mdi-alert"></i>
+
+                                            Expire aujourd'hui
+
+                                        </div>
+
+
+                                    {% elif item.jours_restants == 1 %}
+
+                                        <div class="days-left days-danger">
+
+                                            <i class="mdi mdi-clock-alert"></i>
+
+                                            1 jour
+
+                                        </div>
+
+
+                                    {% elif item.jours_restants <= 90 %}
+
+                                        <div class="days-left days-danger">
+
+                                            <i class="mdi mdi-clock-alert"></i>
+
+                                            {{ item.jours_restants }} jours
+
+                                        </div>
+
+
+                                    {% else %}
+
+                                        <div class="days-left days-warning">
+
+                                            <i class="mdi mdi-clock-outline"></i>
+
+                                            {{ item.jours_restants }} jours
+
+                                        </div>
+
+                                    {% endif %}
+
+                                </td>
+
+
+                                <!-- PRIORITE -->
+
+                                <td>
+
+                                    {% if item.classe == "perime" %}
+
+                                        <span class="status-badge status-danger">
+
+                                            <i class="mdi mdi-alert-circle"></i>
+
+                                            Périmé
+
+                                        </span>
+
+                                    {% elif item.classe == "urgent" %}
+
+                                        <span class="status-badge status-danger">
+
+                                            <i class="mdi mdi-alert"></i>
+
+                                            Urgent
+
+                                        </span>
+
+                                    {% else %}
+
+                                        <span class="status-badge status-warning">
+
+                                            <i class="mdi mdi-clock-outline"></i>
+
+                                            À surveiller
+
+                                        </span>
+
+                                    {% endif %}
+
+                                </td>
+
+
+                                <!-- ACTIONS -->
+
+                                <td>
+
+                                    <div class="action-buttons">
+
+
+                                        <!-- VOIR STOCK -->
+
+                                        <a
+                                            href="{% url 'stock' %}"
+                                            class="action-btn action-view"
+                                            title="Voir le stock"
+                                        >
+
+                                            <i class="mdi mdi-eye-outline"></i>
+
+                                        </a>
+
+
+                                        <!-- ENTREE -->
+
+                                        <a
+                                            href="{% url 'entree_stock' %}"
+                                            class="action-btn action-entry"
+                                            title="Nouvelle entrée"
+                                        >
+
+                                            <i class="mdi mdi-plus"></i>
+
+                                        </a>
+
+
+                                        <!-- SORTIE -->
+
+                                        <a
+                                            href="{% url 'sortie_stock' %}"
+                                            class="action-btn action-exit"
+                                            title="Sortie de stock"
+                                        >
+
+                                            <i class="mdi mdi-minus"></i>
+
+                                        </a>
+
+                                    </div>
+
+                                </td>
+
+                            </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+
+            <!-- ==================================================
+                 LEGENDE
+            =================================================== -->
+
+            <div class="legend">
+
+                <span class="legend-title">
+
+                    Légende :
+
+                </span>
+
+
+                <span class="legend-item">
+
+                    <span class="legend-dot legend-red"></span>
+
+                    Périmé / urgent
+
+                </span>
+
+
+                <span class="legend-item">
+
+                    <span class="legend-dot legend-orange"></span>
+
+                    À surveiller
+
+                </span>
+
+            </div>
+
+
+            <!-- ==================================================
+                 PAGINATION
+            =================================================== -->
+
+            <div class="pagination-container">
+
+
+                <!-- INFORMATIONS -->
+
+                <div class="pagination-info">
+
+                    Affichage de
+
+                    <strong style="color:#ffffff;">
+
+                        {{ page_obj.start_index }}
+
+                    </strong>
+
+                    à
+
+                    <strong style="color:#ffffff;">
+
+                        {{ page_obj.end_index }}
+
+                    </strong>
+
+                    sur
+
+                    <strong style="color:#ffffff;">
+
+                        {{ page_obj.paginator.count }}
+
+                    </strong>
+
+                    lot(s)
+
+                </div>
+
+
+                {% if page_obj.paginator.num_pages > 1 %}
+
+                    <nav aria-label="Pagination">
+
+                        <ul class="pagination">
+
+
+                            <!-- PREMIERE PAGE -->
+
+                            {% if page_obj.has_previous %}
+
+                                <li class="page-item">
+
+                                    <a
+                                        class="page-link"
+                                        href="?rech={{ rech|urlencode }}&page=1"
+                                        title="Première page"
+                                    >
+
+                                        <i class="mdi mdi-page-first"></i>
+
+                                    </a>
+
+                                </li>
+
+                            {% else %}
+
+                                <li class="page-item disabled">
+
+                                    <span class="page-link">
+
+                                        <i class="mdi mdi-page-first"></i>
+
+                                    </span>
+
+                                </li>
+
+                            {% endif %}
+
+
+                            <!-- PRECEDENTE -->
+
+                            {% if page_obj.has_previous %}
+
+                                <li class="page-item">
+
+                                    <a
+                                        class="page-link"
+                                        href="?rech={{ rech|urlencode }}&page={{ page_obj.previous_page_number }}"
+                                        title="Page précédente"
+                                    >
+
+                                        <i class="mdi mdi-chevron-left"></i>
+
+                                    </a>
+
+                                </li>
+
+                            {% else %}
+
+                                <li class="page-item disabled">
+
+                                    <span class="page-link">
+
+                                        <i class="mdi mdi-chevron-left"></i>
+
+                                    </span>
+
+                                </li>
+
+                            {% endif %}
+
+
+                            <!-- NUMEROS DE PAGES -->
+
+                            {% for num in page_obj.paginator.page_range %}
+
+                                {% if num == page_obj.number %}
+
+                                    <li class="page-item active">
+
+                                        <span class="page-link">
+
+                                            {{ num }}
+
+                                        </span>
+
+                                    </li>
+
+                                {% elif num >= page_obj.number|add:"-2" and num <= page_obj.number|add:"2" %}
+
+                                    <li class="page-item">
+
+                                        <a
+                                            class="page-link"
+                                            href="?rech={{ rech|urlencode }}&page={{ num }}"
+                                        >
+
+                                            {{ num }}
+
+                                        </a>
+
+                                    </li>
+
+                                {% endif %}
+
+                            {% endfor %}
+
+
+                            <!-- SUIVANTE -->
+
+                            {% if page_obj.has_next %}
+
+                                <li class="page-item">
+
+                                    <a
+                                        class="page-link"
+                                        href="?rech={{ rech|urlencode }}&page={{ page_obj.next_page_number }}"
+                                        title="Page suivante"
+                                    >
+
+                                        <i class="mdi mdi-chevron-right"></i>
+
+                                    </a>
+
+                                </li>
+
+                            {% else %}
+
+                                <li class="page-item disabled">
+
+                                    <span class="page-link">
+
+                                        <i class="mdi mdi-chevron-right"></i>
+
+                                    </span>
+
+                                </li>
+
+                            {% endif %}
+
+
+                            <!-- DERNIERE PAGE -->
+
+                            {% if page_obj.has_next %}
+
+                                <li class="page-item">
+
+                                    <a
+                                        class="page-link"
+                                        href="?rech={{ rech|urlencode }}&page={{ page_obj.paginator.num_pages }}"
+                                        title="Dernière page"
+                                    >
+
+                                        <i class="mdi mdi-page-last"></i>
+
+                                    </a>
+
+                                </li>
+
+                            {% else %}
+
+                                <li class="page-item disabled">
+
+                                    <span class="page-link">
+
+                                        <i class="mdi mdi-page-last"></i>
+
+                                    </span>
+
+                                </li>
+
+                            {% endif %}
+
+                        </ul>
+
+                    </nav>
+
+                {% endif %}
+
+            </div>
+
+
+        {% else %}
+
+
+            <!-- ==================================================
+                 AUCUN RESULTAT
+            =================================================== -->
+
+            <div class="empty-state">
+
+                {% if rech %}
+
+                    <i class="mdi mdi-magnify-close"></i>
+
+                    <h5>
+
+                        Aucun résultat
+
+                    </h5>
+
+                    <p>
+
+                        Aucun lot ne correspond à la recherche
+
+                        <strong>"{{ rech }}"</strong>.
+
+                    </p>
+
+
+                    <a
+                        href="{% url 'produits_peremption' %}"
+                        class="btn btn-outline-info mt-3"
+                    >
+
+                        <i class="mdi mdi-refresh mr-1"></i>
+
+                        Afficher tous les lots
+
+                    </a>
+
+                {% else %}
+
+                    <i class="mdi mdi-check-circle-outline"></i>
+
+                    <h5>
+
+                        Aucun produit proche de la péremption
+
+                    </h5>
+
+                    <p>
+
+                        Aucun lot n'est périmé ou ne doit expirer dans les 4 prochains mois.
+
+                    </p>
+
+                {% endif %}
+
+            </div>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,500 @@
+
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+<div class="content-wrapper">
+
+    <div class="row justify-content-center">
+
+        <!-- =========================
+             FORMULAIRE
+        ========================== -->
+        <div class="col-md-9 col-lg-8 grid-margin stretch-card">
+
+            <div class="card shadow-sm">
+
+                <div class="card-body p-4">
+
+                    <!-- En-tête -->
+                    <div class="mb-4">
+
+                        <h4 class="card-title mb-2">
+                            <i class="mdi mdi-package-down mr-2"></i>
+                            Entrée de stock
+                        </h4>
+
+                        <p class="card-description mb-0">
+                            Enregistrer une nouvelle entrée de produit dans le stock
+                        </p>
+
+                    </div>
+
+                    <hr class="mb-4">
+
+
+                    <form class="forms-sample"
+                          method="post"
+                          action="{% url 'entree_stock' %}">
+
+                        {% csrf_token %}
+
+
+                        <!-- =========================
+                             PRODUIT
+                        ========================== -->
+
+                        <div class="form-group mb-4">
+
+                            <label for="produit" class="text-white font-weight-bold">
+                                Produit <span class="text-danger">*</span>
+                            </label>
+
+                            <select
+                                class="js-example-basic-single"
+                                required
+                                style="width:100%"
+                                name="produit"
+                                id="produit">
+
+                                <option value="">
+                                    --- Sélectionner un produit ---
+                                </option>
+
+                                {% for produit in produits %}
+
+                                    <option value="{{ produit.id }}">
+                                        {{ produit.nom }}
+                                    </option>
+
+                                {% endfor %}
+
+                            </select>
+
+                            <small class="text-muted">
+                                Recherchez directement le produit dans la liste.
+                            </small>
+
+                        </div>
+
+
+                        <!-- =========================
+                             INFORMATIONS DU LOT
+                        ========================== -->
+
+                        <div class="row">
+
+                            <!-- Numéro de lot -->
+                            <div class="col-md-6">
+
+                                <div class="form-group mb-4">
+
+                                    <label for="numero"
+                                           class="text-white font-weight-bold">
+
+                                        Numéro de lot
+
+                                    </label>
+
+                                    <input
+                                        type="text"
+                                        name="numero"
+                                        class="form-control text-white"
+                                        id="numero"
+                                        placeholder="Exemple : LOT-2026-001">
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- Quantité -->
+                            <div class="col-md-6">
+
+                                <div class="form-group mb-4">
+
+                                    <label for="quantite"
+                                           class="text-white font-weight-bold">
+
+                                        Quantité <span class="text-danger">*</span>
+
+                                    </label>
+
+                                    <input
+                                        type="number"
+                                        name="quantite"
+                                        class="form-control text-white"
+                                        id="quantite"
+                                        placeholder="Exemple : 50"
+                                        min="0.01"
+                                        step="0.01"
+                                        required>
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- Date de péremption -->
+                            <div class="col-md-6">
+
+                                <div class="form-group mb-4">
+
+                                    <label for="date_peremption"
+                                           class="text-white font-weight-bold">
+
+                                        Date de péremption <span class="text-danger">*</span>
+
+                                    </label>
+
+                                    <input
+                                        type="date"
+                                        name="date_peremption"
+                                        class="form-control text-white"
+                                        id="date_peremption"
+                                        required>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- =========================
+                             MOTIF
+                        ========================== -->
+
+                        <div class="form-group mb-4">
+
+                            <label for="motif"
+                                   class="text-white font-weight-bold">
+
+                                Motif
+
+                            </label>
+
+                            <textarea
+                                name="motif"
+                                class="form-control text-white"
+                                id="motif"
+                                rows="4"
+                                placeholder="Exemple : Réception fournisseur, nouvel approvisionnement..."></textarea>
+
+                        </div>
+
+
+                        <!-- =========================
+                             INFORMATION
+                        ========================== -->
+
+                        <div class="alert alert-info shadow-sm mb-4">
+
+                            <div class="d-flex align-items-start">
+
+                                <i class="mdi mdi-information-outline mr-3"
+                                   style="font-size: 24px;">
+                                </i>
+
+                                <div>
+
+                                    <strong>
+                                        Information
+                                    </strong>
+
+                                    <p class="mb-0 mt-1">
+                                        Cette opération crée automatiquement un nouveau lot
+                                        et augmente le stock total du produit.
+                                    </p>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- =========================
+                             BOUTONS
+                        ========================== -->
+
+                        <div class="d-flex justify-content-end align-items-center">
+
+                            <a
+                                href="{% url 'stock' %}"
+                                class="btn btn-outline-secondary mr-2">
+
+                                <i class="mdi mdi-close mr-1"></i>
+
+                                Annuler
+
+                            </a>
+
+
+                            <button
+                                type="submit"
+                                class="btn btn-primary">
+
+                                <i class="mdi mdi-content-save mr-1"></i>
+
+                                Enregistrer l'entrée
+
+                            </button>
+
+                        </div>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- =========================
+             MESSAGES
+        ========================== -->
+
+        <div class="col-md-9 col-lg-8 grid-margin">
+
+            {% if msg %}
+
+                <div class="alert alert-danger shadow-sm">
+
+                    <i class="mdi mdi-alert-circle-outline mr-2"></i>
+
+                    {{ msg }}
+
+                </div>
+
+            {% elif msok %}
+
+                <div class="alert alert-success shadow-sm">
+
+                    <i class="mdi mdi-check-circle-outline mr-2"></i>
+
+                    {{ msok }}
+
+                </div>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =========================
+     STYLE
+========================== -->
+
+<style>
+
+    /* Labels */
+    .form-group label {
+        margin-bottom: 8px;
+        font-size: 14px;
+    }
+
+
+    /* Champs */
+    .form-control {
+        border-radius: 6px;
+        min-height: 45px;
+    }
+
+
+    /* Texte saisi en blanc */
+    .form-control.text-white {
+        color: #ffffff !important;
+    }
+
+
+    /* Placeholder */
+    .form-control.text-white::placeholder {
+        color: rgba(255, 255, 255, 0.55) !important;
+    }
+
+
+    /* Texte du textarea */
+    textarea.form-control.text-white {
+        color: #ffffff !important;
+    }
+
+
+    /* Date */
+    input[type="date"].form-control.text-white {
+        color: #ffffff !important;
+    }
+
+
+    /* Icônes */
+    .card-title i {
+        font-size: 22px;
+        vertical-align: middle;
+    }
+
+
+    /* Carte */
+    .card {
+        border-radius: 10px;
+        overflow: hidden;
+    }
+
+
+    /* Boutons */
+    .btn {
+        border-radius: 6px;
+    }
+
+
+    /* Select2 */
+    .select2-container {
+        width: 100% !important;
+    }
+
+
+    .select2-container--default
+    .select2-selection--single {
+
+        height: 45px !important;
+
+        border-radius: 6px !important;
+
+        border: 1px solid #444 !important;
+
+        background-color: transparent !important;
+
+    }
+
+
+    .select2-container--default
+    .select2-selection--single
+    .select2-selection__rendered {
+
+        color: #ffffff !important;
+
+        line-height: 43px !important;
+
+        padding-left: 14px !important;
+
+    }
+
+
+    .select2-container--default
+    .select2-selection--single
+    .select2-selection__placeholder {
+
+        color: rgba(255, 255, 255, 0.55) !important;
+
+    }
+
+
+    .select2-container--default
+    .select2-selection--single
+    .select2-selection__arrow {
+
+        height: 43px !important;
+
+    }
+
+
+    /* Liste Select2 */
+    .select2-dropdown {
+
+        background-color: #2a2a2a !important;
+
+        border: 1px solid #444 !important;
+
+    }
+
+
+    .select2-results__option {
+
+        color: #ffffff !important;
+
+        padding: 10px 14px !important;
+
+    }
+
+
+    .select2-container--default
+    .select2-results__option--highlighted[aria-selected] {
+
+        background-color: #007bff !important;
+
+        color: #ffffff !important;
+
+    }
+
+
+    /* Champ de recherche Select2 */
+    .select2-search--dropdown {
+
+        background-color: #2a2a2a !important;
+
+        padding: 10px !important;
+
+    }
+
+
+    .select2-search--dropdown
+    .select2-search__field {
+
+        background-color: #333 !important;
+
+        color: #ffffff !important;
+
+        border: 1px solid #555 !important;
+
+        border-radius: 5px !important;
+
+        padding: 8px !important;
+
+    }
+
+
+    .select2-search--dropdown
+    .select2-search__field::placeholder {
+
+        color: rgba(255, 255, 255, 0.55);
+
+    }
+
+
+    /* Information */
+    .alert-info {
+
+        border-radius: 7px;
+
+    }
+
+
+    /* Responsive */
+    @media (max-width: 768px) {
+
+        .card-body {
+            padding: 20px !important;
+        }
+
+        .d-flex.justify-content-end {
+            flex-direction: column;
+            align-items: stretch !important;
+        }
+
+        .d-flex.justify-content-end .btn {
+            width: 100%;
+            margin-right: 0 !important;
+            margin-bottom: 10px;
+        }
+
+    }
+
+</style>
+
+
+{% endblock content %}

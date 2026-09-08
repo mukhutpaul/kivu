@@ -8,7 +8,8 @@ from app_facture.models.appartement import Appartement
 class Produit(models.Model):
     nom = models.CharField(max_length=255,null=False)
     pu = models.DecimalField(max_digits=6,decimal_places=2)
-    quantite = models.DecimalField(max_digits=6,decimal_places=2,null=True)
+    quantite = models.DecimalField(max_digits=10,decimal_places=2,default=0)
+    stock_minimum = models.DecimalField(max_digits=10,decimal_places=2,default=0)
     createdAt = models.DateTimeField(auto_now=True)
     updatedAt = models.DateTimeField(null=True)
     

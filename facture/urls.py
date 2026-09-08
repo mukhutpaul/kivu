@@ -17,7 +17,13 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
-from app_facture.views import addAppartement, addDetailFacture, addFacture, addProduit, addUser, appartement, deleteAppartement, deleteProduit, deleteUser, deletedetailFacture, detaiFacture, fAppartement, fProduit, fUser, facture, home, log_out, login, modAppartement, modProduit, modifierUser, print_facture, produit, sign_in, updateAppartement, updateProduit, updateUser, users
+from app_facture.views import addAppartement, addDetailFacture, addFacture, addProduit, addUser, appartement, deleteAppartement, deleteProduit, deleteUser, deletedetailFacture, detaiFacture, fAppartement, fProduit, fUser, facture, home, log_out, login, modAppartement, modProduit, modifierUser, print_facture, produit, produits_peremption, recettes_facturiers, sign_in, updateAppartement, updateProduit, updateUser, users
+from app_facture.views import (
+    stock,
+    entree_stock,
+    sortie_stock,
+    mouvements_stock,
+)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -72,6 +78,48 @@ urlpatterns = [
     
     ###Imprimer facture
     path('print_facture/<int:id>',print_facture, name="print_facture"),
+    
+    path("recettes-facturiers/",recettes_facturiers,name="recettes_facturiers"),
+    
+
+
+
+
+
+
+
+    path(
+        "stock/",
+        stock,
+        name="stock"
+    ),
+
+    path(
+        "stock/entree/",
+        entree_stock,
+        name="entree_stock"
+    ),
+
+    path(
+        "stock/sortie/",
+        sortie_stock,
+        name="sortie_stock"
+    ),
+
+    path(
+        "stock/mouvements/",
+        mouvements_stock,
+        name="mouvements_stock"
+    ),
+    
+
+path(
+    "stock/peremption/",
+    produits_peremption,
+    name="produits_peremption"
+),
+
+
     
     
     

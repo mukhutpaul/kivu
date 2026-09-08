@@ -1,0 +1,1046 @@
+
+{% extends 'base.html' %}
+
+{% block content %}
+
+<style>
+    /* ==========================================================
+       BARRE DE RECHERCHE
+    =========================================================== */
+
+    .stock-search-input {
+        color: #ffffff !important;
+        background-color: #191c24 !important;
+    }
+
+    .stock-search-input::placeholder {
+        color: rgba(255, 255, 255, 0.60) !important;
+        opacity: 1;
+    }
+
+    .stock-search-input:focus {
+        color: #ffffff !important;
+        background-color: #191c24 !important;
+    }
+
+    .stock-search-input:-webkit-autofill,
+    .stock-search-input:-webkit-autofill:hover,
+    .stock-search-input:-webkit-autofill:focus {
+        -webkit-text-fill-color: #ffffff !important;
+        box-shadow: 0 0 0 1000px #191c24 inset !important;
+    }
+
+    /* Texte du groupe de recherche */
+    .stock-search-input + * {
+        color: #ffffff;
+    }
+</style>
+
+
+<div class="content-wrapper">
+
+
+    <!-- ==========================================================
+         HEADER
+    =========================================================== -->
+
+    <div class="row">
+
+        <div class="col-12 grid-margin stretch-card">
+
+            <div class="card corona-gradient-card">
+
+                <div class="card-body py-0 px-0 px-sm-3">
+
+                    <div class="row align-items-center">
+
+                        <div class="col-3 col-sm-2 col-xl-2 text-center">
+
+                            <i class="mdi mdi-package-variant"
+                               style="font-size:65px;">
+                            </i>
+
+                        </div>
+
+
+                        <div class="col-6 col-sm-7 col-xl-8">
+
+                            <h4 class="mb-1">
+
+                                Gestion du stock
+
+                            </h4>
+
+                            <p class="mb-0 font-weight-normal">
+
+                                Suivi des produits, lots et dates de péremption
+
+                            </p>
+
+                        </div>
+
+
+                        <div class="col-3 col-sm-3 col-xl-2 text-center">
+
+                            <a href="{% url 'entree_stock' %}"
+                               class="btn btn-outline-light btn-rounded">
+
+                                <i class="mdi mdi-plus mr-1"></i>
+
+                                Entrée
+
+                            </a>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ==========================================================
+         STATISTIQUES
+    =========================================================== -->
+
+    <div class="row">
+
+
+        <!-- STOCK TOTAL -->
+
+        <div class="col-md-4 grid-margin stretch-card">
+
+            <div class="card">
+
+                <div class="card-body">
+
+                    <p class="text-muted mb-2">
+
+                        <i class="mdi mdi-package-variant mr-1"></i>
+
+                        Stock total
+
+                    </p>
+
+                    <h2 class="mb-0">
+
+                        {{ total_stock|floatformat:2 }}
+
+                    </h2>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- STOCK FAIBLE -->
+
+        <div class="col-md-4 grid-margin stretch-card">
+
+            <div class="card">
+
+                <div class="card-body">
+
+                    <p class="text-muted mb-2">
+
+                        <i class="mdi mdi-alert mr-1"></i>
+
+                        Stock faible
+
+                    </p>
+
+                    <h2 class="mb-0 text-warning">
+
+                        {{ produits_alerte }}
+
+                    </h2>
+
+                    <small class="text-muted">
+
+                        produit(s)
+
+                    </small>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- PRODUITS PÉRIMÉS -->
+
+        <div class="col-md-4 grid-margin stretch-card">
+
+            <div class="card">
+
+                <div class="card-body">
+
+                    <p class="text-muted mb-2">
+
+                        <i class="mdi mdi-calendar-alert mr-1"></i>
+
+                        Produits périmés
+
+                    </p>
+
+                    <h2 class="mb-0 text-danger">
+
+                        {{ lots_perimes }}
+
+                    </h2>
+
+                    <small class="text-muted">
+
+                        lot(s)
+
+                    </small>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ==========================================================
+         ACTIONS
+    =========================================================== -->
+
+    <div class="row">
+
+        <div class="col-12 mb-3">
+
+            <div class="d-flex justify-content-between align-items-center flex-wrap">
+
+
+                <div>
+
+                    <h4 class="mb-1">
+
+                        État du stock
+
+                    </h4>
+
+                    <p class="text-muted mb-0">
+
+                        Les couleurs indiquent l'état de péremption des lots.
+
+                    </p>
+
+                </div>
+
+
+                <div class="mt-2 mt-md-0">
+
+                    <a href="{% url 'sortie_stock' %}"
+                       class="btn btn-outline-danger btn-rounded mr-2">
+
+                        <i class="mdi mdi-minus mr-1"></i>
+
+                        Sortie
+
+                    </a>
+
+
+                    <a href="{% url 'mouvements_stock' %}"
+                       class="btn btn-outline-info btn-rounded">
+
+                        <i class="mdi mdi-history mr-1"></i>
+
+                        Historique
+
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ==========================================================
+         BARRE DE RECHERCHE
+    =========================================================== -->
+
+    <div class="row mb-4">
+
+        <div class="col-12">
+
+            <div class="card">
+
+                <div class="card-body">
+
+                    <form method="GET"
+                          action="{% url 'stock' %}">
+
+                        <div class="row align-items-center">
+
+
+                            <!-- CHAMP DE RECHERCHE -->
+
+                            <div class="col-md-9 mb-2 mb-md-0">
+
+                                <div class="input-group">
+
+
+                                    <div class="input-group-prepend">
+
+                                        <span class="input-group-text">
+
+                                            <i class="mdi mdi-magnify"></i>
+
+                                        </span>
+
+                                    </div>
+
+
+                                    <input
+                                        type="text"
+                                        name="rech"
+                                        class="form-control stock-search-input"
+                                        value="{{ rech }}"
+                                        placeholder="Rechercher un produit ou un appartement..."
+                                        autocomplete="off"
+                                    >
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- BOUTONS -->
+
+                            <div class="col-md-3">
+
+                                <div class="d-flex">
+
+
+                                    <button
+                                        type="submit"
+                                        class="btn btn-primary btn-rounded mr-2"
+                                    >
+
+                                        <i class="mdi mdi-magnify mr-1"></i>
+
+                                        Rechercher
+
+                                    </button>
+
+
+                                    {% if rech %}
+
+                                    <a
+                                        href="{% url 'stock' %}"
+                                        class="btn btn-outline-secondary btn-rounded"
+                                        title="Effacer la recherche"
+                                    >
+
+                                        <i class="mdi mdi-close"></i>
+
+                                    </a>
+
+                                    {% endif %}
+
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ==========================================================
+         MESSAGE DE RECHERCHE
+    =========================================================== -->
+
+    {% if rech %}
+
+    <div class="row mb-3">
+
+        <div class="col-12">
+
+            <div class="alert alert-info">
+
+                <i class="mdi mdi-information-outline mr-1"></i>
+
+                Résultats de recherche pour :
+
+                <strong>"{{ rech }}"</strong>
+
+                <span class="ml-2">
+
+                    — {{ page_obj.paginator.count }} produit(s)
+
+                </span>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    {% endif %}
+
+
+    <!-- ==========================================================
+         STOCK
+    =========================================================== -->
+
+    <div class="row">
+
+
+        {% for item in page_obj %}
+
+
+        <div class="col-xl-4 col-lg-6 col-md-6 grid-margin stretch-card">
+
+            <div class="card">
+
+                <div class="card-body">
+
+
+                    <!-- ==================================================
+                         PRODUIT
+                    =================================================== -->
+
+                    <div class="d-flex justify-content-between align-items-start">
+
+
+                        <div>
+
+                            <h4 class="mb-1">
+
+                                {{ item.produit.nom }}
+
+                            </h4>
+
+
+                            <p class="text-muted mb-0">
+
+                                {{ item.produit.appartement.nom }}
+
+                            </p>
+
+                        </div>
+
+
+                        <span class="badge badge-primary p-2">
+
+                            {{ item.produit.quantite|floatformat:2 }}
+
+                        </span>
+
+
+                    </div>
+
+
+                    <hr>
+
+
+                    <!-- ==================================================
+                         SEUIL
+                    =================================================== -->
+
+                    <div class="d-flex justify-content-between mb-3">
+
+                        <span class="text-muted">
+
+                            Stock minimum
+
+                        </span>
+
+
+                        <strong>
+
+                            {{ item.produit.stock_minimum|floatformat:2 }}
+
+                        </strong>
+
+                    </div>
+
+
+                    <!-- ==================================================
+                         LOTS
+                    =================================================== -->
+
+                    {% for lot_data in item.lots %}
+
+
+                    {% with lot=lot_data.lot statut=lot_data.statut %}
+
+
+                    <div
+                        class="p-3 mb-2 rounded"
+                        style="border:1px solid rgba(255,255,255,0.08);"
+                    >
+
+
+                        <!-- LOT + STATUT -->
+
+                        <div class="d-flex justify-content-between align-items-center">
+
+
+                            <div>
+
+                                <strong>
+
+                                    {% if lot.numero %}
+
+                                        {{ lot.numero }}
+
+                                    {% else %}
+
+                                        Lot #{{ lot.id }}
+
+                                    {% endif %}
+
+                                </strong>
+
+                            </div>
+
+
+                            <div>
+
+
+                                {% if statut == "vert" %}
+
+                                    <span class="badge badge-success">
+
+                                        Normal
+
+                                    </span>
+
+
+                                {% elif statut == "orange" %}
+
+                                    <span class="badge badge-warning">
+
+                                        Péremption proche
+
+                                    </span>
+
+
+                                {% elif statut == "rouge" %}
+
+                                    <span class="badge badge-danger">
+
+                                        Urgent
+
+                                    </span>
+
+
+                                {% elif statut == "perime" %}
+
+                                    <span class="badge badge-dark">
+
+                                        Périmé
+
+                                    </span>
+
+                                {% endif %}
+
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- INFORMATIONS DU LOT -->
+
+                        <div class="row mt-3">
+
+
+                            <div class="col-6">
+
+                                <small class="text-muted d-block">
+
+                                    Quantité
+
+                                </small>
+
+
+                                <strong>
+
+                                    {{ lot.quantite|floatformat:2 }}
+
+                                </strong>
+
+                            </div>
+
+
+                            <div class="col-6">
+
+                                <small class="text-muted d-block">
+
+                                    Péremption
+
+                                </small>
+
+
+                                <strong>
+
+                                    {{ lot.date_peremption|date:"d/m/Y" }}
+
+                                </strong>
+
+                            </div>
+
+
+                        </div>
+
+                    </div>
+
+
+                    {% endwith %}
+
+
+                    {% empty %}
+
+
+                    <!-- AUCUN LOT -->
+
+                    <div class="text-center py-3">
+
+                        <i
+                            class="mdi mdi-package-variant-closed"
+                            style="font-size:35px;"
+                        >
+                        </i>
+
+
+                        <p class="text-muted mb-0">
+
+                            Aucun lot enregistré
+
+                        </p>
+
+                    </div>
+
+
+                    {% endfor %}
+
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        {% empty %}
+
+
+        <!-- ======================================================
+             AUCUN PRODUIT
+        ======================================================= -->
+
+        <div class="col-12">
+
+            <div class="card">
+
+                <div class="card-body text-center py-5">
+
+
+                    <i
+                        class="mdi mdi-package-variant-closed"
+                        style="font-size:60px;"
+                    >
+                    </i>
+
+
+                    {% if rech %}
+
+
+                        <h4 class="mt-3">
+
+                            Aucun résultat
+
+                        </h4>
+
+
+                        <p class="text-muted">
+
+                            Aucun produit ne correspond à la recherche
+
+                            <strong>"{{ rech }}"</strong>.
+
+                        </p>
+
+
+                        <a
+                            href="{% url 'stock' %}"
+                            class="btn btn-outline-primary btn-rounded"
+                        >
+
+                            <i class="mdi mdi-refresh mr-1"></i>
+
+                            Afficher tout le stock
+
+                        </a>
+
+
+                    {% else %}
+
+
+                        <h4 class="mt-3">
+
+                            Aucun produit
+
+                        </h4>
+
+
+                        <p class="text-muted">
+
+                            Aucun produit n'est actuellement disponible dans le stock.
+
+                        </p>
+
+
+                    {% endif %}
+
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        {% endfor %}
+
+
+    </div>
+
+
+    <!-- ==========================================================
+         PAGINATION
+    =========================================================== -->
+
+    {% if page_obj.has_other_pages %}
+
+
+    <div class="row">
+
+        <div class="col-12">
+
+            <div class="card">
+
+                <div class="card-body">
+
+
+                    <div class="d-flex justify-content-between align-items-center flex-wrap">
+
+
+                        <!-- INFORMATIONS -->
+
+                        <div class="mb-2">
+
+                            <p class="text-muted mb-0">
+
+                                Page
+
+                                <strong>
+
+                                    {{ page_obj.number }}
+
+                                </strong>
+
+                                sur
+
+                                <strong>
+
+                                    {{ page_obj.paginator.num_pages }}
+
+                                </strong>
+
+                                — {{ page_obj.paginator.count }} produit(s)
+
+                            </p>
+
+                        </div>
+
+
+                        <!-- NAVIGATION -->
+
+                        <nav>
+
+                            <ul class="pagination pagination-sm mb-0">
+
+
+                                <!-- PREMIÈRE PAGE -->
+
+                                {% if page_obj.has_previous %}
+
+                                <li class="page-item">
+
+                                    <a
+                                        class="page-link"
+                                        href="?rech={{ rech|urlencode }}&page=1"
+                                        title="Première page"
+                                    >
+
+                                        <i class="mdi mdi-chevron-double-left"></i>
+
+                                    </a>
+
+                                </li>
+
+                                {% endif %}
+
+
+                                <!-- PAGE PRÉCÉDENTE -->
+
+                                {% if page_obj.has_previous %}
+
+                                <li class="page-item">
+
+                                    <a
+                                        class="page-link"
+                                        href="?rech={{ rech|urlencode }}&page={{ page_obj.previous_page_number }}"
+                                        title="Page précédente"
+                                    >
+
+                                        <i class="mdi mdi-chevron-left"></i>
+
+                                    </a>
+
+                                </li>
+
+                                {% endif %}
+
+
+                                <!-- NUMÉROS DE PAGES -->
+
+                                {% for num in page_obj.paginator.page_range %}
+
+
+                                    {% if num == page_obj.number %}
+
+
+                                    <li class="page-item active">
+
+                                        <span class="page-link">
+
+                                            {{ num }}
+
+                                        </span>
+
+                                    </li>
+
+
+                                    {% elif num >= page_obj.number|add:"-2" and num <= page_obj.number|add:"2" %}
+
+
+                                    <li class="page-item">
+
+                                        <a
+                                            class="page-link"
+                                            href="?rech={{ rech|urlencode }}&page={{ num }}"
+                                        >
+
+                                            {{ num }}
+
+                                        </a>
+
+                                    </li>
+
+
+                                    {% endif %}
+
+
+                                {% endfor %}
+
+
+                                <!-- PAGE SUIVANTE -->
+
+                                {% if page_obj.has_next %}
+
+                                <li class="page-item">
+
+                                    <a
+                                        class="page-link"
+                                        href="?rech={{ rech|urlencode }}&page={{ page_obj.next_page_number }}"
+                                        title="Page suivante"
+                                    >
+
+                                        <i class="mdi mdi-chevron-right"></i>
+
+                                    </a>
+
+                                </li>
+
+                                {% endif %}
+
+
+                                <!-- DERNIÈRE PAGE -->
+
+                                {% if page_obj.has_next %}
+
+                                <li class="page-item">
+
+                                    <a
+                                        class="page-link"
+                                        href="?rech={{ rech|urlencode }}&page={{ page_obj.paginator.num_pages }}"
+                                        title="Dernière page"
+                                    >
+
+                                        <i class="mdi mdi-chevron-double-right"></i>
+
+                                    </a>
+
+                                </li>
+
+                                {% endif %}
+
+
+                            </ul>
+
+                        </nav>
+
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    {% endif %}
+
+
+    <!-- ==========================================================
+         LÉGENDE
+    =========================================================== -->
+
+    <div class="row">
+
+        <div class="col-12">
+
+            <div class="card">
+
+                <div class="card-body">
+
+
+                    <h5 class="card-title">
+
+                        Légende de péremption
+
+                    </h5>
+
+
+                    <div class="row">
+
+
+                        <!-- VERT -->
+
+                        <div class="col-md-3 mb-2">
+
+                            <span class="badge badge-success p-2">
+
+                                🟢 Normal
+
+                            </span>
+
+
+                            <small class="text-muted ml-2">
+
+                                Plus de 4 mois
+
+                            </small>
+
+                        </div>
+
+
+                        <!-- ORANGE -->
+
+                        <div class="col-md-3 mb-2">
+
+                            <span class="badge badge-warning p-2">
+
+                                🟠 Attention
+
+                            </span>
+
+
+                            <small class="text-muted ml-2">
+
+                                ≤ 4 mois
+
+                            </small>
+
+                        </div>
+
+
+                        <!-- ROUGE -->
+
+                        <div class="col-md-3 mb-2">
+
+                            <span class="badge badge-danger p-2">
+
+                                🔴 Urgent
+
+                            </span>
+
+
+                            <small class="text-muted ml-2">
+
+                                ≤ 3 mois
+
+                            </small>
+
+                        </div>
+
+
+                        <!-- PÉRIMÉ -->
+
+                        <div class="col-md-3 mb-2">
+
+                            <span class="badge badge-dark p-2">
+
+                                ⚫ Périmé
+
+                            </span>
+
+                        </div>
+
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+</div>
+
+{% endblock content %}
