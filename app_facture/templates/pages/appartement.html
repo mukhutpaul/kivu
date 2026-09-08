@@ -4,96 +4,517 @@
 
 {% block content %}
 
-     <div class="content-wrapper">
-              <div class="col-12 grid-margin stretch-card">
-                <div class="card corona-gradient-card">
-                  <div class="card-body py-0 px-0 px-sm-3">
-                    <div class="row align-items-center">
-                      <div class="col-4 col-sm-3 col-xl-2">
-                        <img src="{% static 'images/dashboard/Group126@2x.png' %}" class="gradient-corona-img img-fluid" alt="">
-                      </div>
-                      <div class="col-5 col-sm-7 col-xl-8 p-0">
-                        <h4 class="mb-1 mb-sm-0">Gestion des appartements</h4>
-                        <p class="mb-0 font-weight-normal d-none d-sm-block">Créer les appartements en  appuyant sur le bouton à droit!</p>
-                      </div>
-                      <div class="col-3 col-sm-2 col-xl-2 pl-0 text-center">
-                        <span>
-                          <a href="{% url 'fAppartement' %}"  class="btn btn-outline-light btn-rounded get-started-btn">Ajout Appartement</a>
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
+<style>
+    /* ================================
+       STYLE GENERAL
+    ================================= */
+    .appartement-page .card {
+        border: 0;
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 6px 22px rgba(0, 0, 0, 0.18);
+    }
 
-              <div class="row">
-              <div class="col-md-6 grid-margin stretch-card">
-                
-              </div>
-              <div class="col-md-6 grid-margin">
-                <div class="card">
-                  <div class="card-body">
-                    <h4 class="card-title">Cherches ici...</h4>
-                    <form class="forms-sample" method="post">
-                      {% csrf_token %}
-                      <div class="form-group">
-                        <input type="text" style="color:white" class="form-control" name="rech" id="exampleInputUsername1" placeholder="Rechece...">
-                      </div>
-                    </form>
-                  </div>
+    /* ================================
+       HEADER
+    ================================= */
+    .appartement-header {
+        background: linear-gradient(135deg, #0d6efd, #4f46e5);
+        border-radius: 16px;
+        min-height: 120px;
+    }
+
+    .appartement-header h4 {
+        color: #ffffff;
+        font-weight: 700;
+        font-size: 21px;
+    }
+
+    .appartement-header p {
+        color: rgba(255, 255, 255, 0.85);
+    }
+
+    .appartement-header .btn {
+        border-width: 1px;
+        font-weight: 600;
+        transition: all .25s ease;
+    }
+
+    .appartement-header .btn:hover {
+        background: #ffffff;
+        color: #0d6efd;
+        transform: translateY(-2px);
+    }
+
+    /* ================================
+       RECHERCHE
+    ================================= */
+    .search-card {
+        border-radius: 16px;
+    }
+
+    .search-card .card-title {
+        color: #ffffff;
+        font-weight: 700;
+        margin-bottom: 18px;
+    }
+
+    .search-wrapper {
+        position: relative;
+    }
+
+    .search-wrapper i {
+        position: absolute;
+        left: 15px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: rgba(255, 255, 255, 0.75);
+        font-size: 20px;
+        z-index: 2;
+    }
+
+    .search-wrapper .form-control {
+        padding-left: 45px;
+        height: 48px;
+        border-radius: 12px;
+        color: #ffffff !important;
+        background: rgba(255, 255, 255, 0.06);
+        border: 1px solid rgba(255, 255, 255, 0.18);
+    }
+
+    .search-wrapper .form-control:focus {
+        color: #ffffff !important;
+        border-color: #0d6efd;
+        box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.15);
+    }
+
+    .search-wrapper .form-control::placeholder {
+        color: rgba(255, 255, 255, 0.55) !important;
+        opacity: 1;
+    }
+
+    /* ================================
+       CARTE APPARTEMENT
+    ================================= */
+    .appartement-card {
+        height: 100%;
+        transition: all .25s ease;
+        position: relative;
+    }
+
+    .appartement-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
+    }
+
+    .appartement-card .card-body {
+        padding: 22px;
+    }
+
+    .ap-icon {
+        width: 52px;
+        height: 52px;
+        border-radius: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, #0d6efd, #4f46e5);
+        box-shadow: 0 5px 15px rgba(13, 110, 253, 0.25);
+        margin-right: 14px;
+        flex-shrink: 0;
+    }
+
+    .ap-icon i {
+        font-size: 26px;
+        color: #ffffff;
+    }
+
+    .ap-name {
+        color: #ffffff;
+        font-size: 18px;
+        font-weight: 700;
+        margin: 0;
+        word-break: break-word;
+    }
+
+    .ap-label {
+        color: rgba(255, 255, 255, 0.55);
+        font-size: 12px;
+        margin-bottom: 3px;
+        text-transform: uppercase;
+        letter-spacing: .5px;
+    }
+
+    /* ================================
+       BOUTONS
+    ================================= */
+    .btn-action {
+        border-radius: 10px;
+        font-weight: 600;
+        transition: all .2s ease;
+    }
+
+    .btn-action:hover {
+        transform: translateY(-1px);
+    }
+
+    .btn-delete {
+        width: 100%;
+        margin-top: 20px;
+        border-radius: 10px;
+        font-weight: 600;
+    }
+
+    /* ================================
+       BADGE / PAGINATION
+    ================================= */
+    .pagination-wrapper {
+        margin-top: 10px;
+        padding: 18px 20px;
+        border-radius: 14px;
+        background: rgba(255, 255, 255, 0.04);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .pagination-wrapper a {
+        text-decoration: none;
+        margin: 0 4px;
+    }
+
+    .page-info {
+        color: #ffffff;
+        font-weight: 600;
+    }
+
+    .count-badge {
+        font-size: 13px;
+        padding: 7px 12px;
+        border-radius: 20px;
+    }
+
+    /* ================================
+       RESPONSIVE
+    ================================= */
+    @media (max-width: 767px) {
+
+        .appartement-header {
+            padding: 15px 5px;
+        }
+
+        .appartement-header img {
+            max-height: 80px;
+        }
+
+        .appartement-header h4 {
+            font-size: 17px;
+        }
+
+        .appartement-header p {
+            font-size: 12px;
+        }
+
+        .appartement-header .btn {
+            font-size: 11px;
+            padding: 8px 10px;
+        }
+
+        .ap-name {
+            font-size: 16px;
+        }
+    }
+</style>
+
+
+<div class="content-wrapper appartement-page">
+
+    <!-- ================================
+         HEADER
+    ================================= -->
+    <div class="row">
+        <div class="col-12 grid-margin stretch-card">
+
+            <div class="card corona-gradient-card appartement-header">
+
+                <div class="card-body py-2 px-2 px-sm-3">
+
+                    <div class="row align-items-center">
+
+                        <div class="col-3 col-sm-3 col-xl-2 text-center">
+                            <img
+                                src="{% static 'images/dashboard/Group126@2x.png' %}"
+                                class="gradient-corona-img img-fluid"
+                                alt="Appartement"
+                            >
+                        </div>
+
+                        <div class="col-6 col-sm-6 col-xl-8 p-0">
+
+                            <h4 class="mb-1">
+                                <i class="mdi mdi-home-city-outline mr-2"></i>
+                                Gestion des appartements
+                            </h4>
+
+                            <p class="mb-0 d-none d-sm-block">
+                                Gérez facilement vos appartements et vos produits.
+                            </p>
+
+                        </div>
+
+                        <div class="col-3 col-sm-3 col-xl-2 text-center">
+
+                            <a
+                                href="{% url 'fAppartement' %}"
+                                class="btn btn-outline-light btn-rounded"
+                            >
+                                <i class="mdi mdi-plus mr-1"></i>
+                                <span class="d-none d-md-inline">Ajouter</span>
+                                <span class="d-md-none">+</span>
+                            </a>
+
+                        </div>
+
+                    </div>
+
                 </div>
-              </div>
             </div>
 
-          
-            <div class="row">
-              {% for ap in appartement %}
-              <div class="col-xl-6 col-sm-6 grid-margin stretch-card">
-                <div class="card">
-                  <div class="card-body">
-                    <div class="row">
-                      <div class="col-9">
-                        <div class="d-flex align-items-center align-self-start">
-                          <p class="mb-0">{{ap.nom}}</hp>
-                          
-                        </div>
-                      </div>
-                      <div class="col-3">
-                        <div class="icon icon-box-success ">
-                          <a href="{% url 'modAppartement' ap.id %}" style="text-align:right"  class="btn btn-outline-light btn-rounded get-ended-btn">Modifier</a>
-                        </div>
-                      </div>
-                    </div>
-                    {% comment %} <h6 class="text-muted font-weight-normal">Produits :</h6> {% endcomment %}
-                    <div class="row">
-                      <a href="{% url 'deleteAppartement' ap.id %}" onclick="return confirm('Etes-vous sûr de vouloir supprimer?')"  class="btn btn-outline-black btn-danger  btn-rounded get-ended-btn">Supprimer</a>
-                  
-                    </div>
-                    
-                  </div>
-                </div>
-              </div>
+        </div>
+    </div>
 
-              {% endfor %}
-            
-           
-            
-             <br>
-             </div>
-          {% if appartement %}
-          {% if pages.has_previous %}
-                <a href="?page=1">&laquo;</a>
-                <a href="?page={{ pages.previous_page_number }}"><span class="badge badge-info ">Préc</span></a>
-          {% endif %}
-                page {{ pages.number }} sur {{ pages.paginator.num_pages }}
-                <span class="badge badge-info pull-right">{{compte}}</span>
-          
-                {% if pages.has_next %}
-                   <a href="?page={{ pages.next_page_number }}"><span class="badge badge-info ">Suiv</span></a>
-                   <a href="?page={{compte}}">&raquo;</a>
-                {% else %}
+
+    <!-- ================================
+         RECHERCHE
+    ================================= -->
+    <div class="row justify-content-end">
+
+        <div class="col-xl-5 col-lg-6 col-md-8 grid-margin stretch-card">
+
+            <div class="card search-card">
+
+                <div class="card-body">
+
+                    <h4 class="card-title">
+                        <i class="mdi mdi-magnify mr-2"></i>
+                        Rechercher un appartement
+                    </h4>
+
+                    <form method="post" autocomplete="off">
+
+                        {% csrf_token %}
+
+                        <div class="search-wrapper">
+
+                            <i class="mdi mdi-magnify"></i>
+
+                            <input
+                                type="text"
+                                class="form-control"
+                                name="rech"
+                                id="exampleInputUsername1"
+                                placeholder="Rechercher..."
+                            >
+
+                        </div>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ================================
+         LISTE DES APPARTEMENTS
+    ================================= -->
+    <div class="row">
+
+        {% for ap in appartement %}
+
+        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 grid-margin stretch-card">
+
+            <div class="card appartement-card">
+
+                <div class="card-body">
+
+                    <!-- Informations appartement -->
+                    <div class="d-flex align-items-center justify-content-between">
+
+                        <div class="d-flex align-items-center">
+
+                            <div class="ap-icon">
+                                <i class="mdi mdi-home-city-outline"></i>
+                            </div>
+
+                            <div>
+
+                                <div class="ap-label">
+                                    Appartement
+                                </div>
+
+                                <p class="ap-name">
+                                    {{ ap.nom }}
+                                </p>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- Modifier -->
+                        <div>
+
+                            <a
+                                href="{% url 'modAppartement' ap.id %}"
+                                class="btn btn-outline-light btn-rounded btn-action"
+                                title="Modifier"
+                            >
+                                <i class="mdi mdi-pencil-outline"></i>
+                                <span class="d-none d-lg-inline ml-1">
+                                    Modifier
+                                </span>
+                            </a>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- Séparateur -->
+                    <hr style="border-color: rgba(255,255,255,.08);">
+
+
+                    <!-- Supprimer -->
+                    <a
+                        href="{% url 'deleteAppartement' ap.id %}"
+                        onclick="return confirm('Êtes-vous sûr de vouloir supprimer cet appartement ?')"
+                        class="btn btn-danger btn-rounded btn-delete"
+                    >
+                        <i class="mdi mdi-delete-outline mr-1"></i>
+                        Supprimer
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        {% empty %}
+
+        <!-- Aucun appartement -->
+        <div class="col-12">
+
+            <div class="card">
+
+                <div class="card-body text-center py-5">
+
+                    <div class="ap-icon mx-auto mb-3">
+                        <i class="mdi mdi-home-off-outline"></i>
+                    </div>
+
+                    <h4 style="color:#ffffff;">
+                        Aucun appartement trouvé
+                    </h4>
+
+                    <p style="color:rgba(255,255,255,.6);">
+                        Aucun appartement n'est actuellement disponible.
+                    </p>
+
+                    <a
+                        href="{% url 'fAppartement' %}"
+                        class="btn btn-primary btn-rounded"
+                    >
+                        <i class="mdi mdi-plus mr-1"></i>
+                        Ajouter un appartement
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+
+    <!-- ================================
+         PAGINATION
+    ================================= -->
+    {% if appartement %}
+
+    <div class="pagination-wrapper">
+
+        <div class="row align-items-center">
+
+            <div class="col-md-4 mb-2 mb-md-0">
+
+                {% if pages.has_previous %}
+
+                    <a href="?page=1" class="btn btn-outline-light btn-sm btn-rounded">
+                        <i class="mdi mdi-page-first"></i>
+                    </a>
+
+                    <a
+                        href="?page={{ pages.previous_page_number }}"
+                        class="btn btn-info btn-sm btn-rounded"
+                    >
+                        <i class="mdi mdi-chevron-left"></i>
+                        Précédent
+                    </a>
+
                 {% endif %}
 
-           {% endif %}
+            </div>
+
+
+            <div class="col-md-4 text-center mb-2 mb-md-0">
+
+                <span class="page-info">
+                    Page {{ pages.number }} sur {{ pages.paginator.num_pages }}
+                </span>
+
+            </div>
+
+
+            <div class="col-md-4 text-md-right">
+
+                <span class="badge badge-info count-badge mr-2">
+                    {{ compte }}
+                </span>
+
+                {% if pages.has_next %}
+
+                    <a
+                        href="?page={{ pages.next_page_number }}"
+                        class="btn btn-info btn-sm btn-rounded"
+                    >
+                        Suivant
+                        <i class="mdi mdi-chevron-right"></i>
+                    </a>
+
+                    <a
+                        href="?page={{ pages.paginator.num_pages }}"
+                        class="btn btn-outline-light btn-sm btn-rounded"
+                    >
+                        <i class="mdi mdi-page-last"></i>
+                    </a>
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+    </div>
+
+    {% endif %}
+
+</div>
 
 {% endblock content %}

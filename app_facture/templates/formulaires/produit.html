@@ -1,65 +1,971 @@
+
 {% extends 'base.html' %}
 {% load static %}
+
 {% block content %}
+
+<!-- =========================================================
+     STYLE : TEXTE BLANC DES ZONES DE SAISIE
+========================================================== -->
+
+<style>
+
+    /* =====================================================
+       INPUTS / SELECTS
+    ====================================================== */
+
+    .form-control {
+        color: #ffffff !important;
+    }
+
+    .form-control:focus {
+        color: #ffffff !important;
+    }
+
+    /* =====================================================
+       PLACEHOLDERS
+    ====================================================== */
+
+    .form-control::placeholder {
+        color: rgba(255, 255, 255, 0.65) !important;
+        opacity: 1;
+    }
+
+    /* =====================================================
+       SELECT
+    ====================================================== */
+
+    select.form-control {
+        color: #ffffff !important;
+    }
+
+    select.form-control option {
+        color: #ffffff !important;
+        background-color: #252525 !important;
+    }
+
+    /* =====================================================
+       SELECT2
+    ====================================================== */
+
+    .select2-container--default
+    .select2-selection--single {
+        color: #ffffff !important;
+        background-color: transparent !important;
+        border-color: rgba(255,255,255,.15) !important;
+    }
+
+    .select2-container--default
+    .select2-selection--single
+    .select2-selection__rendered {
+        color: #ffffff !important;
+    }
+
+    .select2-container--default
+    .select2-selection--single
+    .select2-selection__placeholder {
+        color: rgba(255,255,255,.65) !important;
+    }
+
+    .select2-container--default
+    .select2-selection--single
+    .select2-selection__arrow b {
+        border-color: #ffffff transparent transparent transparent !important;
+    }
+
+    .select2-container--default
+    .select2-results__option {
+        color: #ffffff !important;
+        background-color: #252525 !important;
+    }
+
+    .select2-container--default
+    .select2-results__option--highlighted {
+        color: #ffffff !important;
+    }
+
+    .select2-dropdown {
+        background-color: #252525 !important;
+        border-color: rgba(255,255,255,.15) !important;
+    }
+
+    /* =====================================================
+       LABELS
+    ====================================================== */
+
+    .form-group label {
+        color: #ffffff;
+    }
+
+    /* =====================================================
+       INPUT GROUP
+    ====================================================== */
+
+    .input-group-text {
+        color: #ffffff !important;
+    }
+
+    /* =====================================================
+       PETITS TEXTES
+    ====================================================== */
+
+    small.text-muted {
+        color: rgba(255,255,255,.65) !important;
+    }
+
+</style>
+
+
+<!-- =========================================================
+     CONTENU PRINCIPAL
+========================================================== -->
+
 <div class="content-wrapper">
+
+
+    <!-- =====================================================
+         HEADER
+    ====================================================== -->
+
     <div class="row">
-              <div class="col-md-6 grid-margin stretch-card">
 
-                 <div class="card">
-                  <div class="card-body">
-                    <h4 class="card-title">Formulaire Produit</h4>
-                    <form class="forms-sample" method="post" action="{% url 'addProduit' %}">
-                       {% csrf_token %}
-                      <div class="form-group">
-                        <label for="exampleInputUsername1">Nom</label>
-                        <input type="text" name="nom" required style="color:white" class="form-control" id="exampleInputUsername1" placeholder="Nom produit">
-                      </div>
-                      <div class="form-group">
-                        <label for="exampleInputUsername1">Prix Unitaire</label>
-                        <input type="number" name="pu" required style="color:white" class="form-control" id="exampleInputUsername1" placeholder="Prix">
-                      </div>
+        <div class="col-12 grid-margin">
 
-                    <div class="form-group">
-                      <label>Appartement</label>
-                      <select class="js-example-basic-single" required style="width:100%" name="appartement">
-                        <option value="">---selecionner---</option>
-                        {% for ap in appart  %}
-                        <option value="{{ap.id}}">{{ap.nom}}</option>
-                        {% endfor %}
-                      </select>
+            <div class="card"
+                 style="
+                    border:none;
+                    border-radius:18px;
+                    overflow:hidden;
+                    background:linear-gradient(
+                        135deg,
+                        #1f3c88 0%,
+                        #4e73df 100%
+                    );
+                 ">
+
+                <div class="card-body py-4 px-4">
+
+                    <div class="row align-items-center">
+
+                        <!-- TITRE -->
+
+                        <div class="col-md-8">
+
+                            <div class="d-flex align-items-center">
+
+                                <div
+                                    class="mr-3 d-flex align-items-center justify-content-center"
+                                    style="
+                                        width:55px;
+                                        height:55px;
+                                        border-radius:15px;
+                                        background:rgba(255,255,255,.15);
+                                    "
+                                >
+
+                                    <i
+                                        class="mdi mdi-package-variant-closed"
+                                        style="
+                                            font-size:28px;
+                                            color:white;
+                                        "
+                                    ></i>
+
+                                </div>
+
+                                <div>
+
+                                    <h3
+                                        class="text-white font-weight-bold mb-1"
+                                    >
+                                        Nouveau produit
+                                    </h3>
+
+                                    <p
+                                        class="text-white mb-0"
+                                        style="opacity:.8;"
+                                    >
+                                        Ajoutez un produit à votre catalogue.
+                                    </p>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- BOUTON RETOUR -->
+
+                        <div
+                            class="col-md-4 text-md-right mt-3 mt-md-0"
+                        >
+
+                            <a
+                                href="{% url 'produit' %}"
+                                class="btn btn-light btn-rounded"
+                            >
+
+                                <i class="mdi mdi-arrow-left mr-1"></i>
+
+                                Retour
+
+                            </a>
+
+                        </div>
+
                     </div>
-                      <button type="submit" class="btn btn-primary mr-2">Valider</button>
-                    </form>
-                  </div>
+
                 </div>
-                
-              </div>
-              <div class="col-md-6 grid-margin">
-                <div class="card">
-                  <div class="card-body">
-                   
-                    {% if msg %}
-                          
-                    <div class="form-group">
-                      <label class="badge badge-danger">{{msg}}</label>
-                    </div>
-                      {% elif msok %}
-                    <div class="form-group">
-                      <label class="badge badge-success">{{msok}}</label>
-                    </div>
-                    {% endif %}
-                     <a href="{% url 'appartement' %}" class="btn btn-outline-light btn-rounded get-started-btn">Retour</a>
-                  </div>
-                </div>
-              </div>
+
             </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         CONTENU
+    ====================================================== -->
+
+    <div class="row">
+
+
+        <!-- =================================================
+             FORMULAIRE
+        ================================================== -->
+
+        <div
+            class="col-xl-7 col-lg-7 grid-margin stretch-card"
+        >
+
+            <div
+                class="card"
+                style="
+                    border:none;
+                    border-radius:16px;
+                    box-shadow:0 5px 25px rgba(0,0,0,.08);
+                "
+            >
+
+                <div class="card-body p-4">
+
+
+                    <!-- =================================================
+                         TITRE
+                    ================================================== -->
+
+                    <div class="mb-4">
+
+                        <div class="d-flex align-items-center">
+
+                            <div
+                                class="mr-3 d-flex align-items-center justify-content-center"
+                                style="
+                                    width:45px;
+                                    height:45px;
+                                    border-radius:12px;
+                                    background:rgba(78,115,223,.12);
+                                "
+                            >
+
+                                <i
+                                    class="mdi mdi-information-outline text-primary"
+                                    style="font-size:23px;"
+                                ></i>
+
+                            </div>
+
+                            <div>
+
+                                <h4
+                                    class="font-weight-bold mb-1"
+                                >
+                                    Informations du produit
+                                </h4>
+
+                                <p
+                                    class="text-muted mb-0"
+                                >
+                                    Renseignez les informations nécessaires.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- =================================================
+                         FORMULAIRE
+                    ================================================== -->
+
+                    <form
+                        method="post"
+                        action="{% url 'addProduit' %}"
+                        autocomplete="off"
+                    >
+
+                        {% csrf_token %}
+
+
+                        <!-- =============================================
+                             NOM DU PRODUIT
+                        ============================================== -->
+
+                        <div class="form-group mb-4">
+
+                            <label
+                                for="nom"
+                                class="font-weight-bold"
+                            >
+
+                                Nom du produit
+
+                                <span class="text-danger">
+                                    *
+                                </span>
+
+                            </label>
+
+
+                            <div class="input-group">
+
+                                <div class="input-group-prepend">
+
+                                    <span
+                                        class="input-group-text"
+                                        style="
+                                            border-radius:8px 0 0 8px;
+                                        "
+                                    >
+
+                                        <i
+                                            class="mdi mdi-pill"
+                                        ></i>
+
+                                    </span>
+
+                                </div>
+
+
+                                <input
+                                    type="text"
+                                    name="nom"
+                                    id="nom"
+                                    required
+                                    class="form-control"
+                                    placeholder="Ex : Paracétamol 500 mg"
+                                >
+
+                            </div>
+
+
+                            <small class="text-muted">
+
+                                <i
+                                    class="mdi mdi-information-outline mr-1"
+                                ></i>
+
+                                Saisissez le nom commercial ou la
+                                désignation du produit.
+
+                            </small>
+
+                        </div>
+
+
+                        <!-- =============================================
+                             PRIX
+                        ============================================== -->
+
+                        <div class="form-group mb-4">
+
+
+                            <div
+                                class="d-flex justify-content-between align-items-center mb-2"
+                            >
+
+                                <label
+                                    for="pu"
+                                    class="font-weight-bold mb-0"
+                                >
+
+                                    Prix de vente TTC
+
+                                    <span class="text-danger">
+                                        *
+                                    </span>
+
+                                </label>
+
+
+                                <span
+                                    class="badge badge-success"
+                                    style="
+                                        padding:7px 10px;
+                                        border-radius:8px;
+                                    "
+                                >
+
+                                    <i
+                                        class="mdi mdi-check-circle-outline mr-1"
+                                    ></i>
+
+                                    TTC
+
+                                </span>
+
+                            </div>
+
+
+                            <div class="input-group">
+
+                                <div class="input-group-prepend">
+
+                                    <span
+                                        class="input-group-text"
+                                        style="
+                                            border-radius:8px 0 0 8px;
+                                        "
+                                    >
+
+                                        <i
+                                            class="mdi mdi-cash-multiple"
+                                        ></i>
+
+                                    </span>
+
+                                </div>
+
+
+                                <input
+                                    type="number"
+                                    name="pu"
+                                    id="pu"
+                                    required
+                                    min="0"
+                                    step="0.01"
+                                    class="form-control"
+                                    placeholder="0.00"
+                                >
+
+
+                                <div class="input-group-append">
+
+                                    <span
+                                        class="input-group-text font-weight-bold"
+                                        style="
+                                            border-radius:0 8px 8px 0;
+                                        "
+                                    >
+
+                                        FC
+
+                                    </span>
+
+                                </div>
+
+                            </div>
+
+
+                            <div
+                                class="d-flex align-items-center mt-2"
+                            >
+
+                                <i
+                                    class="mdi mdi-information-outline mr-1 text-primary"
+                                ></i>
+
+                                <small class="text-muted">
+
+                                    Le prix enregistré correspond au prix
+                                    <strong>TTC</strong>.
+
+                                </small>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- =============================================
+                             APPARTEMENT / POINT DE VENTE
+                        ============================================== -->
+
+                        <div class="form-group mb-4">
+
+                            <label
+                                for="appartement"
+                                class="font-weight-bold"
+                            >
+
+                                Appartement / Point de vente
+
+                                <span class="text-danger">
+                                    *
+                                </span>
+
+                            </label>
+
+
+                            <div class="input-group">
+
+                                <div class="input-group-prepend">
+
+                                    <span
+                                        class="input-group-text"
+                                        style="
+                                            border-radius:8px 0 0 8px;
+                                        "
+                                    >
+
+                                        <i
+                                            class="mdi mdi-store-outline"
+                                        ></i>
+
+                                    </span>
+
+                                </div>
+
+
+                                <select
+                                    class="form-control js-example-basic-single"
+                                    required
+                                    name="appartement"
+                                    id="appartement"
+                                    style="width:100%;"
+                                >
+
+                                    <option value="">
+                                        Sélectionner un appartement
+                                    </option>
+
+
+                                    {% for ap in appart %}
+
+                                        <option
+                                            value="{{ ap.id }}"
+                                        >
+                                            {{ ap.nom }}
+                                        </option>
+
+                                    {% endfor %}
+
+                                </select>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- =============================================
+                             APERÇU FISCAL
+                        ============================================== -->
+
+                        <div
+                            class="p-3 mb-4"
+                            style="
+                                border-radius:12px;
+                                background:rgba(78,115,223,.06);
+                                border:1px solid rgba(78,115,223,.12);
+                            "
+                        >
+
+                            <div
+                                class="d-flex align-items-center mb-2"
+                            >
+
+                                <div
+                                    class="d-flex align-items-center justify-content-center mr-2"
+                                    style="
+                                        width:34px;
+                                        height:34px;
+                                        border-radius:9px;
+                                        background:rgba(78,115,223,.12);
+                                    "
+                                >
+
+                                    <i
+                                        class="mdi mdi-calculator-variant-outline text-primary"
+                                        style="font-size:19px;"
+                                    ></i>
+
+                                </div>
+
+
+                                <strong>
+                                    Aperçu fiscal
+                                </strong>
+
+                            </div>
+
+
+                            <p
+                                class="text-muted small mb-0"
+                            >
+
+                                Le prix TTC sera utilisé pour calculer
+                                automatiquement le montant HT et la TVA
+                                lors de la facturation.
+
+                            </p>
+
+                        </div>
+
+
+                        <!-- =============================================
+                             BOUTONS
+                        ============================================== -->
+
+                        <div
+                            class="d-flex align-items-center flex-wrap"
+                        >
+
+                            <button
+                                type="submit"
+                                class="btn btn-primary btn-rounded px-4 mr-2 mb-2 mb-md-0"
+                            >
+
+                                <i
+                                    class="mdi mdi-content-save-outline mr-1"
+                                ></i>
+
+                                Enregistrer le produit
+
+                            </button>
+
+
+                            <a
+                                href="{% url 'produit' %}"
+                                class="btn btn-outline-secondary btn-rounded mb-2 mb-md-0"
+                            >
+
+                                <i
+                                    class="mdi mdi-close mr-1"
+                                ></i>
+
+                                Annuler
+
+                            </a>
+
+                        </div>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- =================================================
+             PANNEAU DROIT
+        ================================================== -->
+
+        <div
+            class="col-xl-5 col-lg-5 grid-margin stretch-card"
+        >
+
+            <div
+                class="card"
+                style="
+                    border:none;
+                    border-radius:16px;
+                    box-shadow:0 5px 25px rgba(0,0,0,.08);
+                "
+            >
+
+                <div class="card-body p-4">
+
+
+                    <!-- =============================================
+                         MESSAGE D'ERREUR
+                    ============================================== -->
+
+                    {% if msg %}
+
+                        <div
+                            class="alert alert-danger"
+                            style="
+                                border-radius:10px;
+                                border:none;
+                            "
+                        >
+
+                            <div class="d-flex">
+
+                                <i
+                                    class="mdi mdi-alert-circle-outline mr-2"
+                                    style="font-size:22px;"
+                                ></i>
+
+                                <div>
+
+                                    <strong>
+                                        Erreur
+                                    </strong>
+
+                                    <div class="mt-1">
+                                        {{ msg }}
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    {% endif %}
+
+
+                    <!-- =============================================
+                         MESSAGE SUCCÈS
+                    ============================================== -->
+
+                    {% if msok %}
+
+                        <div
+                            class="alert alert-success"
+                            style="
+                                border-radius:10px;
+                                border:none;
+                            "
+                        >
+
+                            <div class="d-flex">
+
+                                <i
+                                    class="mdi mdi-check-circle-outline mr-2"
+                                    style="font-size:22px;"
+                                ></i>
+
+                                <div>
+
+                                    <strong>
+                                        Produit enregistré
+                                    </strong>
+
+                                    <div class="mt-1">
+                                        {{ msok }}
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    {% endif %}
+
+
+                    <!-- =============================================
+                         TVA
+                    ============================================== -->
+
+                    <div
+                        class="text-center mb-4"
+                    >
+
+                        <div
+                            class="d-inline-flex align-items-center justify-content-center"
+                            style="
+                                width:70px;
+                                height:70px;
+                                border-radius:50%;
+                                background:rgba(255,193,7,.12);
+                            "
+                        >
+
+                            <i
+                                class="mdi mdi-percent-outline text-warning"
+                                style="font-size:32px;"
+                            ></i>
+
+                        </div>
+
+
+                        <h4
+                            class="font-weight-bold mt-3 mb-1"
+                        >
+                            TVA 16 %
+                        </h4>
+
+
+                        <p
+                            class="text-muted mb-0"
+                        >
+                            Calcul automatique lors de la vente.
+                        </p>
+
+                    </div>
+
+
+                    <!-- =============================================
+                         EXEMPLE CALCUL TVA
+                    ============================================== -->
+
+                    <div
+                        class="p-4"
+                        style="
+                            border-radius:14px;
+                            background:rgba(255,255,255,.03);
+                            border:1px solid rgba(255,255,255,.08);
+                        "
+                    >
+
+                        <div
+                            class="d-flex justify-content-between mb-3"
+                        >
+
+                            <span class="text-muted">
+                                Prix TTC
+                            </span>
+
+                            <strong>
+                                11 600 FC
+                            </strong>
+
+                        </div>
+
+
+                        <div
+                            class="d-flex justify-content-between mb-3"
+                        >
+
+                            <span class="text-muted">
+                                Prix HT
+                            </span>
+
+                            <strong>
+                                10 000 FC
+                            </strong>
+
+                        </div>
+
+
+                        <div
+                            class="d-flex justify-content-between"
+                        >
+
+                            <span class="text-muted">
+                                TVA 16 %
+                            </span>
+
+                            <strong class="text-warning">
+                                1 600 FC
+                            </strong>
+
+                        </div>
+
+
+                        <hr>
+
+
+                        <div
+                            class="d-flex justify-content-between"
+                        >
+
+                            <strong>
+                                Total TTC
+                            </strong>
+
+                            <strong class="text-primary">
+                                11 600 FC
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- =============================================
+                         INFORMATION
+                    ============================================== -->
+
+                    <div class="mt-4">
+
+                        <div
+                            class="d-flex align-items-start"
+                        >
+
+                            <i
+                                class="mdi mdi-shield-check-outline text-success mr-2"
+                                style="font-size:21px;"
+                            ></i>
+
+
+                            <p
+                                class="text-muted small mb-0"
+                            >
+
+                                Les informations fiscales sont conservées
+                                dans le détail de la facture afin de préserver
+                                les montants historiques même si le prix du
+                                produit est modifié ultérieurement.
+
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- =============================================
+                         RAPPEL
+                    ============================================== -->
+
+                    <div
+                        class="mt-4 p-3"
+                        style="
+                            border-radius:12px;
+                            background:rgba(40,167,69,.07);
+                            border:1px solid rgba(40,167,69,.15);
+                        "
+                    >
+
+                        <div
+                            class="d-flex align-items-start"
+                        >
+
+                            <i
+                                class="mdi mdi-check-decagram text-success mr-2"
+                                style="font-size:22px;"
+                            ></i>
+
+                            <div>
+
+                                <strong>
+                                    Prix TTC
+                                </strong>
+
+                                <p
+                                    class="text-muted small mb-0 mt-1"
+                                >
+
+                                    Vous saisissez uniquement le prix TTC.
+                                    Le système déterminera automatiquement
+                                    le HT et la TVA de 16 %.
+
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
 
 </div>
 
 {% endblock content %}
-
-
-
-
-
-             

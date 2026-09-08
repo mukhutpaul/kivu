@@ -1,77 +1,742 @@
+
 {% load static %}
+
 <!DOCTYPE html>
-<html lang="en">
-  <head>
-    <!-- Required meta tags -->
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>Kivu Market</title>
-    <!-- plugins:css -->
-    <link rel="stylesheet" href="{% static 'vendors/mdi/css/materialdesignicons.min.css' %}">
-    <link rel="stylesheet" href="{% static 'vendors/css/vendor.bundle.base.css' %}">
-    <!-- endinject -->
-    <!-- Plugin css for this page -->
-    <!-- End plugin css for this page -->
-    <!-- inject:css -->
-    <!-- endinject -->
-    <!-- Layout styles -->
-    <link rel="stylesheet" href="{% static 'css/style.css' %}">
-    <!-- End layout styles -->
-    <link rel="shortcut icon" href="{% static 'images/favicon.png' %}" />
-  </head>
-  <body>
-    <div class="container-scroller">
-      <div class="container-fluid  page-body-wrapper full-page-wrapper">
-        <div class="row w-100 m-0">
-          <div class="content-wrapper full-page-wrapper d-flex align-items-center auth login-bg">
-            <div class="card col-lg-4 mx-auto">
-              <div class="card-body px-5 py-5">
-                <h3 class="card-title text-left mb-3">Connexion</h3>
-                
-                <img class="img-fluid rounded-circle" src="{% static 'images/logo2.jpg' %}" alt="">
-                
-                <form method="post" action="{% url 'sign_in' %}">
-                    {% csrf_token %}
-                  <div class="form-group">
-                    <label>Username *</label>
-                    <input type="text" name="username" style="color:white" class="form-control p_input">
-                  </div>
-                  <div class="form-group">
-                    <label>Password *</label>
-                    <input type="Password" style="color:white"  name="password" class="form-control p_input">
-                  </div>
-                  <br>
-                  <CENTER>
-                  {% if msg %}
-                  <label class="badge badge-danger">{{msg}}</label>
-                  {% endif %}
-                  </CENTER>
-                  <div class="text-center">
-                    <button type="submit" class="btn btn-primary btn-block enter-btn">Login</button>
-                  </div>
-                 
-                </form>
-              </div>
-            </div>
-          </div>
-          <!-- content-wrapper ends -->
+<html lang="fr">
+
+<head>
+
+  <meta charset="utf-8">
+
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <title>Connexion | Tanganika Future</title>
+
+  <!-- Material Design Icons -->
+  <link rel="stylesheet"
+        href="{% static 'vendors/mdi/css/materialdesignicons.min.css' %}">
+
+  <!-- Bootstrap / Vendor -->
+  <link rel="stylesheet"
+        href="{% static 'vendors/css/vendor.bundle.base.css' %}">
+
+  <!-- Theme -->
+  <link rel="stylesheet"
+        href="{% static 'css/style.css' %}">
+
+  <!-- Favicon -->
+  <link rel="shortcut icon"
+        href="{% static 'images/favicon.png' %}">
+
+
+  <style>
+
+    /* =====================================================
+       GLOBAL
+    ===================================================== */
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: "Segoe UI", Arial, sans-serif;
+      background:
+        radial-gradient(
+          circle at top left,
+          rgba(0, 123, 255, 0.20),
+          transparent 35%
+        ),
+        radial-gradient(
+          circle at bottom right,
+          rgba(111, 66, 193, 0.20),
+          transparent 35%
+        ),
+        linear-gradient(
+          135deg,
+          #0b1020 0%,
+          #121a2f 45%,
+          #0b1220 100%
+        );
+      color: #ffffff;
+    }
+
+
+    /* =====================================================
+       PAGE
+    ===================================================== */
+
+    .login-page {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 30px 15px;
+      position: relative;
+      overflow: hidden;
+    }
+
+
+    /* Cercles décoratifs */
+
+    .login-page::before,
+    .login-page::after {
+      content: "";
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(2px);
+      pointer-events: none;
+    }
+
+    .login-page::before {
+      width: 280px;
+      height: 280px;
+      background: rgba(0, 123, 255, 0.10);
+      top: -100px;
+      left: -80px;
+    }
+
+    .login-page::after {
+      width: 350px;
+      height: 350px;
+      background: rgba(111, 66, 193, 0.10);
+      bottom: -150px;
+      right: -100px;
+    }
+
+
+    /* =====================================================
+       LOGIN CARD
+    ===================================================== */
+
+    .login-card {
+      width: 100%;
+      max-width: 450px;
+      position: relative;
+      z-index: 2;
+
+      background: rgba(24, 32, 52, 0.88);
+
+      border: 1px solid rgba(255, 255, 255, 0.10);
+
+      border-radius: 24px;
+
+      box-shadow:
+        0 25px 70px rgba(0, 0, 0, 0.45),
+        0 8px 25px rgba(0, 0, 0, 0.20);
+
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+
+      overflow: hidden;
+    }
+
+
+    /* =====================================================
+       CARD TOP
+    ===================================================== */
+
+    .login-header {
+      text-align: center;
+      padding: 38px 35px 20px;
+    }
+
+
+    /* =====================================================
+       LOGO
+    ===================================================== */
+
+    .logo-container {
+      width: 105px;
+      height: 105px;
+
+      margin: 0 auto 20px;
+
+      padding: 5px;
+
+      border-radius: 50%;
+
+      background: linear-gradient(
+        135deg,
+        #007bff,
+        #6f42c1
+      );
+
+      box-shadow:
+        0 10px 30px rgba(0, 123, 255, 0.25);
+    }
+
+    .logo-container img {
+      width: 100%;
+      height: 100%;
+
+      object-fit: cover;
+
+      border-radius: 50%;
+
+      border: 4px solid #182034;
+
+      display: block;
+    }
+
+
+    /* =====================================================
+       TITRE
+    ===================================================== */
+
+    .login-title {
+      font-size: 28px;
+      font-weight: 700;
+
+      margin: 0 0 8px;
+
+      color: #ffffff;
+      letter-spacing: 0.2px;
+    }
+
+    .login-subtitle {
+      margin: 0;
+
+      color: rgba(255, 255, 255, 0.60);
+
+      font-size: 14px;
+    }
+
+
+    /* =====================================================
+       FORM
+    ===================================================== */
+
+    .login-form {
+      padding: 10px 35px 35px;
+    }
+
+
+    .form-group {
+      margin-bottom: 22px;
+    }
+
+
+    .form-label {
+      display: block;
+
+      margin-bottom: 9px;
+
+      font-size: 14px;
+      font-weight: 600;
+
+      color: rgba(255, 255, 255, 0.88);
+    }
+
+
+    /* =====================================================
+       INPUT
+    ===================================================== */
+
+    .input-wrapper {
+      position: relative;
+    }
+
+
+    .input-icon {
+      position: absolute;
+
+      left: 16px;
+      top: 50%;
+
+      transform: translateY(-50%);
+
+      font-size: 21px;
+
+      color: rgba(255, 255, 255, 0.55);
+
+      pointer-events: none;
+
+      transition: 0.2s ease;
+    }
+
+
+    .login-input {
+      width: 100%;
+
+      height: 52px;
+
+      padding: 0 48px;
+
+      border-radius: 12px;
+
+      border: 1px solid rgba(255, 255, 255, 0.12);
+
+      background: rgba(255, 255, 255, 0.055);
+
+      color: #ffffff !important;
+
+      font-size: 14px;
+
+      outline: none;
+
+      transition:
+        border-color 0.2s ease,
+        background 0.2s ease,
+        box-shadow 0.2s ease;
+    }
+
+
+    .login-input::placeholder {
+      color: rgba(255, 255, 255, 0.40) !important;
+    }
+
+
+    .login-input:hover {
+      background: rgba(255, 255, 255, 0.075);
+    }
+
+
+    .login-input:focus {
+      background: rgba(255, 255, 255, 0.08);
+
+      border-color: #007bff;
+
+      box-shadow:
+        0 0 0 3px rgba(0, 123, 255, 0.12);
+    }
+
+
+    .login-input:focus + .input-icon {
+      color: #007bff;
+    }
+
+
+    /* =====================================================
+       PASSWORD BUTTON
+    ===================================================== */
+
+    .password-toggle {
+      position: absolute;
+
+      right: 14px;
+      top: 50%;
+
+      transform: translateY(-50%);
+
+      border: none;
+
+      background: transparent;
+
+      color: rgba(255, 255, 255, 0.50);
+
+      font-size: 20px;
+
+      cursor: pointer;
+
+      padding: 4px;
+
+      transition: 0.2s ease;
+    }
+
+
+    .password-toggle:hover {
+      color: #ffffff;
+    }
+
+
+    /* =====================================================
+       ERROR MESSAGE
+    ===================================================== */
+
+    .login-error {
+      display: flex;
+
+      align-items: center;
+
+      gap: 8px;
+
+      margin: 5px 0 20px;
+
+      padding: 11px 14px;
+
+      border-radius: 10px;
+
+      background: rgba(220, 53, 69, 0.12);
+
+      border: 1px solid rgba(220, 53, 69, 0.25);
+
+      color: #ff7b87;
+
+      font-size: 13px;
+
+      text-align: left;
+    }
+
+
+    /* =====================================================
+       BUTTON
+    ===================================================== */
+
+    .login-button {
+      width: 100%;
+
+      height: 52px;
+
+      border: none;
+
+      border-radius: 12px;
+
+      background: linear-gradient(
+        135deg,
+        #007bff,
+        #5b4de8
+      );
+
+      color: #ffffff;
+
+      font-size: 15px;
+
+      font-weight: 700;
+
+      letter-spacing: 0.2px;
+
+      cursor: pointer;
+
+      box-shadow:
+        0 10px 25px rgba(0, 123, 255, 0.25);
+
+      transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        opacity 0.2s ease;
+    }
+
+
+    .login-button:hover {
+      transform: translateY(-2px);
+
+      box-shadow:
+        0 14px 30px rgba(0, 123, 255, 0.35);
+    }
+
+
+    .login-button:active {
+      transform: translateY(0);
+    }
+
+
+    .login-button i {
+      margin-right: 7px;
+      font-size: 18px;
+      vertical-align: middle;
+    }
+
+
+    /* =====================================================
+       FOOTER
+    ===================================================== */
+
+    .login-footer {
+      text-align: center;
+
+      padding: 0 35px 30px;
+
+      color: rgba(255, 255, 255, 0.40);
+
+      font-size: 12px;
+    }
+
+
+    .login-footer strong {
+      color: rgba(255, 255, 255, 0.70);
+    }
+
+
+    /* =====================================================
+       RESPONSIVE
+    ===================================================== */
+
+    @media (max-width: 576px) {
+
+      .login-page {
+        padding: 20px 12px;
+      }
+
+      .login-card {
+        border-radius: 20px;
+      }
+
+      .login-header {
+        padding: 30px 25px 18px;
+      }
+
+      .login-form {
+        padding: 10px 25px 28px;
+      }
+
+      .login-footer {
+        padding: 0 25px 25px;
+      }
+
+      .login-title {
+        font-size: 24px;
+      }
+
+      .logo-container {
+        width: 90px;
+        height: 90px;
+      }
+    }
+
+  </style>
+
+</head>
+
+
+<body>
+
+  <div class="login-page">
+
+    <div class="login-card">
+
+      <!-- ==================================================
+           HEADER
+      ================================================== -->
+
+      <div class="login-header">
+
+        <div class="logo-container">
+
+          <img
+            src="{% static 'images/tanganika.jpg' %}"
+            alt="Tanganika Future"
+          />
+
         </div>
-        <!-- row ends -->
+
+
+        <h1 class="login-title">
+          Tanganika Future
+        </h1>
+
+
+        <p class="login-subtitle">
+          Connectez-vous à votre espace
+        </p>
+
       </div>
-      <!-- page-body-wrapper ends -->
+
+
+      <!-- ==================================================
+           FORMULAIRE
+      ================================================== -->
+
+      <form
+        method="post"
+        action="{% url 'sign_in' %}"
+        class="login-form"
+      >
+
+        {% csrf_token %}
+
+
+        <!-- Username -->
+
+        <div class="form-group">
+
+          <label
+            for="username"
+            class="form-label"
+          >
+            Nom d'utilisateur
+          </label>
+
+
+          <div class="input-wrapper">
+
+            <i class="mdi mdi-account-outline input-icon"></i>
+
+            <input
+              id="username"
+              type="text"
+              name="username"
+              class="login-input"
+              placeholder="Entrez votre nom d'utilisateur"
+              autocomplete="username"
+              required
+            />
+
+          </div>
+
+        </div>
+
+
+        <!-- Password -->
+
+        <div class="form-group">
+
+          <label
+            for="password"
+            class="form-label"
+          >
+            Mot de passe
+          </label>
+
+
+          <div class="input-wrapper">
+
+            <i class="mdi mdi-lock-outline input-icon"></i>
+
+            <input
+              id="password"
+              type="password"
+              name="password"
+              class="login-input"
+              placeholder="Entrez votre mot de passe"
+              autocomplete="current-password"
+              required
+            />
+
+
+            <button
+              type="button"
+              class="password-toggle"
+              id="togglePassword"
+              aria-label="Afficher le mot de passe"
+            >
+
+              <i class="mdi mdi-eye-outline"></i>
+
+            </button>
+
+          </div>
+
+        </div>
+
+
+        <!-- Message d'erreur -->
+
+        {% if msg %}
+
+          <div class="login-error">
+
+            <i class="mdi mdi-alert-circle-outline"></i>
+
+            <span>
+              {{ msg }}
+            </span>
+
+          </div>
+
+        {% endif %}
+
+
+        <!-- Connexion -->
+
+        <button
+          type="submit"
+          class="login-button"
+        >
+
+          <i class="mdi mdi-login"></i>
+
+          Se connecter
+
+        </button>
+
+      </form>
+
+
+      <!-- ==================================================
+           FOOTER
+      ================================================== -->
+
+      <div class="login-footer">
+
+        <strong>Tanganika Future</strong>
+
+        <br>
+
+        Votre espace de gestion
+
+      </div>
+
     </div>
-    <!-- container-scroller -->
-    <!-- plugins:js -->
-    <script src="{% static 'vendors/js/vendor.bundle.base.js' %}"></script>
-    <!-- endinject -->
-    <!-- Plugin js for this page -->
-    <!-- End plugin js for this page -->
-    <!-- inject:js -->
-    <script src="{% static 'js/off-canvas.js' %}"></script>
-    <script src="{% static 'js/hoverable-collapse.js' %}"></script>
-    <script src="{% static 'js/misc.js' %}"></script>
-    <script src="{% static 'js/settings.js' %}"></script>
-    <script src="{% static 'js/todolist.js' %}"></script>
-    <!-- endinject -->
-  </body>
+
+  </div>
+
+
+  <!-- ======================================================
+       JAVASCRIPT
+  ====================================================== -->
+
+  <script src="{% static 'vendors/js/vendor.bundle.base.js' %}"></script>
+
+
+  <script>
+
+    /* =====================================================
+       AFFICHER / MASQUER LE MOT DE PASSE
+    ===================================================== */
+
+    const togglePassword =
+      document.getElementById("togglePassword");
+
+    const password =
+      document.getElementById("password");
+
+
+    if (togglePassword && password) {
+
+      togglePassword.addEventListener(
+        "click",
+        function () {
+
+          const icon =
+            this.querySelector("i");
+
+          if (password.type === "password") {
+
+            password.type = "text";
+
+            icon.classList.remove(
+              "mdi-eye-outline"
+            );
+
+            icon.classList.add(
+              "mdi-eye-off-outline"
+            );
+
+            this.setAttribute(
+              "aria-label",
+              "Masquer le mot de passe"
+            );
+
+          } else {
+
+            password.type = "password";
+
+            icon.classList.remove(
+              "mdi-eye-off-outline"
+            );
+
+            icon.classList.add(
+              "mdi-eye-outline"
+            );
+
+            this.setAttribute(
+              "aria-label",
+              "Afficher le mot de passe"
+            );
+
+          }
+
+        }
+      );
+
+    }
+
+  </script>
+
+</body>
+
 </html>

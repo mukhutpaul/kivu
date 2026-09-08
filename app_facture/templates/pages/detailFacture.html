@@ -1,116 +1,1089 @@
+
 {% extends "base.html" %}
 {% load static %}
 
 {% block content %}
- <div class="row">
-              <div class="col-md-6 grid-margin stretch-card">
-                <div class="card">
-                  <div class="card-body">
-                    <h4 class="card-title">Ajout Produits</h4>
-                    <form class="forms-sample" method="post" Action="{% url 'addDetailFacture'%}">
-                      {% csrf_token %}
-                    <div class="form-group">
-                        
-                        <select class="js-example-basic-single" style="width:100%" name="produit" required>
-                          <option value="">------Sélectionner le produit--------</option>
-                          {% for p in liste_produit %}
-                          <option value="{{p.id}}">{{p.nom}}</option>
-                          {% endfor %}
-                        </select>
-                   </div>
-                   <div class="form-group">
-                        <input type="hidden" name="facture" value="{{sel_facture.id}}"/>
-                        <input type="number" required style="color:white; width:30%" class="form-control" name="qte" id="exampleInputUsername1" placeholder="Quantité">
-                      </div>
-                   <button type="submit" class="btn btn-primary btn-rounded mr-2">Valider</button>
 
-                    </form>
-                  </div>
-                </div>
-                
-              </div>
-              <div class="col-md-6 grid-margin">
-                <div class="card">
-                  <div class="card-body">
-                    <h4 class="card-title">Facture N° : {{sel_facture.id}}</h4>
-                    <p class="card-description"> Date : {{sel_facture.createdAt}} </p>
-                    <form class="forms-sample" method="post">
-                      {% csrf_token %}
-                      <div class="form-group">
-                        <input type="text" style="color:white" class="form-control" name="rech" id="exampleInputUsername1" placeholder="Rechece...">
-                      </div>
-                    </form>
-                  </div>
-                </div>
-              </div>
-     </div>
-      {% if list_facture %}
-      <div class="row">
-              <div class="col-md-6 grid-margin stretch-card">
-                <div class="card">
-                  <div class="card-body">
-                    <h4 class="card-title">Produits de la Fact-{{sel_facture.id}}</h4>
-                    <table class="table">
-                        <thead>
-                          <tr>
-                            <th>Produit</th>
-                            <th>Prix</th>
-                            <th>Quantité</th>
-                            <th>Total</th>
-                            {% if sel_facture.imprimer == False %}
-                            <th>Actions</th>
-                            {% endif %}
-                          </tr>
-                        </thead>
-                        <tbody>
-                         {% for f in list_facture %}
-                          <tr>
-                            <td>{{f.produit}}</td>
-                            <td>{{f.pu}}</td>
-                            <td>{{f.qte}}</td>
-                            <td>{{f.total}} Fc</td>
-                             {% if sel_facture.imprimer == False %}
-                            <td>
-                              <a href="{% url 'deletedetailFacture' f.id %}" onclick="return confirm('Etes-vous sûr de vouloir supprimer?')"> <i class="mdi mdi-delete"></i></a>
-                            </td>
-                            {% endif %}
-                          </tr>
-                        {% endfor %}
-                        </tbody>
-                      </table>
-            {% if list_facture.has_previous %}
-                <a href="?page=1">&laquo;</a>
-                <a href="?page={{ list_facture.previous_page_number }}"><span class="badge badge-info ">Précédent</span></a>
-          {% endif %}
-                page {{ list_facture.number }} sur {{ list_facture.paginator.num_pages }}
-                <span class="badge badge-info pull-right">{{compte}}</span>
-          
-                {% if list_facture.has_next %}
-                   <a href="?page={{ list_facture.next_page_number }}"><span class="badge badge-info ">Suivant</span></a>
-                   <a href="?page={{compte}}">&raquo;</a>
-                {% else %}
-                {% endif %}
-                  </div>
-                </div>
-                
-              </div>
-              <div class="col-md-6 grid-margin">
-                <div class="card">
-                  <div class="card-body">
-                    <h4 class="card-title">Sommation facture: {{sommefac}} Fc</h4>
-                    
-                     <a href="{% url 'print_facture' sel_facture.id %}" class="btn btn-primary btn-rounded mr-2">Imprimer Facture</a>
-                     <a href="{% url 'facture' %}" class="btn btn-primary btn-rounded mr-2">Voir vos factures</a>
-                   
-                  </div>
-                </div>
-              </div>
-     </div>
+<style>
+    /* =========================================================
+       PAGE FACTURE
+    ========================================================== */
 
-      {% endif %}
+    .facture-page {
+        padding-bottom: 30px;
+    }
+
+    .facture-page .card {
+        border: none;
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 6px 24px rgba(0, 0, 0, 0.18);
+    }
+
+    /* =========================================================
+       EN-TÊTE FACTURE
+    ========================================================== */
+
+    .facture-header {
+        background: linear-gradient(135deg, #0d6efd, #4f46e5);
+        border-radius: 16px !important;
+    }
+
+    .facture-header .card-body {
+        padding: 24px;
+    }
+
+    .facture-header h4 {
+        color: #ffffff;
+        font-size: 22px;
+        font-weight: 700;
+        margin-bottom: 5px;
+    }
+
+    .facture-header p {
+        color: rgba(255,255,255,.78);
+        margin-bottom: 0;
+    }
+
+    .facture-number {
+        display: inline-flex;
+        align-items: center;
+        padding: 8px 14px;
+        border-radius: 20px;
+        background: rgba(255,255,255,.14);
+        color: #ffffff;
+        font-weight: 700;
+        font-size: 13px;
+    }
+
+    /* =========================================================
+       TITRES
+    ========================================================== */
+
+    .section-title {
+        color: #ffffff;
+        font-size: 18px;
+        font-weight: 700;
+        margin-bottom: 20px;
+    }
+
+    .section-title i {
+        margin-right: 8px;
+    }
+
+    .section-description {
+        color: rgba(255,255,255,.55);
+        font-size: 13px;
+    }
+
+    /* =========================================================
+       FORMULAIRE
+    ========================================================== */
+
+    .form-label {
+        color: #ffffff !important;
+        font-weight: 600;
+        font-size: 13px;
+        margin-bottom: 8px;
+    }
+
+    .form-control {
+        color: #ffffff !important;
+        border-radius: 11px;
+        min-height: 46px;
+    }
+
+    .form-control:focus {
+        color: #ffffff !important;
+    }
+
+    .form-control::placeholder {
+        color: rgba(255,255,255,.55) !important;
+        opacity: 1;
+    }
+
+    select.form-control {
+        color: #ffffff !important;
+    }
+
+    select.form-control option {
+        color: #ffffff !important;
+        background-color: #252525 !important;
+    }
+
+    .quantity-input {
+        max-width: 180px;
+    }
+
+    .btn-valider {
+        min-height: 46px;
+        padding: 8px 22px;
+        font-weight: 600;
+        border-radius: 11px;
+        transition: all .2s ease;
+    }
+
+    .btn-valider:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(13,110,253,.25);
+    }
+
+    /* =========================================================
+       SELECT2
+    ========================================================== */
+
+    .select2-container {
+        width: 100% !important;
+    }
+
+    .select2-container--default .select2-selection--single {
+        height: 46px !important;
+        border-radius: 11px !important;
+        background-color: transparent !important;
+        border-color: rgba(255,255,255,.15) !important;
+    }
+
+    .select2-container--default
+    .select2-selection--single
+    .select2-selection__rendered {
+        line-height: 46px !important;
+        color: #ffffff !important;
+        padding-left: 14px !important;
+    }
+
+    .select2-container--default
+    .select2-selection--single
+    .select2-selection__placeholder {
+        color: rgba(255,255,255,.55) !important;
+    }
+
+    .select2-container--default
+    .select2-selection--single
+    .select2-selection__arrow {
+        height: 46px !important;
+    }
+
+    .select2-container--default
+    .select2-selection--single
+    .select2-selection__arrow b {
+        border-color: #ffffff transparent transparent transparent !important;
+    }
+
+    .select2-dropdown {
+        background: #252525 !important;
+        border-color: rgba(255,255,255,.15) !important;
+    }
+
+    .select2-container--default
+    .select2-results__option {
+        color: #ffffff !important;
+        background: #252525 !important;
+    }
+
+    .select2-container--default
+    .select2-results__option--highlighted {
+        color: #ffffff !important;
+    }
+
+    .select2-search--dropdown .select2-search__field {
+        color: #ffffff !important;
+        background: #333333 !important;
+        border-color: rgba(255,255,255,.15) !important;
+    }
+
+    /* =========================================================
+       RECHERCHE
+    ========================================================== */
+
+    .search-wrapper {
+        position: relative;
+    }
+
+    .search-wrapper > i {
+        position: absolute;
+        left: 15px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: rgba(255,255,255,.65);
+        font-size: 20px;
+        z-index: 2;
+    }
+
+    .search-wrapper .form-control {
+        padding-left: 45px;
+    }
+
+    /* =========================================================
+       TABLE PRODUITS
+    ========================================================== */
+
+    .table-responsive {
+        border-radius: 12px;
+        overflow-x: auto;
+    }
+
+    .facture-table {
+        width: 100%;
+        margin-bottom: 0;
+        border-collapse: separate;
+        border-spacing: 0;
+    }
+
+    .facture-table thead th {
+        color: rgba(255,255,255,.72) !important;
+        background: rgba(255,255,255,.045);
+        border-bottom: 1px solid rgba(255,255,255,.10) !important;
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: .4px;
+        padding: 14px 10px;
+        white-space: nowrap;
+    }
+
+    .facture-table tbody td {
+        color: #ffffff !important;
+        border-top: 1px solid rgba(255,255,255,.06) !important;
+        padding: 13px 10px;
+        vertical-align: middle;
+        font-size: 13px;
+    }
+
+    .facture-table tbody tr {
+        transition: all .2s ease;
+    }
+
+    .facture-table tbody tr:hover {
+        background: rgba(255,255,255,.035);
+    }
+
+    .product-name {
+        font-weight: 600;
+        color: #ffffff !important;
+    }
+
+    .price-text {
+        color: #20c997 !important;
+        font-weight: 700;
+    }
+
+    .quantity-badge {
+        display: inline-block;
+        padding: 5px 9px;
+        border-radius: 8px;
+        background: rgba(13,110,253,.14);
+        color: #ffffff;
+        font-weight: 600;
+    }
+
+    .action-delete {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 34px;
+        height: 34px;
+        border-radius: 9px;
+        color: #ff6b6b;
+        background: rgba(220,53,69,.10);
+        text-decoration: none !important;
+        transition: all .2s ease;
+    }
+
+    .action-delete:hover {
+        color: #ffffff;
+        background: #dc3545;
+        transform: translateY(-2px);
+    }
+
+    /* =========================================================
+       PAGINATION
+    ========================================================== */
+
+    .pagination-wrapper {
+        margin-top: 20px;
+        padding: 14px;
+        border-radius: 12px;
+        background: rgba(255,255,255,.035);
+        border: 1px solid rgba(255,255,255,.07);
+    }
+
+    .page-info {
+        color: #ffffff;
+        font-weight: 600;
+        font-size: 13px;
+    }
+
+    .count-badge {
+        padding: 7px 11px;
+        border-radius: 20px;
+    }
+
+    /* =========================================================
+       TOTALS
+    ========================================================== */
+
+    .total-card {
+        position: relative;
+    }
+
+    .total-card .card-body {
+        padding: 25px;
+    }
+
+    .total-box {
+        padding: 18px;
+        border-radius: 13px;
+        background: rgba(255,255,255,.035);
+        border: 1px solid rgba(255,255,255,.07);
+        margin-bottom: 20px;
+    }
+
+    .total-line {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 8px 0;
+        color: #ffffff;
+        font-size: 14px;
+    }
+
+    .total-line .label {
+        color: rgba(255,255,255,.62);
+    }
+
+    .total-line .value {
+        font-weight: 700;
+        color: #ffffff;
+    }
+
+    .total-tva {
+        color: #ffc107 !important;
+    }
+
+    .total-ttc {
+        border-top: 1px solid rgba(255,255,255,.15);
+        margin-top: 7px;
+        padding-top: 14px;
+    }
+
+    .total-ttc .label {
+        color: #ffffff;
+        font-size: 16px;
+        font-weight: 700;
+    }
+
+    .total-ttc .value {
+        color: #20c997;
+        font-size: 20px;
+        font-weight: 800;
+    }
+
+    /* =========================================================
+       BOUTONS ACTION
+    ========================================================== */
+
+    .action-buttons {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .action-buttons .btn {
+        border-radius: 10px;
+        font-weight: 600;
+    }
+
+    .btn-print {
+        flex: 1;
+        min-width: 170px;
+    }
+
+    .btn-factures {
+        flex: 1;
+        min-width: 170px;
+    }
+
+    /* =========================================================
+       ETAT VIDE
+    ========================================================== */
+
+    .empty-card {
+        text-align: center;
+        padding: 40px 20px;
+    }
+
+    .empty-icon {
+        width: 65px;
+        height: 65px;
+        margin: 0 auto 15px;
+        border-radius: 17px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(13,110,253,.12);
+    }
+
+    .empty-icon i {
+        color: #ffffff;
+        font-size: 32px;
+    }
+
+    /* =========================================================
+       RESPONSIVE
+    ========================================================== */
+
+    @media (max-width: 767px) {
+
+        .facture-header h4 {
+            font-size: 18px;
+        }
+
+        .facture-table {
+            min-width: 650px;
+        }
+
+        .quantity-input {
+            max-width: 100%;
+        }
+
+        .action-buttons {
+            flex-direction: column;
+        }
+
+        .action-buttons .btn {
+            width: 100%;
+        }
+    }
+</style>
+
+
+<div class="content-wrapper facture-page">
+
+    <!-- =====================================================
+         EN-TÊTE DE LA FACTURE
+    ====================================================== -->
+
+    <div class="row">
+
+        <div class="col-12 grid-margin stretch-card">
+
+            <div class="card facture-header">
+
+                <div class="card-body">
+
+                    <div class="row align-items-center">
+
+                        <div class="col-md-8">
+
+                            <h4>
+                                <i class="mdi mdi-file-document-outline"></i>
+                                Gestion de la facture
+                            </h4>
+
+                            <p>
+                                Ajoutez les produits et gérez le contenu de cette facture.
+                            </p>
+
+                        </div>
+
+                        <div class="col-md-4 text-md-right mt-3 mt-md-0">
+
+                            <span class="facture-number">
+
+                                <i class="mdi mdi-receipt-text-outline mr-2"></i>
+
+                                Facture N° {{ sel_facture.id }}
+
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
         </div>
-      </div>
+
     </div>
-  </div>
+
+
+    <!-- =====================================================
+         AJOUT PRODUIT + INFORMATIONS FACTURE
+    ====================================================== -->
+
+    <div class="row">
+
+        <!-- AJOUT PRODUIT -->
+
+        <div class="col-lg-6 grid-margin stretch-card">
+
+            <div class="card">
+
+                <div class="card-body">
+
+                    <h4 class="section-title">
+
+                        <i class="mdi mdi-cart-plus"></i>
+
+                        Ajouter un produit
+
+                    </h4>
+
+                    <p class="section-description">
+                        Sélectionnez un produit puis indiquez la quantité.
+                    </p>
+
+                    <form
+                        method="post"
+                        action="{% url 'addDetailFacture' %}"
+                        autocomplete="off"
+                    >
+
+                        {% csrf_token %}
+
+                        <!-- Produit -->
+
+                        <div class="form-group">
+
+                            <label class="form-label">
+                                Produit
+                            </label>
+
+                            <select
+                                class="js-example-basic-single"
+                                style="width:100%"
+                                name="produit"
+                                required
+                            >
+
+                                <option value="">
+                                    ------ Sélectionner le produit ------
+                                </option>
+
+                                {% for p in liste_produit %}
+
+                                <option value="{{ p.id }}">
+                                    {{ p.nom }}
+                                </option>
+
+                                {% endfor %}
+
+                            </select>
+
+                        </div>
+
+
+                        <!-- Facture -->
+
+                        <input
+                            type="hidden"
+                            name="facture"
+                            value="{{ sel_facture.id }}"
+                        >
+
+
+                        <!-- Quantité -->
+
+                        <div class="form-group">
+
+                            <label class="form-label">
+                                Quantité
+                            </label>
+
+                            <input
+                                type="number"
+                                required
+                                min="1"
+                                step="1"
+                                class="form-control quantity-input"
+                                name="qte"
+                                id="exampleInputUsername1"
+                                placeholder="Ex. 2"
+                            >
+
+                        </div>
+
+
+                        <!-- Bouton -->
+
+                        <button
+                            type="submit"
+                            class="btn btn-primary btn-rounded btn-valider"
+                        >
+
+                            <i class="mdi mdi-plus-circle-outline mr-1"></i>
+
+                            Ajouter à la facture
+
+                        </button>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- INFORMATIONS FACTURE -->
+
+        <div class="col-lg-6 grid-margin stretch-card">
+
+            <div class="card">
+
+                <div class="card-body">
+
+                    <h4 class="section-title">
+
+                        <i class="mdi mdi-information-outline"></i>
+
+                        Informations facture
+
+                    </h4>
+
+                    <div class="total-box">
+
+                        <div class="total-line">
+
+                            <span class="label">
+                                Numéro
+                            </span>
+
+                            <span class="value">
+                                #{{ sel_facture.id }}
+                            </span>
+
+                        </div>
+
+                        <div class="total-line">
+
+                            <span class="label">
+                                Date de création
+                            </span>
+
+                            <span class="value">
+                                {{ sel_facture.createdAt }}
+                            </span>
+
+                        </div>
+
+                        <div class="total-line">
+
+                            <span class="label">
+                                Statut
+                            </span>
+
+                            <span class="value">
+
+                                {% if sel_facture.imprimer %}
+
+                                    <span class="badge badge-success">
+                                        <i class="mdi mdi-check-circle mr-1"></i>
+                                        Imprimée
+                                    </span>
+
+                                {% else %}
+
+                                    <span class="badge badge-warning">
+                                        <i class="mdi mdi-pencil-circle mr-1"></i>
+                                        En cours
+                                    </span>
+
+                                {% endif %}
+
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- Recherche -->
+
+                    <h6 class="form-label">
+                        Rechercher dans les produits
+                    </h6>
+
+                    <form method="post" autocomplete="off">
+
+                        {% csrf_token %}
+
+                        <div class="search-wrapper">
+
+                            <i class="mdi mdi-magnify"></i>
+
+                            <input
+                                type="text"
+                                class="form-control"
+                                name="rech"
+                                id="searchFacture"
+                                placeholder="Rechercher..."
+                            >
+
+                        </div>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    {% if list_facture %}
+
+    <!-- =====================================================
+         PRODUITS DE LA FACTURE
+    ====================================================== -->
+
+    <div class="row">
+
+        <div class="col-lg-7 grid-margin stretch-card">
+
+            <div class="card">
+
+                <div class="card-body">
+
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+
+                        <div>
+
+                            <h4 class="section-title mb-1">
+
+                                <i class="mdi mdi-format-list-bulleted"></i>
+
+                                Produits de la facture
+
+                            </h4>
+
+                            <span class="section-description">
+                                Facture #{{ sel_facture.id }}
+                            </span>
+
+                        </div>
+
+                        <span class="badge badge-info count-badge">
+
+                            {{ compte }} produit(s)
+
+                        </span>
+
+                    </div>
+
+
+                    <!-- TABLE -->
+
+                    <div class="table-responsive">
+
+                        <table class="table facture-table">
+
+                            <thead>
+
+                                <tr>
+
+                                    <th>Produit</th>
+
+                                    <th>Prix</th>
+
+                                    <th>Quantité</th>
+
+                                    <th>Total</th>
+
+                                    {% if sel_facture.imprimer == False %}
+                                    <th class="text-center">
+                                        Actions
+                                    </th>
+                                    {% endif %}
+
+                                </tr>
+
+                            </thead>
+
+                            <tbody>
+
+                                {% for f in list_facture %}
+
+                                <tr>
+
+                                    <td class="product-name">
+                                        {{ f.produit }}
+                                    </td>
+
+                                    <td class="price-text">
+                                        {{ f.pu }} Fc
+                                    </td>
+
+                                    <td>
+
+                                        <span class="quantity-badge">
+                                            {{ f.qte }}
+                                        </span>
+
+                                    </td>
+
+                                    <td class="price-text">
+                                        {{ f.total }} Fc
+                                    </td>
+
+
+                                    {% if sel_facture.imprimer == False %}
+
+                                    <td class="text-center">
+
+                                        <a
+                                            href="{% url 'deletedetailFacture' f.id %}"
+                                            onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce produit de la facture ?')"
+                                            class="action-delete"
+                                            title="Supprimer"
+                                        >
+
+                                            <i class="mdi mdi-delete-outline"></i>
+
+                                        </a>
+
+                                    </td>
+
+                                    {% endif %}
+
+                                </tr>
+
+                                {% endfor %}
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+
+                    <!-- =================================================
+                         PAGINATION
+                    ================================================== -->
+
+                    <div class="pagination-wrapper">
+
+                        <div class="row align-items-center">
+
+                            <div class="col-md-4">
+
+                                {% if list_facture.has_previous %}
+
+                                <a
+                                    href="?page=1"
+                                    class="btn btn-outline-light btn-sm btn-rounded"
+                                >
+                                    <i class="mdi mdi-page-first"></i>
+                                </a>
+
+                                <a
+                                    href="?page={{ list_facture.previous_page_number }}"
+                                    class="btn btn-info btn-sm btn-rounded"
+                                >
+                                    <i class="mdi mdi-chevron-left"></i>
+                                    Précédent
+                                </a>
+
+                                {% endif %}
+
+                            </div>
+
+
+                            <div class="col-md-4 text-center my-2 my-md-0">
+
+                                <span class="page-info">
+
+                                    Page {{ list_facture.number }}
+                                    sur
+                                    {{ list_facture.paginator.num_pages }}
+
+                                </span>
+
+                            </div>
+
+
+                            <div class="col-md-4 text-md-right">
+
+                                {% if list_facture.has_next %}
+
+                                <a
+                                    href="?page={{ list_facture.next_page_number }}"
+                                    class="btn btn-info btn-sm btn-rounded"
+                                >
+
+                                    Suivant
+                                    <i class="mdi mdi-chevron-right"></i>
+
+                                </a>
+
+                                <a
+                                    href="?page={{ list_facture.paginator.num_pages }}"
+                                    class="btn btn-outline-light btn-sm btn-rounded"
+                                >
+
+                                    <i class="mdi mdi-page-last"></i>
+
+                                </a>
+
+                                {% endif %}
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- =====================================================
+             TOTAL FACTURE
+        ====================================================== -->
+
+        <div class="col-lg-5 grid-margin stretch-card">
+
+            <div class="card total-card">
+
+                <div class="card-body">
+
+                    <h4 class="section-title">
+
+                        <i class="mdi mdi-calculator-variant-outline"></i>
+
+                        Récapitulatif
+
+                    </h4>
+
+
+                    <div class="total-box">
+
+                        <!-- TOTAL HT -->
+
+                        <div class="total-line">
+
+                            <span class="label">
+                                Total HT
+                            </span>
+
+                            <span class="value">
+                                {{ total_ht }} Fc
+                            </span>
+
+                        </div>
+
+
+                        <!-- TVA -->
+
+                        <div class="total-line">
+
+                            <span class="label">
+                                TVA (16 %)
+                            </span>
+
+                            <span class="value total-tva">
+                                {{ total_tva }} Fc
+                            </span>
+
+                        </div>
+
+
+                        <!-- TTC -->
+
+                        <div class="total-line total-ttc">
+
+                            <span class="label">
+                                TOTAL TTC
+                            </span>
+
+                            <span class="value">
+                                {{ sommefac }} Fc
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- ACTIONS -->
+
+                    <div class="action-buttons">
+
+                        <a
+                            href="{% url 'print_facture' sel_facture.id %}"
+                            class="btn btn-primary btn-rounded btn-print"
+                        >
+
+                            <i class="mdi mdi-printer-outline mr-1"></i>
+
+                            Imprimer la facture
+
+                        </a>
+
+
+                        <a
+                            href="{% url 'facture' %}"
+                            class="btn btn-outline-light btn-rounded btn-factures"
+                        >
+
+                            <i class="mdi mdi-file-document-multiple-outline mr-1"></i>
+
+                            Mes factures
+
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    {% else %}
+
+    <!-- =====================================================
+         AUCUN PRODUIT
+    ====================================================== -->
+
+    <div class="row">
+
+        <div class="col-12">
+
+            <div class="card empty-card">
+
+                <div class="empty-icon">
+
+                    <i class="mdi mdi-cart-off"></i>
+
+                </div>
+
+                <h4 style="color:#ffffff;">
+                    Aucun produit dans cette facture
+                </h4>
+
+                <p style="color:rgba(255,255,255,.55);">
+                    Commencez par ajouter un produit à la facture.
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    {% endif %}
+
+</div>
 
 {% endblock content %}

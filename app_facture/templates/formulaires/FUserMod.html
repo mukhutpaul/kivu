@@ -2,91 +2,493 @@
 {% load static %}
 
 {% block content %}
+
+<!-- SweetAlert2 -->
+
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<div class="col-12 grid-margin stretch-card">
-    <div class="card">
-      <div class="card-body">
-        <h4 class="card-title">Modification Utilisateur {{user}}</h4>
-        <p class="card-description">Information </p>
-        <form class="forms-sample" method="post" action="{% url 'updateUser' user.id %}">
-            {% csrf_token %}
-        <div class="row">
-            <div class="col-6">
-                    <div class="form-group">
-                        <label>Profile</label>
-                        <select class="js-example-basic-single" style="width:100%" name="profile" required>
 
-                          <option value="{% if user.profile %} {{user.profile.id}} {% endif %}">{{user.profile}}</option>
+<div class="container-fluid">
 
-                          {% if user %}
+<div class="row justify-content-center">
 
-                          {% else %}
-                          <option value="">--------------</option>
-                          {% endif %}
-                          
-                          {% for p in pro %}
-                          <option value="{{user.profile.id}}">{{user.profile.name}}</option>
-                          <option value="{{p.id}}">{{p.name}}</option>
-                          {% endfor %}
-                        </select>
-                   </div>
+    <div class="col-xl-10 col-lg-11 col-md-12">
 
-                   <div class="form-group">
-                    <label for="exampleInputCity1">Nom utilisateur</label>
-                    <input type="text"  required value="{{user.username}}" style="color:white" class="form-control" id="exampleInputCity1" placeholder="username" name="username">
-                  </div>
-                  {% comment %} {% if user %} {% endcomment %}
-                  {% comment %} {% else %} {% endcomment %}
-                   {% comment %} <div class="form-group">
-                    <label for="exampleInputCity1">Mot de passse</label>
-                    <input type="text"  style="color:white" class="form-control" id="exampleInputCity1" placeholder="Mot de passe" name="password">
-                  </div> {% endcomment %}
-                  {% comment %} {% endif %} {% endcomment %}
-            </div>
+        <div class="card shadow-sm">
 
-            <div class="col-6">
-                <div class="form-group">
-                    <label for="exampleInputCity1">E-mail</label>
-                    <input type="email" required value="{{user.email}}"  style="color:white" class="form-control" id="exampleInputCity1" placeholder="E-mail" name="email">
+            <!-- =========================
+                 HEADER
+            ========================== -->
+            <div class="card-body border-bottom">
+
+                <div class="d-flex align-items-center justify-content-between flex-wrap">
+
+                    <div class="d-flex align-items-center">
+
+                        <div
+                            class="d-flex align-items-center justify-content-center mr-3"
+                            style="
+                                width:52px;
+                                height:52px;
+                                border-radius:12px;
+                                background:rgba(0,123,255,.12);
+                            "
+                        >
+                            <i
+                                class="mdi mdi-account-edit text-primary"
+                                style="font-size:28px;"
+                            ></i>
+                        </div>
+
+                        <div>
+
+                            <h4 class="card-title mb-1">
+                                Modifier l'utilisateur
+                            </h4>
+
+                            <p class="text-muted mb-0">
+                                Modification des informations du compte
+                                <strong>{{ user.username }}</strong>
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                    <!-- Badge utilisateur -->
+                    <div class="mt-2 mt-md-0">
+
+                        {% if user.is_active %}
+
+                            <span class="badge badge-success p-2">
+                                <i class="mdi mdi-circle mr-1"
+                                   style="font-size:7px;"></i>
+                                Compte actif
+                            </span>
+
+                        {% else %}
+
+                            <span class="badge badge-danger p-2">
+                                <i class="mdi mdi-circle mr-1"
+                                   style="font-size:7px;"></i>
+                                Compte inactif
+                            </span>
+
+                        {% endif %}
+
+                    </div>
+
                 </div>
 
-                <div class="form-group">
-                    <label for="exampleInputCity1">Noms</label>
-                    <input type="text" required value="{{user.noms}}" style="color:white" class="form-control" id="exampleInputCity1" placeholder="noms" name="noms">
-                  </div>
-                   
-               {% if msg %}
-                    <script>
-                          Swal.fire({
-                                icon: "error",
-                                title: "Erreur",
-                                text: ('{{msg}}') ,
-                              });   
-                              
-                              
-                    </script>
-               <div class="form-group">
-                <label class="badge badge-danger">{{msg}}</label>
-               </div>
-              {% elif msok  %}
-              
-              <script>
-                  Swal.fire({
-                    icon: "success",
-                    title: "Erreur",
-                    text: ('{{msok}}'),
-                }); 
-                </script>
-                <label class="badge badge-danger">Opération réussie</label>
-              {% endif %}
             </div>
+
+
+            <!-- =========================
+                 FORMULAIRE
+            ========================== -->
+            <div class="card-body">
+
+                <form
+                    method="post"
+                    action="{% url 'updateUser' user.id %}"
+                    autocomplete="off"
+                >
+
+                    {% csrf_token %}
+
+
+                    <!-- =========================
+                         INFORMATIONS DU COMPTE
+                    ========================== -->
+
+                    <div class="mb-4">
+
+                        <div class="d-flex align-items-center mb-3">
+
+                            <i
+                                class="mdi mdi-shield-account text-primary mr-2"
+                                style="font-size:22px;"
+                            ></i>
+
+                            <h5 class="mb-0">
+                                Informations du compte
+                            </h5>
+
+                        </div>
+
+
+                        <div class="row">
+
+                            <!-- PROFIL -->
+                            <div class="col-md-6">
+
+                                <div class="form-group">
+
+                                    <label for="profile">
+                                        Profil
+                                        <span class="text-danger">*</span>
+                                    </label>
+
+                                    <div class="input-group">
+
+                                        <div class="input-group-prepend">
+
+                                            <span class="input-group-text">
+                                                <i class="mdi mdi-shield-account"></i>
+                                            </span>
+
+                                        </div>
+
+                                        <select
+                                            id="profile"
+                                            class="form-control"
+                                            name="profile"
+                                            required
+                                        >
+
+                                            {% if user.profile %}
+
+                                                <option value="{{ user.profile.id }}">
+                                                    {{ user.profile.name }}
+                                                </option>
+
+                                            {% else %}
+
+                                                <option value="">
+                                                    Sélectionner un profil
+                                                </option>
+
+                                            {% endif %}
+
+
+                                            {% for p in pro %}
+
+                                                {% if not user.profile or p.id != user.profile.id %}
+
+                                                    <option value="{{ p.id }}">
+                                                        {{ p.name }}
+                                                    </option>
+
+                                                {% endif %}
+
+                                            {% endfor %}
+
+                                        </select>
+
+                                    </div>
+
+                                    <small class="form-text text-muted">
+                                        Le profil détermine les permissions de l'utilisateur.
+                                    </small>
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- NOM UTILISATEUR -->
+                            <div class="col-md-6">
+
+                                <div class="form-group">
+
+                                    <label for="username">
+                                        Nom utilisateur
+                                        <span class="text-danger">*</span>
+                                    </label>
+
+                                    <div class="input-group">
+
+                                        <div class="input-group-prepend">
+
+                                            <span class="input-group-text">
+                                                <i class="mdi mdi-account"></i>
+                                            </span>
+
+                                        </div>
+
+                                        <input
+                                            type="text"
+                                            required
+                                            value="{{ user.username }}"
+                                            class="form-control"
+                                            id="username"
+                                            name="username"
+                                            placeholder="Nom utilisateur"
+                                        >
+
+                                    </div>
+
+                                    <small class="form-text text-muted">
+                                        Identifiant utilisé pour la connexion.
+                                    </small>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- =========================
+                         INFORMATIONS PERSONNELLES
+                    ========================== -->
+
+                    <div class="mb-4">
+
+                        <div class="d-flex align-items-center mb-3">
+
+                            <i
+                                class="mdi mdi-account-details text-primary mr-2"
+                                style="font-size:22px;"
+                            ></i>
+
+                            <h5 class="mb-0">
+                                Informations personnelles
+                            </h5>
+
+                        </div>
+
+
+                        <div class="row">
+
+                            <!-- NOMS -->
+                            <div class="col-md-6">
+
+                                <div class="form-group">
+
+                                    <label for="noms">
+                                        Noms complets
+                                        <span class="text-danger">*</span>
+                                    </label>
+
+                                    <div class="input-group">
+
+                                        <div class="input-group-prepend">
+
+                                            <span class="input-group-text">
+                                                <i class="mdi mdi-account-outline"></i>
+                                            </span>
+
+                                        </div>
+
+                                        <input
+                                            type="text"
+                                            required
+                                            value="{{ user.noms }}"
+                                            class="form-control"
+                                            id="noms"
+                                            name="noms"
+                                            placeholder="Noms complets"
+                                        >
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- EMAIL -->
+                            <div class="col-md-6">
+
+                                <div class="form-group">
+
+                                    <label for="email">
+                                        Adresse e-mail
+                                        <span class="text-danger">*</span>
+                                    </label>
+
+                                    <div class="input-group">
+
+                                        <div class="input-group-prepend">
+
+                                            <span class="input-group-text">
+                                                <i class="mdi mdi-email-outline"></i>
+                                            </span>
+
+                                        </div>
+
+                                        <input
+                                            type="email"
+                                            required
+                                            value="{{ user.email }}"
+                                            class="form-control"
+                                            id="email"
+                                            name="email"
+                                            placeholder="Adresse e-mail"
+                                        >
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- =========================
+                         INFORMATIONS MOT DE PASSE
+                    ========================== -->
+
+                    <div
+                        class="alert alert-info d-flex align-items-start"
+                        role="alert"
+                    >
+
+                        <i
+                            class="mdi mdi-information-outline mr-2"
+                            style="font-size:22px;"
+                        ></i>
+
+                        <div>
+
+                            <strong>Mot de passe</strong>
+
+                            <div class="mt-1">
+                                Le mot de passe actuel n'est pas modifié
+                                depuis cette page.
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- =========================
+                         MESSAGE ERREUR
+                    ========================== -->
+
+                    {% if msg %}
+
+                        <div
+                            class="alert alert-danger d-flex align-items-center"
+                            role="alert"
+                        >
+
+                            <i
+                                class="mdi mdi-alert-circle-outline mr-2"
+                                style="font-size:22px;"
+                            ></i>
+
+                            <div>
+                                {{ msg }}
+                            </div>
+
+                        </div>
+
+                        <script>
+
+                            document.addEventListener(
+                                "DOMContentLoaded",
+                                function () {
+
+                                    Swal.fire({
+                                        icon: "error",
+                                        title: "Erreur",
+                                        text: "{{ msg|escapejs }}",
+                                        confirmButtonText: "OK"
+                                    });
+
+                                }
+                            );
+
+                        </script>
+
+                    {% endif %}
+
+
+                    <!-- =========================
+                         MESSAGE SUCCÈS
+                    ========================== -->
+
+                    {% if msok %}
+
+                        <div
+                            class="alert alert-success d-flex align-items-center"
+                            role="alert"
+                        >
+
+                            <i
+                                class="mdi mdi-check-circle-outline mr-2"
+                                style="font-size:22px;"
+                            ></i>
+
+                            <div>
+                                {{ msok }}
+                            </div>
+
+                        </div>
+
+                        <script>
+
+                            document.addEventListener(
+                                "DOMContentLoaded",
+                                function () {
+
+                                    Swal.fire({
+                                        icon: "success",
+                                        title: "Modification réussie",
+                                        text: "{{ msok|escapejs }}",
+                                        confirmButtonText: "OK"
+                                    });
+
+                                }
+                            );
+
+                        </script>
+
+                    {% endif %}
+
+
+                    <hr class="my-4">
+
+
+                    <!-- =========================
+                         BOUTONS
+                    ========================== -->
+
+                    <div class="d-flex justify-content-between align-items-center flex-wrap">
+
+                        <a
+                            href="{% url 'users' %}"
+                            class="btn btn-light border mb-2 mb-md-0"
+                        >
+
+                            <i class="mdi mdi-arrow-left mr-1"></i>
+
+                            Retour
+
+                        </a>
+
+
+                        <button
+                            type="submit"
+                            class="btn btn-primary px-4 mb-2 mb-md-0"
+                        >
+
+                            <i class="mdi mdi-content-save-edit-outline mr-1"></i>
+
+                            Enregistrer les modifications
+
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </div>
+
         </div>
 
-          <button type="submit" class="btn btn-primary mr-2">Modifier</button>
-          <a class="btn btn-primary mr-2" style ="color:white" href="{% url 'users' %}">Retour</a>
-        </form>
-      </div>
     </div>
-  </div>
+
+</div>
+
+
+</div>
 
 {% endblock content %}

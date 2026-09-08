@@ -110,103 +110,84 @@
 
     <div class="row">
 
-
         <!-- STOCK TOTAL -->
-
-        <div class="col-md-4 grid-margin stretch-card">
-
+        <div class="col-xl-3 col-md-6 grid-margin stretch-card">
             <div class="card">
-
                 <div class="card-body">
-
                     <p class="text-muted mb-2">
-
                         <i class="mdi mdi-package-variant mr-1"></i>
-
                         Stock total
-
                     </p>
 
                     <h2 class="mb-0">
-
                         {{ total_stock|floatformat:2 }}
-
                     </h2>
 
+                    <small class="text-muted">
+                        unités disponibles
+                    </small>
                 </div>
-
             </div>
-
         </div>
 
+        <!-- VALEUR DU STOCK -->
+        <div class="col-xl-3 col-md-6 grid-margin stretch-card">
+            <div class="card">
+                <div class="card-body">
+                    <p class="text-muted mb-2">
+                        <i class="mdi mdi-cash-multiple mr-1"></i>
+                        Valeur du stock
+                    </p>
+
+                    <h2 class="mb-0 text-success">
+                        {{ valeur_stock|floatformat:2 }}
+                    </h2>
+
+                    <small class="text-muted">
+                        valeur d'achat
+                    </small>
+                </div>
+            </div>
+        </div>
 
         <!-- STOCK FAIBLE -->
-
-        <div class="col-md-4 grid-margin stretch-card">
-
+        <div class="col-xl-3 col-md-6 grid-margin stretch-card">
             <div class="card">
-
                 <div class="card-body">
-
                     <p class="text-muted mb-2">
-
                         <i class="mdi mdi-alert mr-1"></i>
-
                         Stock faible
-
                     </p>
 
                     <h2 class="mb-0 text-warning">
-
                         {{ produits_alerte }}
-
                     </h2>
 
                     <small class="text-muted">
-
                         produit(s)
-
                     </small>
-
                 </div>
-
             </div>
-
         </div>
 
-
-        <!-- PRODUITS PÉRIMÉS -->
-
-        <div class="col-md-4 grid-margin stretch-card">
-
+        <!-- CHIFFRE D'AFFAIRES -->
+        <div class="col-xl-3 col-md-6 grid-margin stretch-card">
             <div class="card">
-
                 <div class="card-body">
-
                     <p class="text-muted mb-2">
-
-                        <i class="mdi mdi-calendar-alert mr-1"></i>
-
-                        Produits périmés
-
+                        <i class="mdi mdi-chart-line mr-1"></i>
+                        Chiffre d'affaires
                     </p>
 
-                    <h2 class="mb-0 text-danger">
-
-                        {{ lots_perimes }}
-
+                    <h2 class="mb-0 text-primary">
+                        {{ chiffre_affaires|floatformat:2 }}
                     </h2>
 
                     <small class="text-muted">
-
-                        lot(s)
-
+                        ventes réalisées
                     </small>
-
                 </div>
-
             </div>
-
         </div>
 
     </div>
@@ -311,7 +292,7 @@
                                         name="rech"
                                         class="form-control stock-search-input"
                                         value="{{ rech }}"
-                                        placeholder="Rechercher un produit ou un appartement..."
+                                        placeholder="Rechercher un produit ou un lot..."
                                         autocomplete="off"
                                     >
 

@@ -1,90 +1,535 @@
+
 {% extends "base.html" %}
 {% load static %}
 
 {% block content %}
+
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<div class="col-12 grid-margin stretch-card">
-    <div class="card">
-      <div class="card-body">
-        <h4 class="card-title">Formulaire d'ajout des utilisateurs</h4>
-        <p class="card-description"> Information </p>
-        <form class="forms-sample" method="post" action="{% url 'addUser' %}">
-            {% csrf_token %}
-        <div class="row">
-            <div class="col-6">
-                    <div class="form-group">
-                        <label>Profile</label>
-                        <select class="js-example-basic-single" style="width:100%" name="profile" required>
-                          <option value="">--------------</option>
-                          {% if user %}
 
-                          {% else %}
-                          <option value="">--------------</option>
-                          {% endif %}
-                          
-                          {% for p in pro %}
-                          <option value="{{user.profile.id}}">{{user.profile.name}}</option>
-                          <option value="{{p.id}}">{{p.name}}</option>
-                          {% endfor %}
-                        </select>
-                   </div>
+<style>
+    /* =====================================================
+       COULEUR DU TEXTE DES ZONES DE SAISIE
+    ====================================================== */
 
-                   <div class="form-group">
-                    <label for="exampleInputCity1">Nom utilisateur</label>
-                    <input type="text"  style="color:white" required class="form-control" id="exampleInputCity1" placeholder="username" name="username">
-                  </div>
-                  {% comment %} {% if user %} {% endcomment %}
-                  {% comment %} {% else %} {% endcomment %}
-                   <div class="form-group">
-                    <label for="exampleInputCity1">Mot de passse</label>
-                    <input type="text"  style="color:white" required class="form-control" id="exampleInputCity1" placeholder="Mot de passe" name="password">
-                  </div>
-                  {% comment %} {% endif %} {% endcomment %}
-            </div>
+    .form-control {
+        color: #ffffff !important;
+    }
 
-            <div class="col-6">
-                <div class="form-group">
-                    <label for="exampleInputCity1">E-mail</label>
-                    <input type="email"   style="color:white" required class="form-control" id="exampleInputCity1" placeholder="E-mail" name="email">
+    /* Select */
+    select.form-control {
+        color: #ffffff !important;
+    }
+
+    /* Options du select */
+    select.form-control option {
+        color: #ffffff;
+        background-color: #2a2a2a;
+    }
+
+    /* Placeholder */
+    .form-control::placeholder {
+        color: rgba(255, 255, 255, 0.65) !important;
+        opacity: 1;
+    }
+
+    /* Texte lorsqu'un champ est focus */
+    .form-control:focus {
+        color: #ffffff !important;
+    }
+
+    /* Texte des labels */
+    label {
+        color: #ffffff;
+    }
+
+    /* Petits textes explicatifs */
+    .form-text {
+        color: rgba(255, 255, 255, 0.65) !important;
+    }
+
+    /* Texte dans les input-group */
+    .input-group-text {
+        color: #ffffff;
+    }
+</style>
+
+<div class="container-fluid">
+
+    <div class="row justify-content-center">
+
+        <div class="col-xl-10 col-lg-11 col-md-12">
+
+            <div class="card shadow-sm">
+
+                <!-- =========================
+                     HEADER
+                ========================== -->
+                <div class="card-body border-bottom">
+
+                    <div class="d-flex align-items-center justify-content-between flex-wrap">
+
+                        <div class="d-flex align-items-center">
+
+                            <div
+                                class="d-flex align-items-center justify-content-center mr-3"
+                                style="
+                                    width:52px;
+                                    height:52px;
+                                    border-radius:12px;
+                                    background:rgba(0,123,255,.12);
+                                "
+                            >
+                                <i
+                                    class="mdi mdi-account-plus text-primary"
+                                    style="font-size:28px;"
+                                ></i>
+                            </div>
+
+                            <div>
+                                <h4 class="card-title mb-1">
+                                    Ajouter un utilisateur
+                                </h4>
+
+                                <p class="text-muted mb-0">
+                                    Créez un nouveau compte utilisateur et attribuez-lui un profil.
+                                </p>
+                            </div>
+
+                        </div>
+
+                    </div>
+
                 </div>
 
-                <div class="form-group">
-                    <label for="exampleInputCity1">Noms</label>
-                    <input type="text"  style="color:white" required class="form-control" id="exampleInputCity1" placeholder="noms" name="noms">
-                  </div>
-                   
-               {% if msg %}
-                    <script>
-                          Swal.fire({
-                                icon: "error",
-                                title: "Erreur",
-                                text: ('{{msg}}') ,
-                              });   
-                              
-                              
-                    </script>
-               <div class="form-group">
-                <label class="badge badge-danger">{{msg}}</label>
-               </div>
-              {% elif msok  %}
-              
-              <script>
-                  Swal.fire({
-                    icon: "success",
-                    title: "Erreur",
-                    text: ('{{msok}}'),
-                }); 
-                </script>
-                <label class="badge badge-danger">Opération réussie</label>
-              {% endif %}
+
+                <!-- =========================
+                     FORMULAIRE
+                ========================== -->
+                <div class="card-body">
+
+                    <form
+                        method="post"
+                        action="{% url 'addUser' %}"
+                        autocomplete="off"
+                    >
+
+                        {% csrf_token %}
+
+
+                        <!-- =========================
+                             INFORMATIONS COMPTE
+                        ========================== -->
+
+                        <div class="mb-4">
+
+                            <div class="d-flex align-items-center mb-3">
+
+                                <i
+                                    class="mdi mdi-shield-account text-primary mr-2"
+                                    style="font-size:22px;"
+                                ></i>
+
+                                <h5 class="mb-0">
+                                    Informations du compte
+                                </h5>
+
+                            </div>
+
+                            <div class="row">
+
+                                <!-- PROFIL -->
+                                <div class="col-md-6">
+
+                                    <div class="form-group">
+
+                                        <label for="profile">
+                                            Profil
+                                            <span class="text-danger">*</span>
+                                        </label>
+
+                                        <div class="input-group">
+
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text">
+                                                    <i class="mdi mdi-shield-account"></i>
+                                                </span>
+                                            </div>
+
+                                            <select
+                                                id="profile"
+                                                class="form-control"
+                                                name="profile"
+                                                required
+                                            >
+
+                                                <option value="">
+                                                    Sélectionner un profil
+                                                </option>
+
+                                                {% for p in pro %}
+
+                                                    <option value="{{ p.id }}">
+                                                        {{ p.name }}
+                                                    </option>
+
+                                                {% endfor %}
+
+                                            </select>
+
+                                        </div>
+
+                                        <small class="form-text">
+                                            Détermine les permissions de l'utilisateur.
+                                        </small>
+
+                                    </div>
+
+                                </div>
+
+
+                                <!-- NOM UTILISATEUR -->
+                                <div class="col-md-6">
+
+                                    <div class="form-group">
+
+                                        <label for="username">
+                                            Nom utilisateur
+                                            <span class="text-danger">*</span>
+                                        </label>
+
+                                        <div class="input-group">
+
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text">
+                                                    <i class="mdi mdi-account"></i>
+                                                </span>
+                                            </div>
+
+                                            <input
+                                                type="text"
+                                                class="form-control"
+                                                id="username"
+                                                name="username"
+                                                placeholder="Ex : jdupont"
+                                                required
+                                            >
+
+                                        </div>
+
+                                        <small class="form-text">
+                                            Identifiant utilisé pour se connecter.
+                                        </small>
+
+                                    </div>
+
+                                </div>
+
+
+                                <!-- MOT DE PASSE -->
+                                <div class="col-md-6">
+
+                                    <div class="form-group">
+
+                                        <label for="password">
+                                            Mot de passe
+                                            <span class="text-danger">*</span>
+                                        </label>
+
+                                        <div class="input-group">
+
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text">
+                                                    <i class="mdi mdi-lock"></i>
+                                                </span>
+                                            </div>
+
+                                            <input
+                                                type="password"
+                                                class="form-control"
+                                                id="password"
+                                                name="password"
+                                                placeholder="Mot de passe"
+                                                required
+                                            >
+
+                                            <div class="input-group-append">
+
+                                                <button
+                                                    type="button"
+                                                    class="btn btn-outline-secondary"
+                                                    id="togglePassword"
+                                                    title="Afficher le mot de passe"
+                                                >
+                                                    <i
+                                                        class="mdi mdi-eye"
+                                                        id="passwordIcon"
+                                                    ></i>
+                                                </button>
+
+                                            </div>
+
+                                        </div>
+
+                                        <small class="form-text">
+                                            Utilisez un mot de passe suffisamment sécurisé.
+                                        </small>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- =========================
+                             INFORMATIONS PERSONNELLES
+                        ========================== -->
+
+                        <div class="mb-4">
+
+                            <div class="d-flex align-items-center mb-3">
+
+                                <i
+                                    class="mdi mdi-account-details text-primary mr-2"
+                                    style="font-size:22px;"
+                                ></i>
+
+                                <h5 class="mb-0">
+                                    Informations personnelles
+                                </h5>
+
+                            </div>
+
+                            <div class="row">
+
+                                <!-- NOMS -->
+                                <div class="col-md-6">
+
+                                    <div class="form-group">
+
+                                        <label for="noms">
+                                            Noms complets
+                                            <span class="text-danger">*</span>
+                                        </label>
+
+                                        <div class="input-group">
+
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text">
+                                                    <i class="mdi mdi-account-outline"></i>
+                                                </span>
+                                            </div>
+
+                                            <input
+                                                type="text"
+                                                class="form-control"
+                                                id="noms"
+                                                name="noms"
+                                                placeholder="Ex : Jean Paul Mukendi"
+                                                required
+                                            >
+
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+
+                                <!-- EMAIL -->
+                                <div class="col-md-6">
+
+                                    <div class="form-group">
+
+                                        <label for="email">
+                                            Adresse e-mail
+                                            <span class="text-danger">*</span>
+                                        </label>
+
+                                        <div class="input-group">
+
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text">
+                                                    <i class="mdi mdi-email-outline"></i>
+                                                </span>
+                                            </div>
+
+                                            <input
+                                                type="email"
+                                                class="form-control"
+                                                id="email"
+                                                name="email"
+                                                placeholder="Ex : utilisateur@email.com"
+                                                required
+                                            >
+
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- =========================
+                             MESSAGES
+                        ========================== -->
+
+                        {% if msg %}
+
+                            <div
+                                class="alert alert-danger d-flex align-items-center"
+                                role="alert"
+                            >
+
+                                <i
+                                    class="mdi mdi-alert-circle-outline mr-2"
+                                    style="font-size:22px;"
+                                ></i>
+
+                                <div>
+                                    {{ msg }}
+                                </div>
+
+                            </div>
+
+                            <script>
+                                document.addEventListener("DOMContentLoaded", function () {
+
+                                    Swal.fire({
+                                        icon: "error",
+                                        title: "Erreur",
+                                        text: "{{ msg|escapejs }}",
+                                        confirmButtonText: "OK"
+                                    });
+
+                                });
+                            </script>
+
+                        {% endif %}
+
+
+                        {% if msok %}
+
+                            <div
+                                class="alert alert-success d-flex align-items-center"
+                                role="alert"
+                            >
+
+                                <i
+                                    class="mdi mdi-check-circle-outline mr-2"
+                                    style="font-size:22px;"
+                                ></i>
+
+                                <div>
+                                    {{ msok }}
+                                </div>
+
+                            </div>
+
+                            <script>
+                                document.addEventListener("DOMContentLoaded", function () {
+
+                                    Swal.fire({
+                                        icon: "success",
+                                        title: "Succès",
+                                        text: "{{ msok|escapejs }}",
+                                        confirmButtonText: "OK"
+                                    });
+
+                                });
+                            </script>
+
+                        {% endif %}
+
+
+                        <hr class="my-4">
+
+
+                        <!-- =========================
+                             BOUTONS
+                        ========================== -->
+
+                        <div class="d-flex justify-content-between align-items-center flex-wrap">
+
+                            <a
+                                href="{% url 'users' %}"
+                                class="btn btn-light border mb-2 mb-md-0"
+                            >
+                                <i class="mdi mdi-arrow-left mr-1"></i>
+                                Retour
+                            </a>
+
+
+                            <button
+                                type="submit"
+                                class="btn btn-primary px-4 mb-2 mb-md-0"
+                            >
+                                <i class="mdi mdi-content-save-outline mr-1"></i>
+                                Enregistrer l'utilisateur
+                            </button>
+
+                        </div>
+
+                    </form>
+
+                </div>
+
             </div>
+
         </div>
 
-          <button type="submit" class="btn btn-primary mr-2">Enregistrer</button>
-          <a class="btn btn-primary mr-2" style ="color:white" href="{% url 'users' %}">Retour</a>
-        </form>
-      </div>
     </div>
-  </div>
+
+</div>
+
+
+<!-- =========================
+     AFFICHER / MASQUER PASSWORD
+========================== -->
+
+<script>
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    const togglePassword = document.getElementById("togglePassword");
+    const password = document.getElementById("password");
+    const passwordIcon = document.getElementById("passwordIcon");
+
+    if (togglePassword && password) {
+
+        togglePassword.addEventListener("click", function () {
+
+            if (password.type === "password") {
+
+                password.type = "text";
+
+                passwordIcon.classList.remove("mdi-eye");
+                passwordIcon.classList.add("mdi-eye-off");
+
+                togglePassword.title = "Masquer le mot de passe";
+
+            } else {
+
+                password.type = "password";
+
+                passwordIcon.classList.remove("mdi-eye-off");
+                passwordIcon.classList.add("mdi-eye");
+
+                togglePassword.title = "Afficher le mot de passe";
+            }
+
+        });
+
+    }
+
+});
+
+</script>
 
 {% endblock content %}

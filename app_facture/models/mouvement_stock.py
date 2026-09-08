@@ -42,17 +42,17 @@ class MouvementStock(models.Model):
     )
 
     quantite = models.DecimalField(
-        max_digits=10,
+        max_digits=20,
         decimal_places=2
     )
 
     stock_avant = models.DecimalField(
-        max_digits=10,
+        max_digits=20,
         decimal_places=2
     )
 
     stock_apres = models.DecimalField(
-        max_digits=10,
+        max_digits=20,
         decimal_places=2
     )
 

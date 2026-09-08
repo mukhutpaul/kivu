@@ -37,7 +37,7 @@
       <!-- partial:partials/_sidebar.html -->
       <nav class="sidebar sidebar-offcanvas" id="sidebar">
         <div class="sidebar-brand-wrapper d-none d-lg-flex align-items-center justify-content-center fixed-top">
-          <img class="img-xs rounded-circle" src="{% static 'images/logo1.jpg' %}" alt="" />
+          <img class="img-xs rounded-circle" src="{% static 'images/tanganika.jpg' %}" alt="" />
           <a class="sidebar-brand brand-logo-mini"></a>
         </div>
 
@@ -184,89 +184,87 @@
             </li>
           {% endif %}
 
-          <!-- Rapports -->
-          {% if request.user.profile.id == 8 %}
-            <li class="nav-item menu-items {{ lrappo }}">
-              <a class="nav-link" data-toggle="collapse" href="#rapport" aria-expanded="false" aria-controls="rapport">
-                <span class="menu-icon"><i class="mdi mdi-chart-bar"></i></span>
+          <!-- ====================================================== -->
+          <!-- RAPPORTS -->
+          <!-- ====================================================== -->
 
-                <span class="menu-title">Rapports</span>
+          {% if request.user.profile.id == 1 or request.user.profile.id == 2 or request.user.is_staff %}
+            <li class="nav-item nav-category">
+              <span class="nav-link">Rapports</span>
+            </li>
 
-                <i class="menu-arrow"></i>
+            <!-- Rapport des recettes des facturiers -->
+            <li class="nav-item menu-items {{ lrapport }}">
+              <a class="nav-link" href="{% url 'recettes_facturiers' %}">
+                <span class="menu-icon"><i class="mdi mdi-cash-multiple"></i></span>
+
+                <span class="menu-title">Recettes des facturiers</span>
               </a>
+            </li>
 
-              <div class="collapse" id="rapport">
-                <ul class="nav flex-column sub-menu">
-                  <li class="nav-item">
-                    <a class="nav-link" href="{% url 'recettes_facturiers' %}">
-                      <i class="mdi mdi-cash-multiple mr-2"></i>
-                      Recettes des facturiers
-                    </a>
-                  </li>
-                </ul>
-              </div>
+            <!-- Rapport mensuel ventes + TVA -->
+            <li class="nav-item menu-items {{ lrapport_tva }}">
+              <a class="nav-link" href="{% url 'rapport_mensuel_tva' %}">
+                <span class="menu-icon"><i class="mdi mdi-file-chart"></i></span>
+
+                <span class="menu-title">Rapport ventes & TVA</span>
+              </a>
             </li>
           {% endif %}
 
-          <!-- Stock -->
+          <!-- ====================================================== -->
+          <!-- GESTION DU STOCK -->
+          <!-- ====================================================== -->
+
           {% if request.user.profile.id == 1 or request.user.profile.id == 2 or request.user.profile.id == 4 or request.user.is_staff %}
+            <!-- Titre de la section -->
+            <li class="nav-item nav-category">
+              <span class="nav-link">Gestion du stock</span>
+            </li>
+
+            <!-- Stock général -->
             <li class="nav-item menu-items {{ lstock }}">
-              <a class="nav-link" data-toggle="collapse" href="#stock-menu" aria-expanded="false" aria-controls="stock-menu">
+              <a class="nav-link" href="{% url 'stock' %}">
                 <span class="menu-icon"><i class="mdi mdi-warehouse"></i></span>
 
-                <span class="menu-title">Stock</span>
-
-                <i class="menu-arrow"></i>
+                <span class="menu-title">Stock général</span>
               </a>
+            </li>
 
-              <div class="collapse" id="stock-menu">
-                <ul class="nav flex-column sub-menu">
-                  <!-- Stock général -->
-                  <li class="nav-item">
-                    <a class="nav-link" href="{% url 'stock' %}">
-                      <i class="mdi mdi-view-dashboard-outline mr-2"></i>
+            <!-- Produits proches de la péremption -->
+            <li class="nav-item menu-items {{ lperemption }}">
+              <a class="nav-link" href="{% url 'produits_peremption' %}">
+                <span class="menu-icon"><i class="mdi mdi-calendar-alert"></i></span>
 
-                      Stock général
-                    </a>
-                  </li>
+                <span class="menu-title">Péremption</span>
+              </a>
+            </li>
 
-                  <!-- Produits proches de la péremption -->
-                  <li class="nav-item">
-                    <a class="nav-link" href="{% url 'produits_peremption' %}">
-                      <i class="mdi mdi-calendar-alert mr-2 text-warning"></i>
+            <!-- Entrée de stock -->
+            <li class="nav-item menu-items {{ lentree }}">
+              <a class="nav-link" href="{% url 'entree_stock' %}">
+                <span class="menu-icon"><i class="mdi mdi-plus-circle-outline"></i></span>
 
-                      Péremption
-                    </a>
-                  </li>
+                <span class="menu-title">Entrée de stock</span>
+              </a>
+            </li>
 
-                  <!-- Entrée -->
-                  <li class="nav-item">
-                    <a class="nav-link" href="{% url 'entree_stock' %}">
-                      <i class="mdi mdi-plus-circle-outline mr-2 text-success"></i>
+            <!-- Sortie manuelle -->
+            <li class="nav-item menu-items {{ lsortie }}">
+              <a class="nav-link" href="{% url 'sortie_stock' %}">
+                <span class="menu-icon"><i class="mdi mdi-minus-circle-outline"></i></span>
 
-                      Entrée de stock
-                    </a>
-                  </li>
+                <span class="menu-title">Sortie manuelle</span>
+              </a>
+            </li>
 
-                  <!-- Sortie manuelle -->
-                  <li class="nav-item">
-                    <a class="nav-link" href="{% url 'sortie_stock' %}">
-                      <i class="mdi mdi-minus-circle-outline mr-2 text-danger"></i>
+            <!-- Mouvements de stock -->
+            <li class="nav-item menu-items {{ lmouvements }}">
+              <a class="nav-link" href="{% url 'mouvements_stock' %}">
+                <span class="menu-icon"><i class="mdi mdi-swap-vertical"></i></span>
 
-                      Sortie manuelle
-                    </a>
-                  </li>
-
-                  <!-- Mouvements -->
-                  <li class="nav-item">
-                    <a class="nav-link" href="{% url 'mouvements_stock' %}">
-                      <i class="mdi mdi-swap-vertical mr-2 text-info"></i>
-
-                      Mouvements de stock
-                    </a>
-                  </li>
-                </ul>
-              </div>
+                <span class="menu-title">Mouvements de stock</span>
+              </a>
             </li>
           {% endif %}
 

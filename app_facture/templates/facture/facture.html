@@ -1,73 +1,827 @@
+{% load static %}
+
 <!DOCTYPE html>
-<html lang="en">
+
+<html lang="fr">
+
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ngya-reçu</title>
 
-    <style>
-        @page {
-            size: a7 portrait;
-        }
-    </style>
+<meta charset="UTF-8">
+
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Tanganika Future - Facture</title>
+
+
+<style>
+
+
+    /* =====================================================
+       FORMAT TICKET
+    ===================================================== */
+
+    @page {
+        size: A7 portrait;
+        margin: 4mm;
+    }
+
+
+    * {
+        box-sizing: border-box;
+    }
+
+
+    body {
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 7px;
+        margin: 0;
+        padding: 0;
+        color: #111;
+        background: #fff;
+    }
+
+
+    .ticket {
+        width: 100%;
+        margin: 0 auto;
+    }
+
+
+    .center {
+        text-align: center;
+    }
+
+
+    /* =====================================================
+       EN-TÊTE
+    ===================================================== */
+
+    .entete {
+        text-align: center;
+        line-height: 1.15;
+    }
+
+
+    .logo {
+        width: 28px;
+        height: 28px;
+        object-fit: contain;
+        display: block;
+        margin: 0 auto 2px auto;
+    }
+
+
+    .titre {
+        font-size: 10px;
+        font-weight: bold;
+        letter-spacing: 0.3px;
+        margin-top: 1px;
+    }
+
+
+    .sous-titre {
+        font-size: 7px;
+        font-weight: bold;
+        margin-top: 1px;
+        letter-spacing: 0.4px;
+    }
+
+
+    /* =====================================================
+       SEPARATEURS
+    ===================================================== */
+
+    .separator {
+        border-top: 1px dashed #222;
+        margin: 4px 0;
+        height: 1px;
+    }
+
+
+    .separator-double {
+        border-top: 1.5px solid #111;
+        margin: 4px 0;
+        height: 1px;
+    }
+
+
+    /* =====================================================
+       INFORMATIONS FACTURE
+    ===================================================== */
+
+    .infos-facture {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 6.5px;
+        margin-bottom: 2px;
+    }
+
+
+    .infos-facture td {
+        padding: 1px 0;
+        vertical-align: top;
+    }
+
+
+    .infos-facture .label {
+        font-weight: bold;
+    }
+
+
+    .infos-facture .right {
+        text-align: right;
+    }
+
+
+    /* =====================================================
+       TABLE PRODUITS
+    ===================================================== */
+
+    .produits {
+        width: 100%;
+        border-collapse: collapse;
+        table-layout: fixed;
+        font-size: 6.5px;
+    }
+
+
+    .produits th {
+        font-weight: bold;
+        border-bottom: 1px solid #111;
+        padding: 2px 1px;
+        text-align: left;
+    }
+
+
+    .produits td {
+        padding: 2px 1px;
+        vertical-align: top;
+        border-bottom: 1px dotted #bbb;
+        word-wrap: break-word;
+    }
+
+
+    /* =====================================================
+       LARGEUR COLONNES
+    ===================================================== */
+
+    .produits th:nth-child(1),
+    .produits td:nth-child(1) {
+
+        width: 43%;
+        text-align: left;
+
+    }
+
+
+    .produits th:nth-child(2),
+    .produits td:nth-child(2) {
+
+        width: 21%;
+        text-align: right;
+
+    }
+
+
+    .produits th:nth-child(3),
+    .produits td:nth-child(3) {
+
+        width: 13%;
+        text-align: center;
+
+    }
+
+
+    .produits th:nth-child(4),
+    .produits td:nth-child(4) {
+
+        width: 23%;
+        text-align: right;
+
+    }
+
+
+    .produit-nom {
+        font-weight: 500;
+    }
+
+
+    .prix {
+        white-space: nowrap;
+    }
+
+
+    /* =====================================================
+       TOTAUX
+    ===================================================== */
+
+    .totaux {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 3px;
+        font-size: 7px;
+    }
+
+
+    .totaux td {
+        padding: 1.5px 0;
+    }
+
+
+    .totaux .libelle {
+        text-align: left;
+    }
+
+
+    .totaux .montant {
+        text-align: right;
+        font-weight: bold;
+        white-space: nowrap;
+    }
+
+
+    .total-ttc {
+        border-top: 1px solid #111;
+        border-bottom: 1px solid #111;
+        font-size: 9px;
+        font-weight: bold;
+        padding-top: 3px !important;
+        padding-bottom: 3px !important;
+    }
+
+
+    /* =====================================================
+       OPERATEUR + QR CODE
+    ===================================================== */
+
+    .bas-ticket {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 5px;
+    }
+
+
+    .bas-ticket td {
+        vertical-align: middle;
+    }
+
+
+    .operateur {
+        font-size: 6.5px;
+        line-height: 1.35;
+    }
+
+
+    .operateur-nom {
+        font-size: 7px;
+        font-weight: bold;
+    }
+
+
+    .qrcode-container {
+        text-align: right;
+    }
+
+
+    .qrcode {
+        width: 30px;
+        height: 30px;
+        display: block;
+        margin-left: auto;
+    }
+
+
+    /* =====================================================
+       FOOTER / CONTACTS
+    ===================================================== */
+
+    .footer {
+        width: 100%;
+        text-align: center;
+
+        margin-top: 5px;
+        padding-top: 4px;
+
+        font-size: 5.5px;
+        line-height: 1.3;
+    }
+
+
+    /*
+     * UNE SEULE BARRE SEPARATRICE
+     * juste avant le footer
+     */
+
+    .footer-separator {
+        border-top: 1px solid #111;
+        margin: 5px 0 0 0;
+        height: 1px;
+    }
+
+
+    .footer-company {
+        font-size: 6.5px;
+        font-weight: bold;
+
+        letter-spacing: 0.3px;
+
+        margin-bottom: 2px;
+    }
+
+
+    .footer-contact {
+        font-size: 5.5px;
+        margin-top: 1px;
+    }
+
+
+    .footer-contact strong {
+        font-weight: bold;
+    }
+
+
+    .footer-address {
+        margin-top: 2px;
+
+        padding-top: 2px;
+
+        font-size: 5.5px;
+    }
+
+
+    .footer-thanks {
+        margin-top: 3px;
+
+        font-size: 6.5px;
+        font-weight: bold;
+    }
+
+
+    .footer-legal {
+        margin-top: 1px;
+
+        font-size: 5px;
+
+        line-height: 1.2;
+    }
+
+
+</style>
+
+
 </head>
-<body>
-    
-    <div style="margin: auto;">
-    <CENTER>
-        <br> 
-        KIVU SUPERMARKET<br>
-        RCCM : CD/GOM/RCCM/21-B-00036<br/>
-        RCCM : CD/GOM/RCCM/21-B-00036<br/>
-        Numéro d'impôt : A2153091G<br/>
-        id. Nat : 19-F4300-N82711<br/>
-        ------------------------------------------------------------------------<br/>
-        {% comment %} <img src="mediafiles/ngi.png" width="80px" alt="qrcode"/><br> {% endcomment %}
-    </CENTER>
-  
-    <CENTER>
-       <table class="table" style="margin-left: 20px;margin-right: 20px; font-size:7px">
-                        <thead style="font-size:7px">
-                          <tr>
-                            <th >Produit</th>
-                            <th>Pu</th>
-                            <th>Qté</th>
-                            <th>Total</th>
-                          </tr>
-                        </thead>
-                        <tbody >
-                         {% for f in list_facture %}
-                          <tr>
-                            <td style="text-transform: lowercase">{{f.produit}}</td>
-                            <td>{{f.pu}}</td>
-                            <td>{{f.qte}}</td>
-                            <td>{{f.total}}Fc</td>
-                          </tr>
-                        {% endfor %}
-                        
-                        </tbody>
-                        
-         </table>
-          ---------------------------------------------------------------------
-        <table>
-            <th></th>
-           
-            <th>Totol Gén : {{sommefac}} Fc</th></th>
-        </table>
-    </CENTER>
 
-    <CENTER>
-        ---------------------------------------------------------------------
-        <table>
-            <th>Opérateur<br> {{noms}}</th>
-            <th><img src="mediafiles/facture/{{img}}" width="50px" alt="qrcode"/></th>
-        </table>
-        
-    </CENTER>
-    <br>
-   
+
+<body>
+
+
+<div class="ticket">
+
+
+<!-- =====================================================
+     EN-TÊTE
+===================================================== -->
+
+<div class="entete">
+
+
+    <!--
+        LOGO DJANGO STATIC
+
+        Le fichier doit être dans :
+
+        app_facture/
+            static/
+                images/
+                    tanganika.jpg
+    -->
+
+
+    <img
+        src="app_facture/static/images/tanganika.jpg"
+        class="logo"
+        alt="Tanganika Future"
+    >
+
+
+    <div class="titre">
+
+        TANGANIKA FUTURE SA.
+
     </div>
-    
+
+
+    <div class="sous-titre">
+
+        REÇU DE VENTE
+
+    </div>
+
+
+</div>
+
+
+<!-- =====================================================
+     BARRE SOUS L'EN-TÊTE
+===================================================== -->
+
+<div class="separator-double"></div>
+
+
+<!-- =====================================================
+     INFORMATIONS FACTURE
+===================================================== -->
+
+<table class="infos-facture">
+
+
+    <tr>
+
+
+        <td>
+
+            <span class="label">
+
+                Facture :
+
+            </span>
+
+            #{{ facture.id }}
+
+        </td>
+
+
+        <td class="right">
+
+
+            {% if facture.numero %}
+
+                {{ facture.numero }}
+
+            {% else %}
+
+                Vente
+
+            {% endif %}
+
+
+        </td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+        <td>
+
+            <span class="label">
+
+                Date :
+
+            </span>
+
+
+            {% if date_impression %}
+
+                {{ date_impression|date:"d/m/Y" }}
+
+            {% else %}
+
+                -
+
+            {% endif %}
+
+
+        </td>
+
+
+        <td class="right">
+
+
+            {% if facture.client %}
+
+                {{ facture.client }}
+
+            {% endif %}
+
+
+        </td>
+
+
+    </tr>
+
+
+</table>
+
+
+<div class="separator"></div>
+
+
+<!-- =====================================================
+     PRODUITS
+===================================================== -->
+
+<table class="produits">
+
+
+    <thead>
+
+
+        <tr>
+
+            <th>
+                Produit
+            </th>
+
+
+            <th>
+                PU TTC
+            </th>
+
+
+            <th>
+                Qté
+            </th>
+
+
+            <th>
+                Total
+            </th>
+
+        </tr>
+
+
+    </thead>
+
+
+    <tbody>
+
+
+        {% for f in list_facture %}
+
+
+        <tr>
+
+
+            <td class="produit-nom">
+
+                {{ f.produit }}
+
+            </td>
+
+
+            <td class="prix">
+
+                {{ f.pu }} Fc
+
+            </td>
+
+
+            <td>
+
+                {{ f.qte }}
+
+            </td>
+
+
+            <td class="prix">
+
+                <strong>
+
+                    {{ f.total }} Fc
+
+                </strong>
+
+            </td>
+
+
+        </tr>
+
+
+        {% empty %}
+
+
+        <tr>
+
+
+            <td colspan="4" class="center">
+
+                Aucun produit
+
+            </td>
+
+
+        </tr>
+
+
+        {% endfor %}
+
+
+    </tbody>
+
+
+</table>
+
+
+<div class="separator"></div>
+
+
+<!-- =====================================================
+     TOTAUX
+===================================================== -->
+
+<table class="totaux">
+
+
+    <tr>
+
+
+        <td class="libelle">
+
+            Total HT
+
+        </td>
+
+
+        <td class="montant">
+
+            {{ total_ht }} Fc
+
+        </td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+        <td class="libelle">
+
+            TVA
+
+        </td>
+
+
+        <td class="montant">
+
+            {{ total_tva }} Fc
+
+        </td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+        <td class="libelle total-ttc">
+
+            TOTAL TTC
+
+        </td>
+
+
+        <td class="montant total-ttc">
+
+            {{ sommefac }} Fc
+
+        </td>
+
+
+    </tr>
+
+
+</table>
+
+
+<!-- =====================================================
+     OPERATEUR + QR CODE
+===================================================== -->
+
+<table class="bas-ticket">
+
+
+    <tr>
+
+
+        <td class="operateur">
+
+
+            <strong>
+
+                Opérateur
+
+            </strong>
+
+
+            <br>
+
+
+            <span class="operateur-nom">
+
+                {{ noms }}
+
+            </span>
+
+
+            <br>
+
+
+            <span>
+
+                Vente validée
+
+            </span>
+
+
+        </td>
+
+
+        <td class="qrcode-container">
+        
+
+               <img src="mediafiles/facture/{{img}}" width="50px" alt="qrcode"/>
+
+
+
+        </td>
+
+
+    </tr>
+
+
+</table>
+
+
+<!-- =====================================================
+     UNE SEULE BARRE AVANT LE FOOTER
+===================================================== -->
+
+<div class="footer-separator"></div>
+
+
+<!-- =====================================================
+     FOOTER / CONTACTS
+===================================================== -->
+
+<div class="footer">
+
+
+
+    <div class="footer-contact">
+
+        <strong>Tél :</strong>
+
+        +243 821 041 414
+
+    </div>
+
+
+    <div class="footer-contact">
+
+        <strong>Email :</strong>
+
+        tanganyikafuture.sa@gmail.com
+
+    </div>
+
+
+    <div class="footer-address">
+
+        <strong>Site :</strong>
+
+        www.tanganyikafuture.com
+
+    </div>
+
+
+    <div class="footer-thanks">
+
+        Merci pour votre confiance !
+
+    </div>
+
+
+    <div class="footer-legal">
+
+        Conservez ce reçu comme preuve de votre achat.
+
+    </div>
+
+
+</div>
+
+
+</div>
+
+
 </body>
+
+
 </html>

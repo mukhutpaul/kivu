@@ -1,9 +1,11 @@
-
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponseRedirect
 
-
 from django.core.paginator import Paginator
+import os
+import json
+import time
+from django.conf import settings
 
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login as auth_login, logout
@@ -11,17 +13,15 @@ from django.contrib.auth import authenticate, login as auth_login, logout
 from django.contrib import messages
 
 from django.db import transaction
-from django.db.models import Sum, Avg, Count, Q,F
+from django.db.models import Sum, Avg, Count, Q, F
 from django.db.models.functions import Coalesce
-
 from django.utils import timezone
 
-from decimal import Decimal
+from decimal import Decimal, InvalidOperation, ROUND_HALF_UP
 
 from datetime import date
 import datetime
 import qrcode
-from time import time
 import json
 
 from app_facture.utils import render_to_pdf
@@ -36,92 +36,259 @@ from app_facture.models.mouvement_stock import MouvementStock
 
 
 # ==========================================================
+# CONSTANTES TVA
+# ==========================================================
+
+TVA_TAUX = Decimal("16.00")
+TVA_DIVISEUR = Decimal("1.16")
+
+
+def calcul_tva_depuis_ttc(prix_ttc):
+    """
+    Calcule le prix HT et la TVA à partir d'un prix TTC.
+
+    Exemple :
+        TTC = 11 600
+        HT  = 10 000
+        TVA = 1 600
+    """
+
+    prix_ttc = Decimal(prix_ttc or "0.00")
+
+    prix_ht = (
+        prix_ttc / TVA_DIVISEUR
+    ).quantize(
+        Decimal("0.01"),
+        rounding=ROUND_HALF_UP
+    )
+
+    tva = (
+        prix_ttc - prix_ht
+    ).quantize(
+        Decimal("0.01"),
+        rounding=ROUND_HALF_UP
+    )
+
+    return prix_ht, tva
+
+
+# ==========================================================
 # HOME
 # ==========================================================
 
 @login_required(login_url="sign_in")
 def home(request):
 
-    ap = Appartement.objects.all()
-
-    nbrp = Produit.objects.all().count()
-
     mois = datetime.date.today().month
     annee = datetime.date.today().year
+    aujourd_hui = datetime.date.today()
 
-    totalFacture = Facture.objects.filter(
-        createdAt__date=datetime.date.today()
-    ).count()
+    # ======================================================
+    # NOMBRE DE PRODUITS
+    # ======================================================
 
-    totalFactureM = Facture.objects.filter(
-        createdAt__date__month=mois,
-        createdAt__date__year=annee
-    ).count()
+    nbrp = Produit.objects.count()
 
-    totalFactureA = Facture.objects.filter(
-        createdAt__date__year=annee
-    ).count()
+    # ======================================================
+    # FACTURES VALIDÉES
+    # ======================================================
 
     factj = Facture.objects.filter(
-        createdAt__date=datetime.date.today()
+        createdAt__date=aujourd_hui,
+        imprimer=True
     )
 
     factm = Facture.objects.filter(
         createdAt__date__month=mois,
-        createdAt__date__year=annee
+        createdAt__date__year=annee,
+        imprimer=True
     )
 
     factan = Facture.objects.filter(
-        createdAt__date__year=annee
+        createdAt__date__year=annee,
+        imprimer=True
     )
 
-    somme = Decimal("0.00")
+    # ======================================================
+    # NOMBRE DE FACTURES
+    # ======================================================
 
-    for f in factj:
+    totalFacture = factj.count()
+    totalFactureM = factm.count()
+    totalFactureA = factan.count()
 
-        factd = Detail_facture.objects.filter(
-            facture_id=f.id
+    # ======================================================
+    # CA TTC
+    # ======================================================
+
+    somme = factj.aggregate(
+        total=Coalesce(
+            Sum("total_ttc"),
+            Decimal("0.00")
         )
+    )["total"]
 
-        for fd in factd:
-
-            somme += fd.produit.pu * fd.quantite
-
-    sommeMois = Decimal("0.00")
-
-    for f in factm:
-
-        factd = Detail_facture.objects.filter(
-            facture_id=f.id
+    sommeMois = factm.aggregate(
+        total=Coalesce(
+            Sum("total_ttc"),
+            Decimal("0.00")
         )
+    )["total"]
 
-        for fd in factd:
-
-            sommeMois += fd.produit.pu * fd.quantite
-
-    sommeAn = Decimal("0.00")
-
-    for f in factan:
-
-        factd = Detail_facture.objects.filter(
-            facture_id=f.id
+    sommeAn = factan.aggregate(
+        total=Coalesce(
+            Sum("total_ttc"),
+            Decimal("0.00")
         )
+    )["total"]
 
-        for fd in factd:
+    # ======================================================
+    # CA HT
+    # ======================================================
 
-            sommeAn += fd.produit.pu * fd.quantite
+    somme_ht = factj.aggregate(
+        total=Coalesce(
+            Sum("total_ht"),
+            Decimal("0.00")
+        )
+    )["total"]
 
-    nbrFemme = 0
+    sommeMois_ht = factm.aggregate(
+        total=Coalesce(
+            Sum("total_ht"),
+            Decimal("0.00")
+        )
+    )["total"]
+
+    sommeAn_ht = factan.aggregate(
+        total=Coalesce(
+            Sum("total_ht"),
+            Decimal("0.00")
+        )
+    )["total"]
+
+    # ======================================================
+    # TVA COLLECTÉE
+    # ======================================================
+
+    tva_jour = factj.aggregate(
+        total=Coalesce(
+            Sum("total_tva"),
+            Decimal("0.00")
+        )
+    )["total"]
+
+    tva_mois = factm.aggregate(
+        total=Coalesce(
+            Sum("total_tva"),
+            Decimal("0.00")
+        )
+    )["total"]
+
+    tva_annee = factan.aggregate(
+        total=Coalesce(
+            Sum("total_tva"),
+            Decimal("0.00")
+        )
+    )["total"]
+
+    # ======================================================
+    # PRODUITS LES PLUS VENDUS
+    # ======================================================
+    #
+    # On utilise Detail_facture et non Produit.quantite.
+    #
+    # Produit.quantite = stock actuel
+    # Detail_facture.quantite = quantité réellement vendue
+    #
+    # On ne prend que les factures validées.
+    # ======================================================
+
+    details_ventes = Detail_facture.objects.filter(
+        facture__imprimer=True,
+        facture__createdAt__date__year=annee
+    )
+
+    produits_populaires = (
+        details_ventes
+        .values(
+            "produit__id",
+            "produit__nom"
+        )
+        .annotate(
+            quantite_vendue=Coalesce(
+                Sum("quantite"),
+                Decimal("0.00")
+            ),
+            chiffre_affaires=Coalesce(
+                Sum(
+                    F("quantite") * F("pu_ttc")
+                ),
+                Decimal("0.00")
+            )
+        )
+        .order_by("-quantite_vendue")[:10]
+    )
+
+    # ======================================================
+    # PRODUITS LES PLUS VENDUS AUJOURD'HUI
+    # ======================================================
+
+    produits_populaires_jour = (
+        Detail_facture.objects.filter(
+            facture__imprimer=True,
+            facture__createdAt__date=aujourd_hui
+        )
+        .values(
+            "produit__id",
+            "produit__nom"
+        )
+        .annotate(
+            quantite_vendue=Coalesce(
+                Sum("quantite"),
+                Decimal("0.00")
+            ),
+            chiffre_affaires=Coalesce(
+                Sum(
+                    F("quantite") * F("pu_ttc")
+                ),
+                Decimal("0.00")
+            )
+        )
+        .order_by("-quantite_vendue")[:10]
+    )
+
+    # ======================================================
+    # CONTEXT
+    # ======================================================
 
     ctx = {
         "hm": "active",
+
+        # Factures
         "totalFacture": totalFacture,
-        "sommeMois": sommeMois,
-        "somme": somme,
-        "nbrp": nbrp,
         "totalFactureM": totalFactureM,
         "totalFactureA": totalFactureA,
+
+        # CA TTC
+        "somme": somme,
+        "sommeMois": sommeMois,
         "sommeAn": sommeAn,
+
+        # CA HT
+        "somme_ht": somme_ht,
+        "sommeMois_ht": sommeMois_ht,
+        "sommeAn_ht": sommeAn_ht,
+
+        # TVA
+        "tva_jour": tva_jour,
+        "tva_mois": tva_mois,
+        "tva_annee": tva_annee,
+
+        # Produits
+        "nbrp": nbrp,
+        "produits_populaires": produits_populaires,
+        "produits_populaires_jour": produits_populaires_jour,
     }
 
     return render(
@@ -129,8 +296,6 @@ def home(request):
         "pages/home.html",
         ctx
     )
-
-
 # ==========================================================
 # APPARTEMENTS
 # ==========================================================
@@ -487,7 +652,11 @@ def addProduit(request):
                 if prix < 0:
                     raise ValueError
 
-            except (ValueError, TypeError):
+            except (
+                ValueError,
+                TypeError,
+                InvalidOperation
+            ):
 
                 msg = "Prix doit être un numérique"
 
@@ -606,7 +775,11 @@ def updateProduit(request, id):
                 if prix < 0:
                     raise ValueError
 
-            except (ValueError, TypeError):
+            except (
+                ValueError,
+                TypeError,
+                InvalidOperation
+            ):
 
                 msg = "Prix doit être un numérique"
 
@@ -618,6 +791,9 @@ def updateProduit(request, id):
 
                 pr.nom = nom.upper()
                 pr.appartement = apr
+
+                # IMPORTANT :
+                # le prix du produit reste stocké en TTC
                 pr.pu = prix
 
                 pr.save()
@@ -740,7 +916,6 @@ def fUser(request):
         ctx
     )
 
-
 @login_required(login_url="sign_in")
 def addUser(request):
 
@@ -754,74 +929,71 @@ def addUser(request):
         profile = request.POST.get(
             "profile",
             ""
-        )
-
-        centre = request.POST.get(
-            "centre",
-            ""
-        )
+        ).strip()
 
         noms = request.POST.get(
             "noms",
             ""
-        )
+        ).strip()
 
         username = request.POST.get(
             "username",
             ""
-        )
+        ).strip()
 
         email = request.POST.get(
             "email",
             ""
-        )
+        ).strip()
 
         password = request.POST.get(
             "password",
             ""
         )
 
-        if email == "":
+        # ==================================================
+        # VALIDATIONS
+        # ==================================================
 
+        if email == "":
             msg = "Veuillez remplir le mail"
 
         elif profile == "":
+            msg = "Veuillez choisir le profil"
 
-            msg = "Veuillez choisir le profile"
+        elif noms == "":
+            msg = "Veuillez remplir les noms"
 
-        elif centre == "":
+        elif username == "":
+            msg = "Veuillez remplir le nom utilisateur"
 
-            msg = "Veuillez choisir le centre"
+        elif password == "":
+            msg = "Veuillez remplir le mot de passe"
 
         elif User.objects.filter(
             username=username
         ).exists():
-
             msg = "Ce nom utilisateur existe déjà"
 
         elif User.objects.filter(
             email=email
         ).exists():
-
             msg = "Cette adresse mail existe déjà"
-
-        elif noms == "":
-
-            msg = "Veuillez remplir les noms"
-
-        elif username == "":
-
-            msg = "Veuillez remplir le nom utilisateur"
-
-        elif password == "":
-
-            msg = "Veuillez remplir le mot de passe"
 
         else:
 
-            pro = Profile.objects.get(
+            # ==================================================
+            # PROFIL
+            # ==================================================
+
+            pro = get_object_or_404(
+                Profile,
                 pk=profile
             )
+
+            # ==================================================
+            # CRÉATION UTILISATEUR
+            # ==================================================
 
             u = User(
                 noms=noms.upper(),
@@ -830,6 +1002,10 @@ def addUser(request):
                 email=email,
                 is_active=True
             )
+
+            # ==================================================
+            # MOT DE PASSE HASHÉ
+            # ==================================================
 
             u.set_password(
                 password
@@ -855,7 +1031,6 @@ def addUser(request):
             "pro": profiles
         }
     )
-
 
 @login_required(login_url="sign_in")
 def modifierUser(request, id):
@@ -1052,6 +1227,7 @@ def log_out(request):
     )
 
 
+
 # ==========================================================
 # FACTURES
 # ==========================================================
@@ -1066,11 +1242,26 @@ def facture(request):
         request.POST.get("rech", "")
     ).strip()
 
-    if request.user.profile.id == 3:
+    # ======================================================
+    # PROFIL UTILISATEUR
+    # ======================================================
+
+    profile = getattr(
+        request.user,
+        "profile",
+        None
+    )
+
+    # ======================================================
+    # FACTURES
+    # ======================================================
+
+    if profile and profile.id == 3:
 
         factj = Facture.objects.filter(
             createdAt__date=datej,
-            user=request.user
+            user=request.user,
+            imprimer=True
         )
 
         queryset = Facture.objects.filter(
@@ -1080,24 +1271,54 @@ def facture(request):
     else:
 
         factj = Facture.objects.filter(
-            createdAt__date=datej
+            createdAt__date=datej,
+            imprimer=True
         )
 
         queryset = Facture.objects.all()
 
+    # ======================================================
+    # NOMBRE DE FACTURES VALIDÉES DU JOUR
+    # ======================================================
+
     nbr = factj.count()
 
-    somme = Decimal("0.00")
+    # ======================================================
+    # CA TTC DU JOUR
+    # ======================================================
 
-    for f in factj:
-
-        factd = Detail_facture.objects.filter(
-            facture_id=f.id
+    somme = factj.aggregate(
+        total=Coalesce(
+            Sum("total_ttc"),
+            Decimal("0.00")
         )
+    )["total"]
 
-        for fd in factd:
+    # ======================================================
+    # CA HT DU JOUR
+    # ======================================================
 
-            somme += fd.produit.pu * fd.quantite
+    somme_ht = factj.aggregate(
+        total=Coalesce(
+            Sum("total_ht"),
+            Decimal("0.00")
+        )
+    )["total"]
+
+    # ======================================================
+    # TVA DU JOUR
+    # ======================================================
+
+    somme_tva = factj.aggregate(
+        total=Coalesce(
+            Sum("total_tva"),
+            Decimal("0.00")
+        )
+    )["total"]
+
+    # ======================================================
+    # RECHERCHE
+    # ======================================================
 
     if recherche:
 
@@ -1105,9 +1326,17 @@ def facture(request):
             id__icontains=recherche
         )
 
+    # ======================================================
+    # TRI
+    # ======================================================
+
     queryset = queryset.order_by(
         "-id"
     )
+
+    # ======================================================
+    # PAGINATION
+    # ======================================================
 
     paginator = Paginator(
         queryset,
@@ -1124,16 +1353,62 @@ def facture(request):
 
     compte = paginator.count
 
+    # ======================================================
+    # CONTEXT
+    # ======================================================
+
     ctx = {
+
         "compte": compte,
+
         "facture": pages,
+
         "lfact": "active",
+
+        # ==========================
+        # TTC
+        # ==========================
+
         "somme": somme,
+
+        # ==========================
+        # HT
+        # ==========================
+
+        "somme_ht": somme_ht,
+
+        # ==========================
+        # TVA
+        # ==========================
+
+        "somme_tva": somme_tva,
+
+        # ==========================
+        # NOMBRE FACTURES
+        # ==========================
+
         "facture_total_jour": nbr,
+
+        # ==========================
+        # UTILISATEUR
+        # ==========================
+
         "noms": request.user.noms,
-        "profile": request.user.profile,
+
+        "profile": profile,
+
+        # ==========================
+        # PAGINATION
+        # ==========================
+
         "pages": pages,
+
         "page_obj": pages,
+
+        # ==========================
+        # RECHERCHE
+        # ==========================
+
         "recherche": recherche,
     }
 
@@ -1143,19 +1418,12 @@ def facture(request):
         ctx
     )
 
-
 @login_required(login_url="sign_in")
 def addFacture(request):
 
-    userId = User.objects.get(
-        pk=request.user.id
+    f = Facture.objects.create(
+        user=request.user
     )
-
-    f = Facture(
-        user=userId
-    )
-
-    f.save()
 
     return HttpResponseRedirect(
         "/facture/"
@@ -1169,38 +1437,53 @@ def addFacture(request):
 @login_required(login_url="sign_in")
 def detaiFacture(request, id):
 
-    sel_facture = Facture.objects.get(
+    # ======================================================
+    # FACTURE
+    # ======================================================
+
+    sel_facture = get_object_or_404(
+        Facture,
         id=id
     )
 
+    # ======================================================
+    # PRODUITS
+    # ======================================================
+
     liste_produit = Produit.objects.all()
-
-    total = 0
-
-    data_liste = []
 
     data_produit = []
 
-    sommefac = Decimal("0.00")
+    # ======================================================
+    # PRODUITS NON PRÉSENTS DANS LA FACTURE
+    # ======================================================
 
     for lp in liste_produit:
 
-        list_sans_fac = Detail_facture.objects.filter(
+        existe = Detail_facture.objects.filter(
             facture_id=sel_facture.id,
             produit_id=lp.id
-        )
+        ).exists()
 
-        if not list_sans_fac.exists():
+        if not existe:
 
             data_produit.append({
                 "id": lp.id,
                 "nom": lp.nom
             })
 
+    # ======================================================
+    # RECHERCHE
+    # ======================================================
+
     recherche = request.GET.get(
         "q",
         request.POST.get("rech", "")
     ).strip()
+
+    # ======================================================
+    # DÉTAILS DE LA FACTURE
+    # ======================================================
 
     queryset = Detail_facture.objects.filter(
         facture_id=sel_facture.id
@@ -1218,6 +1501,10 @@ def detaiFacture(request, id):
         "-id"
     )
 
+    # ======================================================
+    # PAGINATION
+    # ======================================================
+
     paginator = Paginator(
         queryset,
         20
@@ -1233,35 +1520,196 @@ def detaiFacture(request, id):
 
     compte = paginator.count
 
+    # ======================================================
+    # PRÉPARATION DES LIGNES
+    # ======================================================
+
+    data_liste = []
+
     for t in list_facture:
 
-        total_ligne = (
-            t.produit.pu
-            * t.quantite
+        # --------------------------------------------------
+        # Prix TTC
+        # --------------------------------------------------
+
+        pu_ttc = (
+            t.pu_ttc
+            or Decimal("0.00")
         )
 
-        sommefac += total_ligne
+        # --------------------------------------------------
+        # Prix HT
+        # --------------------------------------------------
+
+        pu_ht = (
+            t.pu_ht
+            or Decimal("0.00")
+        )
+
+        # --------------------------------------------------
+        # TVA unitaire
+        # --------------------------------------------------
+
+        tva_unitaire = (
+            t.tva_unitaire
+            or Decimal("0.00")
+        )
+
+        # --------------------------------------------------
+        # Quantité
+        # --------------------------------------------------
+
+        quantite = (
+            t.quantite
+            or Decimal("0.00")
+        )
+
+        # --------------------------------------------------
+        # Total TTC de la ligne
+        # --------------------------------------------------
+
+        total_ligne_ttc = (
+            pu_ttc * quantite
+        ).quantize(
+            Decimal("0.01"),
+            rounding=ROUND_HALF_UP
+        )
+
+        # --------------------------------------------------
+        # Total HT de la ligne
+        # --------------------------------------------------
+
+        total_ligne_ht = (
+            pu_ht * quantite
+        ).quantize(
+            Decimal("0.01"),
+            rounding=ROUND_HALF_UP
+        )
+
+        # --------------------------------------------------
+        # Total TVA de la ligne
+        # --------------------------------------------------
+
+        total_ligne_tva = (
+            tva_unitaire * quantite
+        ).quantize(
+            Decimal("0.01"),
+            rounding=ROUND_HALF_UP
+        )
+
+        # --------------------------------------------------
+        # Données envoyées au template
+        # --------------------------------------------------
 
         data_liste.append({
+
             "id": t.id,
+
             "produit": t.produit,
-            "pu": t.produit.pu,
-            "qte": t.quantite,
-            "total": total_ligne
+
+            # Prix unitaires
+            "pu": pu_ttc,
+            "pu_ttc": pu_ttc,
+            "pu_ht": pu_ht,
+            "tva_unitaire": tva_unitaire,
+
+            # Taux TVA
+            "taux_tva": t.taux_tva,
+
+            # Quantité
+            "qte": quantite,
+            "quantite": quantite,
+
+            # Totaux ligne
+            "total": total_ligne_ttc,
+            "total_ttc": total_ligne_ttc,
+            "total_ht": total_ligne_ht,
+            "total_tva": total_ligne_tva,
         })
 
+    # ======================================================
+    # TOTAUX DE LA FACTURE
+    # ======================================================
+    #
+    # On récupère les totaux enregistrés dans Facture.
+    #
+    # Cela permet d'avoir le total de TOUTE la facture,
+    # même lorsque la facture contient plusieurs pages.
+    # ======================================================
+
+    total_ht = (
+        sel_facture.total_ht
+        or Decimal("0.00")
+    ).quantize(
+        Decimal("0.01"),
+        rounding=ROUND_HALF_UP
+    )
+
+    total_tva = (
+        sel_facture.total_tva
+        or Decimal("0.00")
+    ).quantize(
+        Decimal("0.01"),
+        rounding=ROUND_HALF_UP
+    )
+
+    total_ttc = (
+        sel_facture.total_ttc
+        or Decimal("0.00")
+    ).quantize(
+        Decimal("0.01"),
+        rounding=ROUND_HALF_UP
+    )
+
+    # ======================================================
+    # CONTEXT
+    # ======================================================
+
     ctx = {
+
+        # Facture
         "sel_facture": sel_facture,
+
+        # Détails
         "list_facture": data_liste,
+
+        # Menu actif
         "Llist_facture": "active",
+
+        # Produits disponibles
         "liste_produit": data_produit,
-        "sommefac": sommefac,
+
+        # --------------------------------------------------
+        # TOTAUX
+        # --------------------------------------------------
+
+        # Variables utilisées directement dans le template
+        "total_ht": total_ht,
+        "total_tva": total_tva,
+        "sommefac": total_ttc,
+
+        # Alias supplémentaires
+        "somme_ht": total_ht,
+        "somme_tva": total_tva,
+        "somme_ttc": total_ttc,
+
+        # --------------------------------------------------
+        # AUTRES INFORMATIONS
+        # --------------------------------------------------
+
         "compte": compte,
-        "total": total,
+
+        # Pagination
         "pages": list_facture,
         "page_obj": list_facture,
+
+        # Recherche
         "recherche": recherche,
     }
+
+    # ======================================================
+    # RENDU DU TEMPLATE
+    # ======================================================
 
     return render(
         request,
@@ -1269,21 +1717,27 @@ def detaiFacture(request, id):
         ctx
     )
 
-
 @login_required(login_url="sign_in")
 def deletedetailFacture(request, id):
 
-    df = Detail_facture.objects.get(
+    df = get_object_or_404(
+        Detail_facture,
         pk=id
     )
 
-    dt = Facture.objects.get(
+    dt = get_object_or_404(
+        Facture,
         pk=df.facture.id
     )
 
     id_facture = dt.id
 
     if dt.imprimer:
+
+        messages.warning(
+            request,
+            "Impossible de modifier une facture déjà validée."
+        )
 
         return redirect(
             "/detaiFacture/"
@@ -1298,51 +1752,310 @@ def deletedetailFacture(request, id):
     )
 
 
+
 @login_required(login_url="sign_in")
 def addDetailFacture(request):
 
-    if request.method == "POST":
+    # =========================================================
+    # VÉRIFIER LA MÉTHODE
+    # =========================================================
 
-        produit = request.POST.get(
-            "produit",
-            None
+    if request.method != "POST":
+        return redirect("facture")
+
+    # =========================================================
+    # RÉCUPÉRER LES DONNÉES
+    # =========================================================
+
+    produit_id = request.POST.get("produit")
+    facture_id = request.POST.get("facture")
+    qte_str = request.POST.get("qte", "").strip()
+
+    # =========================================================
+    # VÉRIFIER PRODUIT + FACTURE
+    # =========================================================
+
+    if not produit_id or not facture_id:
+
+        messages.error(
+            request,
+            "Le produit et la facture sont obligatoires."
         )
 
-        qte = request.POST.get(
-            "qte",
-            0
-        )
+        return redirect("facture")
 
-        facture = request.POST.get(
-            "facture",
-            None
-        )
+    # =========================================================
+    # RÉCUPÉRER LA FACTURE
+    # =========================================================
 
-        pro = Produit.objects.get(
-            pk=produit
-        )
-
-        fact = Facture.objects.get(
-            pk=facture
-        )
-
-        pr = Detail_facture(
-            produit=pro,
-            facture=fact,
-            quantite=qte
-        )
-
-        pr.save()
-
-        return HttpResponseRedirect(
-            "/detaiFacture/"
-            + str(facture)
-        )
-
-    return redirect(
-        "facture"
+    fact = get_object_or_404(
+        Facture,
+        pk=facture_id
     )
 
+    # =========================================================
+    # VÉRIFIER SI LA FACTURE EST DÉJÀ VALIDÉE
+    # =========================================================
+
+    if fact.imprimer:
+
+        messages.error(
+            request,
+            "Cette facture est déjà validée et ne peut plus être modifiée."
+        )
+
+        return redirect(
+            "/detaiFacture/" + str(fact.id)
+        )
+
+    # =========================================================
+    # VALIDATION DE LA QUANTITÉ
+    # =========================================================
+
+    try:
+
+        qte = Decimal(qte_str)
+
+    except (InvalidOperation, TypeError, ValueError):
+
+        messages.error(
+            request,
+            "La quantité saisie est invalide."
+        )
+
+        return redirect(
+            "/detaiFacture/" + str(fact.id)
+        )
+
+    if qte <= 0:
+
+        messages.error(
+            request,
+            "La quantité doit être supérieure à zéro."
+        )
+
+        return redirect(
+            "/detaiFacture/" + str(fact.id)
+        )
+
+    # =========================================================
+    # POUR UNE PHARMACIE :
+    # LA QUANTITÉ DOIT ÊTRE ENTIÈRE
+    # =========================================================
+
+    if qte != qte.to_integral_value():
+
+        messages.error(
+            request,
+            "La quantité doit être un nombre entier."
+        )
+
+        return redirect(
+            "/detaiFacture/" + str(fact.id)
+        )
+
+    # =========================================================
+    # RÉCUPÉRER LE PRODUIT
+    # =========================================================
+
+    pro = get_object_or_404(
+        Produit,
+        pk=produit_id
+    )
+
+    # =========================================================
+    # VÉRIFIER SI LE PRODUIT EXISTE DÉJÀ
+    # =========================================================
+
+    existe = Detail_facture.objects.filter(
+        facture=fact,
+        produit=pro
+    ).exists()
+
+    if existe:
+
+        messages.error(
+            request,
+            f"Le produit « {pro.nom} » est déjà présent dans cette facture."
+        )
+
+        return redirect(
+            "/detaiFacture/" + str(fact.id)
+        )
+
+    # =========================================================
+    # PRIX TTC DU PRODUIT
+    #
+    # Produit.pu = prix TTC
+    # TVA = 16 %
+    # =========================================================
+
+    pu_ttc = Decimal(
+        pro.pu or "0.00"
+    ).quantize(
+        Decimal("0.01"),
+        rounding=ROUND_HALF_UP
+    )
+
+    # =========================================================
+    # VÉRIFIER QUE LE PRIX EST VALIDE
+    # =========================================================
+
+    if pu_ttc < 0:
+
+        messages.error(
+            request,
+            "Le prix du produit est invalide."
+        )
+
+        return redirect(
+            "/detaiFacture/" + str(fact.id)
+        )
+
+    # =========================================================
+    # CALCUL HT + TVA
+    # =========================================================
+
+    taux_tva = TVA_TAUX
+
+    pu_ht, tva_unitaire = calcul_tva_depuis_ttc(
+        pu_ttc
+    )
+
+    # =========================================================
+    # CRÉATION + RECALCUL DANS UNE TRANSACTION
+    # =========================================================
+
+    with transaction.atomic():
+
+        # -----------------------------------------------------
+        # CRÉER LE DÉTAIL
+        # -----------------------------------------------------
+
+        Detail_facture.objects.create(
+
+            facture=fact,
+
+            produit=pro,
+
+            quantite=qte,
+
+            pu_ttc=pu_ttc,
+
+            pu_ht=pu_ht,
+
+            tva_unitaire=tva_unitaire,
+
+            taux_tva=taux_tva,
+        )
+
+        # -----------------------------------------------------
+        # RÉCUPÉRER TOUS LES DÉTAILS DE LA FACTURE
+        # -----------------------------------------------------
+
+        details = Detail_facture.objects.filter(
+            facture=fact
+        )
+
+        # -----------------------------------------------------
+        # INITIALISER LES TOTAUX
+        # -----------------------------------------------------
+
+        total_ht = Decimal("0.00")
+        total_tva = Decimal("0.00")
+        total_ttc = Decimal("0.00")
+
+        # -----------------------------------------------------
+        # CALCULER LES TOTAUX
+        # -----------------------------------------------------
+
+        for detail in details:
+
+            quantite = detail.quantite or Decimal("0.00")
+
+            pu_ttc_detail = detail.pu_ttc or Decimal("0.00")
+            pu_ht_detail = detail.pu_ht or Decimal("0.00")
+            tva_detail = detail.tva_unitaire or Decimal("0.00")
+
+            # Total TTC de la ligne
+            total_ttc += (
+                pu_ttc_detail * quantite
+            )
+
+            # Total HT de la ligne
+            total_ht += (
+                pu_ht_detail * quantite
+            )
+
+            # Total TVA de la ligne
+            total_tva += (
+                tva_detail * quantite
+            )
+
+        # -----------------------------------------------------
+        # ARRONDIR LES TOTAUX
+        # -----------------------------------------------------
+
+        total_ht = total_ht.quantize(
+            Decimal("0.01"),
+            rounding=ROUND_HALF_UP
+        )
+
+        total_tva = total_tva.quantize(
+            Decimal("0.01"),
+            rounding=ROUND_HALF_UP
+        )
+
+        total_ttc = total_ttc.quantize(
+            Decimal("0.01"),
+            rounding=ROUND_HALF_UP
+        )
+
+        # -----------------------------------------------------
+        # SÉCURITÉ :
+        # HT + TVA DOIT ÊTRE ÉGAL AU TTC
+        # -----------------------------------------------------
+
+        total_ttc = (
+            total_ht + total_tva
+        ).quantize(
+            Decimal("0.01"),
+            rounding=ROUND_HALF_UP
+        )
+
+        # -----------------------------------------------------
+        # ENREGISTRER LES TOTAUX DANS FACTURE
+        # -----------------------------------------------------
+
+        fact.total_ht = total_ht
+        fact.total_tva = total_tva
+        fact.total_ttc = total_ttc
+
+        fact.save(
+            update_fields=[
+                "total_ht",
+                "total_tva",
+                "total_ttc",
+                "updatedAt",
+            ]
+        )
+
+    # =========================================================
+    # MESSAGE DE SUCCÈS
+    # =========================================================
+
+    messages.success(
+        request,
+        f"Le produit « {pro.nom} » a été ajouté à la facture."
+    )
+
+    # =========================================================
+    # RETOUR À LA FACTURE
+    # =========================================================
+
+    return redirect(
+        "/detaiFacture/" + str(fact.id)
+    )
 
 # ==========================================================
 # IMPRESSION / VALIDATION FACTURE
@@ -1351,173 +2064,487 @@ def addDetailFacture(request):
 @login_required(login_url="sign_in")
 def print_facture(request, id):
 
-    sel_facture = Facture.objects.get(
-        id=id
-    )
+    print("\n")
+    print("=" * 100)
+    print(">>> DEBUT print_facture()")
+    print(">>> Facture ID :", id)
+    print(">>> Utilisateur :", request.user)
+    print("=" * 100)
 
-    # ======================================================
-    # FACTURE DÉJÀ VALIDÉE
-    # ======================================================
-
-    if sel_facture.imprimer:
-
-        messages.warning(
-            request,
-            "Cette facture a déjà été validée et le stock a déjà été déduit."
-        )
-
-        return redirect(
-            "/detaiFacture/"
-            + str(sel_facture.id)
-        )
-
-    liste_produit = Produit.objects.all()
-
-    total = 0
-
-    data_liste = []
-
-    data_produit = []
-
-    sommefac = Decimal("0.00")
-
-    # ======================================================
-    # DÉTAILS
-    # ======================================================
-
-    details = Detail_facture.objects.filter(
-        facture_id=sel_facture.id
-    ).select_related(
-        "produit"
-    )
-
-    # ======================================================
-    # PRODUITS NON PRÉSENTS DANS LA FACTURE
-    # ======================================================
-
-    for lp in liste_produit:
-
-        list_sans_fac = Detail_facture.objects.filter(
-            facture_id=sel_facture.id,
-            produit_id=lp.id
-        )
-
-        if not list_sans_fac.exists():
-
-            data_produit.append({
-                "id": lp.id,
-                "nom": lp.nom
-            })
-
-    # ======================================================
-    # CALCUL FACTURE
-    # ======================================================
-
-    for t in details:
-
-        total_ligne = (
-            t.produit.pu
-            * t.quantite
-        )
-
-        sommefac += total_ligne
-
-        data_liste.append({
-            "id": t.id,
-            "produit": t.produit,
-            "pu": t.produit.pu,
-            "qte": t.quantite,
-            "total": total_ligne
-        })
-
-    # ======================================================
-    # TRANSACTION STOCK
-    # ======================================================
+    # ============================================================
+    # TRANSACTION COMPLETE
+    # ============================================================
 
     with transaction.atomic():
 
-        produits_ids = [
-            detail.produit_id
-            for detail in details
-        ]
+        # ========================================================
+        # RECUPERATION + VERROUILLAGE DE LA FACTURE
+        # ========================================================
 
-        produits_verrouilles = {
-            produit.id: produit
-            for produit in Produit.objects.select_for_update().filter(
-                id__in=produits_ids
+        try:
+
+            sel_facture = (
+                Facture.objects
+                .select_for_update()
+                .get(id=id)
             )
-        }
 
-        # ==================================================
-        # VÉRIFICATION STOCK
-        # ==================================================
+        except Facture.DoesNotExist:
+
+            messages.error(
+                request,
+                "❌ La facture demandée n'existe pas."
+            )
+
+            return redirect(
+                "/detaiFacture/" + str(id)
+            )
+
+        print(
+            ">>> Facture trouvée :",
+            sel_facture.id
+        )
+
+        # ========================================================
+        # VERIFICATION : FACTURE DEJA IMPRIMEE
+        # ========================================================
+
+        if sel_facture.imprimer:
+
+            print(
+                ">>> FACTURE DEJA IMPRIMEE"
+            )
+
+            messages.error(
+                request,
+                f"❌ La facture #{sel_facture.id} a déjà été "
+                f"imprimée et validée. "
+                f"Elle ne peut pas être imprimée une deuxième fois."
+            )
+
+            return redirect(
+                "/detaiFacture/" + str(sel_facture.id)
+            )
+
+        # ========================================================
+        # RECUPERATION DES DETAILS
+        # ========================================================
+
+        details = list(
+            Detail_facture.objects
+            .select_related("produit")
+            .filter(
+                facture=sel_facture
+            )
+        )
+
+        if not details:
+
+            messages.error(
+                request,
+                "❌ Impossible d'imprimer cette facture : "
+                "elle ne contient aucun produit."
+            )
+
+            return redirect(
+                "/detaiFacture/" + str(sel_facture.id)
+            )
+
+        print(
+            ">>> Nombre de détails :",
+            len(details)
+        )
+
+        # ========================================================
+        # DATE DU JOUR
+        # ========================================================
+
+        aujourd_hui = date.today()
+
+        # ========================================================
+        # TOTAUX
+        # ========================================================
+
+        total_ht = Decimal("0.00")
+        total_tva = Decimal("0.00")
+        total_ttc = Decimal("0.00")
+
+        # ========================================================
+        # LISTE POUR LE TEMPLATE
+        # ========================================================
+
+        list_facture = []
+
+        # ========================================================
+        # TRAITEMENT DES DETAILS
+        # ========================================================
 
         for detail in details:
 
-            produit = produits_verrouilles[
-                detail.produit_id
-            ]
+            print("\n")
+            print("-" * 100)
 
-            stock_disponible = (
-                produit.quantite
-                or Decimal("0")
-            )
+            # ====================================================
+            # VERIFICATION PRODUIT
+            # ====================================================
 
-            if detail.quantite > stock_disponible:
+            if not detail.produit_id:
 
                 messages.error(
                     request,
-                    f"Stock insuffisant pour {produit.nom}. "
-                    f"Disponible : {stock_disponible}, "
-                    f"demandé : {detail.quantite}."
+                    "❌ Un détail de la facture ne possède "
+                    "aucun produit."
                 )
 
                 return redirect(
-                    "/detaiFacture/"
-                    + str(sel_facture.id)
+                    "/detaiFacture/" + str(sel_facture.id)
                 )
 
-        # ==================================================
-        # FEFO
-        # ==================================================
+            # ====================================================
+            # VERROUILLAGE DU PRODUIT
+            # ====================================================
 
-        for detail in details:
+            try:
 
-            produit = produits_verrouilles[
-                detail.produit_id
-            ]
+                produit = (
+                    Produit.objects
+                    .select_for_update()
+                    .get(id=detail.produit_id)
+                )
 
-            quantite_restante = Decimal(
-                detail.quantite
+            except Produit.DoesNotExist:
+
+                messages.error(
+                    request,
+                    f"❌ Le produit associé à la facture "
+                    f"n'existe plus."
+                )
+
+                return redirect(
+                    "/detaiFacture/" + str(sel_facture.id)
+                )
+
+            print(
+                ">>> Produit :",
+                produit.nom
             )
 
-            stock_courant = (
-                produit.quantite
-                or Decimal("0")
+            # ====================================================
+            # QUANTITE DEMANDEE
+            # ====================================================
+
+            try:
+
+                quantite_demandee = Decimal(
+                    str(
+                        detail.quantite
+                        if detail.quantite is not None
+                        else "0.00"
+                    )
+                )
+
+            except (
+                InvalidOperation,
+                TypeError,
+                ValueError
+            ):
+
+                messages.error(
+                    request,
+                    f"❌ Quantité invalide pour "
+                    f"{produit.nom}."
+                )
+
+                return redirect(
+                    "/detaiFacture/" + str(sel_facture.id)
+                )
+
+            quantite_demandee = (
+                quantite_demandee.quantize(
+                    Decimal("0.01"),
+                    rounding=ROUND_HALF_UP
+                )
             )
 
-            lots = Lot.objects.select_for_update().filter(
-                produit=produit,
-                quantite__gt=0,
-                date_peremption__gte=date.today()
-            ).order_by(
-                "date_peremption",
-                "id"
+            if quantite_demandee <= 0:
+
+                messages.error(
+                    request,
+                    f"❌ La quantité demandée pour "
+                    f"{produit.nom} doit être supérieure à zéro."
+                )
+
+                return redirect(
+                    "/detaiFacture/" + str(sel_facture.id)
+                )
+
+            print(
+                ">>> Quantité demandée :",
+                quantite_demandee
             )
+
+            # ====================================================
+            # STOCK GLOBAL PRODUIT
+            # ====================================================
+
+            try:
+
+                stock_global_avant = Decimal(
+                    str(
+                        produit.quantite
+                        if produit.quantite is not None
+                        else "0.00"
+                    )
+                )
+
+            except (
+                InvalidOperation,
+                TypeError,
+                ValueError
+            ):
+
+                stock_global_avant = Decimal("0.00")
+
+            stock_global_avant = (
+                stock_global_avant.quantize(
+                    Decimal("0.01"),
+                    rounding=ROUND_HALF_UP
+                )
+            )
+
+            print(
+                ">>> Stock global avant :",
+                stock_global_avant
+            )
+
+            # ====================================================
+            # RECUPERATION DES LOTS
+            #
+            # FEFO
+            # First Expired, First Out
+            # ====================================================
+
+            lots = list(
+                Lot.objects
+                .select_for_update()
+                .filter(
+                    produit_id=produit.id,
+                    quantite__gt=0,
+                    date_peremption__gte=aujourd_hui
+                )
+                .order_by(
+                    "date_peremption",
+                    "id"
+                )
+            )
+
+            print(
+                ">>> Nombre de lots disponibles :",
+                len(lots)
+            )
+
+            # ====================================================
+            # STOCK TOTAL DES LOTS
+            # ====================================================
+
+            stock_lots = Decimal("0.00")
+
+            for lot in lots:
+
+                try:
+
+                    stock_lot = Decimal(
+                        str(
+                            lot.quantite
+                            if lot.quantite is not None
+                            else "0.00"
+                        )
+                    )
+
+                except (
+                    InvalidOperation,
+                    TypeError,
+                    ValueError
+                ):
+
+                    stock_lot = Decimal("0.00")
+
+                stock_lot = (
+                    stock_lot.quantize(
+                        Decimal("0.01"),
+                        rounding=ROUND_HALF_UP
+                    )
+                )
+
+                if stock_lot > 0:
+
+                    stock_lots += stock_lot
+
+            stock_lots = (
+                stock_lots.quantize(
+                    Decimal("0.01"),
+                    rounding=ROUND_HALF_UP
+                )
+            )
+
+            print(
+                ">>> Stock total des lots :",
+                stock_lots
+            )
+
+            # ====================================================
+            # VERIFICATION STOCK GLOBAL
+            # ====================================================
+
+            if stock_global_avant < quantite_demandee:
+
+                messages.error(
+                    request,
+                    f"❌ Stock insuffisant pour "
+                    f"{produit.nom}. "
+                    f"Demandé : {quantite_demandee}, "
+                    f"stock disponible : {stock_global_avant}."
+                )
+
+                return redirect(
+                    "/detaiFacture/" + str(sel_facture.id)
+                )
+
+            # ====================================================
+            # VERIFICATION STOCK DES LOTS
+            # ====================================================
+
+            if stock_lots < quantite_demandee:
+
+                messages.error(
+                    request,
+                    f"❌ Stock insuffisant dans les lots "
+                    f"pour {produit.nom}. "
+                    f"Demandé : {quantite_demandee}, "
+                    f"disponible dans les lots : {stock_lots}."
+                )
+
+                return redirect(
+                    "/detaiFacture/" + str(sel_facture.id)
+                )
+
+            # ====================================================
+            # QUANTITE RESTANTE
+            # ====================================================
+
+            quantite_restante = quantite_demandee
+
+            # ====================================================
+            # STOCK GLOBAL COURANT
+            # ====================================================
+
+            stock_global_courant = stock_global_avant
+
+            # ====================================================
+            # CONSOMMATION DES LOTS
+            # ====================================================
 
             for lot in lots:
 
                 if quantite_restante <= 0:
                     break
 
-                stock_avant = stock_courant
+                # =================================================
+                # STOCK LOT AVANT
+                # =================================================
 
-                quantite_lot = min(
-                    lot.quantite,
+                try:
+
+                    stock_lot_avant = Decimal(
+                        str(
+                            lot.quantite
+                            if lot.quantite is not None
+                            else "0.00"
+                        )
+                    )
+
+                except (
+                    InvalidOperation,
+                    TypeError,
+                    ValueError
+                ):
+
+                    stock_lot_avant = Decimal("0.00")
+
+                stock_lot_avant = (
+                    stock_lot_avant.quantize(
+                        Decimal("0.01"),
+                        rounding=ROUND_HALF_UP
+                    )
+                )
+
+                if stock_lot_avant <= 0:
+                    continue
+
+                # =================================================
+                # QUANTITE A SORTIR
+                # =================================================
+
+                quantite_a_sortir = min(
+                    stock_lot_avant,
                     quantite_restante
                 )
 
-                lot.quantite -= quantite_lot
+                quantite_a_sortir = (
+                    quantite_a_sortir.quantize(
+                        Decimal("0.01"),
+                        rounding=ROUND_HALF_UP
+                    )
+                )
+
+                if quantite_a_sortir <= 0:
+                    continue
+
+                # =================================================
+                # STOCK LOT APRES
+                # =================================================
+
+                stock_lot_apres = (
+                    stock_lot_avant
+                    - quantite_a_sortir
+                )
+
+                stock_lot_apres = (
+                    stock_lot_apres.quantize(
+                        Decimal("0.01"),
+                        rounding=ROUND_HALF_UP
+                    )
+                )
+
+                print(
+                    f">>> LOT #{lot.id}"
+                )
+
+                print(
+                    ">>> Péremption :",
+                    lot.date_peremption
+                )
+
+                print(
+                    ">>> Stock lot avant :",
+                    stock_lot_avant
+                )
+
+                print(
+                    ">>> Quantité sortie :",
+                    quantite_a_sortir
+                )
+
+                print(
+                    ">>> Stock lot après :",
+                    stock_lot_apres
+                )
+
+                # =================================================
+                # MISE A JOUR DU LOT
+                # =================================================
+
+                lot.quantite = stock_lot_apres
 
                 lot.save(
                     update_fields=[
@@ -1525,36 +2552,104 @@ def print_facture(request, id):
                     ]
                 )
 
-                stock_courant -= quantite_lot
-
-                quantite_restante -= quantite_lot
+                # =================================================
+                # CREATION MOUVEMENT STOCK
+                # =================================================
 
                 MouvementStock.objects.create(
+
                     produit=produit,
+
                     lot=lot,
+
                     user=request.user,
+
                     type=MouvementStock.TYPE_SORTIE,
-                    quantite=quantite_lot,
-                    stock_avant=stock_avant,
-                    stock_apres=stock_courant,
+
+                    quantite=quantite_a_sortir,
+
+                    stock_avant=stock_lot_avant,
+
+                    stock_apres=stock_lot_apres,
+
                     motif=(
-                        f"Vente - Facture #{sel_facture.id}"
+                        f"Vente - Facture "
+                        f"#{sel_facture.id}"
                     )
                 )
 
+                print(
+                    ">>> MouvementStock créé."
+                )
+
+                # =================================================
+                # QUANTITE RESTANTE
+                # =================================================
+
+                quantite_restante -= (
+                    quantite_a_sortir
+                )
+
+                quantite_restante = (
+                    quantite_restante.quantize(
+                        Decimal("0.01"),
+                        rounding=ROUND_HALF_UP
+                    )
+                )
+
+                # =================================================
+                # STOCK GLOBAL
+                # =================================================
+
+                stock_global_courant -= (
+                    quantite_a_sortir
+                )
+
+                stock_global_courant = (
+                    stock_global_courant.quantize(
+                        Decimal("0.01"),
+                        rounding=ROUND_HALF_UP
+                    )
+                )
+
+                print(
+                    ">>> Quantité restante :",
+                    quantite_restante
+                )
+
+                print(
+                    ">>> Stock global courant :",
+                    stock_global_courant
+                )
+
+            # ====================================================
+            # VERIFICATION FINALE
+            # ====================================================
+
             if quantite_restante > 0:
 
-                messages.error(
-                    request,
-                    f"Stock insuffisant dans les lots pour "
-                    f"{produit.nom}."
+                raise ValueError(
+                    f"Stock insuffisant pour "
+                    f"{produit.nom}. "
+                    f"Quantité restante : "
+                    f"{quantite_restante}"
                 )
 
-                raise Exception(
-                    "Stock insuffisant dans les lots."
+            # ====================================================
+            # SECURITE STOCK GLOBAL
+            # ====================================================
+
+            if stock_global_courant < 0:
+
+                stock_global_courant = Decimal(
+                    "0.00"
                 )
 
-            produit.quantite = stock_courant
+            # ====================================================
+            # MISE A JOUR PRODUIT
+            # ====================================================
+
+            produit.quantite = stock_global_courant
 
             produit.save(
                 update_fields=[
@@ -1562,66 +2657,590 @@ def print_facture(request, id):
                 ]
             )
 
-        # ==================================================
-        # VALIDATION FACTURE
-        # ==================================================
+            print(
+                ">>> Stock global après :",
+                produit.quantite
+            )
+
+            # ====================================================
+            # STOCK MINIMUM
+            # ====================================================
+
+            try:
+
+                stock_minimum = Decimal(
+                    str(
+                        getattr(
+                            produit,
+                            "stock_minimum",
+                            "0.00"
+                        )
+                        or "0.00"
+                    )
+                )
+
+            except (
+                InvalidOperation,
+                TypeError,
+                ValueError
+            ):
+
+                stock_minimum = Decimal(
+                    "0.00"
+                )
+
+            stock_minimum = (
+                stock_minimum.quantize(
+                    Decimal("0.01"),
+                    rounding=ROUND_HALF_UP
+                )
+            )
+
+            # ====================================================
+            # ALERTE STOCK EPUISE
+            # ====================================================
+
+            if stock_global_courant <= 0:
+
+                messages.warning(
+                    request,
+                    f"⚠️ STOCK ÉPUISÉ : "
+                    f"{produit.nom}. "
+                    f"Un réapprovisionnement est nécessaire."
+                )
+
+            # ====================================================
+            # ALERTE STOCK FAIBLE
+            # ====================================================
+
+            elif (
+                stock_minimum > 0
+                and stock_global_courant <= stock_minimum
+            ):
+
+                messages.warning(
+                    request,
+                    f"⚠️ STOCK FAIBLE : "
+                    f"{produit.nom}. "
+                    f"Stock restant : "
+                    f"{stock_global_courant}. "
+                    f"Stock minimum : "
+                    f"{stock_minimum}. "
+                    f"Un réapprovisionnement est recommandé."
+                )
+
+            # ====================================================
+            # PRIX TTC
+            # ====================================================
+
+            try:
+
+                pu_ttc = Decimal(
+                    str(
+                        detail.pu_ttc
+                        if detail.pu_ttc is not None
+                        else "0.00"
+                    )
+                )
+
+            except (
+                InvalidOperation,
+                TypeError,
+                ValueError
+            ):
+
+                messages.error(
+                    request,
+                    f"❌ Prix TTC invalide pour "
+                    f"{produit.nom}."
+                )
+
+                raise ValueError(
+                    f"Prix TTC invalide pour {produit.nom}"
+                )
+
+            pu_ttc = (
+                pu_ttc.quantize(
+                    Decimal("0.01"),
+                    rounding=ROUND_HALF_UP
+                )
+            )
+
+            # ====================================================
+            # PRIX HT
+            # ====================================================
+
+            try:
+
+                pu_ht = Decimal(
+                    str(
+                        detail.pu_ht
+                        if detail.pu_ht is not None
+                        else "0.00"
+                    )
+                )
+
+            except (
+                InvalidOperation,
+                TypeError,
+                ValueError
+            ):
+
+                messages.error(
+                    request,
+                    f"❌ Prix HT invalide pour "
+                    f"{produit.nom}."
+                )
+
+                raise ValueError(
+                    f"Prix HT invalide pour {produit.nom}"
+                )
+
+            pu_ht = (
+                pu_ht.quantize(
+                    Decimal("0.01"),
+                    rounding=ROUND_HALF_UP
+                )
+            )
+
+            # ====================================================
+            # TVA UNITAIRE
+            # ====================================================
+
+            try:
+
+                tva_unitaire = Decimal(
+                    str(
+                        detail.tva_unitaire
+                        if detail.tva_unitaire is not None
+                        else "0.00"
+                    )
+                )
+
+            except (
+                InvalidOperation,
+                TypeError,
+                ValueError
+            ):
+
+                tva_unitaire = Decimal(
+                    "0.00"
+                )
+
+            tva_unitaire = (
+                tva_unitaire.quantize(
+                    Decimal("0.01"),
+                    rounding=ROUND_HALF_UP
+                )
+            )
+
+            # ====================================================
+            # TAUX TVA
+            # ====================================================
+
+            try:
+
+                taux_tva = Decimal(
+                    str(
+                        detail.taux_tva
+                        if detail.taux_tva is not None
+                        else "16.00"
+                    )
+                )
+
+            except (
+                InvalidOperation,
+                TypeError,
+                ValueError
+            ):
+
+                taux_tva = Decimal(
+                    "16.00"
+                )
+
+            taux_tva = (
+                taux_tva.quantize(
+                    Decimal("0.01"),
+                    rounding=ROUND_HALF_UP
+                )
+            )
+
+            print(
+                ">>> PU HT :",
+                pu_ht
+            )
+
+            print(
+                ">>> PU TTC :",
+                pu_ttc
+            )
+
+            print(
+                ">>> TVA unitaire :",
+                tva_unitaire
+            )
+
+            print(
+                ">>> Taux TVA :",
+                taux_tva
+            )
+
+            # ====================================================
+            # MONTANT HT
+            # ====================================================
+
+            montant_ligne_ht = (
+                quantite_demandee
+                * pu_ht
+            )
+
+            montant_ligne_ht = (
+                montant_ligne_ht.quantize(
+                    Decimal("0.01"),
+                    rounding=ROUND_HALF_UP
+                )
+            )
+
+            # ====================================================
+            # MONTANT TVA
+            # ====================================================
+
+            montant_ligne_tva = (
+                quantite_demandee
+                * tva_unitaire
+            )
+
+            montant_ligne_tva = (
+                montant_ligne_tva.quantize(
+                    Decimal("0.01"),
+                    rounding=ROUND_HALF_UP
+                )
+            )
+
+            # ====================================================
+            # TOTAL TTC
+            # ====================================================
+
+            montant_ligne_ttc = (
+                quantite_demandee
+                * pu_ttc
+            )
+
+            montant_ligne_ttc = (
+                montant_ligne_ttc.quantize(
+                    Decimal("0.01"),
+                    rounding=ROUND_HALF_UP
+                )
+            )
+
+            # ====================================================
+            # TOTAUX
+            # ====================================================
+
+            total_ht += montant_ligne_ht
+            total_tva += montant_ligne_tva
+            total_ttc += montant_ligne_ttc
+
+            # ====================================================
+            # LIGNE POUR LE TEMPLATE
+            # ====================================================
+
+            list_facture.append({
+
+                "produit": produit.nom,
+
+                "pu": pu_ttc,
+
+                "qte": quantite_demandee,
+
+                "total": montant_ligne_ttc,
+            })
+
+            print(
+                ">>> Ligne facture ajoutée :",
+                produit.nom,
+                "| PU TTC :",
+                pu_ttc,
+                "| QTE :",
+                quantite_demandee,
+                "| TOTAL TTC :",
+                montant_ligne_ttc
+            )
+
+        # ========================================================
+        # ARRONDISSEMENT DES TOTAUX
+        # ========================================================
+
+        total_ht = (
+            total_ht.quantize(
+                Decimal("0.01"),
+                rounding=ROUND_HALF_UP
+            )
+        )
+
+        total_tva = (
+            total_tva.quantize(
+                Decimal("0.01"),
+                rounding=ROUND_HALF_UP
+            )
+        )
+
+        total_ttc = (
+            total_ttc.quantize(
+                Decimal("0.01"),
+                rounding=ROUND_HALF_UP
+            )
+        )
+
+        print("\n")
+        print("=" * 100)
+        print(">>> TOTAL HT  :", total_ht)
+        print(">>> TOTAL TVA :", total_tva)
+        print(">>> TOTAL TTC :", total_ttc)
+        print("=" * 100)
+
+        # ========================================================
+        # MISE A JOUR FACTURE
+        # ========================================================
 
         sel_facture.imprimer = True
 
-        sel_facture.total = sommefac
+        if hasattr(sel_facture, "total_ht"):
+            sel_facture.total_ht = total_ht
 
-        sel_facture.save(
-            update_fields=[
-                "imprimer",
-                "total"
-            ]
+        if hasattr(sel_facture, "total_tva"):
+            sel_facture.total_tva = total_tva
+
+        if hasattr(sel_facture, "total_ttc"):
+            sel_facture.total_ttc = total_ttc
+
+        # Si ton modèle possède seulement "total"
+        if hasattr(sel_facture, "total"):
+            sel_facture.total = total_ttc
+
+        sel_facture.save()
+
+        print(
+            ">>> Facture marquée comme imprimée."
         )
 
-    # ======================================================
-    # QR CODE
-    # ======================================================
+        # ========================================================
+        # DONNEES QR CODE
+        # ========================================================
 
-    img = qrcode.make(
-        str(data_liste)
-    )
+        data_liste = {
 
-    img_name = (
-        "facture"
-        + str(time())
-        + ".png"
-    )
+            "facture": sel_facture.id,
 
-    img.save(
-        "mediafiles/facture/"
-        + img_name
-    )
+            "numero": getattr(
+                sel_facture,
+                "numero",
+                sel_facture.id
+            ),
 
-    # ======================================================
-    # PDF
-    # ======================================================
+            "date": str(
+                getattr(
+                    sel_facture,
+                    "date",
+                    aujourd_hui
+                )
+            ),
 
-    ctx = {
-        "sel_facture": sel_facture,
-        "list_facture": data_liste,
-        "Llist_facture": "active",
-        "liste_produit": data_produit,
-        "sommefac": sommefac,
-        "compte": len(details),
-        "total": total,
-        "img": img_name,
-        "produit": data_liste,
-        "noms": request.user.noms
-    }
+            "total_ht": str(
+                total_ht
+            ),
 
-    pdf = render_to_pdf(
-        "facture/facture.html",
-        ctx,
-        200
-    )
+            "total_tva": str(
+                total_tva
+            ),
 
-    return pdf
+            "total_ttc": str(
+                total_ttc
+            ),
+        }
 
+        data_qr = json.dumps(
+            data_liste,
+            ensure_ascii=False
+        )
 
+        print(
+            ">>> Données QR :",
+            data_qr
+        )
+
+        # ========================================================
+        # DOSSIER QR
+        #
+        # MEDIA_ROOT/facture/
+        #
+        # Exemple :
+        # C:/market-app/kivu/mediafiles/facture/
+        # ========================================================
+
+        dossier_qr = os.path.join(
+            settings.MEDIA_ROOT,
+            "mediafiles/facture/",
+        )
+
+        os.makedirs(
+            dossier_qr,
+            exist_ok=True
+        )
+
+        # ========================================================
+        # NOM QR
+        # ========================================================
+
+        nom_qr = (
+            f"qr_facture_"
+            f"{sel_facture.id}_"
+            f"{int(time.time())}.png"
+        )
+
+        # ========================================================
+        # CHEMIN PHYSIQUE
+        # ========================================================
+
+        chemin_qr = os.path.join(
+            dossier_qr,
+            nom_qr
+        )
+
+        # ========================================================
+        # GENERATION QR
+        # ========================================================
+
+        qr_image = qrcode.make(
+            data_qr
+        )
+
+        qr_image.save(
+            chemin_qr
+        )
+
+        print(
+            ">>> QR Code enregistré :",
+            chemin_qr
+        )
+
+        # ========================================================
+        # VERIFICATION FICHIER
+        # ========================================================
+
+        if os.path.exists(chemin_qr):
+
+            print(
+                ">>> ✓ FICHIER QR EXISTE"
+            )
+
+            print(
+                ">>> Taille QR :",
+                os.path.getsize(chemin_qr),
+                "octets"
+            )
+
+        else:
+
+            print(
+                ">>> ❌ ERREUR : QR NON ENREGISTRE"
+            )
+
+            raise FileNotFoundError(
+                f"Le QR Code n'a pas pu être enregistré : "
+                f"{chemin_qr}"
+            )
+
+        # ========================================================
+        # URL MEDIA DU QR
+        # ========================================================
+
+        qr_url = (
+            settings.MEDIA_URL
+            + "facture/"
+            + nom_qr
+        )
+
+        print(
+            ">>> QR URL :",
+            qr_url
+        )
+
+        # ========================================================
+        # NOM OPERATEUR
+        # ========================================================
+
+        noms_operateur = getattr(
+            request.user,
+            "noms",
+            str(request.user)
+        )
+
+        # ========================================================
+        # CONTEXTE PDF
+        # ========================================================
+
+        context = {
+
+            "facture": sel_facture,
+
+            "details": details,
+
+            "list_facture": list_facture,
+
+            "total_ht": total_ht,
+
+            "total_tva": total_tva,
+
+            "total_ttc": total_ttc,
+
+            "sommefac": total_ttc,
+
+            # URL du QR
+            "qr_code": qr_url,
+
+            # Nom physique du fichier
+            "img": nom_qr,
+
+            "noms": noms_operateur,
+
+            "utilisateur": noms_operateur,
+
+            "date_impression": aujourd_hui,
+        }
+
+        print(
+            ">>> Nombre de lignes PDF :",
+            len(list_facture)
+        )
+
+        print(
+            ">>> Contexte PDF préparé."
+        )
+
+        # ========================================================
+        # GENERATION PDF
+        # ========================================================
+
+        print(
+            ">>> Génération du PDF..."
+        )
+
+        pdf = render_to_pdf(
+            "facture/facture.html",
+            context,
+            "facture_" + str(sel_facture.id)
+        )
+
+        print(
+            ">>> PDF généré avec succès."
+        )
+
+        print("=" * 100)
+        print(">>> FIN print_facture()")
+        print("=" * 100)
+
+        return pdf
 # ==========================================================
 # RAPPORTS : RECETTES DES FACTURIERS
 # ==========================================================
@@ -1659,71 +3278,204 @@ def recettes_facturiers(request):
 
     for user in facturiers:
 
-        recette_jour = Facture.objects.filter(
+        # ==================================================
+        # FACTURES VALIDÉES DU JOUR
+        # ==================================================
+
+        factures_jour_qs = Facture.objects.filter(
             user=user,
             createdAt__gte=debut_jour,
-            createdAt__lte=maintenant
-        ).aggregate(
+            createdAt__lte=maintenant,
+            imprimer=True
+        )
+
+        recette_jour_ht = factures_jour_qs.aggregate(
             total=Coalesce(
-                Sum("total"),
+                Sum("total_ht"),
                 Decimal("0.00")
             )
         )["total"]
 
-        recette_mois = Facture.objects.filter(
+        recette_jour_tva = factures_jour_qs.aggregate(
+            total=Coalesce(
+                Sum("total_tva"),
+                Decimal("0.00")
+            )
+        )["total"]
+
+        recette_jour_ttc = factures_jour_qs.aggregate(
+            total=Coalesce(
+                Sum("total_ttc"),
+                Decimal("0.00")
+            )
+        )["total"]
+
+        # ==================================================
+        # FACTURES VALIDÉES DU MOIS
+        # ==================================================
+
+        factures_mois_qs = Facture.objects.filter(
             user=user,
             createdAt__gte=debut_mois,
-            createdAt__lte=maintenant
-        ).aggregate(
+            createdAt__lte=maintenant,
+            imprimer=True
+        )
+
+        recette_mois_ht = factures_mois_qs.aggregate(
             total=Coalesce(
-                Sum("total"),
+                Sum("total_ht"),
                 Decimal("0.00")
             )
         )["total"]
 
-        recette_annee = Facture.objects.filter(
-            user=user,
-            createdAt__gte=debut_annee,
-            createdAt__lte=maintenant
-        ).aggregate(
+        recette_mois_tva = factures_mois_qs.aggregate(
             total=Coalesce(
-                Sum("total"),
+                Sum("total_tva"),
                 Decimal("0.00")
             )
         )["total"]
 
-        factures_jour = Facture.objects.filter(
-            user=user,
-            createdAt__gte=debut_jour,
-            createdAt__lte=maintenant
-        ).count()
+        recette_mois_ttc = factures_mois_qs.aggregate(
+            total=Coalesce(
+                Sum("total_ttc"),
+                Decimal("0.00")
+            )
+        )["total"]
 
-        factures_mois = Facture.objects.filter(
-            user=user,
-            createdAt__gte=debut_mois,
-            createdAt__lte=maintenant
-        ).count()
+        # ==================================================
+        # FACTURES VALIDÉES DE L'ANNÉE
+        # ==================================================
 
-        factures_annee = Facture.objects.filter(
+        factures_annee_qs = Facture.objects.filter(
             user=user,
             createdAt__gte=debut_annee,
-            createdAt__lte=maintenant
-        ).count()
+            createdAt__lte=maintenant,
+            imprimer=True
+        )
+
+        recette_annee_ht = factures_annee_qs.aggregate(
+            total=Coalesce(
+                Sum("total_ht"),
+                Decimal("0.00")
+            )
+        )["total"]
+
+        recette_annee_tva = factures_annee_qs.aggregate(
+            total=Coalesce(
+                Sum("total_tva"),
+                Decimal("0.00")
+            )
+        )["total"]
+
+        recette_annee_ttc = factures_annee_qs.aggregate(
+            total=Coalesce(
+                Sum("total_ttc"),
+                Decimal("0.00")
+            )
+        )["total"]
+
+        # ==================================================
+        # NOMBRE DE FACTURES
+        # ==================================================
+
+        factures_jour = factures_jour_qs.count()
+
+        factures_mois = factures_mois_qs.count()
+
+        factures_annee = factures_annee_qs.count()
 
         donnees.append({
+
             "user": user,
-            "recette_jour": recette_jour,
-            "recette_mois": recette_mois,
-            "recette_annee": recette_annee,
+
+            # ==========================
+            # JOUR
+            # ==========================
+
+            "recette_jour": recette_jour_ttc,
+            "recette_jour_ht": recette_jour_ht,
+            "recette_jour_tva": recette_jour_tva,
+            "recette_jour_ttc": recette_jour_ttc,
+
             "factures_jour": factures_jour,
+
+            # ==========================
+            # MOIS
+            # ==========================
+
+            "recette_mois": recette_mois_ttc,
+            "recette_mois_ht": recette_mois_ht,
+            "recette_mois_tva": recette_mois_tva,
+            "recette_mois_ttc": recette_mois_ttc,
+
             "factures_mois": factures_mois,
+
+            # ==========================
+            # ANNÉE
+            # ==========================
+
+            "recette_annee": recette_annee_ttc,
+            "recette_annee_ht": recette_annee_ht,
+            "recette_annee_tva": recette_annee_tva,
+            "recette_annee_ttc": recette_annee_ttc,
+
             "factures_annee": factures_annee,
         })
 
+    # ======================================================
+    # TOTAUX GÉNÉRAUX DU MOIS
+    # ======================================================
+
+    toutes_factures_mois = Facture.objects.filter(
+        createdAt__gte=debut_mois,
+        createdAt__lte=maintenant,
+        imprimer=True
+    )
+
+    total_mois_ht = toutes_factures_mois.aggregate(
+        total=Coalesce(
+            Sum("total_ht"),
+            Decimal("0.00")
+        )
+    )["total"]
+
+    total_mois_tva = toutes_factures_mois.aggregate(
+        total=Coalesce(
+            Sum("total_tva"),
+            Decimal("0.00")
+        )
+    )["total"]
+
+    total_mois_ttc = toutes_factures_mois.aggregate(
+        total=Coalesce(
+            Sum("total_ttc"),
+            Decimal("0.00")
+        )
+    )["total"]
+
+    nombre_factures_mois = toutes_factures_mois.count()
+
     context = {
+
         "facturiers": donnees,
+
         "date": maintenant,
+
         "lrapport": "active",
+
+        # ==================================================
+        # RAPPORT GLOBAL
+        # ==================================================
+
+        "total_mois_ht": total_mois_ht,
+
+        "total_mois_tva": total_mois_tva,
+
+        "total_mois_ttc": total_mois_ttc,
+
+        "nombre_factures_mois": nombre_factures_mois,
+
+        "taux_tva": TVA_TAUX,
     }
 
     return render(
@@ -1823,24 +3575,33 @@ def statut_peremption(date_peremption):
 
 @login_required
 def stock(request):
+
     # ==============================
     # RECHERCHE
     # ==============================
-    rech = request.GET.get("rech", "").strip()
+
+    rech = request.GET.get(
+        "rech",
+        ""
+    ).strip()
 
     # ==============================
     # PRODUITS
     # ==============================
-    produits = Produit.objects.select_related(
-        "appartement"
-    ).prefetch_related(
-        "lots"
-    ).order_by("nom")
+
+    produits = (
+        Produit.objects
+        .select_related("appartement")
+        .prefetch_related("lots")
+        .order_by("nom")
+    )
 
     # ==============================
     # FILTRE DE RECHERCHE
     # ==============================
+
     if rech:
+
         produits = produits.filter(
             Q(nom__icontains=rech)
             | Q(appartement__nom__icontains=rech)
@@ -1848,35 +3609,143 @@ def stock(request):
         ).distinct()
 
     # ==============================
-    # STATISTIQUES GÉNÉRALES
+    # DATE ACTUELLE
     # ==============================
-    total_stock = Produit.objects.aggregate(
-        total=Sum("quantite")
-    )["total"] or Decimal("0")
-
-    produits_alerte = Produit.objects.filter(
-        quantite__lte=F("stock_minimum")
-    ).count()
 
     aujourd_hui = date.today()
 
-    lots_perimes = Lot.objects.filter(
-        quantite__gt=0,
-        date_peremption__lt=aujourd_hui
-    ).count()
+    # ==============================
+    # STOCK TOTAL
+    # ==============================
+
+    total_stock = (
+        Produit.objects.aggregate(
+            total=Coalesce(
+                Sum("quantite"),
+                Decimal("0.00")
+            )
+        )["total"]
+    )
+
+    # ==============================
+    # PRODUITS EN STOCK FAIBLE
+    # ==============================
+
+    produits_alerte = (
+        Produit.objects
+        .filter(
+            quantite__lte=F("stock_minimum")
+        )
+        .count()
+    )
+
+    # ==============================
+    # LOTS PÉRIMÉS
+    # ==============================
+
+    lots_perimes = (
+        Lot.objects
+        .filter(
+            quantite__gt=0,
+            date_peremption__lt=aujourd_hui
+        )
+        .count()
+    )
+
+    # ==============================
+    # VALEUR DU STOCK
+    #
+    # quantité × prix de vente TTC
+    # ==============================
+
+    valeur_stock = Decimal("0.00")
+
+    produits_valeur = Produit.objects.all()
+
+    for produit in produits_valeur:
+
+        quantite = (
+            produit.quantite
+            or Decimal("0.00")
+        )
+
+        prix = (
+            produit.pu
+            or Decimal("0.00")
+        )
+
+        valeur_stock += (
+            quantite * prix
+        )
+
+    # ==============================
+    # CHIFFRE D'AFFAIRES TTC
+    # ==============================
+
+    chiffre_affaires = (
+        Facture.objects
+        .filter(
+            imprimer=True
+        )
+        .aggregate(
+            total=Coalesce(
+                Sum("total_ttc"),
+                Decimal("0.00")
+            )
+        )["total"]
+    )
+
+    # ==============================
+    # CHIFFRE D'AFFAIRES HT
+    # ==============================
+
+    chiffre_affaires_ht = (
+        Facture.objects
+        .filter(
+            imprimer=True
+        )
+        .aggregate(
+            total=Coalesce(
+                Sum("total_ht"),
+                Decimal("0.00")
+            )
+        )["total"]
+    )
+
+    # ==============================
+    # TVA COLLECTÉE
+    # ==============================
+
+    tva_collectee = (
+        Facture.objects
+        .filter(
+            imprimer=True
+        )
+        .aggregate(
+            total=Coalesce(
+                Sum("total_tva"),
+                Decimal("0.00")
+            )
+        )["total"]
+    )
 
     # ==============================
     # PRÉPARATION DES DONNÉES
     # ==============================
+
     donnees = []
 
     for produit in produits:
 
         lots_data = []
 
-        for lot in produit.lots.all().order_by("date_peremption"):
+        for lot in produit.lots.all().order_by(
+            "date_peremption"
+        ):
 
-            statut = statut_peremption(lot.date_peremption)
+            statut = statut_peremption(
+                lot.date_peremption
+            )
 
             lots_data.append({
                 "lot": lot,
@@ -1891,29 +3760,61 @@ def stock(request):
     # ==============================
     # PAGINATION
     # ==============================
-    paginator = Paginator(donnees, 12)
 
-    page_number = request.GET.get("page")
+    paginator = Paginator(
+        donnees,
+        12
+    )
 
-    page_obj = paginator.get_page(page_number)
+    page_number = request.GET.get(
+        "page"
+    )
+
+    page_obj = paginator.get_page(
+        page_number
+    )
 
     # ==============================
     # RENDU
     # ==============================
+
     return render(
         request,
         "stock/index.html",
         {
             "page_obj": page_obj,
+
             "donnees": page_obj.object_list,
 
             "rech": rech,
 
+            # ======================
+            # STATISTIQUES STOCK
+            # ======================
+
             "total_stock": total_stock,
+
+            "valeur_stock": valeur_stock,
+
             "produits_alerte": produits_alerte,
+
             "lots_perimes": lots_perimes,
+            "lstock": "active",
+
+            # ======================
+            # CHIFFRE D'AFFAIRES
+            # ======================
+
+            "chiffre_affaires": chiffre_affaires,
+
+            "chiffre_affaires_ht": chiffre_affaires_ht,
+
+            "tva_collectee": tva_collectee,
+
+            "taux_tva": TVA_TAUX,
         }
     )
+
 
 # ==========================================================
 # ENTRÉE STOCK
@@ -1976,6 +3877,7 @@ def entree_stock(request):
                 raise ValueError
 
         except (
+            InvalidOperation,
             ValueError,
             TypeError
         ):
@@ -2078,6 +3980,7 @@ def entree_stock(request):
 
     context = {
         "produits": produits,
+        "lentree": "active",
     }
 
     return render(
@@ -2135,6 +4038,7 @@ def sortie_stock(request):
                 raise ValueError
 
         except (
+            InvalidOperation,
             ValueError,
             TypeError
         ):
@@ -2258,6 +4162,7 @@ def sortie_stock(request):
 
     context = {
         "produits": produits,
+        "lsortie": "active",
     }
 
     return render(
@@ -2270,10 +4175,14 @@ def sortie_stock(request):
 # ==========================================================
 # MOUVEMENTS STOCK
 # ==========================================================
+
 @login_required(login_url="sign_in")
 def mouvements_stock(request):
 
-    rech = request.GET.get("rech", "").strip()
+    rech = request.GET.get(
+        "rech",
+        ""
+    ).strip()
 
     mouvements = (
         MouvementStock.objects
@@ -2282,10 +4191,14 @@ def mouvements_stock(request):
             "lot",
             "user",
         )
-        .order_by("-createdAt", "-id")
+        .order_by(
+            "-createdAt",
+            "-id"
+        )
     )
 
     if rech:
+
         mouvements = mouvements.filter(
             Q(produit__nom__icontains=rech)
             | Q(lot__numero__icontains=rech)
@@ -2300,7 +4213,9 @@ def mouvements_stock(request):
         50
     )
 
-    page_number = request.GET.get("page")
+    page_number = request.GET.get(
+        "page"
+    )
 
     page_obj = paginator.get_page(
         page_number
@@ -2311,6 +4226,7 @@ def mouvements_stock(request):
         "page_obj": page_obj,
         "total_mouvements": paginator.count,
         "rech": rech,
+        "lmouvements": "active",
     }
 
     return render(
@@ -2318,23 +4234,35 @@ def mouvements_stock(request):
         "stock/mouvements.html",
         context
     )
+
+
 # ==========================================================
 # PRODUITS PROCHES DE LA PÉREMPTION
 # ==========================================================
 
 @login_required
 def produits_peremption(request):
+
     aujourd_hui = date.today()
-    limite_4_mois = aujourd_hui + datetime.timedelta(days=120)
+
+    limite_4_mois = (
+        aujourd_hui
+        + datetime.timedelta(days=120)
+    )
 
     # ==============================
     # RECHERCHE
     # ==============================
-    rech = request.GET.get("rech", "").strip()
+
+    rech = request.GET.get(
+        "rech",
+        ""
+    ).strip()
 
     # ==============================
     # LOTS ARRIVANT À EXPIRATION
     # ==============================
+
     lots = Lot.objects.select_related(
         "produit",
         "produit__appartement"
@@ -2346,7 +4274,9 @@ def produits_peremption(request):
     # ==============================
     # FILTRE DE RECHERCHE
     # ==============================
+
     if rech:
+
         lots = lots.filter(
             Q(produit__nom__icontains=rech)
             | Q(produit__appartement__nom__icontains=rech)
@@ -2356,6 +4286,7 @@ def produits_peremption(request):
     # ==============================
     # TRI
     # ==============================
+
     lots = lots.order_by(
         "date_peremption",
         "produit__nom",
@@ -2365,6 +4296,7 @@ def produits_peremption(request):
     # ==============================
     # STATISTIQUES
     # ==============================
+
     total_peremption = lots.count()
 
     total_perimes = lots.filter(
@@ -2374,19 +4306,26 @@ def produits_peremption(request):
     # ==============================
     # PRÉPARATION DES DONNÉES
     # ==============================
+
     donnees = []
 
     for lot in lots:
 
         jours_restants = (
-            lot.date_peremption - aujourd_hui
+            lot.date_peremption
+            - aujourd_hui
         ).days
 
         if jours_restants < 0:
+
             classe = "perime"
+
         elif jours_restants <= 90:
+
             classe = "urgent"
+
         else:
+
             classe = "surveiller"
 
         donnees.append({
@@ -2401,15 +4340,24 @@ def produits_peremption(request):
     # ==============================
     # PAGINATION
     # ==============================
-    paginator = Paginator(donnees, 50)
 
-    page_number = request.GET.get("page")
+    paginator = Paginator(
+        donnees,
+        50
+    )
 
-    page_obj = paginator.get_page(page_number)
+    page_number = request.GET.get(
+        "page"
+    )
+
+    page_obj = paginator.get_page(
+        page_number
+    )
 
     # ==============================
     # RENDU
     # ==============================
+
     return render(
         request,
         "stock/peremption.html",
@@ -2419,5 +4367,416 @@ def produits_peremption(request):
             "total_peremption": total_peremption,
             "total_perimes": total_perimes,
             "rech": rech,
+            "lperemption": "active",
         }
     )
+    
+    
+
+# ==========================================================
+# RAPPORT MENSUEL DES VENTES ET DE LA TVA
+# ==========================================================
+
+@login_required(login_url="sign_in")
+def rapport_mensuel_tva(request):
+    """
+    Génère le rapport mensuel des ventes et de la TVA collectée.
+
+    Paramètres GET :
+        mois  = 1 à 12
+        annee = année
+
+    Exemple :
+        /rapport-mensuel-tva/?mois=8&annee=2026
+    """
+
+    # ======================================================
+    # MOIS / ANNÉE
+    # ======================================================
+
+    aujourd_hui = timezone.localdate()
+
+    try:
+        mois = int(
+            request.GET.get(
+                "mois",
+                aujourd_hui.month
+            )
+        )
+    except (TypeError, ValueError):
+        mois = aujourd_hui.month
+
+    try:
+        annee = int(
+            request.GET.get(
+                "annee",
+                aujourd_hui.year
+            )
+        )
+    except (TypeError, ValueError):
+        annee = aujourd_hui.year
+
+    # Sécurité
+    if mois < 1 or mois > 12:
+        mois = aujourd_hui.month
+
+    if annee < 2000 or annee > 2100:
+        annee = aujourd_hui.year
+
+    # ======================================================
+    # NOMS DES MOIS
+    # ======================================================
+
+    noms_mois = [
+        "",
+        "Janvier",
+        "Février",
+        "Mars",
+        "Avril",
+        "Mai",
+        "Juin",
+        "Juillet",
+        "Août",
+        "Septembre",
+        "Octobre",
+        "Novembre",
+        "Décembre",
+    ]
+
+    nom_mois = noms_mois[mois]
+
+    # ======================================================
+    # FACTURES VALIDÉES DU MOIS
+    # ======================================================
+
+    factures = Facture.objects.filter(
+        createdAt__year=annee,
+        createdAt__month=mois,
+        imprimer=True
+    ).select_related(
+        "user"
+    ).order_by(
+        "createdAt"
+    )
+
+    # ======================================================
+    # NOMBRE DE FACTURES
+    # ======================================================
+
+    nombre_factures = factures.count()
+
+    # ======================================================
+    # TOTAL HT
+    # ======================================================
+
+    total_ht = factures.aggregate(
+        total=Coalesce(
+            Sum("total_ht"),
+            Decimal("0.00")
+        )
+    )["total"]
+
+    # ======================================================
+    # TOTAL TVA
+    # ======================================================
+
+    total_tva = factures.aggregate(
+        total=Coalesce(
+            Sum("total_tva"),
+            Decimal("0.00")
+        )
+    )["total"]
+
+    # ======================================================
+    # TOTAL TTC
+    # ======================================================
+
+    total_ttc = factures.aggregate(
+        total=Coalesce(
+            Sum("total_ttc"),
+            Decimal("0.00")
+        )
+    )["total"]
+
+    # ======================================================
+    # ARRONDIS
+    # ======================================================
+
+    total_ht = (
+        total_ht or Decimal("0.00")
+    ).quantize(
+        Decimal("0.01"),
+        rounding=ROUND_HALF_UP
+    )
+
+    total_tva = (
+        total_tva or Decimal("0.00")
+    ).quantize(
+        Decimal("0.01"),
+        rounding=ROUND_HALF_UP
+    )
+
+    total_ttc = (
+        total_ttc or Decimal("0.00")
+    ).quantize(
+        Decimal("0.01"),
+        rounding=ROUND_HALF_UP
+    )
+
+    # ======================================================
+    # VÉRIFICATION
+    # HT + TVA = TTC
+    # ======================================================
+
+    difference = (
+        total_ht + total_tva - total_ttc
+    ).quantize(
+        Decimal("0.01"),
+        rounding=ROUND_HALF_UP
+    )
+
+    # ======================================================
+    # DÉTAIL DE LA TVA PAR TAUX
+    # ======================================================
+
+    details = Detail_facture.objects.filter(
+        facture__in=factures
+    ).values(
+        "taux_tva"
+    ).annotate(
+        base_ht=Coalesce(
+            Sum(
+                F("pu_ht") * F("quantite")
+            ),
+            Decimal("0.00")
+        ),
+        montant_tva=Coalesce(
+            Sum(
+                F("tva_unitaire") * F("quantite")
+            ),
+            Decimal("0.00")
+        ),
+        montant_ttc=Coalesce(
+            Sum(
+                F("pu_ttc") * F("quantite")
+            ),
+            Decimal("0.00")
+        ),
+        quantite=Coalesce(
+            Sum("quantite"),
+            Decimal("0.00")
+        )
+    ).order_by(
+        "taux_tva"
+    )
+
+    # ======================================================
+    # PRÉPARER LES DONNÉES TVA
+    # ======================================================
+
+    tva_par_taux = []
+
+    for ligne in details:
+
+        taux = (
+            ligne["taux_tva"]
+            or Decimal("0.00")
+        )
+
+        base_ht = (
+            ligne["base_ht"]
+            or Decimal("0.00")
+        ).quantize(
+            Decimal("0.01"),
+            rounding=ROUND_HALF_UP
+        )
+
+        montant_tva = (
+            ligne["montant_tva"]
+            or Decimal("0.00")
+        ).quantize(
+            Decimal("0.01"),
+            rounding=ROUND_HALF_UP
+        )
+
+        montant_ttc = (
+            ligne["montant_ttc"]
+            or Decimal("0.00")
+        ).quantize(
+            Decimal("0.01"),
+            rounding=ROUND_HALF_UP
+        )
+
+        quantite = (
+            ligne["quantite"]
+            or Decimal("0.00")
+        )
+
+        tva_par_taux.append({
+            "taux": taux,
+            "base_ht": base_ht,
+            "montant_tva": montant_tva,
+            "montant_ttc": montant_ttc,
+            "quantite": quantite,
+        })
+
+    # ======================================================
+    # DÉTAIL DES VENTES
+    # ======================================================
+
+    lignes_vente = []
+
+    details_vente = Detail_facture.objects.filter(
+        facture__in=factures
+    ).select_related(
+        "facture",
+        "produit"
+    ).order_by(
+        "facture__createdAt",
+        "id"
+    )
+
+    for detail in details_vente:
+
+        quantite = (
+            detail.quantite
+            or Decimal("0.00")
+        )
+
+        pu_ht = (
+            detail.pu_ht
+            or Decimal("0.00")
+        )
+
+        pu_ttc = (
+            detail.pu_ttc
+            or Decimal("0.00")
+        )
+
+        tva_unitaire = (
+            detail.tva_unitaire
+            or Decimal("0.00")
+        )
+
+        total_ligne_ht = (
+            pu_ht * quantite
+        ).quantize(
+            Decimal("0.01"),
+            rounding=ROUND_HALF_UP
+        )
+
+        total_ligne_tva = (
+            tva_unitaire * quantite
+        ).quantize(
+            Decimal("0.01"),
+            rounding=ROUND_HALF_UP
+        )
+
+        total_ligne_ttc = (
+            pu_ttc * quantite
+        ).quantize(
+            Decimal("0.01"),
+            rounding=ROUND_HALF_UP
+        )
+
+        lignes_vente.append({
+            "facture": detail.facture,
+            "produit": detail.produit,
+            "quantite": quantite,
+            "pu_ht": pu_ht,
+            "pu_ttc": pu_ttc,
+            "taux_tva": detail.taux_tva,
+            "total_ht": total_ligne_ht,
+            "total_tva": total_ligne_tva,
+            "total_ttc": total_ligne_ttc,
+        })
+
+    # ======================================================
+    # RAPPORT
+    # ======================================================
+
+    context = {
+
+        # --------------------------------------------------
+        # Identification
+        # --------------------------------------------------
+
+        "entreprise": "Kivu SuperMarket",
+        "titre": "Rapport mensuel des ventes et de la TVA collectée",
+
+        # --------------------------------------------------
+        # Période
+        # --------------------------------------------------
+
+        "mois": mois,
+        "annee": annee,
+        "nom_mois": nom_mois,
+
+        # --------------------------------------------------
+        # Statistiques
+        # --------------------------------------------------
+
+        "nombre_factures": nombre_factures,
+
+        "total_ht": total_ht,
+        "total_tva": total_tva,
+        "total_ttc": total_ttc,
+
+        # --------------------------------------------------
+        # Contrôle
+        # --------------------------------------------------
+
+        "difference": difference,
+
+        # --------------------------------------------------
+        # TVA
+        # --------------------------------------------------
+
+        "tva_par_taux": tva_par_taux,
+
+        # --------------------------------------------------
+        # Ventes
+        # --------------------------------------------------
+
+        "lignes_vente": lignes_vente,
+
+        # --------------------------------------------------
+        # Factures
+        # --------------------------------------------------
+
+        "factures": factures,
+
+        # --------------------------------------------------
+        # Utilisateur
+        # --------------------------------------------------
+
+        "noms": request.user.noms,
+        "profile": getattr(
+            request.user,
+            "profile",
+            None
+        ),
+
+        # --------------------------------------------------
+        # Menu actif
+        # --------------------------------------------------
+
+        "lrapport": "active",
+
+        # --------------------------------------------------
+        # Date génération
+        # --------------------------------------------------
+
+        "date_generation": timezone.localtime(),
+
+    }
+
+    # ======================================================
+    # GÉNÉRATION PDF
+    # ======================================================
+
+    return render_to_pdf(
+        "rapports/rapport_mensuel_tva.html",
+        context
+    )
+

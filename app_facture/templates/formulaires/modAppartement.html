@@ -1,52 +1,325 @@
+
 {% extends 'base.html' %}
 {% load static %}
+
 {% block content %}
-<div class="content-wrapper">
-    <div class="row">
-              <div class="col-md-6 grid-margin stretch-card">
 
-                 <div class="card">
-                  <div class="card-body">
-                    <h4 class="card-title">Modifier l'Appartement n°: {{ap.id}}</h4>
-                    <form class="forms-sample" method="post" action="{% url 'updateAppartement' ap.id %}">
-                       {% csrf_token %}
-                      <div class="form-group">
-                        <label for="exampleInputUsername1">Nom</label>
-                        <input type="text" value="{{ap.nom}}" name="nom" style="color:white" class="form-control" id="exampleInputUsername1" placeholder="Appartement">
-                      </div>
+<style>
+    /* =====================================================
+       TEXTE BLANC DANS LA ZONE DE SAISIE
+    ====================================================== */
 
-                      <button type="submit" class="btn btn-primary mr-2">Valider</button>
+    .form-control {
+        color: #ffffff !important;
+    }
+
+    .form-control:focus {
+        color: #ffffff !important;
+    }
+
+    .form-control::placeholder {
+        color: rgba(255, 255, 255, 0.60) !important;
+        opacity: 1;
+    }
+
+    /* Label du champ */
+    .form-group label {
+        color: #ffffff;
+    }
+
+    /* Icône à gauche du champ */
+    .input-group-text {
+        color: #ffffff !important;
+    }
+</style>
+
+
+<div class="container-fluid">
+
+
+    <div class="row justify-content-center">
+
+        <div class="col-xl-8 col-lg-9 col-md-12">
+
+            <div
+                class="card shadow-sm"
+                style="
+                    border:none;
+                    border-radius:16px;
+                    overflow:hidden;
+                "
+            >
+
+
+                <!-- =================================================
+                     EN-TÊTE
+                ================================================== -->
+
+                <div class="card-body border-bottom">
+
+                    <div class="d-flex align-items-center">
+
+                        <div
+                            class="d-flex align-items-center justify-content-center mr-3"
+                            style="
+                                width:52px;
+                                height:52px;
+                                border-radius:12px;
+                                background:rgba(0,123,255,.12);
+                            "
+                        >
+
+                            <i
+                                class="mdi mdi-home-edit text-primary"
+                                style="font-size:28px;"
+                            ></i>
+
+                        </div>
+
+
+                        <div>
+
+                            <h4 class="card-title mb-1">
+                                Modifier l'appartement
+                            </h4>
+
+                            <p class="text-muted mb-0">
+
+                                Modification de l'appartement
+
+                                <strong>
+                                    n° {{ ap.id }}
+                                </strong>
+
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- =================================================
+                     CONTENU
+                ================================================== -->
+
+                <div class="card-body">
+
+
+                    <!-- =================================================
+                         INFORMATIONS APPARTEMENT
+                    ================================================== -->
+
+                    <div
+                        class="alert alert-info d-flex align-items-center mb-4"
+                        role="alert"
+                        style="border-radius:10px;"
+                    >
+
+                        <i
+                            class="mdi mdi-home-outline mr-3"
+                            style="font-size:25px;"
+                        ></i>
+
+
+                        <div>
+
+                            <strong>
+                                Appartement n°{{ ap.id }}
+                            </strong>
+
+                            <div class="text-muted mt-1">
+
+                                Modifiez le nom de l'appartement puis
+                                cliquez sur « Enregistrer ».
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- =================================================
+                         FORMULAIRE
+                    ================================================== -->
+
+                    <form
+                        method="post"
+                        action="{% url 'updateAppartement' ap.id %}"
+                        autocomplete="off"
+                    >
+
+                        {% csrf_token %}
+
+
+                        <!-- =================================================
+                             NOM
+                        ================================================== -->
+
+                        <div class="form-group">
+
+                            <label
+                                for="nom"
+                                class="font-weight-bold"
+                            >
+
+                                Nom de l'appartement
+
+                                <span class="text-danger">
+                                    *
+                                </span>
+
+                            </label>
+
+
+                            <div class="input-group">
+
+                                <div class="input-group-prepend">
+
+                                    <span
+                                        class="input-group-text"
+                                        style="
+                                            border-radius:8px 0 0 8px;
+                                        "
+                                    >
+
+                                        <i
+                                            class="mdi mdi-home-outline"
+                                            style="font-size:20px;"
+                                        ></i>
+
+                                    </span>
+
+                                </div>
+
+
+                                <input
+                                    type="text"
+                                    value="{{ ap.nom }}"
+                                    name="nom"
+                                    class="form-control"
+                                    id="nom"
+                                    placeholder="Nom de l'appartement"
+                                    required
+                                    autofocus
+                                >
+
+                            </div>
+
+
+                            <small
+                                class="form-text text-muted mt-2"
+                            >
+
+                                <i
+                                    class="mdi mdi-information-outline mr-1"
+                                ></i>
+
+                                Saisissez le nom ou la désignation
+                                de l'appartement.
+
+                            </small>
+
+                        </div>
+
+
+                        <!-- =================================================
+                             MESSAGES
+                        ================================================== -->
+
+                        {% if msg %}
+
+                            <div
+                                class="alert alert-danger d-flex align-items-center mt-4"
+                                role="alert"
+                                style="border-radius:10px;"
+                            >
+
+                                <i
+                                    class="mdi mdi-alert-circle-outline mr-2"
+                                    style="font-size:22px;"
+                                ></i>
+
+                                <span>
+                                    {{ msg }}
+                                </span>
+
+                            </div>
+
+                        {% elif msok %}
+
+                            <div
+                                class="alert alert-success d-flex align-items-center mt-4"
+                                role="alert"
+                                style="border-radius:10px;"
+                            >
+
+                                <i
+                                    class="mdi mdi-check-circle-outline mr-2"
+                                    style="font-size:22px;"
+                                ></i>
+
+                                <span>
+                                    {{ msok }}
+                                </span>
+
+                            </div>
+
+                        {% endif %}
+
+
+                        <hr class="my-4">
+
+
+                        <!-- =================================================
+                             BOUTONS
+                        ================================================== -->
+
+                        <div
+                            class="d-flex justify-content-between align-items-center flex-wrap"
+                        >
+
+                            <a
+                                href="{% url 'appartement' %}"
+                                class="btn btn-light border mb-2 mb-md-0"
+                            >
+
+                                <i
+                                    class="mdi mdi-arrow-left mr-1"
+                                ></i>
+
+                                Retour
+
+                            </a>
+
+
+                            <button
+                                type="submit"
+                                class="btn btn-primary px-4 mb-2 mb-md-0"
+                            >
+
+                                <i
+                                    class="mdi mdi-content-save-edit-outline mr-1"
+                                ></i>
+
+                                Enregistrer les modifications
+
+                            </button>
+
+                        </div>
+
                     </form>
-                  </div>
+
                 </div>
-                
-              </div>
-              <div class="col-md-6 grid-margin">
-                <div class="card">
-                  <div class="card-body">
-                   
-                    {% if msg %}
-                          
-                    <div class="form-group">
-                      <label class="badge badge-danger">{{msg}}</label>
-                    </div>
-                      {% elif msok %}
-                    <div class="form-group">
-                      <label class="badge badge-success">{{msok}}</label>
-                    </div>
-                    {% endif %}
-                     <a href="{% url 'appartement' %}" class="btn btn-outline-light btn-rounded get-started-btn">Retour</a>
-                  </div>
-                </div>
-              </div>
+
             </div>
+
+        </div>
+
+    </div>
 
 </div>
 
 {% endblock content %}
-
-
-
-
-
-             

@@ -1,52 +1,684 @@
+
 {% extends 'base.html' %}
 {% load static %}
+
 {% block content %}
+
+<style>
+    /* =====================================================
+       TEXTE DES CHAMPS EN BLANC
+    ====================================================== */
+
+    .form-control {
+        color: #ffffff !important;
+    }
+
+    .form-control:focus {
+        color: #ffffff !important;
+    }
+
+    .form-control::placeholder {
+        color: rgba(255, 255, 255, 0.60) !important;
+        opacity: 1;
+    }
+
+    .form-group label {
+        color: #ffffff;
+    }
+
+    .input-group-text {
+        color: #ffffff !important;
+    }
+
+    /* =====================================================
+       CARTE PRINCIPALE
+    ====================================================== */
+
+    .appartement-card {
+        border: none;
+        border-radius: 18px;
+        overflow: hidden;
+        box-shadow: 0 6px 30px rgba(0, 0, 0, .08);
+    }
+
+    /* =====================================================
+       HEADER
+    ====================================================== */
+
+    .appartement-header {
+        border: none;
+        border-radius: 18px;
+        background: linear-gradient(
+            135deg,
+            #1f3c88 0%,
+            #4e73df 100%
+        );
+        box-shadow: 0 8px 25px rgba(31, 60, 136, .20);
+    }
+
+    .header-icon {
+        width: 58px;
+        height: 58px;
+        border-radius: 15px;
+        background: rgba(255, 255, 255, .15);
+    }
+
+    /* =====================================================
+       ICONES DES CHAMPS
+    ====================================================== */
+
+    .field-icon {
+        min-width: 48px;
+        justify-content: center;
+        background: rgba(78, 115, 223, .10);
+        border-color: rgba(255, 255, 255, .10);
+    }
+
+    /* =====================================================
+       ZONE D'INFORMATION
+    ====================================================== */
+
+    .info-box {
+        border-radius: 13px;
+        background: rgba(78, 115, 223, .07);
+        border: 1px solid rgba(78, 115, 223, .14);
+    }
+
+    /* =====================================================
+       ZONE MESSAGE
+    ====================================================== */
+
+    .message-card {
+        border-radius: 13px;
+        border: none;
+    }
+</style>
+
+
 <div class="content-wrapper">
+
+
+    <!-- =====================================================
+         HEADER
+    ====================================================== -->
+
     <div class="row">
-              <div class="col-md-6 grid-margin stretch-card">
 
-                 <div class="card">
-                  <div class="card-body">
-                    <h4 class="card-title">Formulaire Appartement</h4>
-                    <form class="forms-sample" method="post" action="{% url 'addAppartement' %}">
-                       {% csrf_token %}
-                      <div class="form-group">
-                        <label for="exampleInputUsername1">Nom</label>
-                        <input type="text" name="nom" required style="color:white" class="form-control" id="exampleInputUsername1" placeholder="Appartement">
-                      </div>
+        <div class="col-12 grid-margin">
 
-                      <button type="submit" class="btn btn-primary mr-2">Valider</button>
-                    </form>
-                  </div>
-                </div>
-                
-              </div>
-              <div class="col-md-6 grid-margin">
-                <div class="card">
-                  <div class="card-body">
-                   
-                    {% if msg %}
-                          
-                    <div class="form-group">
-                      <label class="badge badge-danger">{{msg}}</label>
+            <div class="card appartement-header">
+
+                <div class="card-body py-4 px-4">
+
+                    <div class="row align-items-center">
+
+                        <!-- TITRE -->
+
+                        <div class="col-md-8">
+
+                            <div class="d-flex align-items-center">
+
+                                <div
+                                    class="header-icon mr-3 d-flex align-items-center justify-content-center"
+                                >
+
+                                    <i
+                                        class="mdi mdi-store-plus"
+                                        style="
+                                            font-size:30px;
+                                            color:white;
+                                        "
+                                    ></i>
+
+                                </div>
+
+
+                                <div>
+
+                                    <span
+                                        class="text-white"
+                                        style="
+                                            font-size:12px;
+                                            opacity:.75;
+                                            letter-spacing:1px;
+                                            font-weight:600;
+                                        "
+                                    >
+                                        GESTION DES POINTS DE VENTE
+                                    </span>
+
+                                    <h3
+                                        class="text-white font-weight-bold mb-1"
+                                    >
+                                        Nouvel appartement
+                                    </h3>
+
+                                    <p
+                                        class="text-white mb-0"
+                                        style="opacity:.80;"
+                                    >
+                                        Ajoutez un nouvel appartement ou point
+                                        de vente à votre système.
+                                    </p>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- RETOUR -->
+
+                        <div
+                            class="col-md-4 text-md-right mt-3 mt-md-0"
+                        >
+
+                            <a
+                                href="{% url 'appartement' %}"
+                                class="btn btn-light btn-rounded px-4"
+                            >
+
+                                <i
+                                    class="mdi mdi-arrow-left mr-1"
+                                ></i>
+
+                                Retour
+
+                            </a>
+
+                        </div>
+
                     </div>
-                      {% elif msok %}
-                    <div class="form-group">
-                      <label class="badge badge-success">{{msok}}</label>
-                    </div>
-                    {% endif %}
-                     <a href="{% url 'appartement' %}"  class="btn btn-outline-light btn-rounded get-started-btn">Retour</a>
-                  </div>
+
                 </div>
-              </div>
+
             </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         CONTENU
+    ====================================================== -->
+
+    <div class="row">
+
+
+        <!-- =================================================
+             FORMULAIRE
+        ================================================== -->
+
+        <div class="col-xl-7 col-lg-7 grid-margin stretch-card">
+
+            <div class="card appartement-card h-100">
+
+                <div class="card-body p-4">
+
+
+                    <!-- TITRE DE SECTION -->
+
+                    <div class="d-flex align-items-center mb-4">
+
+                        <div
+                            class="d-flex align-items-center justify-content-center mr-3"
+                            style="
+                                width:44px;
+                                height:44px;
+                                border-radius:12px;
+                                background:rgba(78,115,223,.10);
+                            "
+                        >
+
+                            <i
+                                class="mdi mdi-home-outline text-primary"
+                                style="font-size:23px;"
+                            ></i>
+
+                        </div>
+
+
+                        <div>
+
+                            <h4
+                                class="font-weight-bold mb-1"
+                            >
+                                Informations de l'appartement
+                            </h4>
+
+                            <p
+                                class="text-muted mb-0"
+                            >
+                                Renseignez le nom du nouvel appartement.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- =================================================
+                         FORMULAIRE
+                    ================================================== -->
+
+                    <form
+                        class="forms-sample"
+                        method="post"
+                        action="{% url 'addAppartement' %}"
+                        autocomplete="off"
+                    >
+
+                        {% csrf_token %}
+
+
+                        <!-- =================================================
+                             NOM
+                        ================================================== -->
+
+                        <div class="form-group mb-4">
+
+                            <label
+                                for="nom"
+                                class="font-weight-bold"
+                            >
+
+                                Nom de l'appartement
+
+                                <span class="text-danger">
+                                    *
+                                </span>
+
+                            </label>
+
+
+                            <div class="input-group">
+
+                                <div class="input-group-prepend">
+
+                                    <span
+                                        class="input-group-text field-icon"
+                                        style="
+                                            border-radius:8px 0 0 8px;
+                                        "
+                                    >
+
+                                        <i
+                                            class="mdi mdi-home-city-outline"
+                                            style="font-size:20px;"
+                                        ></i>
+
+                                    </span>
+
+                                </div>
+
+
+                                <input
+                                    type="text"
+                                    name="nom"
+                                    required
+                                    class="form-control"
+                                    id="nom"
+                                    placeholder="Ex : Appartement Kinshasa"
+                                >
+
+                            </div>
+
+
+                            <small
+                                class="form-text text-muted mt-2"
+                            >
+
+                                <i
+                                    class="mdi mdi-information-outline mr-1"
+                                ></i>
+
+                                Saisissez un nom permettant d'identifier
+                                facilement ce point de vente.
+
+                            </small>
+
+                        </div>
+
+
+                        <!-- =================================================
+                             APERCU
+                        ================================================== -->
+
+                        <div
+                            class="info-box p-3 mb-4"
+                        >
+
+                            <div
+                                class="d-flex align-items-center mb-2"
+                            >
+
+                                <i
+                                    class="mdi mdi-information-outline text-primary mr-2"
+                                    style="font-size:21px;"
+                                ></i>
+
+                                <strong>
+                                    Information
+                                </strong>
+
+                            </div>
+
+
+                            <p
+                                class="text-muted small mb-0"
+                            >
+
+                                L'appartement pourra ensuite être associé
+                                aux produits afin d'identifier leur
+                                point de vente ou leur emplacement.
+
+                            </p>
+
+                        </div>
+
+
+                        <!-- =================================================
+                             BOUTONS
+                        ================================================== -->
+
+                        <div
+                            class="d-flex align-items-center flex-wrap"
+                        >
+
+                            <button
+                                type="submit"
+                                class="btn btn-primary btn-rounded px-4 mr-2 mb-2 mb-md-0"
+                            >
+
+                                <i
+                                    class="mdi mdi-content-save-outline mr-1"
+                                ></i>
+
+                                Enregistrer
+
+                            </button>
+
+
+                            <a
+                                href="{% url 'appartement' %}"
+                                class="btn btn-outline-secondary btn-rounded mb-2 mb-md-0"
+                            >
+
+                                <i
+                                    class="mdi mdi-close mr-1"
+                                ></i>
+
+                                Annuler
+
+                            </a>
+
+                        </div>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- =================================================
+             PANNEAU DROIT
+        ================================================== -->
+
+        <div class="col-xl-5 col-lg-5 grid-margin stretch-card">
+
+            <div class="card appartement-card h-100">
+
+                <div class="card-body p-4">
+
+
+                    <!-- =================================================
+                         MESSAGES
+                    ================================================== -->
+
+                    {% if msg %}
+
+                        <div
+                            class="alert alert-danger message-card mb-4"
+                        >
+
+                            <div class="d-flex align-items-start">
+
+                                <i
+                                    class="mdi mdi-alert-circle-outline mr-2"
+                                    style="font-size:23px;"
+                                ></i>
+
+                                <div>
+
+                                    <strong>
+                                        Une erreur est survenue
+                                    </strong>
+
+                                    <p
+                                        class="mb-0 mt-1"
+                                    >
+                                        {{ msg }}
+                                    </p>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    {% elif msok %}
+
+                        <div
+                            class="alert alert-success message-card mb-4"
+                        >
+
+                            <div class="d-flex align-items-start">
+
+                                <i
+                                    class="mdi mdi-check-circle-outline mr-2"
+                                    style="font-size:23px;"
+                                ></i>
+
+                                <div>
+
+                                    <strong>
+                                        Appartement enregistré
+                                    </strong>
+
+                                    <p
+                                        class="mb-0 mt-1"
+                                    >
+                                        {{ msok }}
+                                    </p>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    {% endif %}
+
+
+                    <!-- =================================================
+                         ILLUSTRATION
+                    ================================================== -->
+
+                    <div class="text-center mb-4">
+
+                        <div
+                            class="d-inline-flex align-items-center justify-content-center"
+                            style="
+                                width:80px;
+                                height:80px;
+                                border-radius:22px;
+                                background:rgba(78,115,223,.10);
+                            "
+                        >
+
+                            <i
+                                class="mdi mdi-store-outline text-primary"
+                                style="font-size:40px;"
+                            ></i>
+
+                        </div>
+
+
+                        <h4
+                            class="font-weight-bold mt-3 mb-1"
+                        >
+                            Point de vente
+                        </h4>
+
+
+                        <p
+                            class="text-muted mb-0"
+                        >
+                            Organisez facilement vos différents
+                            emplacements.
+                        </p>
+
+                    </div>
+
+
+                    <!-- =================================================
+                         INFORMATIONS
+                    ================================================== -->
+
+                    <div
+                        class="p-4 mb-4"
+                        style="
+                            border-radius:14px;
+                            background:rgba(255,255,255,.03);
+                            border:1px solid rgba(255,255,255,.08);
+                        "
+                    >
+
+                        <div
+                            class="d-flex align-items-center mb-3"
+                        >
+
+                            <i
+                                class="mdi mdi-format-list-bulleted text-primary mr-2"
+                                style="font-size:21px;"
+                            ></i>
+
+                            <strong>
+                                À quoi sert un appartement ?
+                            </strong>
+
+                        </div>
+
+
+                        <div
+                            class="d-flex align-items-start mb-3"
+                        >
+
+                            <i
+                                class="mdi mdi-check-circle-outline text-success mr-2"
+                                style="font-size:19px;"
+                            ></i>
+
+                            <span class="text-muted small">
+                                Identifier un point de vente.
+                            </span>
+
+                        </div>
+
+
+                        <div
+                            class="d-flex align-items-start mb-3"
+                        >
+
+                            <i
+                                class="mdi mdi-check-circle-outline text-success mr-2"
+                                style="font-size:19px;"
+                            ></i>
+
+                            <span class="text-muted small">
+                                Associer les produits à un emplacement.
+                            </span>
+
+                        </div>
+
+
+                        <div
+                            class="d-flex align-items-start"
+                        >
+
+                            <i
+                                class="mdi mdi-check-circle-outline text-success mr-2"
+                                style="font-size:19px;"
+                            ></i>
+
+                            <span class="text-muted small">
+                                Faciliter la gestion du catalogue.
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- =================================================
+                         CONSEIL
+                    ================================================== -->
+
+                    <div
+                        class="p-3"
+                        style="
+                            border-radius:12px;
+                            background:rgba(40,167,69,.07);
+                            border:1px solid rgba(40,167,69,.15);
+                        "
+                    >
+
+                        <div
+                            class="d-flex align-items-start"
+                        >
+
+                            <i
+                                class="mdi mdi-lightbulb-on-outline text-success mr-2"
+                                style="font-size:22px;"
+                            ></i>
+
+                            <div>
+
+                                <strong>
+                                    Conseil
+                                </strong>
+
+                                <p
+                                    class="text-muted small mb-0 mt-1"
+                                >
+
+                                    Utilisez des noms courts et explicites,
+                                    par exemple :
+                                    <strong>Pharmacie principale</strong>,
+                                    <strong>Succursale Limete</strong> ou
+                                    <strong>Point de vente 01</strong>.
+
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
 
 </div>
 
 {% endblock content %}
-
-
-
-
-
-             

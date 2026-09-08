@@ -1,0 +1,698 @@
+{% load static %}
+
+<!DOCTYPE html>
+
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+
+    <title>Rapport mensuel des ventes et TVA</title>
+
+    <style>
+      @page {
+        size: A4;
+        margin: 14mm 13mm 24mm 13mm;
+      }
+      
+      * {
+        box-sizing: border-box;
+      }
+      
+      body {
+        font-family: DejaVu Sans, Arial, sans-serif;
+        font-size: 9.5px;
+        color: #202124;
+        margin: 0;
+        padding: 0;
+        line-height: 1.35;
+      }
+      
+      /* ================================================= */
+      /* EN-TÊTE */
+      /* ================================================= */
+      
+      .header {
+        width: 100%;
+        margin-bottom: 15px;
+        padding-bottom: 10px;
+        border-bottom: 2px solid #1f2937;
+      }
+      
+      .header-table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      
+      .logo-cell {
+        width: 19%;
+        vertical-align: middle;
+        text-align: left;
+      }
+      
+      .logo {
+        width: 105px;
+        max-height: 68px;
+        object-fit: contain;
+      }
+      
+      .company-cell {
+        width: 41%;
+        vertical-align: middle;
+        padding-left: 8px;
+      }
+      
+      .company {
+        font-size: 19px;
+        font-weight: bold;
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+      }
+      
+      .subtitle {
+        font-size: 9px;
+        color: #666;
+        margin-top: 4px;
+      }
+      
+      .document-cell {
+        width: 40%;
+        vertical-align: middle;
+        text-align: right;
+      }
+      
+      .document-title {
+        font-size: 13px;
+        font-weight: bold;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+      
+      .period {
+        font-size: 10px;
+        margin-top: 6px;
+        color: #555;
+      }
+      
+      .period strong {
+        color: #202124;
+        font-size: 11px;
+      }
+      
+      /* ================================================= */
+      /* TITRES DES SECTIONS */
+      /* ================================================= */
+      
+      .section-title {
+        font-size: 11px;
+        font-weight: bold;
+        text-transform: uppercase;
+        margin-top: 15px;
+        margin-bottom: 7px;
+        padding: 6px 9px;
+        border-left: 4px solid #202124;
+        background-color: #f3f4f6;
+      }
+      
+      /* ================================================= */
+      /* SYNTHÈSE */
+      /* ================================================= */
+      
+      .summary {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 5px;
+        margin-left: -5px;
+      }
+      
+      .summary td {
+        width: 25%;
+        border: 1px solid #d1d5db;
+        padding: 9px 10px;
+        vertical-align: middle;
+        background-color: #fafafa;
+      }
+      
+      .summary-label {
+        font-size: 8px;
+        text-transform: uppercase;
+        color: #6b7280;
+        font-weight: bold;
+      }
+      
+      .summary-value {
+        font-size: 13px;
+        font-weight: bold;
+        margin-top: 4px;
+      }
+      
+      /* ================================================= */
+      /* TABLEAUX */
+      /* ================================================= */
+      
+      table.data {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 5px;
+        table-layout: fixed;
+      }
+      
+      table.data th {
+        background-color: #e5e7eb;
+        border: 1px solid #9ca3af;
+        padding: 7px 5px;
+        font-size: 8px;
+        font-weight: bold;
+        text-align: center;
+        vertical-align: middle;
+      }
+      
+      table.data td {
+        border: 1px solid #d1d5db;
+        padding: 6px 5px;
+        font-size: 8.3px;
+        vertical-align: middle;
+      }
+      
+      table.data tbody tr:nth-child(even) {
+        background-color: #fafafa;
+      }
+      
+      .text-left {
+        text-align: left;
+      }
+      
+      .text-right {
+        text-align: right;
+      }
+      
+      .text-center {
+        text-align: center;
+      }
+      
+      .total-row {
+        font-weight: bold;
+        background-color: #e5e7eb !important;
+      }
+      
+      /* ================================================= */
+      /* TABLEAU TVA */
+      /* ================================================= */
+      
+      .tva-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 7px;
+        table-layout: fixed;
+      }
+      
+      .tva-table th {
+        background-color: #374151;
+        color: #ffffff;
+        border: 1px solid #374151;
+        padding: 8px 5px;
+        font-size: 8px;
+        font-weight: bold;
+        text-align: center;
+        vertical-align: middle;
+      }
+      
+      .tva-table td {
+        border: 1px solid #d1d5db;
+        padding: 7px 5px;
+        font-size: 8.5px;
+        vertical-align: middle;
+      }
+      
+      .tva-table tbody tr:nth-child(even) {
+        background-color: #f9fafb;
+      }
+      
+      .tva-table .rate {
+        font-weight: bold;
+        text-align: center;
+      }
+      
+      .tva-table .amount {
+        text-align: right;
+        white-space: nowrap;
+      }
+      
+      .tva-table .quantity {
+        text-align: right;
+      }
+      
+      .tva-table .total-tva-row td {
+        background-color: #e5e7eb;
+        font-weight: bold;
+        border-top: 2px solid #374151;
+        padding-top: 8px;
+        padding-bottom: 8px;
+      }
+      
+      .tva-table .total-tva-row td:nth-child(4) {
+        font-size: 9px;
+      }
+      
+      /* ================================================= */
+      /* BLOC TVA À DÉCLARER */
+      /* ================================================= */
+      
+      .tva-important {
+        width: 100%;
+        margin-top: 12px;
+        padding: 11px 13px;
+        border: 1.5px solid #374151;
+        background-color: #f3f4f6;
+        text-align: center;
+      }
+      
+      .tva-important-label {
+        display: block;
+        font-size: 8.5px;
+        text-transform: uppercase;
+        font-weight: bold;
+        color: #4b5563;
+        margin-bottom: 4px;
+      }
+      
+      .tva-important-value {
+        display: block;
+        font-size: 16px;
+        font-weight: bold;
+      }
+      
+      /* ================================================= */
+      /* CONTRÔLE COMPTABLE */
+      /* ================================================= */
+      
+      .control-ok {
+        margin-top: 9px;
+        padding: 8px 10px;
+        border: 1px solid #9ca3af;
+        background-color: #f9fafb;
+        font-size: 8.5px;
+      }
+      
+      .control-warning {
+        margin-top: 9px;
+        padding: 8px 10px;
+        border: 1px solid #9ca3af;
+        background-color: #f9fafb;
+        font-size: 8.5px;
+      }
+      
+      /* ================================================= */
+      /* DÉTAIL DES VENTES */
+      /* ================================================= */
+      
+      .sales-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 5px;
+        table-layout: fixed;
+      }
+      
+      .sales-table th {
+        background-color: #374151;
+        color: #fff;
+        border: 1px solid #374151;
+        padding: 6px 3px;
+        font-size: 7px;
+        text-align: center;
+      }
+      
+      .sales-table td {
+        border: 1px solid #d1d5db;
+        padding: 5px 3px;
+        font-size: 7.3px;
+      }
+      
+      .sales-table tbody tr:nth-child(even) {
+        background-color: #fafafa;
+      }
+      
+      /* ================================================= */
+      /* SIGNATURES */
+      /* ================================================= */
+      
+      .signature-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 35px;
+      }
+      
+      .signature-table td {
+        width: 50%;
+        height: 75px;
+        vertical-align: top;
+        text-align: center;
+        font-size: 8.5px;
+      }
+      
+      /* ================================================= */
+      /* PIED DE PAGE */
+      /* ================================================= */
+      
+      .footer {
+        margin-top: 22px;
+        padding-top: 7px;
+        border-top: 1px solid #9ca3af;
+        text-align: center;
+      }
+      
+      .footer-image {
+        width: 100%;
+        max-height: 65px;
+        object-fit: contain;
+      }
+      
+      .footer-info {
+        margin-top: 4px;
+        font-size: 7.5px;
+        color: #6b7280;
+      }
+      
+      /* ================================================= */
+      /* SAUT DE PAGE */
+      /* ================================================= */
+      
+      .page-break {
+        page-break-before: always;
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- ================================================= -->
+
+    <!-- EN-TÊTE -->
+
+    <!-- ================================================= -->
+
+    <div class="header">
+      <table class="header-table">
+        <tr>
+          <!-- LOGO -->
+
+          <td class="logo-cell">
+            <img src="app_facture/static/images/tanganika.jpg" class="logo" alt="Tanganika Future" />
+          </td>
+
+          <!-- ENTREPRISE -->
+
+          <td class="company-cell">
+            <div class="company">Tanganika Future</div>
+
+            <div class="subtitle">État mensuel des ventes et de la TVA collectée</div>
+          </td>
+
+          <!-- DOCUMENT -->
+
+          <td class="document-cell">
+            <div class="document-title">RAPPORT MENSUEL</div>
+
+            <div class="period">
+              Période :
+
+              <strong>{{ nom_mois }} {{ annee }}</strong>
+            </div>
+          </td>
+        </tr>
+      </table>
+    </div>
+
+    <!-- ================================================= -->
+
+    <!-- 1. SYNTHÈSE -->
+
+    <!-- ================================================= -->
+
+    <div class="section-title">1. Synthèse des ventes</div>
+
+    <table class="summary">
+      <tr>
+        <td>
+          <div class="summary-label">Nombre de factures</div>
+
+          <div class="summary-value">{{ nombre_factures }}</div>
+        </td>
+
+        <td>
+          <div class="summary-label">Ventes HT</div>
+
+          <div class="summary-value">{{ total_ht|floatformat:2 }} CDF</div>
+        </td>
+
+        <td>
+          <div class="summary-label">TVA collectée</div>
+
+          <div class="summary-value">{{ total_tva|floatformat:2 }} CDF</div>
+        </td>
+
+        <td>
+          <div class="summary-label">Ventes TTC</div>
+
+          <div class="summary-value">{{ total_ttc|floatformat:2 }} CDF</div>
+        </td>
+      </tr>
+    </table>
+
+    <!-- ================================================= -->
+
+    <!-- 2. ÉTAT TVA -->
+
+    <!-- ================================================= -->
+
+    <div class="section-title">2. État de la TVA collectée par taux</div>
+
+    <table class="tva-table">
+      <thead>
+        <tr>
+          <th style="width: 14%;">Taux TVA</th>
+
+          <th style="width: 14%;">Quantité</th>
+
+          <th style="width: 24%;">Base taxable HT</th>
+
+          <th style="width: 24%;">TVA collectée</th>
+
+          <th style="width: 24%;">Total TTC</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        {% for ligne in tva_par_taux %}
+          <tr>
+            <td class="rate">{{ ligne.taux|floatformat:2 }} %</td>
+
+            <td class="quantity">{{ ligne.quantite|floatformat:2 }}</td>
+
+            <td class="amount">{{ ligne.base_ht|floatformat:2 }} CDF</td>
+
+            <td class="amount">{{ ligne.montant_tva|floatformat:2 }} CDF</td>
+
+            <td class="amount">{{ ligne.montant_ttc|floatformat:2 }} CDF</td>
+          </tr>
+        {% empty %}
+          <tr>
+            <td colspan="5" class="text-center">Aucune donnée de TVA pour cette période.</td>
+          </tr>
+        {% endfor %}
+
+        <tr class="total-tva-row">
+          <td class="text-center">TOTAL</td>
+
+          <td class="text-right">—</td>
+
+          <td class="amount">{{ total_ht|floatformat:2 }} CDF</td>
+
+          <td class="amount">{{ total_tva|floatformat:2 }} CDF</td>
+
+          <td class="amount">{{ total_ttc|floatformat:2 }} CDF</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- ================================================= -->
+
+    <!-- TVA TOTALE -->
+
+    <!-- ================================================= -->
+
+    <div class="tva-important">
+      <span class="tva-important-label">TVA totale collectée au cours de la période</span>
+
+      <span class="tva-important-value">{{ total_tva|floatformat:2 }} CDF</span>
+    </div>
+
+    <!-- ================================================= -->
+
+    <!-- 3. CONTRÔLE COMPTABLE -->
+
+    <!-- ================================================= -->
+
+    <div class="section-title">3. Contrôle de cohérence</div>
+
+    <table class="data">
+      <tr>
+        <th style="width: 65%;">Élément</th>
+
+        <th style="width: 35%;">Montant</th>
+      </tr>
+
+      <tr>
+        <td>Total ventes HT</td>
+
+        <td class="text-right">{{ total_ht|floatformat:2 }} CDF</td>
+      </tr>
+
+      <tr>
+        <td>TVA collectée</td>
+
+        <td class="text-right">{{ total_tva|floatformat:2 }} CDF</td>
+      </tr>
+
+      <tr class="total-row">
+        <td>HT + TVA</td>
+
+        <td class="text-right">{{ total_ht|add:total_tva|floatformat:2 }} CDF</td>
+      </tr>
+
+      <tr>
+        <td>Total TTC enregistré</td>
+
+        <td class="text-right">{{ total_ttc|floatformat:2 }} CDF</td>
+      </tr>
+    </table>
+
+    {% if difference == 0 %}
+      <div class="control-ok">
+        <strong>Contrôle réussi :</strong>
+
+        le total HT augmenté de la TVA correspond au total TTC enregistré.
+      </div>
+    {% else %}
+      <div class="control-warning">
+        <strong>Attention :</strong>
+
+        une différence de
+
+        {{ difference|floatformat:2 }} CDF
+
+        a été constatée entre HT + TVA et le TTC enregistré.
+      </div>
+    {% endif %}
+
+    <!-- ================================================= -->
+
+    <!-- 4. DÉTAIL DES VENTES -->
+
+    <!-- ================================================= -->
+
+    <div class="page-break"></div>
+
+    <div class="section-title">4. Détail des ventes</div>
+
+    <table class="sales-table">
+      <thead>
+        <tr>
+          <th style="width: 7%;">Facture</th>
+
+          <th style="width: 9%;">Date</th>
+
+          <th style="width: 25%;">Produit</th>
+
+          <th style="width: 7%;">Qté</th>
+
+          <th style="width: 11%;">PU HT</th>
+
+          <th style="width: 8%;">TVA</th>
+
+          <th style="width: 11%;">Total HT</th>
+
+          <th style="width: 11%;">Total TVA</th>
+
+          <th style="width: 11%;">Total TTC</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        {% for ligne in lignes_vente %}
+          <tr>
+            <td class="text-center">#{{ ligne.facture.id }}</td>
+
+            <td class="text-center">{{ ligne.facture.createdAt|date:'d/m/Y' }}</td>
+
+            <td class="text-left">{{ ligne.produit.nom }}</td>
+
+            <td class="text-right">{{ ligne.quantite|floatformat:2 }}</td>
+
+            <td class="text-right">{{ ligne.pu_ht|floatformat:2 }}</td>
+
+            <td class="text-center">{{ ligne.taux_tva|floatformat:2 }} %</td>
+
+            <td class="text-right">{{ ligne.total_ht|floatformat:2 }}</td>
+
+            <td class="text-right">{{ ligne.total_tva|floatformat:2 }}</td>
+
+            <td class="text-right">{{ ligne.total_ttc|floatformat:2 }}</td>
+          </tr>
+        {% empty %}
+          <tr>
+            <td colspan="9" class="text-center">Aucune vente validée pour cette période.</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    <!-- ================================================= -->
+
+    <!-- SIGNATURES -->
+
+    <!-- ================================================= -->
+
+    <table class="signature-table">
+      <tr>
+        <td>
+          <strong>Établi par</strong>
+
+          <br /><br /><br />
+
+          {{ noms }}
+        </td>
+
+        <td>
+          <strong>Responsable / Direction</strong>
+
+          <br /><br /><br />
+
+          Signature et cachet
+        </td>
+      </tr>
+    </table>
+
+    <!-- ================================================= -->
+
+    <!-- PIED DE PAGE TANGANIKA -->
+
+    <!-- ================================================= -->
+
+    <div class="footer">
+      <img src="app_facture/static/images/pied_tanganika.jpg" class="footer-image" alt="Tanganika Future" />
+
+      <div class="footer-info">
+        Tanganika Future — Rapport mensuel des ventes et de la TVA collectée
+
+        <br />
+
+        Période :
+        {{ nom_mois }} {{ annee }}
+
+        <br />
+
+        Document généré le
+        {{ date_generation|date:'d/m/Y à H:i' }}
+      </div>
+    </div>
+  </body>
+</html>

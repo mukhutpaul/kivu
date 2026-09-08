@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ngya-reçu</title>
+
+    <style>
+        @page {
+            size: a7 portrait;
+        }
+    </style>
+</head>
+<body>
+    
+    <div style="margin: auto;">
+    <CENTER>
+        <br> 
+        KIVU SUPERMARKET<br>
+        RCCM : CD/GOM/RCCM/21-B-00036<br/>
+        RCCM : CD/GOM/RCCM/21-B-00036<br/>
+        Numéro d'impôt : A2153091G<br/>
+        id. Nat : 19-F4300-N82711<br/>
+        ------------------------------------------------------------------------<br/>
+        {% comment %} <img src="mediafiles/ngi.png" width="80px" alt="qrcode"/><br> {% endcomment %}
+    </CENTER>
+  
+    <CENTER>
+       <table class="table" style="margin-left: 20px;margin-right: 20px; font-size:7px">
+                        <thead style="font-size:7px">
+                          <tr>
+                            <th >Produit</th>
+                            <th>Pu</th>
+                            <th>Qté</th>
+                            <th>Total</th>
+                          </tr>
+                        </thead>
+                        <tbody >
+                         {% for f in list_facture %}
+                          <tr>
+                            <td style="text-transform: lowercase">{{f.produit}}</td>
+                            <td>{{f.pu}}</td>
+                            <td>{{f.qte}}</td>
+                            <td>{{f.total}}Fc</td>
+                          </tr>
+                        {% endfor %}
+                        
+                        </tbody>
+                        
+         </table>
+          ---------------------------------------------------------------------
+        <table>
+            <th></th>
+           
+            <th>Totol Gén : {{sommefac}} Fc</th></th>
+        </table>
+    </CENTER>
+
+    <CENTER>
+        ---------------------------------------------------------------------
+        <table>
+            <th>Opérateur<br> {{noms}}</th>
+            <th><img src="mediafiles/facture/{{img}}" width="50px" alt="qrcode"/></th>
+        </table>
+        
+    </CENTER>
+    <br>
+   
+    </div>
+    
+</body>
+</html>

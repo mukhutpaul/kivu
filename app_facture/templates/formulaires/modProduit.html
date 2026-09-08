@@ -1,65 +1,758 @@
 {% extends 'base.html' %}
 {% load static %}
+
 {% block content %}
-<div class="content-wrapper">
-    <div class="row">
-              <div class="col-md-6 grid-margin stretch-card">
 
-                 <div class="card">
-                  <div class="card-body">
-                    <h4 class="card-title">Formulaire Produit</h4>
-                    <form class="forms-sample" method="post" action="{% url 'updateProduit' pr.id %}">
-                       {% csrf_token %}
-                      <div class="form-group">
-                        <label for="exampleInputUsername1">Nom</label>
-                        <input type="text" name="nom" value="{{pr.nom}}" style="color:white" class="form-control" id="exampleInputUsername1" placeholder="Nom produit">
-                      </div>
-                      <div class="form-group">
-                        <label for="exampleInputUsername1">Prix Unitaire</label>
-                        <input type="number" name="pu" value="{{pr.pu}}" style="color:white" class="form-control" id="exampleInputUsername1" placeholder="Prix">
-                      </div>
+<div class="container-fluid">
 
-                    <div class="form-group">
-                      <label>Appartement</label>
-                      <select class="js-example-basic-single" style="width:100%" name="appartement">
-                        <option value="{% if pr.appartement %} {{pr.appartement.id}} {% endif %}">{{pr.appartement}}</option>
-                        {% for ap in appart  %}
-                        <option value="{{ap.id}}">{{ap.nom}}</option>
-                        {% endfor %}
-                      </select>
+
+<!-- =====================================================
+     HEADER
+====================================================== -->
+
+<div class="row">
+    <div class="col-12 grid-margin">
+
+        <div
+            class="card"
+            style="
+                border:none;
+                border-radius:18px;
+                overflow:hidden;
+                background:linear-gradient(135deg,#182848 0%,#4e73df 100%);
+                box-shadow:0 8px 30px rgba(0,0,0,.10);
+            "
+        >
+
+            <div class="card-body py-4 px-4">
+
+                <div class="d-flex align-items-center justify-content-between flex-wrap">
+
+                    <div class="d-flex align-items-center">
+
+                        <div
+                            class="d-flex align-items-center justify-content-center mr-3"
+                            style="
+                                width:58px;
+                                height:58px;
+                                min-width:58px;
+                                border-radius:16px;
+                                background:rgba(255,255,255,.14);
+                                border:1px solid rgba(255,255,255,.12);
+                            "
+                        >
+
+                            <i
+                                class="mdi mdi-pill"
+                                style="
+                                    font-size:30px;
+                                    color:white;
+                                "
+                            ></i>
+
+                        </div>
+
+                        <div>
+
+                            <div
+                                class="text-white"
+                                style="
+                                    font-size:12px;
+                                    letter-spacing:1px;
+                                    opacity:.7;
+                                "
+                            >
+                                GESTION DES PRODUITS
+                            </div>
+
+                            <h3
+                                class="text-white font-weight-bold mb-1"
+                            >
+                                Modifier le produit
+                            </h3>
+
+                            <p
+                                class="text-white mb-0"
+                                style="opacity:.75;"
+                            >
+                                Mettez à jour les informations et le prix
+                                de vente du produit.
+                            </p>
+
+                        </div>
+
                     </div>
-                      <button type="submit" class="btn btn-primary btn-rounded mr-2">Valider</button>
-                    </form>
-                  </div>
+
+
+                    <div class="mt-3 mt-md-0">
+
+                        <a
+                            href="{% url 'produit' %}"
+                            class="btn btn-light btn-rounded px-4"
+                        >
+
+                            <i class="mdi mdi-arrow-left mr-1"></i>
+
+                            Retour aux produits
+
+                        </a>
+
+                    </div>
+
                 </div>
-                
-              </div>
-              <div class="col-md-6 grid-margin">
-                <div class="card">
-                  <div class="card-body">
-                   
-                    {% if msg %}
-                          
-                    <div class="form-group">
-                      <label class="badge badge-danger">{{msg}}</label>
-                    </div>
-                      {% elif msok %}
-                    <div class="form-group">
-                      <label class="badge badge-success">{{msok}}</label>
-                    </div>
-                    {% endif %}
-                     <a href="{% url 'appartement' %}" target="_blank" class="btn btn-outline-light btn-rounded get-started-btn">Retour</a>
-                  </div>
-                </div>
-              </div>
+
             </div>
+
+        </div>
+
+    </div>
+</div>
+
+
+<!-- =====================================================
+     CONTENU PRINCIPAL
+====================================================== -->
+
+<div class="row">
+
+
+    <!-- =================================================
+         FORMULAIRE
+    ================================================== -->
+
+    <div class="col-xl-7 col-lg-7 grid-margin stretch-card">
+
+        <div
+            class="card h-100"
+            style="
+                border:none;
+                border-radius:16px;
+                box-shadow:0 6px 28px rgba(0,0,0,.07);
+            "
+        >
+
+            <div class="card-body p-4">
+
+
+                <!-- TITRE FORMULAIRE -->
+
+                <div class="d-flex align-items-start justify-content-between mb-4">
+
+                    <div>
+
+                        <span
+                            class="text-muted"
+                            style="
+                                font-size:11px;
+                                letter-spacing:1px;
+                            "
+                        >
+                            PRODUIT #{{ pr.id }}
+                        </span>
+
+                        <h4 class="font-weight-bold mt-1 mb-1">
+                            {{ pr.nom }}
+                        </h4>
+
+                        <p class="text-muted mb-0">
+                            Informations générales du produit
+                        </p>
+
+                    </div>
+
+                    <span
+                        class="badge badge-primary"
+                        style="
+                            padding:8px 12px;
+                            border-radius:8px;
+                        "
+                    >
+                        <i class="mdi mdi-pencil-outline mr-1"></i>
+                        Modification
+                    </span>
+
+                </div>
+
+
+                <form
+                    method="post"
+                    action="{% url 'updateProduit' pr.id %}"
+                    autocomplete="off"
+                >
+
+                    {% csrf_token %}
+
+
+                    <!-- =====================================
+                         NOM PRODUIT
+                    ====================================== -->
+
+                    <div class="form-group mb-4">
+
+                        <label
+                            for="nom"
+                            class="font-weight-bold"
+                        >
+                            Nom du produit
+                            <span class="text-danger">*</span>
+                        </label>
+
+                        <div class="input-group">
+
+                            <div class="input-group-prepend">
+
+                                <span
+                                    class="input-group-text"
+                                    style="
+                                        border-radius:9px 0 0 9px;
+                                    "
+                                >
+                                    <i class="mdi mdi-pill"></i>
+                                </span>
+
+                            </div>
+
+                            <input
+                                type="text"
+                                name="nom"
+                                value="{{ pr.nom }}"
+                                required
+                                class="form-control"
+                                id="nom"
+                                placeholder="Nom du produit"
+                            >
+
+                        </div>
+
+                        <small class="form-text text-muted">
+                            Le nom utilisé dans le catalogue et les factures.
+                        </small>
+
+                    </div>
+
+
+                    <!-- =====================================
+                         PRIX
+                    ====================================== -->
+
+                    <div class="form-group mb-4">
+
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+
+                            <label
+                                for="pu"
+                                class="font-weight-bold mb-0"
+                            >
+                                Prix de vente
+                                <span class="text-danger">*</span>
+                            </label>
+
+                            <span
+                                class="badge badge-success"
+                                style="
+                                    padding:7px 11px;
+                                    border-radius:7px;
+                                "
+                            >
+                                TTC
+                            </span>
+
+                        </div>
+
+
+                        <div class="input-group">
+
+                            <div class="input-group-prepend">
+
+                                <span
+                                    class="input-group-text"
+                                    style="
+                                        border-radius:9px 0 0 9px;
+                                    "
+                                >
+                                    <i class="mdi mdi-cash-multiple"></i>
+                                </span>
+
+                            </div>
+
+
+                            <input
+                                type="number"
+                                name="pu"
+                                value="{{ pr.pu }}"
+                                required
+                                min="0"
+                                step="0.01"
+                                class="form-control"
+                                id="pu"
+                                placeholder="0.00"
+                            >
+
+
+                            <div class="input-group-append">
+
+                                <span
+                                    class="input-group-text font-weight-bold"
+                                    style="
+                                        border-radius:0 9px 9px 0;
+                                    "
+                                >
+                                    FC
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                        <small class="text-muted d-block mt-2">
+
+                            <i class="mdi mdi-information-outline mr-1"></i>
+
+                            Le prix saisi correspond au
+                            <strong>prix TTC</strong>.
+
+                        </small>
+
+                    </div>
+
+
+                    <!-- =====================================
+                         APPARTEMENT
+                    ====================================== -->
+
+                    <div class="form-group mb-4">
+
+                        <label
+                            for="appartement"
+                            class="font-weight-bold"
+                        >
+
+                            Appartement / Point de vente
+
+                            <span class="text-danger">*</span>
+
+                        </label>
+
+
+                        <div class="input-group">
+
+                            <div class="input-group-prepend">
+
+                                <span
+                                    class="input-group-text"
+                                    style="
+                                        border-radius:9px 0 0 9px;
+                                    "
+                                >
+                                    <i class="mdi mdi-store-outline"></i>
+                                </span>
+
+                            </div>
+
+
+                            <select
+                                class="form-control js-example-basic-single"
+                                required
+                                name="appartement"
+                                id="appartement"
+                                style="width:100%;"
+                            >
+
+                                <option value="">
+                                    Sélectionner un appartement
+                                </option>
+
+
+                                {% for ap in appart %}
+
+                                    <option
+                                        value="{{ ap.id }}"
+                                        {% if pr.appartement and pr.appartement.id == ap.id %}
+                                            selected
+                                        {% endif %}
+                                    >
+
+                                        {{ ap.nom }}
+
+                                    </option>
+
+                                {% endfor %}
+
+                            </select>
+
+                        </div>
+
+                        <small class="form-text text-muted">
+
+                            <i class="mdi mdi-map-marker-outline mr-1"></i>
+
+                            Sélectionnez le point de vente auquel
+                            ce produit est rattaché.
+
+                        </small>
+
+                    </div>
+
+
+                    <!-- =====================================
+                         INFORMATIONS FISCALES
+                    ====================================== -->
+
+                    <div
+                        class="p-3 mb-4"
+                        style="
+                            border-radius:12px;
+                            background:rgba(78,115,223,.055);
+                            border:1px solid rgba(78,115,223,.12);
+                        "
+                    >
+
+                        <div class="d-flex align-items-center mb-2">
+
+                            <div
+                                class="d-flex align-items-center justify-content-center mr-2"
+                                style="
+                                    width:34px;
+                                    height:34px;
+                                    border-radius:9px;
+                                    background:rgba(78,115,223,.12);
+                                "
+                            >
+
+                                <i
+                                    class="mdi mdi-calculator-variant-outline text-primary"
+                                ></i>
+
+                            </div>
+
+                            <strong>
+                                Informations fiscales
+                            </strong>
+
+                        </div>
+
+
+                        <p class="text-muted small mb-0">
+
+                            Le prix de vente est enregistré en
+                            <strong>TTC</strong>.
+                            Le montant HT et la TVA de
+                            <strong>16 %</strong>
+                            sont calculés automatiquement lors
+                            de la facturation.
+
+                        </p>
+
+                    </div>
+
+
+                    <!-- =====================================
+                         BOUTONS
+                    ====================================== -->
+
+                    <div
+                        class="d-flex align-items-center justify-content-between flex-wrap pt-2"
+                    >
+
+                        <a
+                            href="{% url 'produit' %}"
+                            class="btn btn-outline-secondary btn-rounded mb-2"
+                        >
+
+                            <i class="mdi mdi-close mr-1"></i>
+
+                            Annuler
+
+                        </a>
+
+
+                        <button
+                            type="submit"
+                            class="btn btn-primary btn-rounded px-4 mb-2"
+                        >
+
+                            <i class="mdi mdi-content-save-outline mr-1"></i>
+
+                            Enregistrer les modifications
+
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =================================================
+         FICHE PRODUIT
+    ================================================== -->
+
+    <div class="col-xl-5 col-lg-5 grid-margin stretch-card">
+
+        <div
+            class="card h-100"
+            style="
+                border:none;
+                border-radius:16px;
+                box-shadow:0 6px 28px rgba(0,0,0,.07);
+            "
+        >
+
+            <div class="card-body p-4">
+
+
+                <!-- TITRE -->
+
+                <div class="d-flex align-items-center mb-4">
+
+                    <div
+                        class="d-flex align-items-center justify-content-center mr-3"
+                        style="
+                            width:45px;
+                            height:45px;
+                            border-radius:12px;
+                            background:rgba(78,115,223,.10);
+                        "
+                    >
+
+                        <i
+                            class="mdi mdi-package-variant-closed text-primary"
+                            style="font-size:23px;"
+                        ></i>
+
+                    </div>
+
+                    <div>
+
+                        <h5 class="font-weight-bold mb-0">
+                            Fiche produit
+                        </h5>
+
+                        <small class="text-muted">
+                            Informations actuelles
+                        </small>
+
+                    </div>
+
+                </div>
+
+
+                <!-- PRODUIT -->
+
+                <div class="text-center mb-4">
+
+                    <div
+                        class="d-inline-flex align-items-center justify-content-center"
+                        style="
+                            width:82px;
+                            height:82px;
+                            border-radius:22px;
+                            background:rgba(78,115,223,.10);
+                        "
+                    >
+
+                        <i
+                            class="mdi mdi-pill text-primary"
+                            style="font-size:38px;"
+                        ></i>
+
+                    </div>
+
+
+                    <h4 class="font-weight-bold mt-3 mb-1">
+                        {{ pr.nom }}
+                    </h4>
+
+
+                    <span
+                        class="text-muted"
+                        style="font-size:13px;"
+                    >
+                        Référence #{{ pr.id }}
+                    </span>
+
+                </div>
+
+
+                <!-- PRIX -->
+
+                <div
+                    class="text-center p-3 mb-4"
+                    style="
+                        border-radius:14px;
+                        background:rgba(40,167,69,.07);
+                        border:1px solid rgba(40,167,69,.12);
+                    "
+                >
+
+                    <small class="text-muted d-block mb-1">
+                        PRIX DE VENTE TTC
+                    </small>
+
+                    <div
+                        class="font-weight-bold text-success"
+                        style="font-size:27px;"
+                    >
+
+                        {{ pr.pu|floatformat:2 }}
+
+                        <span style="font-size:15px;">
+                            FC
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <!-- INFORMATIONS -->
+
+                <div>
+
+                    <div
+                        class="d-flex justify-content-between align-items-center py-3"
+                        style="border-bottom:1px solid rgba(128,128,128,.12);"
+                    >
+
+                        <div class="d-flex align-items-center">
+
+                            <i
+                                class="mdi mdi-store-outline text-primary mr-2"
+                            ></i>
+
+                            <span class="text-muted">
+                                Point de vente
+                            </span>
+
+                        </div>
+
+                        <strong>
+                            {{ pr.appartement }}
+                        </strong>
+
+                    </div>
+
+
+                    <div
+                        class="d-flex justify-content-between align-items-center py-3"
+                        style="border-bottom:1px solid rgba(128,128,128,.12);"
+                    >
+
+                        <div class="d-flex align-items-center">
+
+                            <i
+                                class="mdi mdi-percent-outline text-warning mr-2"
+                            ></i>
+
+                            <span class="text-muted">
+                                TVA
+                            </span>
+
+                        </div>
+
+                        <span
+                            class="badge badge-warning"
+                            style="padding:7px 10px;"
+                        >
+                            16 %
+                        </span>
+
+                    </div>
+
+
+                    <div
+                        class="d-flex justify-content-between align-items-center py-3"
+                    >
+
+                        <div class="d-flex align-items-center">
+
+                            <i
+                                class="mdi mdi-cash-check text-success mr-2"
+                            ></i>
+
+                            <span class="text-muted">
+                                Prix enregistré
+                            </span>
+
+                        </div>
+
+                        <span class="badge badge-success">
+                            TTC
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <!-- AVERTISSEMENT -->
+
+                <div
+                    class="alert alert-warning mt-4 mb-0"
+                    style="border-radius:11px;"
+                >
+
+                    <div class="d-flex">
+
+                        <i
+                            class="mdi mdi-alert-outline mr-2"
+                            style="font-size:22px;"
+                        ></i>
+
+                        <div>
+
+                            <strong>
+                                Historique des factures
+                            </strong>
+
+                            <p class="small mb-0 mt-1">
+
+                                La modification du prix n'affecte pas
+                                les anciennes factures. Les prix
+                                enregistrés dans les détails de facture
+                                restent conservés.
+
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- NOTE TVA -->
+
+                <div class="d-flex align-items-start mt-4">
+
+                    <i
+                        class="mdi mdi-shield-check-outline text-success mr-2"
+                        style="font-size:21px;"
+                    ></i>
+
+                    <p class="text-muted small mb-0">
+
+                        Les montants HT et TVA sont calculés à partir
+                        du prix TTC lors de la facturation.
+
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
 
 </div>
 
 {% endblock content %}
-
-
-
-
-
-             
