@@ -1,62 +1,444 @@
 {% load static %}
+
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
   <head>
-    <!-- Required meta tags -->
     <meta charset="utf-8" />
+
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+
     <title>Tanganyika Future SA</title>
 
-    <!-- plugins:css -->
+    <!--  ==========================================================
+       ICONS
+  ===========================================================  -->
+
     <link rel="stylesheet" href="{% static 'vendors/mdi/css/materialdesignicons.min.css' %}" />
+
+    <!--  ==========================================================
+       VENDOR CSS
+  ===========================================================  -->
+
     <link rel="stylesheet" href="{% static 'vendors/css/vendor.bundle.base.css' %}" />
-    <script src="sweetalert2.min.js"></script>
-    <!-- endinject -->
 
-    <!-- Plugin css for this page -->
     <link rel="stylesheet" href="{% static 'vendors/jvectormap/jquery-jvectormap.css' %}" />
+
     <link rel="stylesheet" href="{% static 'vendors/flag-icon-css/css/flag-icon.min.css' %}" />
+
     <link rel="stylesheet" href="{% static 'vendors/owl-carousel-2/owl.carousel.min.css' %}" />
+
     <link rel="stylesheet" href="{% static 'vendors/owl-carousel-2/owl.theme.default.min.css' %}" />
+
+    <!--  ==========================================================
+       SELECT2
+  ===========================================================  -->
+
     <link rel="stylesheet" href="{% static 'vendors/select2/select2.min.css' %}" />
+
     <link rel="stylesheet" href="{% static 'vendors/select2-bootstrap-theme/select2-bootstrap.min.css' %}" />
-    <!-- End plugin css for this page -->
 
-    <!-- inject:css -->
-    <!-- endinject -->
+    <!--  ==========================================================
+       STYLE PRINCIPAL
+  ===========================================================  -->
 
-    <!-- Layout styles -->
     <link rel="stylesheet" href="{% static 'css/style.css' %}" />
-    <!-- End layout styles -->
+
+    <!--  ==========================================================
+       SWEETALERT2
+  ===========================================================  -->
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" />
+
+    <!--  ==========================================================
+       FAVICON
+  ===========================================================  -->
 
     <link rel="shortcut icon" href="{% static 'images/favicon.png' %}" />
+
+    <!--  ==========================================================
+       CORRECTION DU LAYOUT
+  ===========================================================  -->
+
+    <style>
+      /* ==========================================================
+         RESET GLOBAL
+      ========================================================== */
+      
+      html,
+      body {
+        margin: 0 !important;
+        padding: 0 !important;
+        width: 100%;
+        min-height: 100%;
+      }
+      
+      body {
+        overflow-x: hidden !important;
+      }
+      
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
+      
+      /* ==========================================================
+         STRUCTURE PRINCIPALE
+      ========================================================== */
+      
+      .container-scroller {
+        width: 100% !important;
+        min-height: 100vh !important;
+        margin: 0 !important;
+        padding: 0 !important;
+      }
+      
+      .page-body-wrapper {
+        width: 100% !important;
+        min-height: 100vh !important;
+        margin: 0 !important;
+        padding: 0 !important;
+      }
+      
+      /* ==========================================================
+         DESKTOP
+      ========================================================== */
+      
+      @media (min-width: 992px) {
+        /* ------------------------------------------------------
+             SIDEBAR FIXE
+          ------------------------------------------------------ */
+      
+        .sidebar {
+          position: fixed !important;
+      
+          top: 0 !important;
+          left: 0 !important;
+          bottom: 0 !important;
+      
+          width: 255px !important;
+          height: 100vh !important;
+      
+          margin: 0 !important;
+          padding: 0 !important;
+      
+          overflow-x: hidden !important;
+          overflow-y: auto !important;
+      
+          z-index: 1050 !important;
+        }
+      
+        /* ------------------------------------------------------
+             NAVBAR FIXE
+          ------------------------------------------------------ */
+      
+        .navbar.fixed-top {
+          position: fixed !important;
+      
+          top: 0 !important;
+          left: 255px !important;
+          right: 0 !important;
+      
+          width: calc(100% - 255px) !important;
+      
+          height: 70px !important;
+          min-height: 70px !important;
+      
+          margin: 0 !important;
+          padding: 0 !important;
+      
+          z-index: 1040 !important;
+        }
+      
+        /* ------------------------------------------------------
+             NAVBAR WRAPPER
+          ------------------------------------------------------ */
+      
+        .navbar-menu-wrapper {
+          height: 70px !important;
+          min-height: 70px !important;
+      
+          margin: 0 !important;
+          padding: 0 15px !important;
+        }
+      
+        /* ------------------------------------------------------
+             MAIN PANEL
+          ------------------------------------------------------ */
+      
+        .main-panel {
+          position: relative !important;
+      
+          margin-left: 255px !important;
+      
+          width: calc(100% - 255px) !important;
+      
+          min-height: 100vh !important;
+      
+          margin-top: 0 !important;
+          padding: 0 !important;
+      
+          overflow-x: hidden !important;
+        }
+      
+        /* ------------------------------------------------------
+             CONTENT WRAPPER
+      
+             C'est ici qu'on réserve UNIQUEMENT la hauteur
+             réelle de la navbar.
+      
+             Aucun margin supplémentaire.
+             Aucun padding-top supplémentaire du thème.
+          ------------------------------------------------------ */
+      
+        .main-panel .content-wrapper {
+          width: 100% !important;
+      
+          margin: 0 !important;
+      
+          padding-top: 70px !important;
+          padding-right: 15px !important;
+          padding-bottom: 20px !important;
+          padding-left: 15px !important;
+      
+          min-height: calc(100vh - 70px) !important;
+      
+          overflow-x: hidden !important;
+        }
+      
+        /* ------------------------------------------------------
+             PREMIER ÉLÉMENT DU CONTENU
+      
+             Évite qu'un élément enfant ajoute encore une marge
+             inutile en haut.
+          ------------------------------------------------------ */
+      
+        .main-panel .content-wrapper > :first-child {
+          margin-top: 0 !important;
+        }
+      
+        /* ------------------------------------------------------
+             CONTAINER DANS LE CONTENT WRAPPER
+          ------------------------------------------------------ */
+      
+        .main-panel .content-wrapper > .container,
+        .main-panel .content-wrapper > .container-fluid {
+          margin-top: 0 !important;
+          padding-top: 0 !important;
+        }
+      
+        /* ------------------------------------------------------
+             FOOTER
+          ------------------------------------------------------ */
+      
+        .main-panel .footer {
+          width: 100% !important;
+      
+          margin: 0 !important;
+        }
+      
+        /* ------------------------------------------------------
+             SUPPRESSION DES ESPACES DU THEME
+          ------------------------------------------------------ */
+      
+        .page-body-wrapper,
+        .main-panel,
+        .content-wrapper {
+          transform: none !important;
+        }
+      }
+      
+      /* ==========================================================
+         TABLETTE / MOBILE
+      ========================================================== */
+      
+      @media (max-width: 991px) {
+        .page-body-wrapper {
+          width: 100% !important;
+      
+          margin: 0 !important;
+          padding: 0 !important;
+        }
+      
+        /* ------------------------------------------------------
+             NAVBAR MOBILE
+          ------------------------------------------------------ */
+      
+        .navbar.fixed-top {
+          position: fixed !important;
+      
+          top: 0 !important;
+          left: 0 !important;
+          right: 0 !important;
+      
+          width: 100% !important;
+      
+          height: 70px !important;
+          min-height: 70px !important;
+      
+          margin: 0 !important;
+          padding: 0 !important;
+      
+          z-index: 1040 !important;
+        }
+      
+        .navbar-menu-wrapper {
+          height: 70px !important;
+          min-height: 70px !important;
+      
+          margin: 0 !important;
+        }
+      
+        /* ------------------------------------------------------
+             MAIN PANEL MOBILE
+          ------------------------------------------------------ */
+      
+        .main-panel {
+          width: 100% !important;
+      
+          margin: 0 !important;
+          padding: 0 !important;
+      
+          min-height: 100vh !important;
+        }
+      
+        /* ------------------------------------------------------
+             CONTENT MOBILE
+          ------------------------------------------------------ */
+      
+        .main-panel .content-wrapper {
+          width: 100% !important;
+      
+          margin: 0 !important;
+      
+          padding-top: 70px !important;
+          padding-right: 15px !important;
+          padding-bottom: 20px !important;
+          padding-left: 15px !important;
+      
+          min-height: calc(100vh - 70px) !important;
+        }
+      
+        .main-panel .content-wrapper > :first-child {
+          margin-top: 0 !important;
+        }
+      }
+      
+      /* ==========================================================
+         PETITS ÉCRANS
+      ========================================================== */
+      
+      @media (max-width: 576px) {
+        .navbar.fixed-top {
+          height: 65px !important;
+          min-height: 65px !important;
+        }
+      
+        .navbar-menu-wrapper {
+          height: 65px !important;
+          min-height: 65px !important;
+        }
+      
+        .main-panel .content-wrapper {
+          padding-top: 65px !important;
+      
+          min-height: calc(100vh - 65px) !important;
+        }
+      }
+      
+      /* ==========================================================
+         SIDEBAR SCROLLBAR
+      ========================================================== */
+      
+      .sidebar::-webkit-scrollbar {
+        width: 5px;
+      }
+      
+      .sidebar::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      
+      .sidebar::-webkit-scrollbar-thumb {
+        background: rgba(255, 255, 255, 0.15);
+        border-radius: 10px;
+      }
+      
+      .sidebar::-webkit-scrollbar-thumb:hover {
+        background: rgba(255, 255, 255, 0.25);
+      }
+      
+      /* ==========================================================
+         TABLEAUX
+      ========================================================== */
+      
+      .table-responsive {
+        width: 100% !important;
+      
+        overflow-x: auto !important;
+      
+        -webkit-overflow-scrolling: touch;
+      }
+      
+      /* ==========================================================
+         ÉVITER LES DÉBORDEMENTS
+      ========================================================== */
+      
+      .main-panel,
+      .content-wrapper {
+        max-width: 100% !important;
+      
+        overflow-x: hidden !important;
+      }
+    </style>
   </head>
 
   <body>
+    <!--  ==========================================================
+       CONTAINER
+  ===========================================================  -->
+
     <div class="container-scroller">
-      <!-- partial:partials/_sidebar.html -->
+      <!--  ========================================================
+         SIDEBAR
+    =========================================================  -->
+
       <nav class="sidebar sidebar-offcanvas" id="sidebar">
+        <!--  ======================================================
+           LOGO
+      =======================================================  -->
+
         <div class="sidebar-brand-wrapper d-none d-lg-flex align-items-center justify-content-center fixed-top">
-          <img class="img-xs rounded-circle" src="{% static 'images/tanganika.jpg' %}" alt="" />
-          <a class="sidebar-brand brand-logo-mini"></a>
+          <img class="img-xs rounded-circle" src="{% static 'images/tanganika.jpg' %}" alt="Tanganyika Future" />
+
+          <a class="sidebar-brand brand-logo-mini" href="{% url 'home' %}"></a>
         </div>
 
+        <!--  ======================================================
+           MENU
+      =======================================================  -->
+
         <ul class="nav">
+          <!--  ====================================================
+             PROFIL
+        =====================================================  -->
+
           <li class="nav-item profile">
             <div class="profile-desc">
               <div class="profile-pic">
                 <div class="count-indicator">
-                  <img class="img-xs rounded-circle" src="{% static 'images/faces/face15.jpg' %}" alt="" />
+                  <img class="img-xs rounded-circle" src="{% static 'images/faces/face15.jpg' %}" alt="Profil" />
+
                   <span class="count bg-success"></span>
                 </div>
 
                 <div class="profile-name">
                   <h5 class="mb-0 font-weight-normal">{{ request.user.username }}</h5>
+
                   <span>{{ request.user.profile }}</span>
                 </div>
               </div>
 
-              <a href="#" id="profile-dropdown" data-toggle="dropdown"><i class="mdi mdi-dots-vertical"></i></a>
+              <a href="#" id="profile-dropdown" data-toggle="dropdown" aria-expanded="false"><i class="mdi mdi-dots-vertical"></i></a>
 
               <div class="dropdown-menu dropdown-menu-right sidebar-dropdown preview-list" aria-labelledby="profile-dropdown">
                 <a href="#" class="dropdown-item preview-item">
@@ -67,7 +449,7 @@
                   </div>
 
                   <div class="preview-item-content">
-                    <p class="preview-subject ellipsis mb-1 text-small">Account settings</p>
+                    <p class="preview-subject ellipsis mb-1 text-small">Paramètres du compte</p>
                   </div>
                 </a>
 
@@ -81,7 +463,7 @@
                   </div>
 
                   <div class="preview-item-content">
-                    <p class="preview-subject ellipsis mb-1 text-small">Change Password</p>
+                    <p class="preview-subject ellipsis mb-1 text-small">Modifier le mot de passe</p>
                   </div>
                 </a>
 
@@ -95,98 +477,98 @@
                   </div>
 
                   <div class="preview-item-content">
-                    <p class="preview-subject ellipsis mb-1 text-small">To-do list</p>
+                    <p class="preview-subject ellipsis mb-1 text-small">Liste des tâches</p>
                   </div>
                 </a>
               </div>
             </div>
           </li>
 
+          <!--  ====================================================
+             NAVIGATION
+        =====================================================  -->
+
           <li class="nav-item nav-category">
             <span class="nav-link">Navigation</span>
           </li>
 
-          <!-- Tableau de bord -->
+          <!--  ====================================================
+             TABLEAU DE BORD
+        =====================================================  -->
+
           <li class="nav-item menu-items {{ hm }}">
             <a class="nav-link" href="{% url 'home' %}">
               <span class="menu-icon"><i class="mdi mdi-speedometer"></i></span>
+
               <span class="menu-title">Tableau de bord</span>
             </a>
           </li>
 
-          <!-- Appartements + Produits -->
+          <!--  ====================================================
+             APPARTEMENTS + PRODUITS
+        =====================================================  -->
+
           {% if request.user.profile.id == 1 or request.user.profile.id == 2 or request.user.profile.id == 4 or request.user.is_staff %}
+            <!-- APPARTEMENTS -->
+
             <li class="nav-item menu-items {{ lapr }}">
               <a class="nav-link" href="{% url 'appartement' %}">
                 <span class="menu-icon"><i class="mdi mdi-table-large"></i></span>
+
                 <span class="menu-title">Appartements</span>
               </a>
             </li>
 
+            <!-- PRODUITS -->
+
             <li class="nav-item menu-items {{ lproduit }}">
               <a class="nav-link" href="{% url 'produit' %}">
-                <span class="menu-icon"><i class="mdi mdi-table-large"></i></span>
+                <span class="menu-icon"><i class="mdi mdi-package-variant-closed"></i></span>
+
                 <span class="menu-title">Produits</span>
               </a>
             </li>
           {% endif %}
 
-          <!-- Factures -->
+          <!--  ====================================================
+             FACTURES
+        =====================================================  -->
+
           {% if request.user.profile.id == 1 or request.user.profile.id == 2 or request.user.profile.id == 3 or request.user.is_staff %}
             <li class="nav-item menu-items {{ lfact }}">
               <a class="nav-link" href="{% url 'facture' %}">
-                <span class="menu-icon"><i class="mdi mdi-table-large"></i></span>
+                <span class="menu-icon"><i class="mdi mdi-file-document-outline"></i></span>
+
                 <span class="menu-title">Factures</span>
               </a>
             </li>
           {% endif %}
 
-          {% comment %}
-          <li class="nav-item menu-items">
-            <a class="nav-link" data-toggle="collapse" href="#ui-basic" aria-expanded="false" aria-controls="ui-basic">
-              <span class="menu-icon"><i class="mdi mdi-laptop"></i></span>
-              <span class="menu-title">Basic UI Elements</span>
-              <i class="menu-arrow"></i>
-            </a>
+          <!--  ====================================================
+             UTILISATEURS
+        =====================================================  -->
 
-            <div class="collapse" id="ui-basic">
-              <ul class="nav flex-column sub-menu">
-                <li class="nav-item">
-                  <a class="nav-link" href="pages/ui-features/buttons.html">Buttons</a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link" href="pages/ui-features/dropdowns.html">Dropdowns</a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link" href="pages/ui-features/typography.html">Typography</a>
-                </li>
-              </ul>
-            </div>
-          </li>
-          {% endcomment %}
-
-          <!-- Utilisateurs -->
           {% if request.user.profile.id == 1 or request.user.profile.id == 2 or request.user.is_staff %}
             <li class="nav-item menu-items {{ luser }}">
               <a class="nav-link" href="{% url 'users' %}">
-                <span class="menu-icon"><i class="mdi mdi-table-large"></i></span>
+                <span class="menu-icon"><i class="mdi mdi-account-group"></i></span>
+
                 <span class="menu-title">Utilisateurs</span>
               </a>
             </li>
           {% endif %}
 
-  
-
-          <!-- ====================================================== -->
-          <!-- RAPPORTS -->
-          <!-- ====================================================== -->
+          <!--  ====================================================
+             RAPPORTS
+        =====================================================  -->
 
           {% if request.user.profile.id == 1 or request.user.profile.id == 2 or request.user.is_staff %}
             <li class="nav-item nav-category">
               <span class="nav-link">Rapports</span>
             </li>
 
-            <!-- Rapport des recettes des facturiers -->
+            <!-- RECETTES -->
+
             <li class="nav-item menu-items {{ lrapport }}">
               <a class="nav-link" href="{% url 'recettes_facturiers' %}">
                 <span class="menu-icon"><i class="mdi mdi-cash-multiple"></i></span>
@@ -195,7 +577,8 @@
               </a>
             </li>
 
-            <!-- Rapport mensuel ventes + TVA -->
+            <!-- TVA -->
+
             <li class="nav-item menu-items {{ lrapport_tva }}">
               <a class="nav-link" href="{% url 'rapport_mensuel_tva' %}">
                 <span class="menu-icon"><i class="mdi mdi-file-chart"></i></span>
@@ -205,17 +588,17 @@
             </li>
           {% endif %}
 
-          <!-- ====================================================== -->
-          <!-- GESTION DU STOCK -->
-          <!-- ====================================================== -->
+          <!--  ====================================================
+             GESTION DU STOCK
+        =====================================================  -->
 
           {% if request.user.profile.id == 1 or request.user.profile.id == 2 or request.user.profile.id == 4 or request.user.is_staff %}
-            <!-- Titre de la section -->
             <li class="nav-item nav-category">
               <span class="nav-link">Gestion du stock</span>
             </li>
 
-            <!-- Stock général -->
+            <!-- STOCK -->
+
             <li class="nav-item menu-items {{ lstock }}">
               <a class="nav-link" href="{% url 'stock' %}">
                 <span class="menu-icon"><i class="mdi mdi-warehouse"></i></span>
@@ -224,7 +607,8 @@
               </a>
             </li>
 
-            <!-- Produits proches de la péremption -->
+            <!-- PÉREMPTION -->
+
             <li class="nav-item menu-items {{ lperemption }}">
               <a class="nav-link" href="{% url 'produits_peremption' %}">
                 <span class="menu-icon"><i class="mdi mdi-calendar-alert"></i></span>
@@ -233,7 +617,8 @@
               </a>
             </li>
 
-            <!-- Entrée de stock -->
+            <!-- ENTRÉE -->
+
             <li class="nav-item menu-items {{ lentree }}">
               <a class="nav-link" href="{% url 'entree_stock' %}">
                 <span class="menu-icon"><i class="mdi mdi-plus-circle-outline"></i></span>
@@ -242,7 +627,8 @@
               </a>
             </li>
 
-            <!-- Sortie manuelle -->
+            <!-- SORTIE -->
+
             <li class="nav-item menu-items {{ lsortie }}">
               <a class="nav-link" href="{% url 'sortie_stock' %}">
                 <span class="menu-icon"><i class="mdi mdi-minus-circle-outline"></i></span>
@@ -251,7 +637,8 @@
               </a>
             </li>
 
-            <!-- Mouvements de stock -->
+            <!-- MOUVEMENTS -->
+
             <li class="nav-item menu-items {{ lmouvements }}">
               <a class="nav-link" href="{% url 'mouvements_stock' %}">
                 <span class="menu-icon"><i class="mdi mdi-swap-vertical"></i></span>
@@ -261,7 +648,10 @@
             </li>
           {% endif %}
 
-          <!-- Ancien menu Rapport -->
+          <!--  ====================================================
+             ANCIEN RAPPORT
+        =====================================================  -->
+
           {% if request.user.profile.id == 8 %}
             <li class="nav-item menu-items">
               <a class="nav-link" data-toggle="collapse" href="#auth" aria-expanded="false" aria-controls="auth">
@@ -275,23 +665,23 @@
               <div class="collapse" id="auth">
                 <ul class="nav flex-column sub-menu">
                   <li class="nav-item">
-                    <a class="nav-link" href="pages/samples/blank-page.html">Blank Page</a>
+                    <a class="nav-link" href="#">Blank Page</a>
                   </li>
 
                   <li class="nav-item">
-                    <a class="nav-link" href="pages/samples/error-404.html">404</a>
+                    <a class="nav-link" href="#">404</a>
                   </li>
 
                   <li class="nav-item">
-                    <a class="nav-link" href="pages/samples/error-500.html">500</a>
+                    <a class="nav-link" href="#">500</a>
                   </li>
 
                   <li class="nav-item">
-                    <a class="nav-link" href="pages/samples/login.html">Login</a>
+                    <a class="nav-link" href="#">Login</a>
                   </li>
 
                   <li class="nav-item">
-                    <a class="nav-link" href="pages/samples/register.html">Register</a>
+                    <a class="nav-link" href="#">Register</a>
                   </li>
                 </ul>
               </div>
@@ -299,143 +689,118 @@
           {% endif %}
         </ul>
       </nav>
-      <!-- partial -->
+
+      <!--  ==========================================================
+         PAGE BODY WRAPPER
+    ===========================================================  -->
 
       <div class="container-fluid page-body-wrapper">
-        <!-- partial:partials/_navbar.html -->
+        <!--  ========================================================
+           NAVBAR
+      =========================================================  -->
+
         <nav class="navbar p-0 fixed-top d-flex flex-row">
+          <!--  ======================================================
+             LOGO MOBILE
+        =======================================================  -->
+
           <div class="navbar-brand-wrapper d-flex d-lg-none align-items-center justify-content-center">
             <a class="navbar-brand brand-logo-mini" href="{% url 'home' %}"><img src="{% static 'images/logo-mini.svg' %}" alt="logo" /></a>
           </div>
 
+          <!--  ======================================================
+             NAVBAR MENU WRAPPER
+        =======================================================  -->
+
           <div class="navbar-menu-wrapper flex-grow d-flex align-items-stretch">
-            <button class="navbar-toggler navbar-toggler align-self-center" type="button" data-toggle="minimize"><span class="mdi mdi-menu"></span></button>
+            <!--  ====================================================
+               TOGGLE SIDEBAR
+          =====================================================  -->
+
+            <button class="navbar-toggler navbar-toggler align-self-center" type="button" data-toggle="minimize" aria-label="Réduire le menu"><span class="mdi mdi-menu"></span></button>
+
+            <!--  ====================================================
+               RECHERCHE
+          =====================================================  -->
 
             <ul class="navbar-nav w-100">
               <li class="nav-item w-100">
-                <form class="nav-link mt-2 mt-md-0 d-none d-lg-flex search">
-                  <input type="text" class="form-control" placeholder="Search products" />
+                <form class="nav-link mt-2 mt-md-0 d-none d-lg-flex search" action="#">
+                  <input type="text" class="form-control" placeholder="Rechercher..." />
                 </form>
               </li>
             </ul>
 
+            <!--  ====================================================
+               NAVBAR RIGHT
+          =====================================================  -->
+
             <ul class="navbar-nav navbar-nav-right">
-              <!-- Projects -->
-              <li class="nav-item dropdown d-none d-lg-block">
-                <div class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list" aria-labelledby="createbuttonDropdown">
-                  <h6 class="p-3 mb-0">Projects</h6>
+              <!--  ==================================================
+                 SETTINGS
+            ===================================================  -->
 
-                  <div class="dropdown-divider"></div>
-
-                  <a class="dropdown-item preview-item">
-                    <div class="preview-thumbnail">
-                      <div class="preview-icon bg-dark rounded-circle">
-                        <i class="mdi mdi-file-outline text-primary"></i>
-                      </div>
-                    </div>
-
-                    <div class="preview-item-content">
-                      <p class="preview-subject ellipsis mb-1">Software Development</p>
-                    </div>
-                  </a>
-
-                  <div class="dropdown-divider"></div>
-
-                  <a class="dropdown-item preview-item">
-                    <div class="preview-thumbnail">
-                      <div class="preview-icon bg-dark rounded-circle">
-                        <i class="mdi mdi-web text-info"></i>
-                      </div>
-                    </div>
-
-                    <div class="preview-item-content">
-                      <p class="preview-subject ellipsis mb-1">UI Development</p>
-                    </div>
-                  </a>
-
-                  <div class="dropdown-divider"></div>
-
-                  <a class="dropdown-item preview-item">
-                    <div class="preview-thumbnail">
-                      <div class="preview-icon bg-dark rounded-circle">
-                        <i class="mdi mdi-layers text-danger"></i>
-                      </div>
-                    </div>
-
-                    <div class="preview-item-content">
-                      <p class="preview-subject ellipsis mb-1">Software Testing</p>
-                    </div>
-                  </a>
-
-                  <div class="dropdown-divider"></div>
-
-                  <p class="p-3 mb-0 text-center">See all projects</p>
-                </div>
-              </li>
-
-              <!-- Settings -->
               <li class="nav-item nav-settings d-none d-lg-block">
                 <a class="nav-link" href="#"><i class="mdi mdi-view-grid"></i></a>
               </li>
 
-              <!-- Messages -->
+              <!--  ==================================================
+                 MESSAGES
+            ===================================================  -->
+
               <li class="nav-item dropdown border-left">
+                <a class="nav-link" href="#" id="messageDropdown" data-toggle="dropdown" aria-expanded="false"><i class="mdi mdi-email"></i></a>
+
                 <div class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list" aria-labelledby="messageDropdown">
                   <h6 class="p-3 mb-0">Messages</h6>
 
                   <div class="dropdown-divider"></div>
 
-                  <a class="dropdown-item preview-item">
+                  <a class="dropdown-item preview-item" href="#">
                     <div class="preview-thumbnail">
                       <img src="{% static 'images/faces/face4.jpg' %}" alt="image" class="rounded-circle profile-pic" />
                     </div>
 
                     <div class="preview-item-content">
-                      <p class="preview-subject ellipsis mb-1">Mark send you a message</p>
-                      <p class="text-muted mb-0">1 Minutes ago</p>
+                      <p class="preview-subject ellipsis mb-1">Mark vous a envoyé un message</p>
+
+                      <p class="text-muted mb-0">Il y a 1 minute</p>
                     </div>
                   </a>
 
                   <div class="dropdown-divider"></div>
 
-                  <a class="dropdown-item preview-item">
+                  <a class="dropdown-item preview-item" href="#">
                     <div class="preview-thumbnail">
                       <img src="{% static 'images/faces/face2.jpg' %}" alt="image" class="rounded-circle profile-pic" />
                     </div>
 
                     <div class="preview-item-content">
-                      <p class="preview-subject ellipsis mb-1">Cregh send you a message</p>
-                      <p class="text-muted mb-0">15 Minutes ago</p>
+                      <p class="preview-subject ellipsis mb-1">Cregh vous a envoyé un message</p>
+
+                      <p class="text-muted mb-0">Il y a 15 minutes</p>
                     </div>
                   </a>
 
                   <div class="dropdown-divider"></div>
 
-                  <a class="dropdown-item preview-item">
-                    <div class="preview-thumbnail">
-                      <img src="{% static 'images/faces/face3.jpg' %}" alt="image" class="rounded-circle profile-pic" />
-                    </div>
-
-                    <div class="preview-item-content">
-                      <p class="preview-subject ellipsis mb-1">Profile picture updated</p>
-                      <p class="text-muted mb-0">18 Minutes ago</p>
-                    </div>
-                  </a>
-
-                  <div class="dropdown-divider"></div>
-
-                  <p class="p-3 mb-0 text-center">4 new messages</p>
+                  <p class="p-3 mb-0 text-center">4 nouveaux messages</p>
                 </div>
               </li>
 
-              <!-- Notifications -->
+              <!--  ==================================================
+                 NOTIFICATIONS
+            ===================================================  -->
+
               <li class="nav-item dropdown border-left">
+                <a class="nav-link" href="#" id="notificationDropdown" data-toggle="dropdown" aria-expanded="false"><i class="mdi mdi-bell"></i></a>
+
                 <div class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list" aria-labelledby="notificationDropdown">
                   <h6 class="p-3 mb-0">Notifications</h6>
 
                   <div class="dropdown-divider"></div>
 
-                  <a class="dropdown-item preview-item">
+                  <a class="dropdown-item preview-item" href="#">
                     <div class="preview-thumbnail">
                       <div class="preview-icon bg-dark rounded-circle">
                         <i class="mdi mdi-calendar text-success"></i>
@@ -443,14 +808,15 @@
                     </div>
 
                     <div class="preview-item-content">
-                      <p class="preview-subject mb-1">Event today</p>
-                      <p class="text-muted ellipsis mb-0">Just a reminder that you have an event today</p>
+                      <p class="preview-subject mb-1">Événement aujourd'hui</p>
+
+                      <p class="text-muted ellipsis mb-0">Vous avez un événement aujourd'hui</p>
                     </div>
                   </a>
 
                   <div class="dropdown-divider"></div>
 
-                  <a class="dropdown-item preview-item">
+                  <a class="dropdown-item preview-item" href="#">
                     <div class="preview-thumbnail">
                       <div class="preview-icon bg-dark rounded-circle">
                         <i class="mdi mdi-settings text-danger"></i>
@@ -458,33 +824,26 @@
                     </div>
 
                     <div class="preview-item-content">
-                      <p class="preview-subject mb-1">Settings</p>
-                      <p class="text-muted ellipsis mb-0">Update dashboard</p>
+                      <p class="preview-subject mb-1">Paramètres</p>
+
+                      <p class="text-muted ellipsis mb-0">Mettre à jour le tableau de bord</p>
                     </div>
                   </a>
 
                   <div class="dropdown-divider"></div>
 
-                  <a class="dropdown-item preview-item">
-                    <div class="preview-thumbnail"></div>
-
-                    <div class="preview-item-content">
-                      <p class="preview-subject mb-1">Launch Admin</p>
-                      <p class="text-muted ellipsis mb-0">New admin wow!</p>
-                    </div>
-                  </a>
-
-                  <div class="dropdown-divider"></div>
-
-                  <p class="p-3 mb-0 text-center">See all notifications</p>
+                  <p class="p-3 mb-0 text-center">Voir toutes les notifications</p>
                 </div>
               </li>
 
-              <!-- Profile -->
+              <!--  ==================================================
+                 PROFIL
+            ===================================================  -->
+
               <li class="nav-item dropdown">
-                <a class="nav-link" id="profileDropdown" href="#" data-toggle="dropdown">
+                <a class="nav-link" id="profileDropdown" href="#" data-toggle="dropdown" aria-expanded="false">
                   <div class="navbar-profile">
-                    <img class="img-xs rounded-circle" src="{% static 'images/faces/face15.jpg' %}" alt="" />
+                    <img class="img-xs rounded-circle" src="{% static 'images/faces/face15.jpg' %}" alt="Profil" />
 
                     <p class="mb-0 d-none d-sm-block navbar-profile-name">{{ request.user.username }}</p>
 
@@ -505,7 +864,7 @@
                     </div>
 
                     <div class="preview-item-content">
-                      <p class="preview-subject mb-1">Paramettre</p>
+                      <p class="preview-subject mb-1">Paramètres</p>
                     </div>
                   </a>
 
@@ -528,103 +887,181 @@
                   <a class="dropdown-item preview-item" href="#">
                     <div class="preview-thumbnail">
                       <div class="preview-icon bg-dark rounded-circle">
-                        <i class="mdi mdi-user text-danger"></i>
+                        <i class="mdi mdi-account text-info"></i>
                       </div>
                     </div>
 
                     <div class="preview-item-content">
-                      <p style="text-transform: lowercase">{{ request.user.noms }}</p>
+                      <p class="mb-0" style="text-transform: lowercase;">{{ request.user.noms }}</p>
                     </div>
                   </a>
                 </div>
               </li>
             </ul>
 
-            <button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center" type="button" data-toggle="offcanvas"><span class="mdi mdi-format-line-spacing"></span></button>
+            <!--  ====================================================
+               MOBILE TOGGLE
+          =====================================================  -->
+
+            <button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center" type="button" data-toggle="offcanvas" aria-label="Ouvrir le menu"><span class="mdi mdi-format-line-spacing"></span></button>
           </div>
         </nav>
-        <!-- partial -->
+
+        <!--  ========================================================
+           MAIN PANEL
+      =========================================================  -->
 
         <div class="main-panel">
+          <!--  ======================================================
+             CONTENT
+        =======================================================  -->
+
           <div class="content-wrapper">
             {% block content %}
 
             {% endblock %}
           </div>
 
-          <!-- partial:partials/_footer.html -->
+          <!--  ======================================================
+             FOOTER
+        =======================================================  -->
+
           <footer class="footer">
             <div class="d-sm-flex justify-content-center justify-content-sm-between">
               <span class="text-muted d-block text-center text-sm-left d-sm-inline-block">Copyright © www.tanganyikafuture.com 2026</span>
 
               <span class="float-none float-sm-right d-block mt-1 mt-sm-0 text-center">
-                MKG. <i class="mdi mdi-heart text-danger"></i> by <a href="https://www.mkg.org/" target="_blank">MKG</a> &amp; <a href="https://www.mkg.org/" target="_blank"></a> for a better future.
-           
+                MKG.
+
+                <i class="mdi mdi-heart text-danger"></i>
+
+                by
+
+                <a href="https://www.mkg.org/" target="_blank" rel="noopener noreferrer">MKG</a>
+
+                for a better future.
               </span>
             </div>
           </footer>
-          <!-- partial -->
         </div>
-        <!-- main-panel ends -->
       </div>
-      <!-- page-body-wrapper ends -->
     </div>
-    <!-- container-scroller -->
 
-    <!-- plugins:js -->
+    <!--  ==========================================================
+       JAVASCRIPT
+  ===========================================================  -->
+
+    <!-- 
+       IMPORTANT :
+       jQuery doit être chargé AVANT les scripts du thème.
+   -->
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
+    <!--  ==========================================================
+       VENDOR BUNDLE
+  ===========================================================  -->
+
     <script src="{% static 'vendors/js/vendor.bundle.base.js' %}"></script>
 
+    <!--  ==========================================================
+       SWEETALERT2
+  ===========================================================  -->
+
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <link rel="stylesheet" href="sweetalert2.min.css" />
 
-    <!-- endinject -->
+    <!--  ==========================================================
+       CHART
+  ===========================================================  -->
 
-    <!-- Plugin js for this page -->
     <script src="{% static 'vendors/chart.js/Chart.min.js' %}"></script>
-    <script src="{% static 'vendors/progressbar.js/progressbar.min.js' %}"></script>
-    <script src="{% static 'vendors/jvectormap/jquery-jvectormap.min.js' %}"></script>
-    <script src="{% static 'vendors/jvectormap/jquery-jvectormap-world-mill-en.js' %}"></script>
-    <script src="{% static 'vendors/owl-carousel-2/owl.carousel.min.js' %}"></script>
-    <!-- End plugin js for this page -->
 
-    <!-- inject:js -->
+    <!--  ==========================================================
+       PROGRESSBAR
+  ===========================================================  -->
+
+    <script src="{% static 'vendors/progressbar.js/progressbar.min.js' %}"></script>
+
+    <!--  ==========================================================
+       JQUERY VECTOR MAP
+  ===========================================================  -->
+
+    <script src="{% static 'vendors/jvectormap/jquery-jvectormap.min.js' %}"></script>
+
+    <script src="{% static 'vendors/jvectormap/jquery-jvectormap-world-mill-en.js' %}"></script>
+
+    <!--  ==========================================================
+       OWL CAROUSEL
+  ===========================================================  -->
+
+    <script src="{% static 'vendors/owl-carousel-2/owl.carousel.min.js' %}"></script>
+
+    <!--  ==========================================================
+       SELECT2
+  ===========================================================  -->
+
+    <script src="{% static 'vendors/select2/select2.min.js' %}"></script>
+
+    <!--  ==========================================================
+       JQUERY VALIDATE
+  ===========================================================  -->
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.min.js"></script>
+
+    <!--  ==========================================================
+       THEME JS
+  ===========================================================  -->
+
     <script src="{% static 'js/off-canvas.js' %}"></script>
+
     <script src="{% static 'js/hoverable-collapse.js' %}"></script>
+
     <script src="{% static 'js/misc.js' %}"></script>
+
     <script src="{% static 'js/settings.js' %}"></script>
+
     <script src="{% static 'js/todolist.js' %}"></script>
 
+    <!--  ==========================================================
+       TYPEAHEAD
+  ===========================================================  -->
+
     <script src="{% static 'vendors/typeahead.js/typeahead.bundle.min.js' %}"></script>
-    <!-- endinject -->
 
-    <!-- Custom js for this page -->
+    <script src="{% static 'js/typeahead.js' %}"></script>
+
+    <!--  ==========================================================
+       DASHBOARD
+  ===========================================================  -->
+
     <script src="{% static 'js/dashboard.js' %}"></script>
+
+    <!--  ==========================================================
+       SELECT2 CUSTOM
+  ===========================================================  -->
+
     <script src="{% static 'js/select2.js' %}"></script>
 
+    <!--  ==========================================================
+       FILE UPLOAD
+  ===========================================================  -->
+
     <script src="{% static 'js/file-upload.js' %}"></script>
-    <script src="{% static 'js/typeahead.js' %}"></script>
-    <script src="{% static 'vendors/select2/select2.min.js' %}"></script>
-    <!-- End custom js for this page -->
 
-    <!-- Plugin js for this page -->
-    <script src="{% static 'vendors/select2/select2.min.js' %}"></script>
-    <!-- End plugin js for this page -->
-
-    <!-- inject:js -->
-    <!-- endinject -->
-
-    <!-- Custom js for this page -->
-    <script src="{% static 'js/file-upload.js' %}"></script>
-    <script src="{% static 'js/typeahead.js' %}"></script>
-    <script src="{% static 'js/select2.js' %}"></script>
+    <!--  ==========================================================
+       SCRIPT PERSONNALISÉ
+  ===========================================================  -->
 
     {% block script_of %}
-      <script src="{% static 'js/dashboard.js' %}"></script>
+
     {% endblock %}
 
+    <!--  ==========================================================
+       VALIDATIONS
+  ===========================================================  -->
+
     {% block validations %}
-      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.min.js"></script>
+
     {% endblock %}
   </body>
 </html>
