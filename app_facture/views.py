@@ -1421,15 +1421,43 @@ def facture(request):
 @login_required(login_url="sign_in")
 def addFacture(request):
 
-    f = Facture.objects.create(
-        user=request.user
+    # ==========================================================
+    # Vérifier si l'utilisateur possède déjà une facture
+    # non validée
+    # ==========================================================
+
+    facture_en_cours = Facture.objects.filter(
+        user=request.user,
+        imprimer=False
+    ).order_by("-createdAt").first()
+
+    if facture_en_cours:
+
+        messages.warning(
+            request,
+            f"Vous avez déjà une facture #{facture_en_cours.id} "
+            f"en cours. Veuillez la valider avant d'en créer une nouvelle."
+        )
+
+        return redirect(
+            "detaiFacture",
+            id=facture_en_cours.id
+        )
+
+    # ==========================================================
+    # Aucune facture non validée
+    # Création d'une nouvelle facture
+    # ==========================================================
+
+    facture = Facture.objects.create(
+        user=request.user,
+        imprimer=False
     )
 
-    return HttpResponseRedirect(
-        "/facture/"
+    return redirect(
+        "detaiFacture",
+        id=facture.id
     )
-
-
 # ==========================================================
 # DETAILS FACTURE
 # ==========================================================
