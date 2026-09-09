@@ -82,13 +82,6 @@ urlpatterns = [
     
     path("recettes-facturiers/",recettes_facturiers,name="recettes_facturiers"),
     
-
-
-
-
-
-
-
     path(
         "stock/",
         stock,
