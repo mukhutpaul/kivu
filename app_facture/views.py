@@ -1839,7 +1839,7 @@ def addDetailFacture(request):
         )
 
     # =========================================================
-    # POUR UNE PHARMACIE :
+    # PHARMACIE :
     # LA QUANTITÉ DOIT ÊTRE ENTIÈRE
     # =========================================================
 
@@ -1853,6 +1853,11 @@ def addDetailFacture(request):
         return redirect(
             "/detaiFacture/" + str(fact.id)
         )
+
+    qte = qte.quantize(
+        Decimal("1"),
+        rounding=ROUND_HALF_UP
+    )
 
     # =========================================================
     # RÉCUPÉRER LE PRODUIT
@@ -1884,10 +1889,47 @@ def addDetailFacture(request):
         )
 
     # =========================================================
-    # PRIX TTC DU PRODUIT
-    #
-    # Produit.pu = prix TTC
-    # TVA = 16 %
+    # VÉRIFIER LE STOCK DE TOUS LES LOTS
+    # =========================================================
+
+    stock_disponible = Lot.objects.filter(
+        produit=pro,
+        quantite__gt=0
+    ).aggregate(
+        total=Coalesce(
+            Sum("quantite"),
+            Decimal("0.00")
+        )
+    )["total"]
+
+    stock_disponible = Decimal(
+        stock_disponible or "0.00"
+    ).quantize(
+        Decimal("0.01"),
+        rounding=ROUND_HALF_UP
+    )
+
+    # =========================================================
+    # STOCK INSUFFISANT
+    # =========================================================
+
+    if qte > stock_disponible:
+
+        messages.error(
+            request,
+            (
+                f"Stock insuffisant pour « {pro.nom} ». "
+                f"Stock disponible : {stock_disponible:.2f}. "
+                f"Quantité demandée : {qte:.0f}."
+            )
+        )
+
+        return redirect(
+            "/detaiFacture/" + str(fact.id)
+        )
+
+    # =========================================================
+    # PRIX TTC
     # =========================================================
 
     pu_ttc = Decimal(
@@ -1898,7 +1940,7 @@ def addDetailFacture(request):
     )
 
     # =========================================================
-    # VÉRIFIER QUE LE PRIX EST VALIDE
+    # VÉRIFIER LE PRIX
     # =========================================================
 
     if pu_ttc < 0:
@@ -1923,7 +1965,7 @@ def addDetailFacture(request):
     )
 
     # =========================================================
-    # CRÉATION + RECALCUL DANS UNE TRANSACTION
+    # TRANSACTION
     # =========================================================
 
     with transaction.atomic():
@@ -1933,24 +1975,17 @@ def addDetailFacture(request):
         # -----------------------------------------------------
 
         Detail_facture.objects.create(
-
             facture=fact,
-
             produit=pro,
-
             quantite=qte,
-
             pu_ttc=pu_ttc,
-
             pu_ht=pu_ht,
-
             tva_unitaire=tva_unitaire,
-
             taux_tva=taux_tva,
         )
 
         # -----------------------------------------------------
-        # RÉCUPÉRER TOUS LES DÉTAILS DE LA FACTURE
+        # RÉCUPÉRER LES DÉTAILS
         # -----------------------------------------------------
 
         details = Detail_facture.objects.filter(
@@ -1958,42 +1993,49 @@ def addDetailFacture(request):
         )
 
         # -----------------------------------------------------
-        # INITIALISER LES TOTAUX
+        # TOTAUX
         # -----------------------------------------------------
 
         total_ht = Decimal("0.00")
         total_tva = Decimal("0.00")
         total_ttc = Decimal("0.00")
 
-        # -----------------------------------------------------
-        # CALCULER LES TOTAUX
-        # -----------------------------------------------------
-
         for detail in details:
 
-            quantite = detail.quantite or Decimal("0.00")
-
-            pu_ttc_detail = detail.pu_ttc or Decimal("0.00")
-            pu_ht_detail = detail.pu_ht or Decimal("0.00")
-            tva_detail = detail.tva_unitaire or Decimal("0.00")
-
-            # Total TTC de la ligne
-            total_ttc += (
-                pu_ttc_detail * quantite
+            quantite = (
+                detail.quantite
+                or Decimal("0.00")
             )
 
-            # Total HT de la ligne
+            pu_ttc_detail = (
+                detail.pu_ttc
+                or Decimal("0.00")
+            )
+
+            pu_ht_detail = (
+                detail.pu_ht
+                or Decimal("0.00")
+            )
+
+            tva_detail = (
+                detail.tva_unitaire
+                or Decimal("0.00")
+            )
+
             total_ht += (
                 pu_ht_detail * quantite
             )
 
-            # Total TVA de la ligne
             total_tva += (
                 tva_detail * quantite
             )
 
+            total_ttc += (
+                pu_ttc_detail * quantite
+            )
+
         # -----------------------------------------------------
-        # ARRONDIR LES TOTAUX
+        # ARRONDIS
         # -----------------------------------------------------
 
         total_ht = total_ht.quantize(
@@ -2006,16 +2048,6 @@ def addDetailFacture(request):
             rounding=ROUND_HALF_UP
         )
 
-        total_ttc = total_ttc.quantize(
-            Decimal("0.01"),
-            rounding=ROUND_HALF_UP
-        )
-
-        # -----------------------------------------------------
-        # SÉCURITÉ :
-        # HT + TVA DOIT ÊTRE ÉGAL AU TTC
-        # -----------------------------------------------------
-
         total_ttc = (
             total_ht + total_tva
         ).quantize(
@@ -2024,7 +2056,7 @@ def addDetailFacture(request):
         )
 
         # -----------------------------------------------------
-        # ENREGISTRER LES TOTAUX DANS FACTURE
+        # ENREGISTRER LES TOTAUX
         # -----------------------------------------------------
 
         fact.total_ht = total_ht
@@ -2041,7 +2073,7 @@ def addDetailFacture(request):
         )
 
     # =========================================================
-    # MESSAGE DE SUCCÈS
+    # SUCCÈS
     # =========================================================
 
     messages.success(
@@ -2050,13 +2082,12 @@ def addDetailFacture(request):
     )
 
     # =========================================================
-    # RETOUR À LA FACTURE
+    # RETOUR
     # =========================================================
 
     return redirect(
         "/detaiFacture/" + str(fact.id)
     )
-
 # ==========================================================
 # IMPRESSION / VALIDATION FACTURE
 # ==========================================================

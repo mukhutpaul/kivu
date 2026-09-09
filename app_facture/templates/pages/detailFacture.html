@@ -453,10 +453,108 @@
             width: 100%;
         }
     }
+
+    /* =========================================================
+       MESSAGES DJANGO
+    ========================================================== */
+
+    .messages-container {
+        margin-bottom: 20px;
+    }
+
+    .messages-container .alert {
+        border: none;
+        border-radius: 12px;
+        padding: 14px 18px;
+        margin-bottom: 10px;
+        font-size: 14px;
+        font-weight: 600;
+        box-shadow: 0 5px 18px rgba(0,0,0,.15);
+    }
+
+    .messages-container .alert-danger {
+        background: rgba(220,53,69,.15);
+        border-left: 4px solid #dc3545;
+        color: #ff8d98;
+    }
+
+    .messages-container .alert-success {
+        background: rgba(25,135,84,.15);
+        border-left: 4px solid #198754;
+        color: #65e6a7;
+    }
+
+    .messages-container .alert-warning {
+        background: rgba(255,193,7,.15);
+        border-left: 4px solid #ffc107;
+        color: #ffd866;
+    }
+
+    .messages-container .alert-info {
+        background: rgba(13,202,240,.15);
+        border-left: 4px solid #0dcaf0;
+        color: #73e8ff;
+    }
+
+    .messages-container .close {
+        color: #fff;
+        opacity: .8;
+    }
+
+    .messages-container .close:hover {
+        opacity: 1;
+    }
+
 </style>
 
 
 <div class="content-wrapper facture-page">
+
+
+    {% if messages %}
+    <div class="messages-container">
+        {% for message in messages %}
+            <div
+                class="alert
+                {% if message.tags == 'error' %}
+                    alert-danger
+                {% elif message.tags == 'success' %}
+                    alert-success
+                {% elif message.tags == 'warning' %}
+                    alert-warning
+                {% else %}
+                    alert-info
+                {% endif %}
+                alert-dismissible fade show"
+                role="alert"
+            >
+                <div class="d-flex align-items-center">
+                    {% if message.tags == 'error' %}
+                        <i class="mdi mdi-alert-circle-outline mr-2" style="font-size:22px;"></i>
+                    {% elif message.tags == 'success' %}
+                        <i class="mdi mdi-check-circle-outline mr-2" style="font-size:22px;"></i>
+                    {% elif message.tags == 'warning' %}
+                        <i class="mdi mdi-alert-outline mr-2" style="font-size:22px;"></i>
+                    {% else %}
+                        <i class="mdi mdi-information-outline mr-2" style="font-size:22px;"></i>
+                    {% endif %}
+
+                    <span>{{ message }}</span>
+                </div>
+
+                <button
+                    type="button"
+                    class="close"
+                    data-dismiss="alert"
+                    aria-label="Fermer"
+                >
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
 
     <!-- =====================================================
          EN-TÊTE DE LA FACTURE
