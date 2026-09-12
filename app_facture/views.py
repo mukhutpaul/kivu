@@ -34,6 +34,14 @@ from app_facture.models.user import Profile, User
 from app_facture.models.lot import Lot
 from app_facture.models.mouvement_stock import MouvementStock
 
+from django.contrib import messages
+from django.contrib.auth import get_user_model
+from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse
+from django.shortcuts import get_object_or_404
+
+from app_facture.models import Detail_facture, Facture
+
 
 # ==========================================================
 # CONSTANTES TVA
@@ -1745,13 +1753,31 @@ def detaiFacture(request, id):
         ctx
     )
 
+
+
+
+
+User = get_user_model()
+
+
 @login_required(login_url="sign_in")
 def deletedetailFacture(request, id):
 
+    # ==========================================================
+    # RÉCUPÉRER LE DÉTAIL DE LA FACTURE
+    # ==========================================================
+
     df = get_object_or_404(
-        Detail_facture,
+        Detail_facture.objects.select_related(
+            "facture",
+            "produit"
+        ),
         pk=id
     )
+
+    # ==========================================================
+    # RÉCUPÉRER LA FACTURE
+    # ==========================================================
 
     dt = get_object_or_404(
         Facture,
@@ -1760,25 +1786,154 @@ def deletedetailFacture(request, id):
 
     id_facture = dt.id
 
+    # ==========================================================
+    # EMPÊCHER LA MODIFICATION D'UNE FACTURE VALIDÉE
+    # ==========================================================
+
     if dt.imprimer:
 
-        messages.warning(
-            request,
-            "Impossible de modifier une facture déjà validée."
+        return JsonResponse(
+            {
+                "success": False,
+                "message": (
+                    "Impossible de modifier une facture "
+                    "déjà validée."
+                )
+            },
+            status=400
         )
 
-        return redirect(
-            "/detaiFacture/"
-            + str(id_facture)
+    # ==========================================================
+    # AUTORISER UNIQUEMENT LA MÉTHODE POST
+    # ==========================================================
+
+    if request.method != "POST":
+
+        return JsonResponse(
+            {
+                "success": False,
+                "message": "Méthode non autorisée."
+            },
+            status=405
         )
+
+    # ==========================================================
+    # RÉCUPÉRER LE MOT DE PASSE DU MANAGER
+    # ==========================================================
+
+    password = request.POST.get(
+        "password",
+        ""
+    ).strip()
+
+    if not password:
+
+        return JsonResponse(
+            {
+                "success": False,
+                "message": (
+                    "Veuillez saisir le mot de passe "
+                    "du manager."
+                )
+            },
+            status=400
+        )
+
+    # ==========================================================
+    # RECHERCHER LES UTILISATEURS AYANT LE PROFIL MANAGER
+    # ==========================================================
+    #
+    # Ton modèle utilise :
+    #
+    # profile = models.ForeignKey(Profile, ...)
+    #
+    # et Profile contient :
+    #
+    # name = models.CharField(...)
+    #
+    # On utilise donc :
+    #
+    # profile__name__iexact="MANAGER"
+    #
+    # iexact permet d'accepter :
+    # MANAGER
+    # Manager
+    # manager
+    # ==========================================================
+
+    managers = User.objects.filter(
+        profile__name__iexact="MANAGER",
+        is_active=True
+    )
+
+    # ==========================================================
+    # VÉRIFIER LE MOT DE PASSE
+    # ==========================================================
+
+    manager_authorise = None
+
+    for manager in managers:
+
+        if manager.check_password(password):
+
+            manager_authorise = manager
+            break
+
+    # ==========================================================
+    # AUCUN MANAGER N'A VALIDÉ LE MOT DE PASSE
+    # ==========================================================
+
+    if manager_authorise is None:
+
+        return JsonResponse(
+            {
+                "success": False,
+                "message": (
+                    "Mot de passe incorrect. "
+                    "L'autorisation du manager est refusée."
+                )
+            },
+            status=403
+        )
+
+    # ==========================================================
+    # CONSERVER LE NOM DU PRODUIT AVANT SUPPRESSION
+    # ==========================================================
+
+    produit_nom = str(df.produit)
+
+    # ==========================================================
+    # SUPPRESSION DU PRODUIT
+    # ==========================================================
 
     df.delete()
 
-    return redirect(
-        "/detaiFacture/"
-        + str(id_facture)
+    # ==========================================================
+    # MESSAGE DE SUCCÈS
+    # ==========================================================
+
+    messages.success(
+        request,
+        (
+            f"Le produit « {produit_nom} » "
+            "a été supprimé de la facture."
+        )
     )
 
+    # ==========================================================
+    # RÉPONSE JSON POUR LE MODAL JAVASCRIPT
+    # ==========================================================
+
+    return JsonResponse(
+        {
+            "success": True,
+            "message": (
+                f"Le produit « {produit_nom} » "
+                "a été supprimé de la facture."
+            ),
+            "facture_id": id_facture
+        }
+    )
 
 
 @login_required(login_url="sign_in")
