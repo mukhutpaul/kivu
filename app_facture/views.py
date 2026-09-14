@@ -620,8 +620,17 @@ def addProduit(request):
 
     if request.method == "POST":
 
+        # ==========================================================
+        # RÉCUPÉRATION DES DONNÉES DU FORMULAIRE
+        # ==========================================================
+
         nom = request.POST.get(
             "nom",
+            ""
+        ).strip()
+
+        code_barre = request.POST.get(
+            "code_barre",
             ""
         ).strip()
 
@@ -635,13 +644,45 @@ def addProduit(request):
             ""
         )
 
+        # ==========================================================
+        # VÉRIFICATION DU NOM
+        # ==========================================================
+
         ver_nom_prod = Produit.objects.filter(
             nom=nom.upper()
         )
 
+        # ==========================================================
+        # VÉRIFICATION DU CODE-BARRES
+        # ==========================================================
+
+        ver_code_barre = Produit.objects.filter(
+            code_barre=code_barre
+        )
+
+        # ==========================================================
+        # VALIDATIONS
+        # ==========================================================
+
         if nom == "":
 
             msg = "Veuillez remplir le nom"
+
+        elif code_barre == "":
+
+            msg = "Veuillez remplir le code-barres"
+
+        elif not code_barre.isdigit():
+
+            msg = "Le code-barres doit contenir uniquement des chiffres"
+
+        elif len(code_barre) > 13:
+
+            msg = "Le code-barres ne doit pas dépasser 13 chiffres"
+
+        elif ver_code_barre.exists():
+
+            msg = "Ce code-barres existe déjà"
 
         elif pu == "":
 
@@ -652,6 +693,10 @@ def addProduit(request):
             msg = "Un produit porte déjà ce nom"
 
         else:
+
+            # ======================================================
+            # VALIDATION DU PRIX
+            # ======================================================
 
             try:
 
@@ -670,29 +715,50 @@ def addProduit(request):
 
             else:
 
+                # ==================================================
+                # VALIDATION DE L'APPARTEMENT
+                # ==================================================
+
                 if appartement == "":
 
                     msg = "Veuillez remplir le appartement"
 
                 else:
 
-                    apr = Appartement.objects.get(
-                        pk=appartement
-                    )
+                    try:
 
-                    pr = Produit(
-                        nom=nom.upper(),
-                        pu=prix,
-                        appartement=apr
-                    )
+                        apr = Appartement.objects.get(
+                            pk=appartement
+                        )
 
-                    pr.save()
+                    except Appartement.DoesNotExist:
 
-                    msok = "Opération réussie"
+                        msg = "L'appartement sélectionné n'existe pas"
 
-                    return HttpResponseRedirect(
-                        "/produit/"
-                    )
+                    else:
+
+                        # ==========================================
+                        # CRÉATION DU PRODUIT
+                        # ==========================================
+
+                        pr = Produit(
+                            nom=nom.upper(),
+                            code_barre=code_barre,
+                            pu=prix,
+                            appartement=apr
+                        )
+
+                        pr.save()
+
+                        msok = "Opération réussie"
+
+                        return HttpResponseRedirect(
+                            "/produit/"
+                        )
+
+    # ==============================================================
+    # CONTEXTE
+    # ==============================================================
 
     ctx = {
         "msg": msg,
@@ -708,8 +774,7 @@ def addProduit(request):
         "formulaires/produit.html",
         ctx
     )
-
-
+    
 @login_required(login_url="sign_in")
 def modProduit(request, id):
 
@@ -752,6 +817,11 @@ def updateProduit(request, id):
             ""
         ).strip()
 
+        code_barre = request.POST.get(
+            "code_barre",
+            ""
+        ).strip()
+
         pu = request.POST.get(
             "pu",
             "0"
@@ -765,6 +835,26 @@ def updateProduit(request, id):
         if nom == "":
 
             msg = "Veuillez remplir le nom"
+
+        elif code_barre == "":
+
+            msg = "Veuillez remplir le code-barres"
+
+        elif not code_barre.isdigit():
+
+            msg = "Le code-barres doit contenir uniquement des chiffres"
+
+        elif len(code_barre) > 13:
+
+            msg = "Le code-barres ne doit pas dépasser 13 chiffres"
+
+        elif Produit.objects.filter(
+            code_barre=code_barre
+        ).exclude(
+            pk=pr.id
+        ).exists():
+
+            msg = "Ce code-barres est déjà utilisé par un autre produit"
 
         elif pu == "":
 
@@ -793,24 +883,35 @@ def updateProduit(request, id):
 
             else:
 
-                apr = Appartement.objects.get(
-                    pk=appartement
-                )
+                try:
 
-                pr.nom = nom.upper()
-                pr.appartement = apr
+                    apr = Appartement.objects.get(
+                        pk=appartement
+                    )
 
-                # IMPORTANT :
-                # le prix du produit reste stocké en TTC
-                pr.pu = prix
+                    pr.nom = nom.upper()
 
-                pr.save()
+                    # IMPORTANT :
+                    # le code-barres est saisi manuellement
+                    pr.code_barre = code_barre
 
-                msok = nom + " modifié avec succès"
+                    pr.appartement = apr
 
-                return HttpResponseRedirect(
-                    "/produit/"
-                )
+                    # IMPORTANT :
+                    # le prix du produit reste stocké en TTC
+                    pr.pu = prix
+
+                    pr.save()
+
+                    msok = nom + " modifié avec succès"
+
+                    return HttpResponseRedirect(
+                        "/produit/"
+                    )
+
+                except Appartement.DoesNotExist:
+
+                    msg = "L'appartement sélectionné n'existe pas"
 
     ctx = {
         "msg": msg,
@@ -826,7 +927,6 @@ def updateProduit(request, id):
         "formulaires/modProduit.html",
         ctx
     )
-
 
 @login_required(login_url="sign_in")
 def deleteProduit(request, id):

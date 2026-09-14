@@ -1,6 +1,4 @@
-
 from decimal import Decimal, ROUND_HALF_UP
-import random
 
 from django.db import models
 
@@ -19,12 +17,12 @@ class Produit(models.Model):
         null=False
     )
 
-    # Code-barres unique du produit
+    # Code-barres saisi manuellement
     code_barre = models.CharField(
         max_length=13,
         unique=True,
         null=False,
-        blank=True,
+        blank=False,
         db_index=True
     )
 
@@ -67,41 +65,6 @@ class Produit(models.Model):
     # ==========================================================
 
     TVA_TAUX = Decimal("16")
-
-    # ==========================================================
-    # GÉNÉRATION DU CODE-BARRES
-    # ==========================================================
-
-    @staticmethod
-    def generer_code_barre():
-        """
-        Génère un code-barres numérique de 13 chiffres.
-
-        Le code est vérifié avant d'être retourné afin
-        d'éviter toute duplication.
-        """
-
-        while True:
-            code = "".join(
-                str(random.randint(0, 9))
-                for _ in range(13)
-            )
-
-            if not Produit.objects.filter(
-                code_barre=code
-            ).exists():
-                return code
-
-    def save(self, *args, **kwargs):
-        """
-        Génère automatiquement le code-barres lors
-        de la première création du produit.
-        """
-
-        if not self.code_barre:
-            self.code_barre = self.generer_code_barre()
-
-        super().save(*args, **kwargs)
 
     # ==========================================================
     # PRIX HT
@@ -154,4 +117,3 @@ class Produit(models.Model):
 
     def __str__(self):
         return self.nom
-
