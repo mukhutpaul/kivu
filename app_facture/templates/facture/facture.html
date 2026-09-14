@@ -327,21 +327,18 @@
       <div class="entete">
         <img src="app_facture/static/images/tanganika.jpg" class="logo" alt="Tanganika Future" />
 
-        <div class="titre-entreprise">TANGANYIKA FUTUR S.A</div>
+        <div class="titre-entreprise">TANGANYIKA FUTUR SA</div>
 
-        <div class="ligne-entreprise">RCCM : CD/KLM/RCCM/14-B-...</div>
+        <div class="ligne-entreprise">RCCM : CD/KLM/RCCM/14-B/130</div>
 
-        <div class="ligne-entreprise">ID NAT : 6-63-N607416</div>
+        <div class="ligne-entreprise">ID NAT : 6-83-N60741G</div>
+        <div class="ligne-entreprise">N° Impôt : A2035150 F</div>
 
-        <div class="ligne-entreprise adresse">34, Q Industriel / Av. de la Paix</div>
-
-        <div class="ligne-entreprise">N° Impôt &amp; Export : PM/0005 CFX-21 0088T2</div>
-
-        <div class="ligne-entreprise">N° Impôt : A 2035150 I</div>
+        <div class="ligne-entreprise adresse">22,Av. De la paix 1 Q.kituku / Av. Lukuga</div>
 
         <div class="ligne-entreprise telephone">Tél : (+243) 81333083</div>
 
-        <div class="fac-numero">Fac N° : 2580</div>
+        <div class="fac-numero">Fac N° : {{ facture.id }}</div>
       </div>
 
       <!--   =====================================================
@@ -355,7 +352,7 @@
     =====================================================   -->
 
       <table class="infos-facture">
-        <tr>
+        {% comment %} <tr>
           <td>
             <span class="label">Facture :</span>
 
@@ -369,7 +366,7 @@
               Vente
             {% endif %}
           </td>
-        </tr>
+        </tr> {% endcomment %}
 
         <tr>
           <td>
