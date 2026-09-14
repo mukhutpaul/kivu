@@ -1935,7 +1935,6 @@ def deletedetailFacture(request, id):
         }
     )
 
-
 @login_required(login_url="sign_in")
 def addDetailFacture(request):
 
@@ -1951,18 +1950,19 @@ def addDetailFacture(request):
     # =========================================================
 
     produit_id = request.POST.get("produit")
+    code_barre = request.POST.get("code_barre", "").strip()
     facture_id = request.POST.get("facture")
-    qte_str = request.POST.get("qte", "").strip()
+    qte_str = request.POST.get("qte", "1").strip()
 
     # =========================================================
-    # VÉRIFIER PRODUIT + FACTURE
+    # VÉRIFIER LA FACTURE
     # =========================================================
 
-    if not produit_id or not facture_id:
+    if not facture_id:
 
         messages.error(
             request,
-            "Le produit et la facture sont obligatoires."
+            "La facture est obligatoire."
         )
 
         return redirect("facture")
@@ -1992,14 +1992,78 @@ def addDetailFacture(request):
         )
 
     # =========================================================
+    # DÉTERMINER SI L'AJOUT VIENT DU LECTEUR
+    # =========================================================
+
+    scan_code = bool(code_barre)
+
+    # =========================================================
+    # RÉCUPÉRER LE PRODUIT
+    # =========================================================
+
+    if scan_code:
+
+        # -----------------------------------------------------
+        # RECHERCHE PAR CODE-BARRES
+        # -----------------------------------------------------
+
+        try:
+
+            pro = Produit.objects.get(
+                code_barre=code_barre
+            )
+
+        except Produit.DoesNotExist:
+
+            messages.error(
+                request,
+                (
+                    f"Produit introuvable pour le code-barres "
+                    f"« {code_barre} »."
+                )
+            )
+
+            return redirect(
+                "/detaiFacture/" + str(fact.id)
+            )
+
+    else:
+
+        # -----------------------------------------------------
+        # RECHERCHE MANUELLE PAR ID
+        # -----------------------------------------------------
+
+        if not produit_id:
+
+            messages.error(
+                request,
+                "Le produit est obligatoire."
+            )
+
+            return redirect(
+                "/detaiFacture/" + str(fact.id)
+            )
+
+        pro = get_object_or_404(
+            Produit,
+            pk=produit_id
+        )
+
+    # =========================================================
     # VALIDATION DE LA QUANTITÉ
     # =========================================================
 
     try:
 
-        qte = Decimal(qte_str)
+        qte = Decimal(
+            qte_str or "1"
+        )
 
-    except (InvalidOperation, TypeError, ValueError):
+    except (
+        InvalidOperation,
+        TypeError,
+        ValueError
+    ):
 
         messages.error(
             request,
@@ -2043,141 +2107,196 @@ def addDetailFacture(request):
     )
 
     # =========================================================
-    # RÉCUPÉRER LE PRODUIT
-    # =========================================================
-
-    pro = get_object_or_404(
-        Produit,
-        pk=produit_id
-    )
-
-    # =========================================================
-    # VÉRIFIER SI LE PRODUIT EXISTE DÉJÀ
-    # =========================================================
-
-    existe = Detail_facture.objects.filter(
-        facture=fact,
-        produit=pro
-    ).exists()
-
-    if existe:
-
-        messages.error(
-            request,
-            f"Le produit « {pro.nom} » est déjà présent dans cette facture."
-        )
-
-        return redirect(
-            "/detaiFacture/" + str(fact.id)
-        )
-
-    # =========================================================
-    # VÉRIFIER LE STOCK DE TOUS LES LOTS
-    # =========================================================
-
-    stock_disponible = Lot.objects.filter(
-        produit=pro,
-        quantite__gt=0
-    ).aggregate(
-        total=Coalesce(
-            Sum("quantite"),
-            Decimal("0.00")
-        )
-    )["total"]
-
-    stock_disponible = Decimal(
-        stock_disponible or "0.00"
-    ).quantize(
-        Decimal("0.01"),
-        rounding=ROUND_HALF_UP
-    )
-
-    # =========================================================
-    # STOCK INSUFFISANT
-    # =========================================================
-
-    if qte > stock_disponible:
-
-        messages.error(
-            request,
-            (
-                f"Stock insuffisant pour « {pro.nom} ». "
-                f"Stock disponible : {stock_disponible:.2f}. "
-                f"Quantité demandée : {qte:.0f}."
-            )
-        )
-
-        return redirect(
-            "/detaiFacture/" + str(fact.id)
-        )
-
-    # =========================================================
-    # PRIX TTC
-    # =========================================================
-
-    pu_ttc = Decimal(
-        pro.pu or "0.00"
-    ).quantize(
-        Decimal("0.01"),
-        rounding=ROUND_HALF_UP
-    )
-
-    # =========================================================
-    # VÉRIFIER LE PRIX
-    # =========================================================
-
-    if pu_ttc < 0:
-
-        messages.error(
-            request,
-            "Le prix du produit est invalide."
-        )
-
-        return redirect(
-            "/detaiFacture/" + str(fact.id)
-        )
-
-    # =========================================================
-    # CALCUL HT + TVA
-    # =========================================================
-
-    taux_tva = TVA_TAUX
-
-    pu_ht, tva_unitaire = calcul_tva_depuis_ttc(
-        pu_ttc
-    )
-
-    # =========================================================
     # TRANSACTION
     # =========================================================
 
     with transaction.atomic():
 
         # -----------------------------------------------------
-        # CRÉER LE DÉTAIL
+        # VERROUILLER LA FACTURE
         # -----------------------------------------------------
 
-        Detail_facture.objects.create(
-            facture=fact,
-            produit=pro,
-            quantite=qte,
-            pu_ttc=pu_ttc,
-            pu_ht=pu_ht,
-            tva_unitaire=tva_unitaire,
-            taux_tva=taux_tva,
+        fact = Facture.objects.select_for_update().get(
+            pk=fact.id
         )
 
         # -----------------------------------------------------
-        # RÉCUPÉRER LES DÉTAILS
+        # REVÉRIFIER LA VALIDATION
         # -----------------------------------------------------
+
+        if fact.imprimer:
+
+            messages.error(
+                request,
+                "Cette facture est déjà validée et ne peut plus être modifiée."
+            )
+
+            return redirect(
+                "/detaiFacture/" + str(fact.id)
+            )
+
+        # -----------------------------------------------------
+        # VERROUILLER LE PRODUIT
+        # -----------------------------------------------------
+
+        pro = Produit.objects.select_for_update().get(
+            pk=pro.id
+        )
+
+        # =====================================================
+        # CHERCHER UN DÉTAIL EXISTANT
+        # =====================================================
+
+        detail_existant = Detail_facture.objects.filter(
+            facture=fact,
+            produit=pro
+        ).first()
+
+        # =====================================================
+        # QUANTITÉ DÉJÀ PRÉSENTE
+        # =====================================================
+
+        ancienne_qte = Decimal("0.00")
+
+        if detail_existant:
+
+            ancienne_qte = (
+                detail_existant.quantite
+                or Decimal("0.00")
+            )
+
+        nouvelle_qte = (
+            ancienne_qte + qte
+        )
+
+        # =====================================================
+        # VÉRIFIER LE STOCK DE TOUS LES LOTS
+        # =====================================================
+
+        stock_disponible = Lot.objects.filter(
+            produit=pro,
+            quantite__gt=0
+        ).aggregate(
+            total=Coalesce(
+                Sum("quantite"),
+                Decimal("0.00")
+            )
+        )["total"]
+
+        stock_disponible = Decimal(
+            stock_disponible or "0.00"
+        ).quantize(
+            Decimal("0.01"),
+            rounding=ROUND_HALF_UP
+        )
+
+        # =====================================================
+        # STOCK INSUFFISANT
+        # =====================================================
+
+        if nouvelle_qte > stock_disponible:
+
+            if detail_existant:
+
+                messages.error(
+                    request,
+                    (
+                        f"Stock insuffisant pour « {pro.nom} ». "
+                        f"Stock disponible : {stock_disponible:.2f}. "
+                        f"Déjà dans la facture : {ancienne_qte:.0f}. "
+                        f"Quantité supplémentaire demandée : {qte:.0f}."
+                    )
+                )
+
+            else:
+
+                messages.error(
+                    request,
+                    (
+                        f"Stock insuffisant pour « {pro.nom} ». "
+                        f"Stock disponible : {stock_disponible:.2f}. "
+                        f"Quantité demandée : {qte:.0f}."
+                    )
+                )
+
+            return redirect(
+                "/detaiFacture/" + str(fact.id)
+            )
+
+        # =====================================================
+        # PRIX TTC
+        # =====================================================
+
+        pu_ttc = Decimal(
+            pro.pu or "0.00"
+        ).quantize(
+            Decimal("0.01"),
+            rounding=ROUND_HALF_UP
+        )
+
+        # =====================================================
+        # VÉRIFIER LE PRIX
+        # =====================================================
+
+        if pu_ttc < 0:
+
+            messages.error(
+                request,
+                "Le prix du produit est invalide."
+            )
+
+            return redirect(
+                "/detaiFacture/" + str(fact.id)
+            )
+
+        # =====================================================
+        # CALCUL HT + TVA
+        # =====================================================
+
+        taux_tva = TVA_TAUX
+
+        pu_ht, tva_unitaire = calcul_tva_depuis_ttc(
+            pu_ttc
+        )
+
+        # =====================================================
+        # AJOUTER OU AUGMENTER LE DÉTAIL
+        # =====================================================
+
+        if detail_existant:
+
+            detail_existant.quantite = nouvelle_qte
+
+            detail_existant.pu_ttc = pu_ttc
+            detail_existant.pu_ht = pu_ht
+            detail_existant.tva_unitaire = tva_unitaire
+            detail_existant.taux_tva = taux_tva
+
+            detail_existant.save()
+
+        else:
+
+            Detail_facture.objects.create(
+                facture=fact,
+                produit=pro,
+                quantite=qte,
+                pu_ttc=pu_ttc,
+                pu_ht=pu_ht,
+                tva_unitaire=tva_unitaire,
+                taux_tva=taux_tva,
+            )
+
+        # =====================================================
+        # RÉCUPÉRER LES DÉTAILS
+        # =====================================================
 
         details = Detail_facture.objects.filter(
             facture=fact
         )
 
-        # -----------------------------------------------------
+        # =====================================================
         # TOTAUX
-        # -----------------------------------------------------
+        # =====================================================
 
         total_ht = Decimal("0.00")
         total_tva = Decimal("0.00")
@@ -2217,9 +2336,9 @@ def addDetailFacture(request):
                 pu_ttc_detail * quantite
             )
 
-        # -----------------------------------------------------
+        # =====================================================
         # ARRONDIS
-        # -----------------------------------------------------
+        # =====================================================
 
         total_ht = total_ht.quantize(
             Decimal("0.01"),
@@ -2238,9 +2357,9 @@ def addDetailFacture(request):
             rounding=ROUND_HALF_UP
         )
 
-        # -----------------------------------------------------
+        # =====================================================
         # ENREGISTRER LES TOTAUX
-        # -----------------------------------------------------
+        # =====================================================
 
         fact.total_ht = total_ht
         fact.total_tva = total_tva
@@ -2256,13 +2375,49 @@ def addDetailFacture(request):
         )
 
     # =========================================================
-    # SUCCÈS
+    # MESSAGE DE SUCCÈS
     # =========================================================
 
-    messages.success(
-        request,
-        f"Le produit « {pro.nom} » a été ajouté à la facture."
-    )
+    if scan_code:
+
+        if detail_existant:
+
+            messages.success(
+                request,
+                (
+                    f"Scan réussi : « {pro.nom} » "
+                    f"— quantité augmentée à {nouvelle_qte:.0f}."
+                )
+            )
+
+        else:
+
+            messages.success(
+                request,
+                (
+                    f"Scan réussi : « {pro.nom} » "
+                    f"a été ajouté à la facture."
+                )
+            )
+
+    else:
+
+        if detail_existant:
+
+            messages.success(
+                request,
+                (
+                    f"Le produit « {pro.nom} » était déjà présent. "
+                    f"Quantité mise à jour : {nouvelle_qte:.0f}."
+                )
+            )
+
+        else:
+
+            messages.success(
+                request,
+                f"Le produit « {pro.nom} » a été ajouté à la facture."
+            )
 
     # =========================================================
     # RETOUR
@@ -2271,10 +2426,7 @@ def addDetailFacture(request):
     return redirect(
         "/detaiFacture/" + str(fact.id)
     )
-# ==========================================================
-# IMPRESSION / VALIDATION FACTURE
-# ==========================================================
-
+    
 @login_required(login_url="sign_in")
 def print_facture(request, id):
 
