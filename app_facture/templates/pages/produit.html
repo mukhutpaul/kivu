@@ -1,4 +1,3 @@
-
 {% extends 'base.html' %}
 {% load static %}
 
@@ -292,6 +291,66 @@
     }
 
     /* =====================================================
+       CODE-BARRES
+    ====================================================== */
+
+    .barcode-section {
+        margin-top: 18px;
+        padding: 16px;
+        border-radius: 12px;
+        background: rgba(255, 255, 255, 0.04);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        text-align: center;
+    }
+
+    .barcode-title {
+        color: rgba(255, 255, 255, 0.55);
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: .6px;
+        margin-bottom: 10px;
+    }
+
+    .barcode-container {
+        background: #ffffff;
+        border-radius: 8px;
+        padding: 10px;
+        display: inline-flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 85px;
+        max-width: 100%;
+    }
+
+    .barcode-container svg {
+        max-width: 100%;
+        height: auto;
+    }
+
+    .barcode-number {
+        color: #ffffff;
+        font-size: 13px;
+        font-weight: 600;
+        letter-spacing: 1px;
+        margin-top: 8px;
+        word-break: break-all;
+    }
+
+    .barcode-actions {
+        display: flex;
+        justify-content: center;
+        gap: 8px;
+        flex-wrap: wrap;
+        margin-top: 12px;
+    }
+
+    .barcode-actions .btn {
+        border-radius: 9px;
+        font-size: 12px;
+        font-weight: 600;
+    }
+
+    /* =====================================================
        SUPPRESSION
     ====================================================== */
 
@@ -406,8 +465,81 @@
             font-size: 11px;
             padding: 7px 9px;
         }
+
+        .barcode-actions {
+            flex-direction: column;
+        }
+
+        .barcode-actions .btn {
+            width: 100%;
+        }
+    }
+
+    /* =====================================================
+       IMPRESSION
+    ====================================================== */
+
+    @media print {
+
+        body * {
+            visibility: hidden !important;
+        }
+
+        #print-area,
+        #print-area * {
+            visibility: visible !important;
+        }
+
+        #print-area {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+        }
+
+        .print-barcode-item {
+            width: 70mm;
+            min-height: 40mm;
+            margin: 0 auto 10mm;
+            padding: 5mm;
+            text-align: center;
+            page-break-inside: avoid;
+            color: #000000 !important;
+            background: #ffffff !important;
+        }
+
+        .print-barcode-item h4 {
+            color: #000000 !important;
+            font-size: 14px;
+            margin-bottom: 4mm;
+        }
+
+        .print-barcode-item .print-price {
+            color: #000000 !important;
+            font-size: 12px;
+            margin-top: 2mm;
+        }
+
+        .print-barcode-item .print-code {
+            color: #000000 !important;
+            font-size: 11px;
+            letter-spacing: 1px;
+            margin-top: 1mm;
+        }
+
+        .print-barcode-item svg {
+            max-width: 100%;
+            height: auto;
+        }
     }
 </style>
+
+
+<!-- =====================================================
+     BIBLIOTHÈQUE CODE-BARRES
+====================================================== -->
+
+<script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
 
 
 <div class="content-wrapper produit-page">
@@ -448,7 +580,7 @@
 
                             <p class="mb-0 d-none d-sm-block">
 
-                                Gérez vos produits, leurs prix et leurs appartements.
+                                Gérez vos produits, leurs prix, leurs appartements et leurs codes-barres.
 
                             </p>
 
@@ -566,7 +698,7 @@
                                 class="form-control"
                                 name="rech"
                                 id="exampleInputUsername1"
-                                placeholder="Rechercher un produit..."
+                                placeholder="Rechercher un produit ou un code-barres..."
                             >
 
                         </div>
@@ -583,6 +715,56 @@
 
 
     <!-- =================================================
+         BOUTON IMPRESSION GLOBALE
+    ================================================== -->
+
+    {% if produit %}
+
+    <div class="row">
+
+        <div class="col-12 grid-margin">
+
+            <div class="card">
+
+                <div class="card-body d-flex justify-content-between align-items-center flex-wrap">
+
+                    <div>
+
+                        <h5 class="text-white mb-1">
+                            <i class="mdi mdi-barcode mr-2"></i>
+                            Codes-barres
+                        </h5>
+
+                        <small style="color: rgba(255,255,255,.55);">
+                            Imprimez ou copiez les codes-barres des produits.
+                        </small>
+
+                    </div>
+
+                    <button
+                        type="button"
+                        class="btn btn-primary btn-rounded mt-2 mt-md-0"
+                        onclick="imprimerTousLesCodesBarres()"
+                    >
+
+                        <i class="mdi mdi-printer mr-1"></i>
+
+                        Imprimer tous les codes-barres
+
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    {% endif %}
+
+
+    <!-- =================================================
          LISTE DES PRODUITS
     ================================================== -->
 
@@ -592,7 +774,13 @@
 
         <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 grid-margin stretch-card">
 
-            <div class="card produit-card">
+            <div
+                class="card produit-card"
+                data-produit-id="{{ pr.id }}"
+                data-produit-nom="{{ pr.nom|escape }}"
+                data-code-barre="{{ pr.code_barre }}"
+                data-prix="{{ pr.pu }}"
+            >
 
                 <div class="card-body">
 
@@ -698,12 +886,88 @@
                     </div>
 
 
-                    <!-- Supprimer -->
+                    <!-- =================================================
+                         CODE-BARRE
+                    ================================================== -->
+
+                    <div class="barcode-section">
+
+                        <div class="barcode-title">
+
+                            <i class="mdi mdi-barcode mr-1"></i>
+
+                            Code-barres
+
+                        </div>
+
+
+                        <div class="barcode-container">
+
+                            <svg
+                                class="barcode-svg"
+                                id="barcode-{{ pr.id }}"
+                                data-code="{{ pr.code_barre }}"
+                            ></svg>
+
+                        </div>
+
+
+                        <div class="barcode-number">
+
+                            {{ pr.code_barre }}
+
+                        </div>
+
+
+                        <div class="barcode-actions">
+
+                            <!-- Copier -->
+
+                            <button
+                                type="button"
+                                class="btn btn-outline-info"
+                                onclick="copierCodeBarre('{{ pr.code_barre }}', this)"
+                            >
+
+                                <i class="mdi mdi-content-copy mr-1"></i>
+
+                                Copier
+
+                            </button>
+
+
+                            <!-- Imprimer -->
+
+                            <button
+                                type="button"
+                                class="btn btn-outline-light"
+                                onclick="imprimerCodeBarre(
+                                    '{{ pr.id }}',
+                                    '{{ pr.nom|escapejs }}',
+                                    '{{ pr.code_barre }}',
+                                    '{{ pr.pu }}'
+                                )"
+                            >
+
+                                <i class="mdi mdi-printer mr-1"></i>
+
+                                Imprimer
+
+                            </button>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- =================================================
+                         SUPPRIMER
+                    ================================================== -->
 
                     <a
                         href="{% url 'deleteProduit' pr.id %}"
-                        onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce produit ?')"
-                        class="btn btn-danger btn-rounded btn-supprimer"
+                        class="btn btn-danger btn-rounded btn-supprimer btn-delete-produit"
+                        data-produit="{{ pr.nom|escapejs }}"
                     >
 
                         <i class="mdi mdi-delete-outline mr-1"></i>
@@ -863,5 +1127,527 @@
     {% endif %}
 
 </div>
+
+
+<!-- =====================================================
+     ZONE D'IMPRESSION
+====================================================== -->
+
+<div id="print-area" style="display:none;"></div>
+
+
+<!-- =====================================================
+     JAVASCRIPT CODE-BARRES
+====================================================== -->
+
+<script>
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    /*
+     * Génération visuelle des codes-barres
+     */
+
+    document.querySelectorAll(".barcode-svg").forEach(function (barcode) {
+
+        const code = barcode.dataset.code;
+
+        if (!code) {
+            return;
+        }
+
+        try {
+
+            JsBarcode(barcode, code, {
+
+                format: "CODE128",
+
+                width: 2,
+
+                height: 55,
+
+                displayValue: false,
+
+                margin: 5,
+
+                background: "#ffffff",
+
+                lineColor: "#000000"
+
+            });
+
+        } catch (error) {
+
+            console.error(
+                "Erreur génération code-barres :",
+                error
+            );
+
+        }
+
+    });
+
+
+    /*
+     * Suppression avec SweetAlert2
+     */
+
+    document.querySelectorAll(".btn-delete-produit").forEach(function (button) {
+
+        button.addEventListener("click", function (event) {
+
+            event.preventDefault();
+
+            const url = this.href;
+
+            const produit = this.dataset.produit || "ce produit";
+
+            if (typeof Swal === "undefined") {
+
+                window.location.href = url;
+
+                return;
+
+            }
+
+            Swal.fire({
+
+                title: "Supprimer le produit ?",
+
+                text: `Êtes-vous sûr de vouloir supprimer "${produit}" ?`,
+
+                icon: "warning",
+
+                showCancelButton: true,
+
+                confirmButtonText: "Oui, supprimer",
+
+                cancelButtonText: "Annuler",
+
+                reverseButtons: true,
+
+                confirmButtonColor: "#dc3545",
+
+                cancelButtonColor: "#6c757d"
+
+            }).then(function (result) {
+
+                if (result.isConfirmed) {
+
+                    window.location.href = url;
+
+                }
+
+            });
+
+        });
+
+    });
+
+});
+
+
+/* =====================================================
+   COPIER LE CODE-BARRE
+====================================================== */
+
+function copierCodeBarre(code, bouton) {
+
+    if (!code) {
+
+        if (typeof Swal !== "undefined") {
+
+            Swal.fire({
+                icon: "error",
+                title: "Code-barres absent",
+                text: "Ce produit ne possède pas encore de code-barres.",
+                confirmButtonColor: "#0d6efd"
+            });
+
+        }
+
+        return;
+    }
+
+
+    /*
+     * Méthode moderne
+     */
+
+    if (navigator.clipboard && window.isSecureContext) {
+
+        navigator.clipboard.writeText(code)
+            .then(function () {
+
+                afficherSuccesCopie(bouton);
+
+            })
+            .catch(function () {
+
+                copierAvecAncienneMethode(code, bouton);
+
+            });
+
+    } else {
+
+        copierAvecAncienneMethode(code, bouton);
+
+    }
+
+}
+
+
+/* =====================================================
+   COPIE DE SECOURS
+====================================================== */
+
+function copierAvecAncienneMethode(code, bouton) {
+
+    const textarea = document.createElement("textarea");
+
+    textarea.value = code;
+
+    textarea.style.position = "fixed";
+
+    textarea.style.left = "-999999px";
+
+    textarea.style.top = "-999999px";
+
+    document.body.appendChild(textarea);
+
+    textarea.focus();
+
+    textarea.select();
+
+    try {
+
+        document.execCommand("copy");
+
+        afficherSuccesCopie(bouton);
+
+    } catch (error) {
+
+        if (typeof Swal !== "undefined") {
+
+            Swal.fire({
+
+                icon: "error",
+
+                title: "Copie impossible",
+
+                text: "Le code-barres n'a pas pu être copié.",
+
+                confirmButtonColor: "#0d6efd"
+
+            });
+
+        }
+
+    }
+
+    document.body.removeChild(textarea);
+
+}
+
+
+/* =====================================================
+   MESSAGE COPIE
+====================================================== */
+
+function afficherSuccesCopie(bouton) {
+
+    const ancienContenu = bouton.innerHTML;
+
+    bouton.innerHTML =
+        '<i class="mdi mdi-check mr-1"></i> Copié';
+
+    bouton.classList.remove("btn-outline-info");
+
+    bouton.classList.add("btn-success");
+
+    setTimeout(function () {
+
+        bouton.innerHTML = ancienContenu;
+
+        bouton.classList.remove("btn-success");
+
+        bouton.classList.add("btn-outline-info");
+
+    }, 1800);
+
+}
+
+
+/* =====================================================
+   IMPRIMER UN CODE-BARRE
+====================================================== */
+
+function imprimerCodeBarre(id, nom, code, prix) {
+
+    if (!code) {
+
+        if (typeof Swal !== "undefined") {
+
+            Swal.fire({
+
+                icon: "error",
+
+                title: "Code-barres absent",
+
+                text: "Ce produit ne possède pas encore de code-barres.",
+
+                confirmButtonColor: "#0d6efd"
+
+            });
+
+        }
+
+        return;
+
+    }
+
+
+    const printArea = document.getElementById("print-area");
+
+    printArea.innerHTML = `
+
+        <div class="print-barcode-item">
+
+            <h4>${echapperHtml(nom)}</h4>
+
+            <svg id="print-barcode-${id}"></svg>
+
+            <div class="print-code">
+                ${echapperHtml(code)}
+            </div>
+
+            <div class="print-price">
+                ${echapperHtml(prix)} Fc
+            </div>
+
+        </div>
+
+    `;
+
+
+    printArea.style.display = "block";
+
+
+    JsBarcode(
+        "#print-barcode-" + id,
+        code,
+        {
+
+            format: "CODE128",
+
+            width: 2.2,
+
+            height: 65,
+
+            displayValue: false,
+
+            margin: 5,
+
+            background: "#ffffff",
+
+            lineColor: "#000000"
+
+        }
+    );
+
+
+    setTimeout(function () {
+
+        window.print();
+
+        setTimeout(function () {
+
+            printArea.innerHTML = "";
+
+            printArea.style.display = "none";
+
+        }, 500);
+
+    }, 200);
+
+}
+
+
+/* =====================================================
+   IMPRIMER TOUS LES CODES-BARRES
+====================================================== */
+
+function imprimerTousLesCodesBarres() {
+
+    const produits = document.querySelectorAll(".produit-card");
+
+    if (!produits.length) {
+
+        if (typeof Swal !== "undefined") {
+
+            Swal.fire({
+
+                icon: "info",
+
+                title: "Aucun produit",
+
+                text: "Aucun produit disponible pour l'impression.",
+
+                confirmButtonColor: "#0d6efd"
+
+            });
+
+        }
+
+        return;
+
+    }
+
+
+    const printArea = document.getElementById("print-area");
+
+    let contenu = "";
+
+
+    produits.forEach(function (produit, index) {
+
+        const nom = produit.dataset.produitNom || "";
+
+        const code = produit.dataset.codeBarre || "";
+
+        const prix = produit.dataset.prix || "";
+
+        if (!code) {
+            return;
+        }
+
+        contenu += `
+
+            <div class="print-barcode-item">
+
+                <h4>${echapperHtml(nom)}</h4>
+
+                <svg id="print-all-barcode-${index}"></svg>
+
+                <div class="print-code">
+                    ${echapperHtml(code)}
+                </div>
+
+                <div class="print-price">
+                    ${echapperHtml(prix)} Fc
+                </div>
+
+            </div>
+
+        `;
+
+    });
+
+
+    if (!contenu) {
+
+        if (typeof Swal !== "undefined") {
+
+            Swal.fire({
+
+                icon: "warning",
+
+                title: "Aucun code-barres",
+
+                text: "Les produits affichés ne possèdent pas encore de code-barres.",
+
+                confirmButtonColor: "#0d6efd"
+
+            });
+
+        }
+
+        return;
+
+    }
+
+
+    printArea.innerHTML = contenu;
+
+    printArea.style.display = "block";
+
+
+    produits.forEach(function (produit, index) {
+
+        const code = produit.dataset.codeBarre || "";
+
+        if (!code) {
+            return;
+        }
+
+        const element = document.getElementById(
+            "print-all-barcode-" + index
+        );
+
+        if (!element) {
+            return;
+        }
+
+        JsBarcode(
+
+            element,
+
+            code,
+
+            {
+
+                format: "CODE128",
+
+                width: 2.2,
+
+                height: 65,
+
+                displayValue: false,
+
+                margin: 5,
+
+                background: "#ffffff",
+
+                lineColor: "#000000"
+
+            }
+
+        );
+
+    });
+
+
+    setTimeout(function () {
+
+        window.print();
+
+        setTimeout(function () {
+
+            printArea.innerHTML = "";
+
+            printArea.style.display = "none";
+
+        }, 500);
+
+    }, 300);
+
+}
+
+
+/* =====================================================
+   PROTECTION HTML
+====================================================== */
+
+function echapperHtml(texte) {
+
+    const div = document.createElement("div");
+
+    div.textContent = texte;
+
+    return div.innerHTML;
+
+}
+
+</script>
 
 {% endblock content %}
