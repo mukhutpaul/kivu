@@ -2035,6 +2035,7 @@ def deletedetailFacture(request, id):
         }
     )
 
+
 @login_required(login_url="sign_in")
 def addDetailFacture(request):
 
@@ -2053,6 +2054,22 @@ def addDetailFacture(request):
     code_barre = request.POST.get("code_barre", "").strip()
     facture_id = request.POST.get("facture")
     qte_str = request.POST.get("qte", "1").strip()
+
+    # =========================================================
+    # DIAGNOSTIC SCANNER
+    # =========================================================
+
+    print("==========================================")
+    print("        DIAGNOSTIC ADD DETAIL FACTURE")
+    print("==========================================")
+    print("METHOD          :", request.method)
+    print("CODE BARRE REÇU :", repr(code_barre))
+    print("LONGUEUR        :", len(code_barre))
+    print("PRODUIT ID      :", repr(produit_id))
+    print("FACTURE ID      :", repr(facture_id))
+    print("QUANTITÉ        :", repr(qte_str))
+    print("POST COMPLET    :", request.POST)
+    print("==========================================")
 
     # =========================================================
     # VÉRIFIER LA FACTURE
@@ -2097,6 +2114,10 @@ def addDetailFacture(request):
 
     scan_code = bool(code_barre)
 
+    print("==========================================")
+    print("SCAN ACTIF :", scan_code)
+    print("==========================================")
+
     # =========================================================
     # RÉCUPÉRER LE PRODUIT
     # =========================================================
@@ -2107,13 +2128,42 @@ def addDetailFacture(request):
         # RECHERCHE PAR CODE-BARRES
         # -----------------------------------------------------
 
+        print("==========================================")
+        print("RECHERCHE DU PRODUIT PAR CODE-BARRES")
+        print("CODE RECHERCHÉ :", repr(code_barre))
+        print("==========================================")
+
         try:
+
+            # Diagnostic : combien de produits correspondent
+            nombre_produits = Produit.objects.filter(
+                code_barre=code_barre
+            ).count()
+
+            print(
+                "PRODUITS TROUVÉS :",
+                nombre_produits
+            )
 
             pro = Produit.objects.get(
                 code_barre=code_barre
             )
 
+            print("==========================================")
+            print("✅ PRODUIT TROUVÉ")
+            print("ID         :", pro.id)
+            print("NOM        :", pro.nom)
+            print("CODE BARRE :", repr(pro.code_barre))
+            print("PRIX TTC   :", pro.pu)
+            print("==========================================")
+
         except Produit.DoesNotExist:
+
+            print("==========================================")
+            print("❌ PRODUIT INTROUVABLE")
+            print("CODE REÇU :", repr(code_barre))
+            print("LONGUEUR  :", len(code_barre))
+            print("==========================================")
 
             messages.error(
                 request,
@@ -2374,6 +2424,12 @@ def addDetailFacture(request):
 
             detail_existant.save()
 
+            print("==========================================")
+            print("✅ DÉTAIL EXISTANT MIS À JOUR")
+            print("PRODUIT :", pro.nom)
+            print("QUANTITÉ :", nouvelle_qte)
+            print("==========================================")
+
         else:
 
             Detail_facture.objects.create(
@@ -2385,6 +2441,12 @@ def addDetailFacture(request):
                 tva_unitaire=tva_unitaire,
                 taux_tva=taux_tva,
             )
+
+            print("==========================================")
+            print("✅ NOUVEAU DÉTAIL CRÉÉ")
+            print("PRODUIT :", pro.nom)
+            print("QUANTITÉ :", qte)
+            print("==========================================")
 
         # =====================================================
         # RÉCUPÉRER LES DÉTAILS
@@ -2526,7 +2588,7 @@ def addDetailFacture(request):
     return redirect(
         "/detaiFacture/" + str(fact.id)
     )
-    
+
 @login_required(login_url="sign_in")
 def print_facture(request, id):
 
