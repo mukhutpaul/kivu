@@ -131,6 +131,12 @@ path(
     importProduit,
     name="importProduit"
 ),
+   
+path(
+    "approvisionnement/",
+    views.approvisionnement,
+    name="approvisionnement"
+),
     
      
 ]

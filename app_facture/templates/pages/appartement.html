@@ -5,369 +5,448 @@
 
 <style>
 
-    /* ================================
-       STYLE GENERAL
-    ================================= */
+/* =====================================================
+   STYLE GENERAL
+===================================================== */
 
-    .appartement-page .card {
-        border: 0;
-        border-radius: 16px;
-        overflow: hidden;
-        box-shadow: 0 6px 22px rgba(0, 0, 0, 0.18);
-    }
+.appartement-page .card {
+    border: 0;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 6px 22px rgba(0, 0, 0, 0.18);
+}
 
 
-    /* ================================
-       HEADER
-    ================================= */
+/* =====================================================
+   HEADER
+===================================================== */
+
+.appartement-header {
+    background: linear-gradient(135deg, #0d6efd, #4f46e5);
+    border-radius: 16px;
+    min-height: 120px;
+}
+
+.appartement-header h4 {
+    color: #ffffff;
+    font-weight: 700;
+    font-size: 21px;
+}
+
+.appartement-header p {
+    color: rgba(255, 255, 255, 0.85);
+}
+
+.appartement-header .btn {
+    border-width: 1px;
+    font-weight: 600;
+    transition: all .25s ease;
+    white-space: nowrap;
+}
+
+.appartement-header .btn:hover {
+    background: #ffffff;
+    color: #0d6efd;
+    transform: translateY(-2px);
+}
+
+
+/* =====================================================
+   ACTIONS HEADER
+===================================================== */
+
+.header-actions {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+
+/* =====================================================
+   BADGE TOTAL APPARTEMENTS
+===================================================== */
+
+.total-appartements {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    margin-top: 8px;
+    padding: 6px 13px;
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    color: #ffffff;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.total-appartements i {
+    font-size: 17px;
+}
+
+
+/* =====================================================
+   RECHERCHE
+===================================================== */
+
+.search-card {
+    border-radius: 16px;
+}
+
+.search-card .card-title {
+    color: #ffffff;
+    font-weight: 700;
+    margin-bottom: 18px;
+}
+
+.search-wrapper {
+    position: relative;
+}
+
+.search-wrapper i {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: rgba(255, 255, 255, 0.75);
+    font-size: 20px;
+    z-index: 2;
+}
+
+.search-wrapper .form-control {
+    padding-left: 45px;
+    height: 48px;
+    border-radius: 12px;
+    color: #ffffff !important;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+.search-wrapper .form-control:focus {
+    color: #ffffff !important;
+    border-color: #0d6efd;
+    box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.15);
+}
+
+.search-wrapper .form-control::placeholder {
+    color: rgba(255, 255, 255, 0.55) !important;
+    opacity: 1;
+}
+
+
+/* =====================================================
+   CARTE APPARTEMENT
+===================================================== */
+
+.appartement-card {
+    height: 100%;
+    transition: all .25s ease;
+    position: relative;
+}
+
+.appartement-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
+}
+
+.appartement-card .card-body {
+    padding: 22px;
+}
+
+.ap-icon {
+    width: 52px;
+    height: 52px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #0d6efd, #4f46e5);
+    box-shadow: 0 5px 15px rgba(13, 110, 253, 0.25);
+    margin-right: 14px;
+    flex-shrink: 0;
+}
+
+.ap-icon i {
+    font-size: 26px;
+    color: #ffffff;
+}
+
+.ap-name {
+    color: #ffffff;
+    font-size: 18px;
+    font-weight: 700;
+    margin: 0;
+    word-break: break-word;
+}
+
+.ap-label {
+    color: rgba(255, 255, 255, 0.55);
+    font-size: 12px;
+    margin-bottom: 3px;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+}
+
+
+/* =====================================================
+   BOUTONS
+===================================================== */
+
+.btn-action {
+    border-radius: 10px;
+    font-weight: 600;
+    transition: all .2s ease;
+}
+
+.btn-action:hover {
+    transform: translateY(-1px);
+}
+
+.btn-delete {
+    width: 100%;
+    margin-top: 20px;
+    border-radius: 10px;
+    font-weight: 600;
+}
+
+
+/* =====================================================
+   PAGINATION
+===================================================== */
+
+.pagination-wrapper {
+    margin-top: 10px;
+    padding: 18px 20px;
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.pagination-wrapper a {
+    text-decoration: none;
+    margin: 0 4px;
+}
+
+.page-info {
+    color: #ffffff;
+    font-weight: 600;
+}
+
+.count-badge {
+    font-size: 13px;
+    padding: 7px 12px;
+    border-radius: 20px;
+}
+
+
+/* =====================================================
+   MODAL IMPORTATION
+===================================================== */
+
+#modalImportAppartement .modal-content {
+    border: 0;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 15px 45px rgba(0, 0, 0, 0.35);
+}
+
+#modalImportAppartement .modal-header {
+    background: linear-gradient(135deg, #0d6efd, #4f46e5);
+    color: #ffffff;
+    border-bottom: 0;
+    padding: 18px 22px;
+}
+
+#modalImportAppartement .modal-title {
+    color: #ffffff;
+    font-weight: 700;
+}
+
+#modalImportAppartement .modal-header .close {
+    color: #ffffff;
+    opacity: 1;
+    text-shadow: none;
+    font-size: 25px;
+}
+
+#modalImportAppartement .modal-body {
+    padding: 28px;
+}
+
+#modalImportAppartement .modal-body h5 {
+    font-weight: 700;
+}
+
+#modalImportAppartement input[type="file"] {
+    height: auto;
+    padding: 10px;
+    border-radius: 10px;
+}
+
+#modalImportAppartement .alert {
+    border-radius: 10px;
+    margin-top: 18px;
+}
+
+#modalImportAppartement .btn {
+    border-radius: 10px;
+    font-weight: 600;
+}
+
+.import-icon {
+    width: 64px;
+    height: 64px;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 15px auto;
+    background: linear-gradient(135deg, #0d6efd, #4f46e5);
+    box-shadow: 0 6px 18px rgba(13, 110, 253, 0.25);
+}
+
+.import-icon i {
+    color: #ffffff;
+    font-size: 32px;
+}
+
+
+/* =====================================================
+   MODAL APPROVISIONNEMENT
+===================================================== */
+
+#modalApprovisionnement .modal-content {
+    border: 0;
+    border-radius: 18px;
+    overflow: hidden;
+    box-shadow: 0 15px 45px rgba(0, 0, 0, 0.35);
+}
+
+#modalApprovisionnement .modal-header {
+    background: linear-gradient(135deg, #198754, #20c997);
+    color: #ffffff;
+    border-bottom: 0;
+    padding: 18px 22px;
+}
+
+#modalApprovisionnement .modal-title {
+    color: #ffffff;
+    font-weight: 700;
+}
+
+#modalApprovisionnement .modal-header .close {
+    color: #ffffff;
+    opacity: 1;
+    text-shadow: none;
+    font-size: 25px;
+}
+
+#modalApprovisionnement .modal-body {
+    padding: 30px;
+}
+
+.approvisionnement-icon {
+    width: 70px;
+    height: 70px;
+    border-radius: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 18px auto;
+    background: linear-gradient(135deg, #198754, #20c997);
+    box-shadow: 0 6px 18px rgba(25, 135, 84, 0.25);
+}
+
+.approvisionnement-icon i {
+    color: #ffffff;
+    font-size: 36px;
+}
+
+#modalApprovisionnement .form-group label {
+    color: rgba(255, 255, 255, 0.85);
+    font-weight: 600;
+}
+
+#modalApprovisionnement .form-control {
+    height: 52px;
+    border-radius: 12px;
+}
+
+#modalApprovisionnement .form-control:focus {
+    border-color: #20c997;
+    box-shadow: 0 0 0 3px rgba(32, 201, 151, 0.15);
+}
+
+#modalApprovisionnement .alert {
+    border-radius: 12px;
+}
+
+#modalApprovisionnement .btn {
+    border-radius: 10px;
+    font-weight: 600;
+}
+
+
+/* =====================================================
+   RESPONSIVE
+===================================================== */
+
+@media (max-width: 767px) {
 
     .appartement-header {
-        background: linear-gradient(135deg, #0d6efd, #4f46e5);
-        border-radius: 16px;
-        min-height: 120px;
+        padding: 15px 5px;
+    }
+
+    .appartement-header img {
+        max-height: 80px;
     }
 
     .appartement-header h4 {
-        color: #ffffff;
-        font-weight: 700;
-        font-size: 21px;
-    }
-
-    .appartement-header p {
-        color: rgba(255, 255, 255, 0.85);
-    }
-
-    .appartement-header .btn {
-        border-width: 1px;
-        font-weight: 600;
-        transition: all .25s ease;
-        white-space: nowrap;
-    }
-
-    .appartement-header .btn:hover {
-        background: #ffffff;
-        color: #0d6efd;
-        transform: translateY(-2px);
-    }
-
-
-    /* ================================
-       ACTIONS HEADER
-    ================================= */
-
-    .header-actions {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        gap: 8px;
-    }
-
-
-    /* ================================
-       BADGE TOTAL APPARTEMENTS
-    ================================= */
-
-    .total-appartements {
-        display: inline-flex;
-        align-items: center;
-        gap: 7px;
-        margin-top: 8px;
-        padding: 6px 13px;
-        border-radius: 20px;
-        background: rgba(255, 255, 255, 0.15);
-        border: 1px solid rgba(255, 255, 255, 0.22);
-        color: #ffffff;
-        font-size: 13px;
-        font-weight: 600;
-    }
-
-    .total-appartements i {
         font-size: 17px;
     }
 
-
-    /* ================================
-       RECHERCHE
-    ================================= */
-
-    .search-card {
-        border-radius: 16px;
+    .appartement-header p {
+        font-size: 12px;
     }
 
-    .search-card .card-title {
-        color: #ffffff;
-        font-weight: 700;
-        margin-bottom: 18px;
+    .appartement-header .btn {
+        font-size: 11px;
+        padding: 8px 10px;
     }
 
-    .search-wrapper {
-        position: relative;
-    }
-
-    .search-wrapper i {
-        position: absolute;
-        left: 15px;
-        top: 50%;
-        transform: translateY(-50%);
-        color: rgba(255, 255, 255, 0.75);
-        font-size: 20px;
-        z-index: 2;
-    }
-
-    .search-wrapper .form-control {
-        padding-left: 45px;
-        height: 48px;
-        border-radius: 12px;
-        color: #ffffff !important;
-        background: rgba(255, 255, 255, 0.06);
-        border: 1px solid rgba(255, 255, 255, 0.18);
-    }
-
-    .search-wrapper .form-control:focus {
-        color: #ffffff !important;
-        border-color: #0d6efd;
-        box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.15);
-    }
-
-    .search-wrapper .form-control::placeholder {
-        color: rgba(255, 255, 255, 0.55) !important;
-        opacity: 1;
-    }
-
-
-    /* ================================
-       CARTE APPARTEMENT
-    ================================= */
-
-    .appartement-card {
-        height: 100%;
-        transition: all .25s ease;
-        position: relative;
-    }
-
-    .appartement-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
-    }
-
-    .appartement-card .card-body {
-        padding: 22px;
-    }
-
-    .ap-icon {
-        width: 52px;
-        height: 52px;
-        border-radius: 14px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background: linear-gradient(135deg, #0d6efd, #4f46e5);
-        box-shadow: 0 5px 15px rgba(13, 110, 253, 0.25);
-        margin-right: 14px;
-        flex-shrink: 0;
-    }
-
-    .ap-icon i {
-        font-size: 26px;
-        color: #ffffff;
+    .header-actions {
+        flex-direction: column;
+        gap: 5px;
     }
 
     .ap-name {
-        color: #ffffff;
-        font-size: 18px;
-        font-weight: 700;
-        margin: 0;
-        word-break: break-word;
-    }
-
-    .ap-label {
-        color: rgba(255, 255, 255, 0.55);
-        font-size: 12px;
-        margin-bottom: 3px;
-        text-transform: uppercase;
-        letter-spacing: .5px;
-    }
-
-
-    /* ================================
-       BOUTONS
-    ================================= */
-
-    .btn-action {
-        border-radius: 10px;
-        font-weight: 600;
-        transition: all .2s ease;
-    }
-
-    .btn-action:hover {
-        transform: translateY(-1px);
-    }
-
-    .btn-delete {
-        width: 100%;
-        margin-top: 20px;
-        border-radius: 10px;
-        font-weight: 600;
-    }
-
-
-    /* ================================
-       PAGINATION
-    ================================= */
-
-    .pagination-wrapper {
-        margin-top: 10px;
-        padding: 18px 20px;
-        border-radius: 14px;
-        background: rgba(255, 255, 255, 0.04);
-        border: 1px solid rgba(255, 255, 255, 0.08);
-    }
-
-    .pagination-wrapper a {
-        text-decoration: none;
-        margin: 0 4px;
-    }
-
-    .page-info {
-        color: #ffffff;
-        font-weight: 600;
-    }
-
-    .count-badge {
-        font-size: 13px;
-        padding: 7px 12px;
-        border-radius: 20px;
-    }
-
-
-    /* ================================
-       MODAL IMPORTATION
-    ================================= */
-
-    #modalImportAppartement .modal-content {
-        border: 0;
-        border-radius: 16px;
-        overflow: hidden;
-        box-shadow: 0 15px 45px rgba(0, 0, 0, 0.35);
-    }
-
-    #modalImportAppartement .modal-header {
-        background: linear-gradient(135deg, #0d6efd, #4f46e5);
-        color: #ffffff;
-        border-bottom: 0;
-        padding: 18px 22px;
-    }
-
-    #modalImportAppartement .modal-title {
-        color: #ffffff;
-        font-weight: 700;
-    }
-
-    #modalImportAppartement .modal-header .close {
-        color: #ffffff;
-        opacity: 1;
-        text-shadow: none;
-        font-size: 25px;
+        font-size: 16px;
     }
 
     #modalImportAppartement .modal-body {
-        padding: 28px;
+        padding: 20px;
     }
 
-    #modalImportAppartement .modal-body h5 {
-        font-weight: 700;
+    #modalApprovisionnement .modal-body {
+        padding: 20px;
     }
 
-    #modalImportAppartement input[type="file"] {
-        height: auto;
-        padding: 10px;
-        border-radius: 10px;
+    .total-appartements {
+        font-size: 11px;
+        padding: 5px 9px;
     }
-
-    #modalImportAppartement .alert {
-        border-radius: 10px;
-        margin-top: 18px;
-    }
-
-    #modalImportAppartement .btn {
-        border-radius: 10px;
-        font-weight: 600;
-    }
-
-    .import-icon {
-        width: 64px;
-        height: 64px;
-        border-radius: 16px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin: 0 auto 15px auto;
-        background: linear-gradient(135deg, #0d6efd, #4f46e5);
-        box-shadow: 0 6px 18px rgba(13, 110, 253, 0.25);
-    }
-
-    .import-icon i {
-        color: #ffffff;
-        font-size: 32px;
-    }
-
-
-    /* ================================
-       RESPONSIVE
-    ================================= */
-
-    @media (max-width: 767px) {
-
-        .appartement-header {
-            padding: 15px 5px;
-        }
-
-        .appartement-header img {
-            max-height: 80px;
-        }
-
-        .appartement-header h4 {
-            font-size: 17px;
-        }
-
-        .appartement-header p {
-            font-size: 12px;
-        }
-
-        .appartement-header .btn {
-            font-size: 11px;
-            padding: 8px 10px;
-        }
-
-        .header-actions {
-            flex-direction: column;
-            gap: 5px;
-        }
-
-        .ap-name {
-            font-size: 16px;
-        }
-
-        #modalImportAppartement .modal-body {
-            padding: 20px;
-        }
-
-        .total-appartements {
-            font-size: 11px;
-            padding: 5px 9px;
-        }
-
-    }
+}
 
 </style>
 
 
 <div class="content-wrapper appartement-page">
 
-
-    <!-- ================================
+    <!-- =====================================================
          HEADER
-    ================================= -->
+    ====================================================== -->
 
     <div class="row">
 
@@ -378,7 +457,6 @@
                 <div class="card-body py-2 px-2 px-sm-3">
 
                     <div class="row align-items-center">
-
 
                         <!-- IMAGE -->
 
@@ -412,8 +490,6 @@
                             </p>
 
 
-                            <!-- TOTAL APPARTEMENTS -->
-
                             <div class="total-appartements">
 
                                 <i class="mdi mdi-home-city-outline"></i>
@@ -437,10 +513,30 @@
 
                             <div class="header-actions">
 
+                                <!-- APPROVISIONNER -->
 
-                                <!-- ================================
-                                     IMPORTER
-                                ================================= -->
+                                <button
+                                    type="button"
+                                    class="btn btn-outline-light btn-rounded"
+                                    data-toggle="modal"
+                                    data-target="#modalApprovisionnement"
+                                    title="Approvisionner tous les produits"
+                                >
+
+                                    <i class="mdi mdi-package-variant-closed-plus mr-1"></i>
+
+                                    <span class="d-none d-md-inline">
+                                        Approvisionner
+                                    </span>
+
+                                    <span class="d-md-none">
+                                        <i class="mdi mdi-package-variant-closed-plus"></i>
+                                    </span>
+
+                                </button>
+
+
+                                <!-- IMPORTER -->
 
                                 <button
                                     type="button"
@@ -459,9 +555,7 @@
                                 </button>
 
 
-                                <!-- ================================
-                                     AJOUTER
-                                ================================= -->
+                                <!-- AJOUTER -->
 
                                 <a
                                     href="{% url 'fAppartement' %}"
@@ -496,9 +590,9 @@
     </div>
 
 
-    <!-- ================================
+    <!-- =====================================================
          RECHERCHE
-    ================================= -->
+    ====================================================== -->
 
     <div class="row justify-content-end">
 
@@ -549,9 +643,9 @@
     </div>
 
 
-    <!-- ================================
+    <!-- =====================================================
          LISTE DES APPARTEMENTS
-    ================================= -->
+    ====================================================== -->
 
     <div class="row">
 
@@ -563,11 +657,7 @@
 
                 <div class="card-body">
 
-
                     <div class="d-flex align-items-center justify-content-between">
-
-
-                        <!-- INFORMATIONS -->
 
                         <div class="d-flex align-items-center">
 
@@ -576,7 +666,6 @@
                                 <i class="mdi mdi-home-city-outline"></i>
 
                             </div>
-
 
                             <div>
 
@@ -592,8 +681,6 @@
 
                         </div>
 
-
-                        <!-- MODIFIER -->
 
                         <div>
 
@@ -619,8 +706,6 @@
                     <hr style="border-color: rgba(255,255,255,.08);">
 
 
-                    <!-- SUPPRIMER -->
-
                     <a
                         href="{% url 'deleteAppartement' ap.id %}"
                         onclick="return confirmerSuppressionAppartement(event, this);"
@@ -641,10 +726,6 @@
 
 
         {% empty %}
-
-        <!-- ================================
-             AUCUN APPARTEMENT
-        ================================= -->
 
         <div class="col-12">
 
@@ -692,18 +773,15 @@
     </div>
 
 
-    <!-- ================================
+    <!-- =====================================================
          PAGINATION
-    ================================= -->
+    ====================================================== -->
 
     {% if appartement %}
 
     <div class="pagination-wrapper">
 
         <div class="row align-items-center">
-
-
-            <!-- PRECEDENT -->
 
             <div class="col-md-4 mb-2 mb-md-0">
 
@@ -735,8 +813,6 @@
             </div>
 
 
-            <!-- PAGE COURANTE -->
-
             <div class="col-md-4 text-center mb-2 mb-md-0">
 
                 <span class="page-info">
@@ -749,8 +825,6 @@
 
             </div>
 
-
-            <!-- SUIVANT -->
 
             <div class="col-md-4 text-md-right">
 
@@ -817,9 +891,6 @@
 
         <div class="modal-content">
 
-
-            <!-- HEADER MODAL -->
-
             <div class="modal-header">
 
                 <h5
@@ -850,8 +921,6 @@
             </div>
 
 
-            <!-- CORPS -->
-
             <div class="modal-body">
 
                 <div class="text-center mb-4">
@@ -864,9 +933,7 @@
 
 
                     <h5>
-
                         Importer un fichier Excel
-
                     </h5>
 
 
@@ -879,8 +946,6 @@
                 </div>
 
 
-                <!-- FORMULAIRE -->
-
                 <form
                     method="POST"
                     action="{% url 'importAppartement' %}"
@@ -890,8 +955,6 @@
 
                     {% csrf_token %}
 
-
-                    <!-- FICHIER -->
 
                     <div class="form-group">
 
@@ -926,8 +989,6 @@
                     </div>
 
 
-                    <!-- INFORMATION -->
-
                     <div class="alert alert-info">
 
                         <i class="mdi mdi-information-outline mr-1"></i>
@@ -935,15 +996,11 @@
                         Le fichier Excel doit contenir les colonnes :
 
                         <strong>id</strong>
-
                         et
-
                         <strong>nom</strong>.
 
                     </div>
 
-
-                    <!-- BOUTONS -->
 
                     <div class="d-flex justify-content-end mt-4">
 
@@ -986,155 +1043,648 @@
 
 
 <!-- =====================================================
-     SWEETALERT2
+     MODAL APPROVISIONNEMENT
+====================================================== -->
+
+<div
+    class="modal fade"
+    id="modalApprovisionnement"
+    tabindex="-1"
+    role="dialog"
+    aria-labelledby="modalApprovisionnementLabel"
+    aria-hidden="true"
+>
+
+    <div
+        class="modal-dialog modal-dialog-centered"
+        role="document"
+    >
+
+        <div class="modal-content">
+
+
+            <!-- HEADER -->
+
+            <div class="modal-header">
+
+                <h5
+                    class="modal-title"
+                    id="modalApprovisionnementLabel"
+                >
+
+                    <i class="mdi mdi-package-variant-closed-plus mr-2"></i>
+
+                    Approvisionnement des produits
+
+                </h5>
+
+
+                <button
+                    type="button"
+                    class="close"
+                    data-dismiss="modal"
+                    aria-label="Fermer"
+                >
+
+                    <span aria-hidden="true">
+                        &times;
+                    </span>
+
+                </button>
+
+            </div>
+
+
+            <!-- CORPS -->
+
+            <div class="modal-body">
+
+                <div class="text-center mb-4">
+
+                    <div class="approvisionnement-icon">
+
+                        <i class="mdi mdi-package-variant-closed-plus"></i>
+
+                    </div>
+
+
+                    <h5>
+                        Approvisionner tous les produits
+                    </h5>
+
+
+                    <p class="text-muted mb-0">
+
+                        La quantité saisie sera ajoutée à
+                        <strong>tous les produits existants</strong>.
+
+                    </p>
+
+                </div>
+
+
+                <!-- FORMULAIRE -->
+
+                <form
+                    method="POST"
+                    action="{% url 'approvisionnement' %}"
+                    id="formApprovisionnement"
+                    autocomplete="off"
+                >
+
+                    {% csrf_token %}
+
+
+                    <!-- QUANTITE UNIQUE -->
+
+                    <div class="form-group">
+
+                        <label for="quantiteApprovisionnement">
+
+                            <i class="mdi mdi-numeric mr-1"></i>
+
+                            Quantité à ajouter à chaque produit
+
+                        </label>
+
+
+                        <input
+                            type="number"
+                            name="quantite"
+                            id="quantiteApprovisionnement"
+                            class="form-control"
+                            min="0.01"
+                            step="0.01"
+                            placeholder="Exemple : 50"
+                            inputmode="decimal"
+                            required
+                        >
+
+
+                        <small class="form-text text-muted mt-2">
+
+                            Exemple :
+                            si vous saisissez
+                            <strong>50</strong>,
+                            chaque produit recevra
+                            <strong>50 unités</strong>.
+
+                        </small>
+
+                    </div>
+
+
+                    <!-- INFORMATION -->
+
+                    <div class="alert alert-info mt-4">
+
+                        <i class="mdi mdi-information-outline mr-1"></i>
+
+                        La vue récupérera automatiquement
+
+                        <strong>tous les produits présents en base de données</strong>.
+
+                        <br>
+
+                        Un nouveau lot sera créé pour chaque produit avec une date de péremption au
+
+                        <strong>01/01/2030</strong>.
+
+                    </div>
+
+
+                    <!-- AVERTISSEMENT -->
+
+                    <div class="alert alert-warning">
+
+                        <i class="mdi mdi-alert-outline mr-1"></i>
+
+                        Cette opération ajoutera la quantité saisie à
+
+                        <strong>tous les produits</strong>.
+
+                    </div>
+
+
+                    <!-- BOUTONS -->
+
+                    <div class="d-flex justify-content-end mt-4">
+
+                        <button
+                            type="button"
+                            class="btn btn-secondary mr-2"
+                            data-dismiss="modal"
+                        >
+
+                            <i class="mdi mdi-close mr-1"></i>
+
+                            Annuler
+
+                        </button>
+
+
+                        <button
+                            type="submit"
+                            class="btn btn-success"
+                            id="btnApprovisionnement"
+                        >
+
+                            <i class="mdi mdi-package-variant-closed-plus mr-1"></i>
+
+                            Approvisionner tous
+
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =====================================================
+     SWEETALERT2 + JAVASCRIPT
 ====================================================== -->
 
 <script>
 
-function confirmerSuppressionAppartement(event, element) {
-
-    event.preventDefault();
-
-    const url = element.getAttribute('href');
-
-    Swal.fire({
-
-        title: 'Supprimer cet appartement ?',
-
-        text: 'Cette action est irréversible.',
-
-        icon: 'warning',
-
-        showCancelButton: true,
-
-        confirmButtonText: 'Oui, supprimer',
-
-        cancelButtonText: 'Annuler',
-
-        reverseButtons: true,
-
-        buttonsStyling: false,
-
-        customClass: {
-
-            confirmButton: 'btn btn-danger mx-1',
-
-            cancelButton: 'btn btn-secondary mx-1'
-
-        }
-
-    }).then((result) => {
-
-        if (result.isConfirmed) {
-
-            window.location.href = url;
-
-        }
-
-    });
-
-    return false;
-}
-
-
-/* =====================================================
-   IMPORT EXCEL
-===================================================== */
-
 document.addEventListener("DOMContentLoaded", function () {
 
-    const form = document.getElementById("formImportAppartement");
+    /* =====================================================
+       SUPPRESSION APPARTEMENT
+    ===================================================== */
 
-    const input = document.getElementById("fichier_excel");
+    window.confirmerSuppressionAppartement = function (
+        event,
+        element
+    ) {
 
-    const button = document.getElementById("btnImportAppartement");
+        event.preventDefault();
+
+        const url = element.getAttribute("href");
+
+        if (!url) {
+            return false;
+        }
+
+        Swal.fire({
+
+            title: "Supprimer cet appartement ?",
+
+            text: "Cette action est irréversible.",
+
+            icon: "warning",
+
+            showCancelButton: true,
+
+            confirmButtonText: "Oui, supprimer",
+
+            cancelButtonText: "Annuler",
+
+            reverseButtons: true,
+
+            buttonsStyling: false,
+
+            customClass: {
+
+                confirmButton: "btn btn-danger mx-1",
+
+                cancelButton: "btn btn-secondary mx-1"
+
+            }
+
+        }).then(function (result) {
+
+            if (result.isConfirmed) {
+
+                window.location.href = url;
+
+            }
+
+        });
+
+        return false;
+    };
 
 
-    if (!form || !input || !button) {
+    /* =====================================================
+       IMPORT EXCEL
+    ===================================================== */
 
-        return;
+    const formImport =
+        document.getElementById(
+            "formImportAppartement"
+        );
 
+    const inputFichier =
+        document.getElementById(
+            "fichier_excel"
+        );
+
+    const buttonImport =
+        document.getElementById(
+            "btnImportAppartement"
+        );
+
+
+    if (
+        formImport &&
+        inputFichier &&
+        buttonImport
+    ) {
+
+        formImport.addEventListener(
+            "submit",
+            function (event) {
+
+                if (
+                    !inputFichier.files ||
+                    inputFichier.files.length === 0
+                ) {
+
+                    event.preventDefault();
+
+                    Swal.fire({
+
+                        title: "Fichier requis",
+
+                        text:
+                            "Veuillez sélectionner un fichier Excel.",
+
+                        icon: "warning",
+
+                        confirmButtonText: "OK",
+
+                        buttonsStyling: false,
+
+                        customClass: {
+
+                            confirmButton:
+                                "btn btn-primary"
+
+                        }
+
+                    });
+
+                    return;
+                }
+
+
+                const fichier =
+                    inputFichier.files[0];
+
+                const nom =
+                    fichier.name
+                        .toLowerCase()
+                        .trim();
+
+
+                const extensionValide =
+                    nom.endsWith(".xlsx") ||
+                    nom.endsWith(".xls");
+
+
+                if (!extensionValide) {
+
+                    event.preventDefault();
+
+                    Swal.fire({
+
+                        title: "Format invalide",
+
+                        text:
+                            "Veuillez sélectionner un fichier Excel (.xlsx ou .xls).",
+
+                        icon: "error",
+
+                        confirmButtonText: "OK",
+
+                        buttonsStyling: false,
+
+                        customClass: {
+
+                            confirmButton:
+                                "btn btn-primary"
+
+                        }
+
+                    });
+
+                    return;
+                }
+
+
+                buttonImport.disabled = true;
+
+                buttonImport.innerHTML =
+                    '<i class="mdi mdi-loading mdi-spin mr-1"></i>' +
+                    "Importation...";
+            }
+        );
     }
 
 
-    form.addEventListener("submit", function (event) {
+    /* =====================================================
+       APPROVISIONNEMENT GENERAL
+    ===================================================== */
 
-        if (!input.files || input.files.length === 0) {
+    const formApprovisionnement =
+        document.getElementById(
+            "formApprovisionnement"
+        );
 
-            event.preventDefault();
+    const quantite =
+        document.getElementById(
+            "quantiteApprovisionnement"
+        );
 
-            Swal.fire({
+    const btnApprovisionnement =
+        document.getElementById(
+            "btnApprovisionnement"
+        );
 
-                title: "Fichier requis",
 
-                text: "Veuillez sélectionner un fichier Excel.",
+    if (
+        formApprovisionnement &&
+        quantite &&
+        btnApprovisionnement
+    ) {
 
-                icon: "warning",
+        let soumissionEnCours = false;
 
-                confirmButtonText: "OK",
 
-                buttonsStyling: false,
+        formApprovisionnement.addEventListener(
+            "submit",
+            function (event) {
 
-                customClass: {
+                event.preventDefault();
 
-                    confirmButton: "btn btn-primary"
 
+                /* =================================================
+                   EVITER DOUBLE SOUMISSION
+                ================================================= */
+
+                if (soumissionEnCours) {
+                    return;
                 }
 
-            });
 
-            return;
+                /* =================================================
+                   RECUPERATION
+                ================================================= */
 
-        }
-
-
-        const fichier = input.files[0];
-
-        const nom = fichier.name.toLowerCase();
+                const valeur =
+                    quantite.value.trim();
 
 
-        if (
-            !nom.endsWith(".xlsx") &&
-            !nom.endsWith(".xls")
-        ) {
+                /* =================================================
+                   QUANTITE OBLIGATOIRE
+                ================================================= */
 
-            event.preventDefault();
+                if (valeur === "") {
 
-            Swal.fire({
+                    Swal.fire({
 
-                title: "Format invalide",
+                        title: "Quantité obligatoire",
 
-                text: "Veuillez sélectionner un fichier Excel (.xlsx ou .xls).",
+                        text:
+                            "Veuillez renseigner la quantité à ajouter.",
 
-                icon: "error",
+                        icon: "warning",
 
-                confirmButtonText: "OK",
+                        confirmButtonText: "OK",
 
-                buttonsStyling: false,
+                        buttonsStyling: false,
 
-                customClass: {
+                        customClass: {
 
-                    confirmButton: "btn btn-primary"
+                            confirmButton:
+                                "btn btn-success"
 
+                        }
+
+                    });
+
+                    quantite.focus();
+
+                    return;
                 }
 
-            });
 
-            return;
+                /* =================================================
+                   NORMALISATION VIRGULE
+                ================================================= */
 
-        }
+                const valeurNormalisee =
+                    valeur.replace(",", ".");
 
 
-        /* =========================================
-           EMPÊCHER DOUBLE CLIC
-        ========================================= */
+                /* =================================================
+                   VERIFICATION NUMERIQUE
+                ================================================= */
 
-        button.disabled = true;
+                const qte =
+                    Number(valeurNormalisee);
 
-        button.innerHTML =
-            '<i class="mdi mdi-loading mdi-spin mr-1"></i> Importation...';
 
-    });
+                if (
+                    !Number.isFinite(qte) ||
+                    qte <= 0
+                ) {
+
+                    Swal.fire({
+
+                        title: "Quantité invalide",
+
+                        text:
+                            "La quantité doit être un nombre supérieur à zéro.",
+
+                        icon: "warning",
+
+                        confirmButtonText: "OK",
+
+                        buttonsStyling: false,
+
+                        customClass: {
+
+                            confirmButton:
+                                "btn btn-success"
+
+                        }
+
+                    });
+
+                    quantite.focus();
+
+                    return;
+                }
+
+
+                /* =================================================
+                   VERIFICATION DECIMALE
+                ================================================= */
+
+                const nombreDecimales =
+                    (valeurNormalisee.split(".")[1] || "").length;
+
+
+                if (nombreDecimales > 2) {
+
+                    Swal.fire({
+
+                        title: "Quantité invalide",
+
+                        text:
+                            "La quantité ne peut contenir que deux décimales maximum.",
+
+                        icon: "warning",
+
+                        confirmButtonText: "OK",
+
+                        buttonsStyling: false,
+
+                        customClass: {
+
+                            confirmButton:
+                                "btn btn-success"
+
+                        }
+
+                    });
+
+                    quantite.focus();
+
+                    return;
+                }
+
+
+                /* =================================================
+                   CONFIRMATION
+                ================================================= */
+
+                Swal.fire({
+
+                    title:
+                        "Confirmer l'approvisionnement ?",
+
+                    html:
+                        "La quantité de <strong>" +
+                        valeurNormalisee +
+                        "</strong> sera ajoutée à " +
+                        "<strong>tous les produits existants</strong>." +
+                        "<br><br>" +
+                        "<span class='text-warning'>" +
+                        "<i class='mdi mdi-alert-outline'></i> " +
+                        "Cette opération créera un nouveau lot pour chaque produit." +
+                        "</span>",
+
+                    icon: "question",
+
+                    showCancelButton: true,
+
+                    confirmButtonText:
+                        "Oui, approvisionner",
+
+                    cancelButtonText:
+                        "Annuler",
+
+                    reverseButtons: true,
+
+                    buttonsStyling: false,
+
+                    customClass: {
+
+                        confirmButton:
+                            "btn btn-success mx-1",
+
+                        cancelButton:
+                            "btn btn-secondary mx-1"
+
+                    }
+
+                }).then(function (result) {
+
+                    if (!result.isConfirmed) {
+                        return;
+                    }
+
+
+                    /* =================================================
+                       VERROUILLAGE
+                    ================================================= */
+
+                    soumissionEnCours = true;
+
+                    btnApprovisionnement.disabled = true;
+
+                    btnApprovisionnement.innerHTML =
+                        '<i class="mdi mdi-loading mdi-spin mr-1"></i>' +
+                        " Approvisionnement...";
+
+
+                    quantite.readOnly = true;
+
+
+                    /* =================================================
+                       SOUMISSION NATIVE
+                    ================================================= */
+
+                    HTMLFormElement.prototype.submit.call(
+                        formApprovisionnement
+                    );
+
+                });
+
+            }
+        );
+
+    }
 
 });
 

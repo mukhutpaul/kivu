@@ -6255,3 +6255,232 @@ def importProduit(request):
     print("\n")
 
     return redirect("produit")
+@login_required(login_url="sign_in")
+def approvisionnement(request):
+
+    if request.method != "POST":
+        return redirect("appartement")
+
+    # =====================================================
+    # RECUPERER LA QUANTITE UNIQUE
+    # =====================================================
+
+    valeur = request.POST.get(
+        "quantite",
+        ""
+    ).strip()
+
+    if not valeur:
+
+        messages.error(
+            request,
+            "Veuillez renseigner une quantité."
+        )
+
+        return redirect("appartement")
+
+
+    # =====================================================
+    # CONVERTIR LA QUANTITE
+    # =====================================================
+
+    try:
+
+        quantite = Decimal(valeur)
+
+    except (
+        InvalidOperation,
+        TypeError,
+        ValueError
+    ):
+
+        messages.error(
+            request,
+            "La quantité saisie est invalide."
+        )
+
+        return redirect("appartement")
+
+
+    # =====================================================
+    # VERIFIER LA QUANTITE
+    # =====================================================
+
+    if quantite <= 0:
+
+        messages.error(
+            request,
+            "La quantité doit être supérieure à zéro."
+        )
+
+        return redirect("appartement")
+
+
+    quantite = quantite.quantize(
+        Decimal("0.01"),
+        rounding=ROUND_HALF_UP
+    )
+
+
+    # =====================================================
+    # DATE DE PEREMPTION
+    # =====================================================
+
+    date_peremption = datetime.date(
+        2030,
+        1,
+        1
+    )
+
+
+    nombre_produits = 0
+
+
+    try:
+
+        with transaction.atomic():
+
+            # =================================================
+            # RECUPERER TOUS LES PRODUITS
+            # =================================================
+
+            produits = Produit.objects.select_for_update().all()
+
+
+            # =================================================
+            # VERIFIER S'IL EXISTE DES PRODUITS
+            # =================================================
+
+            if not produits.exists():
+
+                messages.warning(
+                    request,
+                    "Aucun produit n'existe dans la base de données."
+                )
+
+                return redirect("appartement")
+
+
+            # =================================================
+            # TRAITER TOUS LES PRODUITS
+            # =================================================
+
+            for produit in produits:
+
+                # =============================================
+                # STOCK AVANT
+                # =============================================
+
+                stock_avant = Decimal(
+                    produit.quantite or "0.00"
+                )
+
+                stock_avant = stock_avant.quantize(
+                    Decimal("0.01"),
+                    rounding=ROUND_HALF_UP
+                )
+
+
+                # =============================================
+                # STOCK APRÈS
+                # =============================================
+
+                stock_apres = (
+                    stock_avant + quantite
+                ).quantize(
+                    Decimal("0.01"),
+                    rounding=ROUND_HALF_UP
+                )
+
+
+                # =============================================
+                # CREER LE LOT
+                # =============================================
+
+                lot = Lot.objects.create(
+
+                    produit=produit,
+
+                    numero=None,
+
+                    quantite=quantite,
+
+                    date_peremption=date_peremption
+
+                )
+
+
+                # =============================================
+                # METTRE A JOUR LE PRODUIT
+                # =============================================
+
+                produit.quantite = stock_apres
+
+                produit.save(
+                    update_fields=[
+                        "quantite",
+                        "updatedAt"
+                    ]
+                )
+
+
+                # =============================================
+                # CREER LE MOUVEMENT STOCK
+                # =============================================
+
+                MouvementStock.objects.create(
+
+                    produit=produit,
+
+                    lot=lot,
+
+                    user=request.user,
+
+                    type=MouvementStock.TYPE_ENTREE,
+
+                    quantite=quantite,
+
+                    stock_avant=stock_avant,
+
+                    stock_apres=stock_apres,
+
+                    motif="Approvisionnement"
+
+                )
+
+
+                nombre_produits += 1
+
+
+        # =====================================================
+        # SUCCES
+        # =====================================================
+
+        messages.success(
+            request,
+            (
+                f"Approvisionnement effectué avec succès : "
+                f"{quantite} unité(s) ajoutée(s) à "
+                f"{nombre_produits} produit(s)."
+            )
+        )
+
+
+    except Exception as e:
+
+        print(
+            "ERREUR APPROVISIONNEMENT :",
+            repr(e)
+        )
+
+        messages.error(
+            request,
+            (
+                "Une erreur est survenue pendant "
+                "l'approvisionnement. Aucun changement "
+                "n'a été enregistré."
+            )
+        )
+
+
+    return redirect("appartement")
