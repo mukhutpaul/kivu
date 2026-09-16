@@ -18,7 +18,7 @@ from django.contrib import admin
 from django.urls import path
 
 from app_facture import views
-from app_facture.views import addAppartement, addDetailFacture, addFacture, addProduit, addUser, appartement, deleteAppartement, deleteProduit, deleteUser, deletedetailFacture, detaiFacture, fAppartement, fProduit, fUser, facture, home, log_out, login, modAppartement, modProduit, modifierUser, print_facture, produit, produits_peremption, recettes_facturiers, sign_in, updateAppartement, updateProduit, updateUser, users
+from app_facture.views import addAppartement, addDetailFacture, addFacture, addProduit, addUser, appartement, deleteAppartement, deleteProduit, deleteUser, deletedetailFacture, detaiFacture, fAppartement, fProduit, fUser, facture, home, importProduit, log_out, login, modAppartement, modProduit, modifierUser, print_facture, produit, produits_peremption, recettes_facturiers, sign_in, updateAppartement, updateProduit, updateUser, users
 from app_facture.views import (
     stock,
     entree_stock,
@@ -118,7 +118,19 @@ path(
     "rapport-mensuel-tva/",
     views.rapport_mensuel_tva,
     name="rapport_mensuel_tva"
-)   
+),
+
+   path(
+        'appartement/importer/',
+        views.importAppartement,
+        name='importAppartement'
+    ),
+   
+   path(
+    "produit/importer/",
+    importProduit,
+    name="importProduit"
+),
     
      
 ]

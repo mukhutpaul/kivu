@@ -425,6 +425,106 @@
     }
 
     /* =====================================================
+       MODAL IMPORTATION
+    ====================================================== */
+
+    #modalImportProduit .modal-content {
+        background: #191c24;
+        border: 1px solid rgba(255, 255, 255, 0.10);
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 15px 50px rgba(0, 0, 0, 0.45);
+    }
+
+    #modalImportProduit .modal-header {
+        background: linear-gradient(135deg, #0d6efd, #4f46e5);
+        border-bottom: none;
+        padding: 18px 22px;
+    }
+
+    #modalImportProduit .modal-title {
+        color: #ffffff;
+        font-weight: 700;
+    }
+
+    #modalImportProduit .close {
+        color: #ffffff;
+        opacity: .9;
+        text-shadow: none;
+    }
+
+    #modalImportProduit .modal-body {
+        padding: 24px;
+    }
+
+    .import-info {
+        padding: 15px;
+        border-radius: 12px;
+        background: rgba(13, 110, 253, 0.08);
+        border: 1px solid rgba(13, 110, 253, 0.18);
+        margin-bottom: 20px;
+    }
+
+    .import-info-title {
+        color: #ffffff;
+        font-weight: 700;
+        margin-bottom: 8px;
+    }
+
+    .import-info p {
+        color: rgba(255, 255, 255, 0.65);
+        margin-bottom: 8px;
+        font-size: 13px;
+    }
+
+    .import-columns {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 7px;
+        margin-top: 10px;
+    }
+
+    .import-column {
+        display: inline-block;
+        padding: 5px 9px;
+        border-radius: 7px;
+        background: rgba(255, 255, 255, 0.08);
+        color: #ffffff;
+        font-size: 11px;
+        font-weight: 600;
+    }
+
+    .import-file-label {
+        color: #ffffff;
+        font-weight: 600;
+        margin-bottom: 8px;
+    }
+
+    #fichierExcelProduit {
+        height: auto;
+        padding: 12px;
+        border-radius: 10px;
+        color: #ffffff;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+    }
+
+    #fichierExcelProduit:focus {
+        border-color: #0d6efd;
+        box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.15);
+    }
+
+    #modalImportProduit .modal-footer {
+        border-top: 1px solid rgba(255, 255, 255, 0.08);
+        padding: 15px 22px;
+    }
+
+    .btn-import-produit {
+        font-weight: 600;
+        border-radius: 10px;
+    }
+
+    /* =====================================================
        RESPONSIVE
     ====================================================== */
 
@@ -472,6 +572,10 @@
 
         .barcode-actions .btn {
             width: 100%;
+        }
+
+        #modalImportProduit .modal-body {
+            padding: 18px;
         }
     }
 
@@ -534,59 +638,86 @@
     }
 </style>
 
-
-<!-- =====================================================
-     BIBLIOTHÈQUE CODE-BARRES
-====================================================== -->
-
 <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
-
 
 <div class="content-wrapper produit-page">
 
-    <!-- =================================================
-         HEADER
-    ================================================== -->
+```
+<!-- =================================================
+     HEADER
+================================================== -->
 
-    <div class="row">
+<div class="row">
 
-        <div class="col-12 grid-margin stretch-card">
+    <div class="col-12 grid-margin stretch-card">
 
-            <div class="card corona-gradient-card produit-header">
+        <div class="card corona-gradient-card produit-header">
 
-                <div class="card-body py-2 px-2 px-sm-3">
+            <div class="card-body py-2 px-2 px-sm-3">
 
-                    <div class="row align-items-center">
+                <div class="row align-items-center">
 
-                        <div class="col-3 col-sm-3 col-xl-2 text-center">
+                    <div class="col-3 col-sm-3 col-xl-2 text-center">
 
-                            <img
-                                src="{% static 'images/dashboard/Group126@2x.png' %}"
-                                class="gradient-corona-img img-fluid"
-                                alt="Produits"
+                        <img
+                            src="{% static 'images/dashboard/Group126@2x.png' %}"
+                            class="gradient-corona-img img-fluid"
+                            alt="Produits"
+                        >
+
+                    </div>
+
+
+                    <div class="col-6 col-sm-6 col-xl-6 p-0">
+
+                        <h4 class="mb-1">
+
+                            <i class="mdi mdi-package-variant-closed mr-2"></i>
+
+                            Gestion des produits
+
+                        </h4>
+
+                        <p class="mb-0 d-none d-sm-block">
+
+                            Gérez vos produits, leurs prix, leurs appartements et leurs codes-barres.
+
+                        </p>
+
+                    </div>
+
+
+                    <!-- =================================================
+                         ACTIONS
+                    ================================================== -->
+
+                    <div class="col-3 col-sm-3 col-xl-4 text-center">
+
+                        <div
+                            class="d-flex justify-content-center align-items-center flex-wrap"
+                            style="gap: 8px;"
+                        >
+
+                            <!-- IMPORTER -->
+
+                            <button
+                                type="button"
+                                class="btn btn-outline-light btn-rounded"
+                                data-toggle="modal"
+                                data-target="#modalImportProduit"
+                                title="Importer des produits"
                             >
 
-                        </div>
+                                <i class="mdi mdi-file-import-outline mr-1"></i>
 
-                        <div class="col-6 col-sm-6 col-xl-8 p-0">
+                                <span class="d-none d-md-inline">
+                                    Importer
+                                </span>
 
-                            <h4 class="mb-1">
+                            </button>
 
-                                <i class="mdi mdi-package-variant-closed mr-2"></i>
 
-                                Gestion des produits
-
-                            </h4>
-
-                            <p class="mb-0 d-none d-sm-block">
-
-                                Gérez vos produits, leurs prix, leurs appartements et leurs codes-barres.
-
-                            </p>
-
-                        </div>
-
-                        <div class="col-3 col-sm-3 col-xl-2 text-center">
+                            <!-- AJOUTER -->
 
                             <a
                                 href="{% url 'fProduit' %}"
@@ -617,402 +748,370 @@
 
     </div>
 
+</div>
 
-    <!-- =================================================
-         STATISTIQUES + RECHERCHE
-    ================================================== -->
 
-    <div class="row">
+<!-- =================================================
+     STATISTIQUES + RECHERCHE
+================================================== -->
 
-        <!-- Statistiques -->
+<div class="row">
 
-        <div class="col-md-6 grid-margin stretch-card">
+    <!-- Statistiques -->
 
-            <div class="card stats-card">
+    <div class="col-md-6 grid-margin stretch-card">
 
-                <div class="card-body">
+        <div class="card stats-card">
 
-                    <h4 class="stats-title">
+            <div class="card-body">
 
-                        <i class="mdi mdi-chart-box-outline mr-2"></i>
+                <h4 class="stats-title">
 
-                        Statistiques
+                    <i class="mdi mdi-chart-box-outline mr-2"></i>
 
-                    </h4>
+                    Statistiques
 
-                    <div class="stats-box">
+                </h4>
 
-                        <div class="stats-icon">
+                <div class="stats-box">
 
-                            <i class="mdi mdi-package-variant-closed"></i>
+                    <div class="stats-icon">
+
+                        <i class="mdi mdi-package-variant-closed"></i>
+
+                    </div>
+
+                    <div>
+
+                        <div class="stats-label">
+                            Nombre des produits
+                        </div>
+
+                        <p class="stats-number">
+                            {{ tot_produit }}
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- Recherche -->
+
+    <div class="col-md-6 grid-margin stretch-card">
+
+        <div class="card search-card">
+
+            <div class="card-body">
+
+                <h4 class="search-title">
+
+                    <i class="mdi mdi-magnify mr-2"></i>
+
+                    Rechercher un produit
+
+                </h4>
+
+                <form method="post" autocomplete="off">
+
+                    {% csrf_token %}
+
+                    <div class="search-wrapper">
+
+                        <i class="mdi mdi-magnify"></i>
+
+                        <input
+                            type="text"
+                            class="form-control"
+                            name="rech"
+                            id="exampleInputUsername1"
+                            placeholder="Rechercher un produit ou un code-barres..."
+                        >
+
+                    </div>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =================================================
+     BOUTON IMPRESSION GLOBALE
+================================================== -->
+
+{% if produit %}
+
+<div class="row">
+
+    <div class="col-12 grid-margin">
+
+        <div class="card">
+
+            <div class="card-body d-flex justify-content-between align-items-center flex-wrap">
+
+                <div>
+
+                    <h5 class="text-white mb-1">
+
+                        <i class="mdi mdi-barcode mr-2"></i>
+
+                        Codes-barres
+
+                    </h5>
+
+                    <small style="color: rgba(255,255,255,.55);">
+
+                        Imprimez ou copiez les codes-barres des produits.
+
+                    </small>
+
+                </div>
+
+
+                <button
+                    type="button"
+                    class="btn btn-primary btn-rounded mt-2 mt-md-0"
+                    onclick="imprimerTousLesCodesBarres()"
+                >
+
+                    <i class="mdi mdi-printer mr-1"></i>
+
+                    Imprimer tous les codes-barres
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endif %}
+
+
+<!-- =================================================
+     LISTE DES PRODUITS
+================================================== -->
+
+<div class="row">
+
+    {% for pr in produit %}
+
+    <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 grid-margin stretch-card">
+
+        <div
+            class="card produit-card"
+            data-produit-id="{{ pr.id }}"
+            data-produit-nom="{{ pr.nom|escape }}"
+            data-code-barre="{{ pr.code_barre }}"
+            data-prix="{{ pr.pu }}"
+        >
+
+            <div class="card-body">
+
+                <!-- Nom + Modifier -->
+
+                <div class="produit-top">
+
+                    <div class="produit-identite">
+
+                        <div class="produit-icon">
+
+                            <i class="mdi mdi-pill"></i>
 
                         </div>
 
                         <div>
 
-                            <div class="stats-label">
-                                Nombre des produits
+                            <div class="produit-label">
+                                Produit
                             </div>
 
-                            <p class="stats-number">
-                                {{ tot_produit }}
+                            <p class="produit-nom">
+                                {{ pr.nom }}
                             </p>
 
                         </div>
 
                     </div>
 
-                </div>
 
-            </div>
-
-        </div>
-
-
-        <!-- Recherche -->
-
-        <div class="col-md-6 grid-margin stretch-card">
-
-            <div class="card search-card">
-
-                <div class="card-body">
-
-                    <h4 class="search-title">
-
-                        <i class="mdi mdi-magnify mr-2"></i>
-
-                        Rechercher un produit
-
-                    </h4>
-
-                    <form method="post" autocomplete="off">
-
-                        {% csrf_token %}
-
-                        <div class="search-wrapper">
-
-                            <i class="mdi mdi-magnify"></i>
-
-                            <input
-                                type="text"
-                                class="form-control"
-                                name="rech"
-                                id="exampleInputUsername1"
-                                placeholder="Rechercher un produit ou un code-barres..."
-                            >
-
-                        </div>
-
-                    </form>
-
-                </div>
-
-            </div>
-
-        </div>
-
-    </div>
-
-
-    <!-- =================================================
-         BOUTON IMPRESSION GLOBALE
-    ================================================== -->
-
-    {% if produit %}
-
-    <div class="row">
-
-        <div class="col-12 grid-margin">
-
-            <div class="card">
-
-                <div class="card-body d-flex justify-content-between align-items-center flex-wrap">
-
-                    <div>
-
-                        <h5 class="text-white mb-1">
-                            <i class="mdi mdi-barcode mr-2"></i>
-                            Codes-barres
-                        </h5>
-
-                        <small style="color: rgba(255,255,255,.55);">
-                            Imprimez ou copiez les codes-barres des produits.
-                        </small>
-
-                    </div>
-
-                    <button
-                        type="button"
-                        class="btn btn-primary btn-rounded mt-2 mt-md-0"
-                        onclick="imprimerTousLesCodesBarres()"
-                    >
-
-                        <i class="mdi mdi-printer mr-1"></i>
-
-                        Imprimer tous les codes-barres
-
-                    </button>
-
-                </div>
-
-            </div>
-
-        </div>
-
-    </div>
-
-    {% endif %}
-
-
-    <!-- =================================================
-         LISTE DES PRODUITS
-    ================================================== -->
-
-    <div class="row">
-
-        {% for pr in produit %}
-
-        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 grid-margin stretch-card">
-
-            <div
-                class="card produit-card"
-                data-produit-id="{{ pr.id }}"
-                data-produit-nom="{{ pr.nom|escape }}"
-                data-code-barre="{{ pr.code_barre }}"
-                data-prix="{{ pr.pu }}"
-            >
-
-                <div class="card-body">
-
-                    <!-- Nom + Modifier -->
-
-                    <div class="produit-top">
-
-                        <div class="produit-identite">
-
-                            <div class="produit-icon">
-
-                                <i class="mdi mdi-pill"></i>
-
-                            </div>
-
-                            <div>
-
-                                <div class="produit-label">
-                                    Produit
-                                </div>
-
-                                <p class="produit-nom">
-                                    {{ pr.nom }}
-                                </p>
-
-                            </div>
-
-                        </div>
-
-
-                        <!-- Modifier -->
-
-                        <a
-                            href="{% url 'modProduit' pr.id %}"
-                            class="btn btn-outline-light btn-rounded btn-modifier"
-                            title="Modifier le produit"
-                        >
-
-                            <i class="mdi mdi-pencil-outline"></i>
-
-                            <span class="d-none d-lg-inline ml-1">
-                                Modifier
-                            </span>
-
-                        </a>
-
-                    </div>
-
-
-                    <!-- Informations -->
-
-                    <div class="produit-details">
-
-                        <!-- Prix -->
-
-                        <div class="detail-item">
-
-                            <div class="detail-icon">
-
-                                <i class="mdi mdi-cash-multiple"></i>
-
-                            </div>
-
-                            <div class="detail-content">
-
-                                <span class="detail-label">
-                                    Prix de vente
-                                </span>
-
-                                <span class="detail-value prix-value">
-                                    {{ pr.pu }} Fc
-                                </span>
-
-                            </div>
-
-                        </div>
-
-
-                        <!-- Appartement -->
-
-                        <div class="detail-item">
-
-                            <div class="detail-icon">
-
-                                <i class="mdi mdi-home-city-outline"></i>
-
-                            </div>
-
-                            <div class="detail-content">
-
-                                <span class="detail-label">
-                                    Appartement
-                                </span>
-
-                                <span class="detail-value">
-                                    {{ pr.appartement }}
-                                </span>
-
-                            </div>
-
-                        </div>
-
-                    </div>
-
-
-                    <!-- =================================================
-                         CODE-BARRE
-                    ================================================== -->
-
-                    <div class="barcode-section">
-
-                        <div class="barcode-title">
-
-                            <i class="mdi mdi-barcode mr-1"></i>
-
-                            Code-barres
-
-                        </div>
-
-
-                        <div class="barcode-container">
-
-                            <svg
-                                class="barcode-svg"
-                                id="barcode-{{ pr.id }}"
-                                data-code="{{ pr.code_barre }}"
-                            ></svg>
-
-                        </div>
-
-
-                        <div class="barcode-number">
-
-                            {{ pr.code_barre }}
-
-                        </div>
-
-
-                        <div class="barcode-actions">
-
-                            <!-- Copier -->
-
-                            <button
-                                type="button"
-                                class="btn btn-outline-info"
-                                onclick="copierCodeBarre('{{ pr.code_barre }}', this)"
-                            >
-
-                                <i class="mdi mdi-content-copy mr-1"></i>
-
-                                Copier
-
-                            </button>
-
-
-                            <!-- Imprimer -->
-
-                            <button
-                                type="button"
-                                class="btn btn-outline-light"
-                                onclick="imprimerCodeBarre(
-                                    '{{ pr.id }}',
-                                    '{{ pr.nom|escapejs }}',
-                                    '{{ pr.code_barre }}',
-                                    '{{ pr.pu }}'
-                                )"
-                            >
-
-                                <i class="mdi mdi-printer mr-1"></i>
-
-                                Imprimer
-
-                            </button>
-
-                        </div>
-
-                    </div>
-
-
-                    <!-- =================================================
-                         SUPPRIMER
-                    ================================================== -->
+                    <!-- Modifier -->
 
                     <a
-                        href="{% url 'deleteProduit' pr.id %}"
-                        class="btn btn-danger btn-rounded btn-supprimer btn-delete-produit"
-                        data-produit="{{ pr.nom|escapejs }}"
+                        href="{% url 'modProduit' pr.id %}"
+                        class="btn btn-outline-light btn-rounded btn-modifier"
+                        title="Modifier le produit"
                     >
 
-                        <i class="mdi mdi-delete-outline mr-1"></i>
+                        <i class="mdi mdi-pencil-outline"></i>
 
-                        Supprimer
+                        <span class="d-none d-lg-inline ml-1">
+                            Modifier
+                        </span>
 
                     </a>
 
                 </div>
 
-            </div>
 
-        </div>
+                <!-- Informations -->
+
+                <div class="produit-details">
+
+                    <!-- Prix -->
+
+                    <div class="detail-item">
+
+                        <div class="detail-icon">
+
+                            <i class="mdi mdi-cash-multiple"></i>
+
+                        </div>
+
+                        <div class="detail-content">
+
+                            <span class="detail-label">
+                                Prix de vente
+                            </span>
+
+                            <span class="detail-value prix-value">
+                                {{ pr.pu }} Fc
+                            </span>
+
+                        </div>
+
+                    </div>
 
 
-        {% empty %}
+                    <!-- Appartement -->
 
-        <!-- Aucun produit -->
+                    <div class="detail-item">
 
-        <div class="col-12">
+                        <div class="detail-icon">
 
-            <div class="card empty-card">
+                            <i class="mdi mdi-home-city-outline"></i>
 
-                <div class="empty-icon">
+                        </div>
 
-                    <i class="mdi mdi-package-variant-remove"></i>
+                        <div class="detail-content">
+
+                            <span class="detail-label">
+                                Appartement
+                            </span>
+
+                            <span class="detail-value">
+                                {{ pr.appartement }}
+                            </span>
+
+                        </div>
+
+                    </div>
 
                 </div>
 
-                <h4>
-                    Aucun produit trouvé
-                </h4>
 
-                <p>
-                    Aucun produit n'est actuellement disponible.
-                </p>
+                <!-- =================================================
+                     CODE-BARRE
+                ================================================== -->
+
+                <div class="barcode-section">
+
+                    <div class="barcode-title">
+
+                        <i class="mdi mdi-barcode mr-1"></i>
+
+                        Code-barres
+
+                    </div>
+
+
+                    <div class="barcode-container">
+
+                        <svg
+                            class="barcode-svg"
+                            id="barcode-{{ pr.id }}"
+                            data-code="{{ pr.code_barre }}"
+                        ></svg>
+
+                    </div>
+
+
+                    <div class="barcode-number">
+
+                        {{ pr.code_barre }}
+
+                    </div>
+
+
+                    <div class="barcode-actions">
+
+                        <!-- Copier -->
+
+                        <button
+                            type="button"
+                            class="btn btn-outline-info"
+                            onclick="copierCodeBarre('{{ pr.code_barre }}', this)"
+                        >
+
+                            <i class="mdi mdi-content-copy mr-1"></i>
+
+                            Copier
+
+                        </button>
+
+
+                        <!-- Imprimer -->
+
+                        <button
+                            type="button"
+                            class="btn btn-outline-light"
+                            onclick="imprimerCodeBarre(
+                                '{{ pr.id }}',
+                                '{{ pr.nom|escapejs }}',
+                                '{{ pr.code_barre }}',
+                                '{{ pr.pu }}'
+                            )"
+                        >
+
+                            <i class="mdi mdi-printer mr-1"></i>
+
+                            Imprimer
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                <!-- =================================================
+                     SUPPRIMER
+                ================================================== -->
 
                 <a
-                    href="{% url 'fProduit' %}"
-                    class="btn btn-primary btn-rounded"
+                    href="{% url 'deleteProduit' pr.id %}"
+                    class="btn btn-danger btn-rounded btn-supprimer btn-delete-produit"
+                    data-produit="{{ pr.nom|escapejs }}"
                 >
 
-                    <i class="mdi mdi-plus mr-1"></i>
+                    <i class="mdi mdi-delete-outline mr-1"></i>
 
-                    Ajouter un produit
+                    Supprimer
 
                 </a>
 
@@ -1020,114 +1119,402 @@
 
         </div>
 
-        {% endfor %}
-
     </div>
 
 
-    <!-- =================================================
-         PAGINATION
-    ================================================== -->
+    {% empty %}
 
-    {% if produit %}
+    <!-- Aucun produit -->
 
-    <div class="pagination-wrapper">
+    <div class="col-12">
 
-        <div class="row align-items-center">
+        <div class="card empty-card">
 
-            <!-- Précédent -->
+            <div class="empty-icon">
 
-            <div class="col-md-4 mb-2 mb-md-0">
-
-                {% if pages.has_previous %}
-
-                    <a
-                        href="?page=1"
-                        class="btn btn-outline-light btn-sm btn-rounded"
-                        title="Première page"
-                    >
-
-                        <i class="mdi mdi-page-first"></i>
-
-                    </a>
-
-                    <a
-                        href="?page={{ pages.previous_page_number }}"
-                        class="btn btn-info btn-sm btn-rounded"
-                    >
-
-                        <i class="mdi mdi-chevron-left"></i>
-
-                        Précédent
-
-                    </a>
-
-                {% endif %}
+                <i class="mdi mdi-package-variant-remove"></i>
 
             </div>
 
+            <h4>
+                Aucun produit trouvé
+            </h4>
 
-            <!-- Page actuelle -->
+            <p>
+                Aucun produit n'est actuellement disponible.
+            </p>
 
-            <div class="col-md-4 text-center mb-2 mb-md-0">
+            <a
+                href="{% url 'fProduit' %}"
+                class="btn btn-primary btn-rounded"
+            >
 
-                <span class="page-info">
+                <i class="mdi mdi-plus mr-1"></i>
 
-                    Page {{ pages.number }}
-                    sur
-                    {{ pages.paginator.num_pages }}
+                Ajouter un produit
 
-                </span>
-
-            </div>
-
-
-            <!-- Suivant -->
-
-            <div class="col-md-4 text-md-right">
-
-                <span class="badge badge-info count-badge mr-2">
-
-                    {{ compte }}
-
-                </span>
-
-
-                {% if pages.has_next %}
-
-                    <a
-                        href="?page={{ pages.next_page_number }}"
-                        class="btn btn-info btn-sm btn-rounded"
-                    >
-
-                        Suivant
-
-                        <i class="mdi mdi-chevron-right"></i>
-
-                    </a>
-
-                    <a
-                        href="?page={{ pages.paginator.num_pages }}"
-                        class="btn btn-outline-light btn-sm btn-rounded"
-                        title="Dernière page"
-                    >
-
-                        <i class="mdi mdi-page-last"></i>
-
-                    </a>
-
-                {% endif %}
-
-            </div>
+            </a>
 
         </div>
 
     </div>
 
-    {% endif %}
+    {% endfor %}
 
 </div>
 
+
+<!-- =================================================
+     PAGINATION
+================================================== -->
+
+{% if produit %}
+
+<div class="pagination-wrapper">
+
+    <div class="row align-items-center">
+
+        <!-- Précédent -->
+
+        <div class="col-md-4 mb-2 mb-md-0">
+
+            {% if pages.has_previous %}
+
+                <a
+                    href="?page=1"
+                    class="btn btn-outline-light btn-sm btn-rounded"
+                    title="Première page"
+                >
+
+                    <i class="mdi mdi-page-first"></i>
+
+                </a>
+
+                <a
+                    href="?page={{ pages.previous_page_number }}"
+                    class="btn btn-info btn-sm btn-rounded"
+                >
+
+                    <i class="mdi mdi-chevron-left"></i>
+
+                    Précédent
+
+                </a>
+
+            {% endif %}
+
+        </div>
+
+
+        <!-- Page actuelle -->
+
+        <div class="col-md-4 text-center mb-2 mb-md-0">
+
+            <span class="page-info">
+
+                Page {{ pages.number }}
+                sur
+                {{ pages.paginator.num_pages }}
+
+            </span>
+
+        </div>
+
+
+        <!-- Suivant -->
+
+        <div class="col-md-4 text-md-right">
+
+            <span class="badge badge-info count-badge mr-2">
+
+                {{ compte }}
+
+            </span>
+
+
+            {% if pages.has_next %}
+
+                <a
+                    href="?page={{ pages.next_page_number }}"
+                    class="btn btn-info btn-sm btn-rounded"
+                >
+
+                    Suivant
+
+                    <i class="mdi mdi-chevron-right"></i>
+
+                </a>
+
+                <a
+                    href="?page={{ pages.paginator.num_pages }}"
+                    class="btn btn-outline-light btn-sm btn-rounded"
+                    title="Dernière page"
+                >
+
+                    <i class="mdi mdi-page-last"></i>
+
+                </a>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endif %}
+```
+
+</div>
+
+<!-- =====================================================
+     MODAL IMPORTATION PRODUITS
+====================================================== -->
+
+<div
+    class="modal fade"
+    id="modalImportProduit"
+    tabindex="-1"
+    role="dialog"
+    aria-labelledby="modalImportProduitLabel"
+    aria-hidden="true"
+>
+
+```
+<div
+    class="modal-dialog modal-dialog-centered"
+    role="document"
+>
+
+    <div class="modal-content">
+
+        <!-- HEADER MODAL -->
+
+        <div class="modal-header">
+
+            <h5
+                class="modal-title"
+                id="modalImportProduitLabel"
+            >
+
+                <i class="mdi mdi-file-excel-outline mr-2"></i>
+
+                Importer des produits
+
+            </h5>
+
+
+            <button
+                type="button"
+                class="close"
+                data-dismiss="modal"
+                aria-label="Fermer"
+            >
+
+                <span aria-hidden="true">
+                    &times;
+                </span>
+
+            </button>
+
+        </div>
+
+
+        <!-- BODY -->
+
+        <form
+            method="POST"
+            action="{% url 'importProduit' %}"
+            enctype="multipart/form-data"
+            id="formImportProduit"
+        >
+
+            {% csrf_token %}
+
+            <div class="modal-body">
+
+                <!-- INFORMATIONS -->
+
+                <div class="import-info">
+
+                    <div class="import-info-title">
+
+                        <i class="mdi mdi-information-outline mr-1"></i>
+
+                        Format du fichier Excel
+
+                    </div>
+
+                    <p>
+
+                        Votre fichier Excel doit contenir exactement les colonnes suivantes :
+
+                    </p>
+
+
+                    <div class="import-columns">
+
+                        <span class="import-column">
+                            id
+                        </span>
+
+                        <span class="import-column">
+                            nom
+                        </span>
+
+                        <span class="import-column">
+                            pu
+                        </span>
+
+                        <span class="import-column">
+                            appartement
+                        </span>
+
+                        <span class="import-column">
+                            code_barre
+                        </span>
+
+                    </div>
+
+
+                    <p class="mt-3 mb-2">
+
+                        <i class="mdi mdi-check-circle-outline mr-1"></i>
+
+                        <strong style="color:#ffffff;">
+                            id
+                        </strong>
+                        correspond à l'ID du produit.
+
+                    </p>
+
+
+                    <p class="mb-2">
+
+                        <i class="mdi mdi-check-circle-outline mr-1"></i>
+
+                        <strong style="color:#ffffff;">
+                            appartement
+                        </strong>
+                        doit contenir l'ID d'un appartement existant.
+
+                    </p>
+
+
+                    <p class="mb-2">
+
+                        <i class="mdi mdi-check-circle-outline mr-1"></i>
+
+                        <strong style="color:#ffffff;">
+                            pu
+                        </strong>
+                        correspond au prix de vente du produit.
+
+                    </p>
+
+
+                    <p class="mb-0">
+
+                        <i class="mdi mdi-check-circle-outline mr-1"></i>
+
+                        Pour un nouveau produit,
+                        <strong style="color:#ffffff;">
+                            quantite
+                        </strong>
+                        et
+                        <strong style="color:#ffffff;">
+                            stock_minimum
+                        </strong>
+                        seront automatiquement initialisés à
+                        <strong style="color:#ffffff;">
+                            0
+                        </strong>.
+
+                    </p>
+
+                </div>
+
+
+                <!-- FICHIER -->
+
+                <div class="form-group mb-0">
+
+                    <label
+                        for="fichierExcelProduit"
+                        class="import-file-label"
+                    >
+
+                        <i class="mdi mdi-file-upload-outline mr-1"></i>
+
+                        Sélectionner le fichier Excel
+
+                    </label>
+
+
+                    <input
+                        type="file"
+                        class="form-control"
+                        id="fichierExcelProduit"
+                        name="fichier_excel"
+                        accept=".xlsx,.xls"
+                        required
+                    >
+
+
+                    <small
+                        class="form-text"
+                        style="color: rgba(255,255,255,.48);"
+                    >
+
+                        Formats acceptés : Excel .xlsx ou .xls
+
+                    </small>
+
+                </div>
+
+            </div>
+
+
+            <!-- FOOTER -->
+
+            <div class="modal-footer">
+
+                <button
+                    type="button"
+                    class="btn btn-secondary btn-rounded"
+                    data-dismiss="modal"
+                >
+
+                    <i class="mdi mdi-close mr-1"></i>
+
+                    Annuler
+
+                </button>
+
+
+                <button
+                    type="submit"
+                    class="btn btn-primary btn-rounded btn-import-produit"
+                    id="btnImportProduit"
+                >
+
+                    <i class="mdi mdi-file-import-outline mr-1"></i>
+
+                    Importer
+
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+```
+
+</div>
 
 <!-- =====================================================
      ZONE D'IMPRESSION
@@ -1135,18 +1522,17 @@
 
 <div id="print-area" style="display:none;"></div>
 
-
 <!-- =====================================================
-     JAVASCRIPT CODE-BARRES
+     JAVASCRIPT
 ====================================================== -->
 
 <script>
 
 document.addEventListener("DOMContentLoaded", function () {
 
-    /*
-     * Génération visuelle des codes-barres
-     */
+    /* =====================================================
+       GÉNÉRATION DES CODES-BARRES
+    ====================================================== */
 
     document.querySelectorAll(".barcode-svg").forEach(function (barcode) {
 
@@ -1188,9 +1574,9 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
 
-    /*
-     * Suppression avec SweetAlert2
-     */
+    /* =====================================================
+       SUPPRESSION AVEC SWEETALERT2
+    ====================================================== */
 
     document.querySelectorAll(".btn-delete-produit").forEach(function (button) {
 
@@ -1200,7 +1586,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
             const url = this.href;
 
-            const produit = this.dataset.produit || "ce produit";
+            const produit =
+                this.dataset.produit ||
+                "ce produit";
+
 
             if (typeof Swal === "undefined") {
 
@@ -1210,11 +1599,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
             }
 
+
             Swal.fire({
 
                 title: "Supprimer le produit ?",
 
-                text: `Êtes-vous sûr de vouloir supprimer "${produit}" ?`,
+                text:
+                    `Êtes-vous sûr de vouloir supprimer "${produit}" ?`,
 
                 icon: "warning",
 
@@ -1244,6 +1635,175 @@ document.addEventListener("DOMContentLoaded", function () {
 
     });
 
+
+    /* =====================================================
+       IMPORTATION EXCEL
+    ====================================================== */
+
+    const formImportProduit =
+        document.getElementById("formImportProduit");
+
+    const fichierExcelProduit =
+        document.getElementById("fichierExcelProduit");
+
+    const btnImportProduit =
+        document.getElementById("btnImportProduit");
+
+
+    if (
+        formImportProduit &&
+        fichierExcelProduit &&
+        btnImportProduit
+    ) {
+
+        formImportProduit.addEventListener(
+            "submit",
+            function (event) {
+
+                const fichier =
+                    fichierExcelProduit.files[0];
+
+
+                /* ==========================================
+                   VÉRIFICATION FICHIER
+                ========================================== */
+
+                if (!fichier) {
+
+                    event.preventDefault();
+
+                    if (typeof Swal !== "undefined") {
+
+                        Swal.fire({
+
+                            icon: "warning",
+
+                            title: "Fichier manquant",
+
+                            text:
+                                "Veuillez sélectionner un fichier Excel.",
+
+                            confirmButtonColor: "#0d6efd"
+
+                        });
+
+                    }
+
+                    return;
+
+                }
+
+
+                /* ==========================================
+                   VÉRIFICATION EXTENSION
+                ========================================== */
+
+                const nom =
+                    fichier.name.toLowerCase();
+
+                const extensionValide =
+                    nom.endsWith(".xlsx") ||
+                    nom.endsWith(".xls");
+
+
+                if (!extensionValide) {
+
+                    event.preventDefault();
+
+                    fichierExcelProduit.value = "";
+
+                    if (typeof Swal !== "undefined") {
+
+                        Swal.fire({
+
+                            icon: "error",
+
+                            title: "Format incorrect",
+
+                            text:
+                                "Veuillez sélectionner un fichier Excel au format .xlsx ou .xls.",
+
+                            confirmButtonColor: "#0d6efd"
+
+                        });
+
+                    }
+
+                    return;
+
+                }
+
+
+                /* ==========================================
+                   CONFIRMATION
+                ========================================== */
+
+                event.preventDefault();
+
+
+                const continuer =
+                    function () {
+
+                        btnImportProduit.disabled = true;
+
+                        btnImportProduit.innerHTML =
+                            '<i class="mdi mdi-loading mdi-spin mr-1"></i> Importation...';
+
+                        formImportProduit.submit();
+
+                    };
+
+
+                if (typeof Swal !== "undefined") {
+
+                    Swal.fire({
+
+                        title: "Importer les produits ?",
+
+                        html:
+                            "Le fichier <strong>" +
+                            echapperHtml(fichier.name) +
+                            "</strong> va être importé.",
+
+                        icon: "question",
+
+                        showCancelButton: true,
+
+                        confirmButtonText:
+                            "Oui, importer",
+
+                        cancelButtonText:
+                            "Annuler",
+
+                        reverseButtons: true,
+
+                        confirmButtonColor:
+                            "#0d6efd",
+
+                        cancelButtonColor:
+                            "#6c757d"
+
+                    }).then(function (result) {
+
+                        if (result.isConfirmed) {
+
+                            continuer();
+
+                        }
+
+                    });
+
+                } else {
+
+                    continuer();
+
+                }
+
+            }
+        );
+
+    }
+
 });
 
 
@@ -1258,39 +1818,53 @@ function copierCodeBarre(code, bouton) {
         if (typeof Swal !== "undefined") {
 
             Swal.fire({
+
                 icon: "error",
+
                 title: "Code-barres absent",
-                text: "Ce produit ne possède pas encore de code-barres.",
+
+                text:
+                    "Ce produit ne possède pas encore de code-barres.",
+
                 confirmButtonColor: "#0d6efd"
+
             });
 
         }
 
         return;
+
     }
 
 
-    /*
-     * Méthode moderne
-     */
-
-    if (navigator.clipboard && window.isSecureContext) {
+    if (
+        navigator.clipboard &&
+        window.isSecureContext
+    ) {
 
         navigator.clipboard.writeText(code)
+
             .then(function () {
 
                 afficherSuccesCopie(bouton);
 
             })
+
             .catch(function () {
 
-                copierAvecAncienneMethode(code, bouton);
+                copierAvecAncienneMethode(
+                    code,
+                    bouton
+                );
 
             });
 
     } else {
 
-        copierAvecAncienneMethode(code, bouton);
+        copierAvecAncienneMethode(
+            code,
+            bouton
+        );
 
     }
 
@@ -1303,7 +1877,8 @@ function copierCodeBarre(code, bouton) {
 
 function copierAvecAncienneMethode(code, bouton) {
 
-    const textarea = document.createElement("textarea");
+    const textarea =
+        document.createElement("textarea");
 
     textarea.value = code;
 
@@ -1318,6 +1893,7 @@ function copierAvecAncienneMethode(code, bouton) {
     textarea.focus();
 
     textarea.select();
+
 
     try {
 
@@ -1335,7 +1911,8 @@ function copierAvecAncienneMethode(code, bouton) {
 
                 title: "Copie impossible",
 
-                text: "Le code-barres n'a pas pu être copié.",
+                text:
+                    "Le code-barres n'a pas pu être copié.",
 
                 confirmButtonColor: "#0d6efd"
 
@@ -1344,6 +1921,7 @@ function copierAvecAncienneMethode(code, bouton) {
         }
 
     }
+
 
     document.body.removeChild(textarea);
 
@@ -1356,22 +1934,35 @@ function copierAvecAncienneMethode(code, bouton) {
 
 function afficherSuccesCopie(bouton) {
 
-    const ancienContenu = bouton.innerHTML;
+    const ancienContenu =
+        bouton.innerHTML;
+
 
     bouton.innerHTML =
         '<i class="mdi mdi-check mr-1"></i> Copié';
 
-    bouton.classList.remove("btn-outline-info");
 
-    bouton.classList.add("btn-success");
+    bouton.classList.remove(
+        "btn-outline-info"
+    );
+
+    bouton.classList.add(
+        "btn-success"
+    );
+
 
     setTimeout(function () {
 
-        bouton.innerHTML = ancienContenu;
+        bouton.innerHTML =
+            ancienContenu;
 
-        bouton.classList.remove("btn-success");
+        bouton.classList.remove(
+            "btn-success"
+        );
 
-        bouton.classList.add("btn-outline-info");
+        bouton.classList.add(
+            "btn-outline-info"
+        );
 
     }, 1800);
 
@@ -1382,7 +1973,12 @@ function afficherSuccesCopie(bouton) {
    IMPRIMER UN CODE-BARRE
 ====================================================== */
 
-function imprimerCodeBarre(id, nom, code, prix) {
+function imprimerCodeBarre(
+    id,
+    nom,
+    code,
+    prix
+) {
 
     if (!code) {
 
@@ -1394,7 +1990,8 @@ function imprimerCodeBarre(id, nom, code, prix) {
 
                 title: "Code-barres absent",
 
-                text: "Ce produit ne possède pas encore de code-barres.",
+                text:
+                    "Ce produit ne possède pas encore de code-barres.",
 
                 confirmButtonColor: "#0d6efd"
 
@@ -1407,22 +2004,34 @@ function imprimerCodeBarre(id, nom, code, prix) {
     }
 
 
-    const printArea = document.getElementById("print-area");
+    const printArea =
+        document.getElementById(
+            "print-area"
+        );
+
 
     printArea.innerHTML = `
 
         <div class="print-barcode-item">
 
-            <h4>${echapperHtml(nom)}</h4>
+            <h4>
+                ${echapperHtml(nom)}
+            </h4>
 
-            <svg id="print-barcode-${id}"></svg>
+            <svg
+                id="print-barcode-${id}"
+            ></svg>
 
             <div class="print-code">
+
                 ${echapperHtml(code)}
+
             </div>
 
             <div class="print-price">
+
                 ${echapperHtml(prix)} Fc
+
             </div>
 
         </div>
@@ -1430,7 +2039,8 @@ function imprimerCodeBarre(id, nom, code, prix) {
     `;
 
 
-    printArea.style.display = "block";
+    printArea.style.display =
+        "block";
 
 
     JsBarcode(
@@ -1460,11 +2070,13 @@ function imprimerCodeBarre(id, nom, code, prix) {
 
         window.print();
 
+
         setTimeout(function () {
 
             printArea.innerHTML = "";
 
-            printArea.style.display = "none";
+            printArea.style.display =
+                "none";
 
         }, 500);
 
@@ -1479,7 +2091,11 @@ function imprimerCodeBarre(id, nom, code, prix) {
 
 function imprimerTousLesCodesBarres() {
 
-    const produits = document.querySelectorAll(".produit-card");
+    const produits =
+        document.querySelectorAll(
+            ".produit-card"
+        );
+
 
     if (!produits.length) {
 
@@ -1491,7 +2107,8 @@ function imprimerTousLesCodesBarres() {
 
                 title: "Aucun produit",
 
-                text: "Aucun produit disponible pour l'impression.",
+                text:
+                    "Aucun produit disponible pour l'impression.",
 
                 confirmButtonColor: "#0d6efd"
 
@@ -1504,44 +2121,68 @@ function imprimerTousLesCodesBarres() {
     }
 
 
-    const printArea = document.getElementById("print-area");
+    const printArea =
+        document.getElementById(
+            "print-area"
+        );
+
 
     let contenu = "";
 
 
-    produits.forEach(function (produit, index) {
+    produits.forEach(
+        function (produit, index) {
 
-        const nom = produit.dataset.produitNom || "";
+            const nom =
+                produit.dataset.produitNom ||
+                "";
 
-        const code = produit.dataset.codeBarre || "";
+            const code =
+                produit.dataset.codeBarre ||
+                "";
 
-        const prix = produit.dataset.prix || "";
+            const prix =
+                produit.dataset.prix ||
+                "";
 
-        if (!code) {
-            return;
+
+            if (!code) {
+
+                return;
+
+            }
+
+
+            contenu += `
+
+                <div class="print-barcode-item">
+
+                    <h4>
+                        ${echapperHtml(nom)}
+                    </h4>
+
+                    <svg
+                        id="print-all-barcode-${index}"
+                    ></svg>
+
+                    <div class="print-code">
+
+                        ${echapperHtml(code)}
+
+                    </div>
+
+                    <div class="print-price">
+
+                        ${echapperHtml(prix)} Fc
+
+                    </div>
+
+                </div>
+
+            `;
+
         }
-
-        contenu += `
-
-            <div class="print-barcode-item">
-
-                <h4>${echapperHtml(nom)}</h4>
-
-                <svg id="print-all-barcode-${index}"></svg>
-
-                <div class="print-code">
-                    ${echapperHtml(code)}
-                </div>
-
-                <div class="print-price">
-                    ${echapperHtml(prix)} Fc
-                </div>
-
-            </div>
-
-        `;
-
-    });
+    );
 
 
     if (!contenu) {
@@ -1554,7 +2195,8 @@ function imprimerTousLesCodesBarres() {
 
                 title: "Aucun code-barres",
 
-                text: "Les produits affichés ne possèdent pas encore de code-barres.",
+                text:
+                    "Les produits affichés ne possèdent pas encore de code-barres.",
 
                 confirmButtonColor: "#0d6efd"
 
@@ -1567,65 +2209,80 @@ function imprimerTousLesCodesBarres() {
     }
 
 
-    printArea.innerHTML = contenu;
+    printArea.innerHTML =
+        contenu;
 
-    printArea.style.display = "block";
+
+    printArea.style.display =
+        "block";
 
 
-    produits.forEach(function (produit, index) {
+    produits.forEach(
+        function (produit, index) {
 
-        const code = produit.dataset.codeBarre || "";
+            const code =
+                produit.dataset.codeBarre ||
+                "";
 
-        if (!code) {
-            return;
-        }
 
-        const element = document.getElementById(
-            "print-all-barcode-" + index
-        );
+            if (!code) {
 
-        if (!element) {
-            return;
-        }
-
-        JsBarcode(
-
-            element,
-
-            code,
-
-            {
-
-                format: "CODE128",
-
-                width: 2.2,
-
-                height: 65,
-
-                displayValue: false,
-
-                margin: 5,
-
-                background: "#ffffff",
-
-                lineColor: "#000000"
+                return;
 
             }
 
-        );
 
-    });
+            const element =
+                document.getElementById(
+                    "print-all-barcode-" +
+                    index
+                );
+
+
+            if (!element) {
+
+                return;
+
+            }
+
+
+            JsBarcode(
+                element,
+                code,
+                {
+
+                    format: "CODE128",
+
+                    width: 2.2,
+
+                    height: 65,
+
+                    displayValue: false,
+
+                    margin: 5,
+
+                    background: "#ffffff",
+
+                    lineColor: "#000000"
+
+                }
+            );
+
+        }
+    );
 
 
     setTimeout(function () {
 
         window.print();
 
+
         setTimeout(function () {
 
             printArea.innerHTML = "";
 
-            printArea.style.display = "none";
+            printArea.style.display =
+                "none";
 
         }, 500);
 
@@ -1640,9 +2297,11 @@ function imprimerTousLesCodesBarres() {
 
 function echapperHtml(texte) {
 
-    const div = document.createElement("div");
+    const div =
+        document.createElement("div");
 
-    div.textContent = texte;
+    div.textContent =
+        texte;
 
     return div.innerHTML;
 

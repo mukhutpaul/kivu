@@ -1,13 +1,14 @@
-
 {% extends 'base.html' %}
 {% load static %}
 
 {% block content %}
 
 <style>
+
     /* ================================
        STYLE GENERAL
     ================================= */
+
     .appartement-page .card {
         border: 0;
         border-radius: 16px;
@@ -15,9 +16,11 @@
         box-shadow: 0 6px 22px rgba(0, 0, 0, 0.18);
     }
 
+
     /* ================================
        HEADER
     ================================= */
+
     .appartement-header {
         background: linear-gradient(135deg, #0d6efd, #4f46e5);
         border-radius: 16px;
@@ -38,6 +41,7 @@
         border-width: 1px;
         font-weight: 600;
         transition: all .25s ease;
+        white-space: nowrap;
     }
 
     .appartement-header .btn:hover {
@@ -46,9 +50,46 @@
         transform: translateY(-2px);
     }
 
+
+    /* ================================
+       ACTIONS HEADER
+    ================================= */
+
+    .header-actions {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 8px;
+    }
+
+
+    /* ================================
+       BADGE TOTAL APPARTEMENTS
+    ================================= */
+
+    .total-appartements {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        margin-top: 8px;
+        padding: 6px 13px;
+        border-radius: 20px;
+        background: rgba(255, 255, 255, 0.15);
+        border: 1px solid rgba(255, 255, 255, 0.22);
+        color: #ffffff;
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+    .total-appartements i {
+        font-size: 17px;
+    }
+
+
     /* ================================
        RECHERCHE
     ================================= */
+
     .search-card {
         border-radius: 16px;
     }
@@ -93,9 +134,11 @@
         opacity: 1;
     }
 
+
     /* ================================
        CARTE APPARTEMENT
     ================================= */
+
     .appartement-card {
         height: 100%;
         transition: all .25s ease;
@@ -145,9 +188,11 @@
         letter-spacing: .5px;
     }
 
+
     /* ================================
        BOUTONS
     ================================= */
+
     .btn-action {
         border-radius: 10px;
         font-weight: 600;
@@ -165,9 +210,11 @@
         font-weight: 600;
     }
 
+
     /* ================================
-       BADGE / PAGINATION
+       PAGINATION
     ================================= */
+
     .pagination-wrapper {
         margin-top: 10px;
         padding: 18px 20px;
@@ -192,9 +239,83 @@
         border-radius: 20px;
     }
 
+
+    /* ================================
+       MODAL IMPORTATION
+    ================================= */
+
+    #modalImportAppartement .modal-content {
+        border: 0;
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 15px 45px rgba(0, 0, 0, 0.35);
+    }
+
+    #modalImportAppartement .modal-header {
+        background: linear-gradient(135deg, #0d6efd, #4f46e5);
+        color: #ffffff;
+        border-bottom: 0;
+        padding: 18px 22px;
+    }
+
+    #modalImportAppartement .modal-title {
+        color: #ffffff;
+        font-weight: 700;
+    }
+
+    #modalImportAppartement .modal-header .close {
+        color: #ffffff;
+        opacity: 1;
+        text-shadow: none;
+        font-size: 25px;
+    }
+
+    #modalImportAppartement .modal-body {
+        padding: 28px;
+    }
+
+    #modalImportAppartement .modal-body h5 {
+        font-weight: 700;
+    }
+
+    #modalImportAppartement input[type="file"] {
+        height: auto;
+        padding: 10px;
+        border-radius: 10px;
+    }
+
+    #modalImportAppartement .alert {
+        border-radius: 10px;
+        margin-top: 18px;
+    }
+
+    #modalImportAppartement .btn {
+        border-radius: 10px;
+        font-weight: 600;
+    }
+
+    .import-icon {
+        width: 64px;
+        height: 64px;
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 15px auto;
+        background: linear-gradient(135deg, #0d6efd, #4f46e5);
+        box-shadow: 0 6px 18px rgba(13, 110, 253, 0.25);
+    }
+
+    .import-icon i {
+        color: #ffffff;
+        font-size: 32px;
+    }
+
+
     /* ================================
        RESPONSIVE
     ================================= */
+
     @media (max-width: 767px) {
 
         .appartement-header {
@@ -218,19 +339,38 @@
             padding: 8px 10px;
         }
 
+        .header-actions {
+            flex-direction: column;
+            gap: 5px;
+        }
+
         .ap-name {
             font-size: 16px;
         }
+
+        #modalImportAppartement .modal-body {
+            padding: 20px;
+        }
+
+        .total-appartements {
+            font-size: 11px;
+            padding: 5px 9px;
+        }
+
     }
+
 </style>
 
 
 <div class="content-wrapper appartement-page">
 
+
     <!-- ================================
          HEADER
     ================================= -->
+
     <div class="row">
+
         <div class="col-12 grid-margin stretch-card">
 
             <div class="card corona-gradient-card appartement-header">
@@ -239,52 +379,127 @@
 
                     <div class="row align-items-center">
 
+
+                        <!-- IMAGE -->
+
                         <div class="col-3 col-sm-3 col-xl-2 text-center">
+
                             <img
                                 src="{% static 'images/dashboard/Group126@2x.png' %}"
                                 class="gradient-corona-img img-fluid"
                                 alt="Appartement"
                             >
+
                         </div>
+
+
+                        <!-- TITRE -->
 
                         <div class="col-6 col-sm-6 col-xl-8 p-0">
 
                             <h4 class="mb-1">
+
                                 <i class="mdi mdi-home-city-outline mr-2"></i>
+
                                 Gestion des appartements
+
                             </h4>
 
                             <p class="mb-0 d-none d-sm-block">
+
                                 Gérez facilement vos appartements et vos produits.
+
                             </p>
+
+
+                            <!-- TOTAL APPARTEMENTS -->
+
+                            <div class="total-appartements">
+
+                                <i class="mdi mdi-home-city-outline"></i>
+
+                                <span>
+
+                                    Total :
+                                    <strong>{{ compte }}</strong>
+                                    appartement{{ compte|pluralize }}
+
+                                </span>
+
+                            </div>
 
                         </div>
 
+
+                        <!-- ACTIONS -->
+
                         <div class="col-3 col-sm-3 col-xl-2 text-center">
 
-                            <a
-                                href="{% url 'fAppartement' %}"
-                                class="btn btn-outline-light btn-rounded"
-                            >
-                                <i class="mdi mdi-plus mr-1"></i>
-                                <span class="d-none d-md-inline">Ajouter</span>
-                                <span class="d-md-none">+</span>
-                            </a>
+                            <div class="header-actions">
+
+
+                                <!-- ================================
+                                     IMPORTER
+                                ================================= -->
+
+                                <button
+                                    type="button"
+                                    class="btn btn-outline-light btn-rounded"
+                                    data-toggle="modal"
+                                    data-target="#modalImportAppartement"
+                                    title="Importer des appartements"
+                                >
+
+                                    <i class="mdi mdi-file-import-outline mr-1"></i>
+
+                                    <span class="d-none d-md-inline">
+                                        Importer
+                                    </span>
+
+                                </button>
+
+
+                                <!-- ================================
+                                     AJOUTER
+                                ================================= -->
+
+                                <a
+                                    href="{% url 'fAppartement' %}"
+                                    class="btn btn-outline-light btn-rounded"
+                                    title="Ajouter un appartement"
+                                >
+
+                                    <i class="mdi mdi-plus mr-1"></i>
+
+                                    <span class="d-none d-md-inline">
+                                        Ajouter
+                                    </span>
+
+                                    <span class="d-md-none">
+                                        +
+                                    </span>
+
+                                </a>
+
+                            </div>
 
                         </div>
 
                     </div>
 
                 </div>
+
             </div>
 
         </div>
+
     </div>
 
 
     <!-- ================================
          RECHERCHE
     ================================= -->
+
     <div class="row justify-content-end">
 
         <div class="col-xl-5 col-lg-6 col-md-8 grid-margin stretch-card">
@@ -294,11 +509,18 @@
                 <div class="card-body">
 
                     <h4 class="card-title">
+
                         <i class="mdi mdi-magnify mr-2"></i>
+
                         Rechercher un appartement
+
                     </h4>
 
-                    <form method="post" autocomplete="off">
+
+                    <form
+                        method="post"
+                        autocomplete="off"
+                    >
 
                         {% csrf_token %}
 
@@ -330,6 +552,7 @@
     <!-- ================================
          LISTE DES APPARTEMENTS
     ================================= -->
+
     <div class="row">
 
         {% for ap in appartement %}
@@ -340,14 +563,20 @@
 
                 <div class="card-body">
 
-                    <!-- Informations appartement -->
+
                     <div class="d-flex align-items-center justify-content-between">
+
+
+                        <!-- INFORMATIONS -->
 
                         <div class="d-flex align-items-center">
 
                             <div class="ap-icon">
+
                                 <i class="mdi mdi-home-city-outline"></i>
+
                             </div>
+
 
                             <div>
 
@@ -364,7 +593,8 @@
                         </div>
 
 
-                        <!-- Modifier -->
+                        <!-- MODIFIER -->
+
                         <div>
 
                             <a
@@ -372,10 +602,13 @@
                                 class="btn btn-outline-light btn-rounded btn-action"
                                 title="Modifier"
                             >
+
                                 <i class="mdi mdi-pencil-outline"></i>
+
                                 <span class="d-none d-lg-inline ml-1">
                                     Modifier
                                 </span>
+
                             </a>
 
                         </div>
@@ -383,18 +616,21 @@
                     </div>
 
 
-                    <!-- Séparateur -->
                     <hr style="border-color: rgba(255,255,255,.08);">
 
 
-                    <!-- Supprimer -->
+                    <!-- SUPPRIMER -->
+
                     <a
                         href="{% url 'deleteAppartement' ap.id %}"
-                        onclick="return confirm('Êtes-vous sûr de vouloir supprimer cet appartement ?')"
+                        onclick="return confirmerSuppressionAppartement(event, this);"
                         class="btn btn-danger btn-rounded btn-delete"
                     >
+
                         <i class="mdi mdi-delete-outline mr-1"></i>
+
                         Supprimer
+
                     </a>
 
                 </div>
@@ -403,9 +639,13 @@
 
         </div>
 
+
         {% empty %}
 
-        <!-- Aucun appartement -->
+        <!-- ================================
+             AUCUN APPARTEMENT
+        ================================= -->
+
         <div class="col-12">
 
             <div class="card">
@@ -413,23 +653,32 @@
                 <div class="card-body text-center py-5">
 
                     <div class="ap-icon mx-auto mb-3">
+
                         <i class="mdi mdi-home-off-outline"></i>
+
                     </div>
 
                     <h4 style="color:#ffffff;">
+
                         Aucun appartement trouvé
+
                     </h4>
 
                     <p style="color:rgba(255,255,255,.6);">
+
                         Aucun appartement n'est actuellement disponible.
+
                     </p>
 
                     <a
                         href="{% url 'fAppartement' %}"
                         class="btn btn-primary btn-rounded"
                     >
+
                         <i class="mdi mdi-plus mr-1"></i>
+
                         Ajouter un appartement
+
                     </a>
 
                 </div>
@@ -446,26 +695,39 @@
     <!-- ================================
          PAGINATION
     ================================= -->
+
     {% if appartement %}
 
     <div class="pagination-wrapper">
 
         <div class="row align-items-center">
 
+
+            <!-- PRECEDENT -->
+
             <div class="col-md-4 mb-2 mb-md-0">
 
                 {% if pages.has_previous %}
 
-                    <a href="?page=1" class="btn btn-outline-light btn-sm btn-rounded">
+                    <a
+                        href="?page=1"
+                        class="btn btn-outline-light btn-sm btn-rounded"
+                    >
+
                         <i class="mdi mdi-page-first"></i>
+
                     </a>
+
 
                     <a
                         href="?page={{ pages.previous_page_number }}"
                         class="btn btn-info btn-sm btn-rounded"
                     >
+
                         <i class="mdi mdi-chevron-left"></i>
+
                         Précédent
+
                     </a>
 
                 {% endif %}
@@ -473,20 +735,31 @@
             </div>
 
 
+            <!-- PAGE COURANTE -->
+
             <div class="col-md-4 text-center mb-2 mb-md-0">
 
                 <span class="page-info">
-                    Page {{ pages.number }} sur {{ pages.paginator.num_pages }}
+
+                    Page {{ pages.number }}
+                    sur
+                    {{ pages.paginator.num_pages }}
+
                 </span>
 
             </div>
 
 
+            <!-- SUIVANT -->
+
             <div class="col-md-4 text-md-right">
 
                 <span class="badge badge-info count-badge mr-2">
+
                     {{ compte }}
+
                 </span>
+
 
                 {% if pages.has_next %}
 
@@ -494,15 +767,21 @@
                         href="?page={{ pages.next_page_number }}"
                         class="btn btn-info btn-sm btn-rounded"
                     >
+
                         Suivant
+
                         <i class="mdi mdi-chevron-right"></i>
+
                     </a>
+
 
                     <a
                         href="?page={{ pages.paginator.num_pages }}"
                         class="btn btn-outline-light btn-sm btn-rounded"
                     >
+
                         <i class="mdi mdi-page-last"></i>
+
                     </a>
 
                 {% endif %}
@@ -516,5 +795,349 @@
     {% endif %}
 
 </div>
+
+
+<!-- =====================================================
+     MODAL IMPORTATION APPARTEMENTS
+====================================================== -->
+
+<div
+    class="modal fade"
+    id="modalImportAppartement"
+    tabindex="-1"
+    role="dialog"
+    aria-labelledby="modalImportAppartementLabel"
+    aria-hidden="true"
+>
+
+    <div
+        class="modal-dialog modal-dialog-centered"
+        role="document"
+    >
+
+        <div class="modal-content">
+
+
+            <!-- HEADER MODAL -->
+
+            <div class="modal-header">
+
+                <h5
+                    class="modal-title"
+                    id="modalImportAppartementLabel"
+                >
+
+                    <i class="mdi mdi-file-import-outline mr-2"></i>
+
+                    Importer des appartements
+
+                </h5>
+
+
+                <button
+                    type="button"
+                    class="close"
+                    data-dismiss="modal"
+                    aria-label="Fermer"
+                >
+
+                    <span aria-hidden="true">
+                        &times;
+                    </span>
+
+                </button>
+
+            </div>
+
+
+            <!-- CORPS -->
+
+            <div class="modal-body">
+
+                <div class="text-center mb-4">
+
+                    <div class="import-icon">
+
+                        <i class="mdi mdi-file-excel-outline"></i>
+
+                    </div>
+
+
+                    <h5>
+
+                        Importer un fichier Excel
+
+                    </h5>
+
+
+                    <p class="text-muted mb-0">
+
+                        Sélectionnez le fichier Excel contenant vos appartements.
+
+                    </p>
+
+                </div>
+
+
+                <!-- FORMULAIRE -->
+
+                <form
+                    method="POST"
+                    action="{% url 'importAppartement' %}"
+                    enctype="multipart/form-data"
+                    id="formImportAppartement"
+                >
+
+                    {% csrf_token %}
+
+
+                    <!-- FICHIER -->
+
+                    <div class="form-group">
+
+                        <label for="fichier_excel">
+
+                            <i class="mdi mdi-file-excel-outline mr-1"></i>
+
+                            Fichier Excel
+
+                        </label>
+
+
+                        <input
+                            type="file"
+                            class="form-control"
+                            id="fichier_excel"
+                            name="fichier_excel"
+                            accept=".xlsx,.xls"
+                            required
+                        >
+
+
+                        <small class="form-text text-muted">
+
+                            Formats acceptés :
+                            <strong>.xlsx</strong>
+                            et
+                            <strong>.xls</strong>
+
+                        </small>
+
+                    </div>
+
+
+                    <!-- INFORMATION -->
+
+                    <div class="alert alert-info">
+
+                        <i class="mdi mdi-information-outline mr-1"></i>
+
+                        Le fichier Excel doit contenir les colonnes :
+
+                        <strong>id</strong>
+
+                        et
+
+                        <strong>nom</strong>.
+
+                    </div>
+
+
+                    <!-- BOUTONS -->
+
+                    <div class="d-flex justify-content-end mt-4">
+
+                        <button
+                            type="button"
+                            class="btn btn-secondary mr-2"
+                            data-dismiss="modal"
+                        >
+
+                            <i class="mdi mdi-close mr-1"></i>
+
+                            Annuler
+
+                        </button>
+
+
+                        <button
+                            type="submit"
+                            class="btn btn-primary"
+                            id="btnImportAppartement"
+                        >
+
+                            <i class="mdi mdi-upload mr-1"></i>
+
+                            Importer
+
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =====================================================
+     SWEETALERT2
+====================================================== -->
+
+<script>
+
+function confirmerSuppressionAppartement(event, element) {
+
+    event.preventDefault();
+
+    const url = element.getAttribute('href');
+
+    Swal.fire({
+
+        title: 'Supprimer cet appartement ?',
+
+        text: 'Cette action est irréversible.',
+
+        icon: 'warning',
+
+        showCancelButton: true,
+
+        confirmButtonText: 'Oui, supprimer',
+
+        cancelButtonText: 'Annuler',
+
+        reverseButtons: true,
+
+        buttonsStyling: false,
+
+        customClass: {
+
+            confirmButton: 'btn btn-danger mx-1',
+
+            cancelButton: 'btn btn-secondary mx-1'
+
+        }
+
+    }).then((result) => {
+
+        if (result.isConfirmed) {
+
+            window.location.href = url;
+
+        }
+
+    });
+
+    return false;
+}
+
+
+/* =====================================================
+   IMPORT EXCEL
+===================================================== */
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    const form = document.getElementById("formImportAppartement");
+
+    const input = document.getElementById("fichier_excel");
+
+    const button = document.getElementById("btnImportAppartement");
+
+
+    if (!form || !input || !button) {
+
+        return;
+
+    }
+
+
+    form.addEventListener("submit", function (event) {
+
+        if (!input.files || input.files.length === 0) {
+
+            event.preventDefault();
+
+            Swal.fire({
+
+                title: "Fichier requis",
+
+                text: "Veuillez sélectionner un fichier Excel.",
+
+                icon: "warning",
+
+                confirmButtonText: "OK",
+
+                buttonsStyling: false,
+
+                customClass: {
+
+                    confirmButton: "btn btn-primary"
+
+                }
+
+            });
+
+            return;
+
+        }
+
+
+        const fichier = input.files[0];
+
+        const nom = fichier.name.toLowerCase();
+
+
+        if (
+            !nom.endsWith(".xlsx") &&
+            !nom.endsWith(".xls")
+        ) {
+
+            event.preventDefault();
+
+            Swal.fire({
+
+                title: "Format invalide",
+
+                text: "Veuillez sélectionner un fichier Excel (.xlsx ou .xls).",
+
+                icon: "error",
+
+                confirmButtonText: "OK",
+
+                buttonsStyling: false,
+
+                customClass: {
+
+                    confirmButton: "btn btn-primary"
+
+                }
+
+            });
+
+            return;
+
+        }
+
+
+        /* =========================================
+           EMPÊCHER DOUBLE CLIC
+        ========================================= */
+
+        button.disabled = true;
+
+        button.innerHTML =
+            '<i class="mdi mdi-loading mdi-spin mr-1"></i> Importation...';
+
+    });
+
+});
+
+</script>
 
 {% endblock content %}

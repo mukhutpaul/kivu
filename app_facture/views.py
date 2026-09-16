@@ -42,6 +42,12 @@ from django.shortcuts import get_object_or_404
 
 from app_facture.models import Detail_facture, Facture
 
+import pandas as pd
+
+from django.contrib import messages
+from django.db import transaction
+from django.shortcuts import render, redirect
+
 
 # ==========================================================
 # CONSTANTES TVA
@@ -5309,3 +5315,913 @@ def rapport_mensuel_tva(request):
         context
     )
 
+
+
+
+# ==========================================================
+# IMPORT DES APPARTEMENTS DEPUIS EXCEL
+# ==========================================================
+import pandas as pd
+
+@login_required(login_url="sign_in")
+def importAppartement(request):
+
+    print("\n" + "=" * 80)
+    print("🚀 IMPORT APPARTEMENT")
+    print("=" * 80)
+
+    # ======================================================
+    # LE GET RETOURNE TOUJOURS SUR LA LISTE
+    # ======================================================
+
+    if request.method != "POST":
+        print("➡️ GET : retour vers la liste des appartements")
+        return redirect("appartement")
+
+    # ======================================================
+    # FICHIER
+    # ======================================================
+
+    fichier = request.FILES.get("fichier_excel")
+
+    print("📁 Fichier :", fichier)
+
+    if not fichier:
+        print("❌ Aucun fichier")
+
+        messages.error(
+            request,
+            "Veuillez sélectionner un fichier Excel."
+        )
+
+        return redirect("appartement")
+
+    # ======================================================
+    # EXTENSION
+    # ======================================================
+
+    nom_fichier = fichier.name.lower()
+
+    if not (
+        nom_fichier.endswith(".xlsx")
+        or nom_fichier.endswith(".xls")
+    ):
+        print("❌ Mauvaise extension")
+
+        messages.error(
+            request,
+            "Le fichier doit être au format Excel (.xlsx ou .xls)."
+        )
+
+        return redirect("appartement")
+
+    # ======================================================
+    # LECTURE EXCEL
+    # ======================================================
+
+    try:
+
+        print("📖 Lecture Excel...")
+
+        df = pd.read_excel(fichier)
+
+        print("✅ Excel lu")
+        print("📊 Lignes :", len(df))
+        print("📋 Colonnes :", list(df.columns))
+
+    except Exception as e:
+
+        print("❌ ERREUR EXCEL")
+        print("Type :", type(e).__name__)
+        print("Message :", str(e))
+
+        messages.error(
+            request,
+            f"Impossible de lire le fichier Excel : {str(e)}"
+        )
+
+        return redirect("appartement")
+
+    # ======================================================
+    # NETTOYAGE COLONNES
+    # ======================================================
+
+    df.columns = [
+        str(col).strip().lower()
+        for col in df.columns
+    ]
+
+    print("📋 Colonnes nettoyées :", list(df.columns))
+
+    # ======================================================
+    # COLONNES REQUISES
+    # ======================================================
+
+    colonnes_requises = {
+        "id",
+        "nom"
+    }
+
+    colonnes_manquantes = (
+        colonnes_requises - set(df.columns)
+    )
+
+    if colonnes_manquantes:
+
+        print("❌ Colonnes manquantes :", colonnes_manquantes)
+
+        messages.error(
+            request,
+            "Colonnes manquantes dans le fichier Excel : "
+            + ", ".join(sorted(colonnes_manquantes))
+        )
+
+        return redirect("appartement")
+
+    # ======================================================
+    # SUPPRIMER LES LIGNES VIDES
+    # ======================================================
+
+    df = df.dropna(
+        subset=["id", "nom"]
+    )
+
+    if df.empty:
+
+        print("❌ Aucune donnée valide")
+
+        messages.error(
+            request,
+            "Le fichier Excel ne contient aucun appartement valide."
+        )
+
+        return redirect("appartement")
+
+    # ======================================================
+    # COMPTEURS
+    # ======================================================
+
+    crees = 0
+    mis_a_jour = 0
+    erreurs = []
+
+    # ======================================================
+    # IMPORT
+    # ======================================================
+
+    try:
+
+        with transaction.atomic():
+
+            for index, ligne in df.iterrows():
+
+                numero_ligne = index + 2
+
+                print("\n" + "-" * 60)
+                print("📍 Ligne Excel :", numero_ligne)
+
+                try:
+
+                    # ======================================
+                    # ID
+                    # ======================================
+
+                    valeur_id = ligne["id"]
+
+                    appartement_id = int(
+                        float(valeur_id)
+                    )
+
+                    print("🆔 ID :", appartement_id)
+
+                    if appartement_id <= 0:
+                        raise ValueError(
+                            "L'ID doit être supérieur à zéro."
+                        )
+
+                    # ======================================
+                    # NOM
+                    # ======================================
+
+                    nom = str(
+                        ligne["nom"]
+                    ).strip()
+
+                    if not nom:
+                        raise ValueError(
+                            "Le nom est vide."
+                        )
+
+                    nom = nom.upper()
+
+                    print("🏠 Nom :", nom)
+
+                    # ======================================
+                    # RECHERCHE
+                    # ======================================
+
+                    appartement = (
+                        Appartement.objects
+                        .filter(pk=appartement_id)
+                        .first()
+                    )
+
+                    # ======================================
+                    # EXISTANT
+                    # ======================================
+
+                    if appartement:
+
+                        print("♻️ Mise à jour")
+
+                        appartement.nom = nom
+
+                        # On met uniquement le nom pour éviter
+                        # un problème avec updatedAt.
+                        appartement.save(
+                            update_fields=["nom"]
+                        )
+
+                        mis_a_jour += 1
+
+                    # ======================================
+                    # NOUVEAU
+                    # ======================================
+
+                    else:
+
+                        print("🆕 Création")
+
+                        Appartement.objects.create(
+                            id=appartement_id,
+                            nom=nom
+                        )
+
+                        crees += 1
+
+                except Exception as e:
+
+                    print("❌ ERREUR LIGNE :", str(e))
+
+                    erreurs.append(
+                        f"Ligne {numero_ligne} : {str(e)}"
+                    )
+
+    except Exception as e:
+
+        print("\n❌ ERREUR TRANSACTION")
+        print(type(e).__name__)
+        print(str(e))
+
+        messages.error(
+            request,
+            f"Erreur pendant l'importation : {str(e)}"
+        )
+
+        return redirect("appartement")
+
+    # ======================================================
+    # MESSAGE FINAL
+    # ======================================================
+
+    print("\n" + "=" * 80)
+    print("🏁 IMPORT TERMINÉ")
+    print("🆕 Créés :", crees)
+    print("♻️ Mis à jour :", mis_a_jour)
+    print("❌ Erreurs :", len(erreurs))
+    print("=" * 80)
+
+    if erreurs:
+
+        messages.warning(
+            request,
+            (
+                f"Import terminé avec quelques erreurs : "
+                f"{crees} créé(s), "
+                f"{mis_a_jour} mis à jour, "
+                f"{len(erreurs)} erreur(s). "
+                f"Première erreur : {erreurs[0]}"
+            )
+        )
+
+    elif crees > 0 or mis_a_jour > 0:
+
+        messages.success(
+            request,
+            (
+                f"Import réussi : "
+                f"{crees} appartement(s) créé(s), "
+                f"{mis_a_jour} mis à jour."
+            )
+        )
+
+    else:
+
+        messages.info(
+            request,
+            "Aucun changement effectué. Les appartements du fichier existent déjà avec les mêmes informations."
+        )
+
+    # ======================================================
+    # RETOUR SUR LA MÊME PAGE
+    # ======================================================
+
+    return redirect("appartement")
+
+
+@login_required(login_url="sign_in")
+def importProduit(request):
+
+    print("\n")
+    print("=" * 70)
+    print("🚀 DÉBUT IMPORT DES PRODUITS")
+    print("=" * 70)
+
+    # ==========================================================
+    # VÉRIFICATION DE LA MÉTHODE
+    # ==========================================================
+
+    if request.method != "POST":
+
+        print("⚠️ Requête différente de POST.")
+        print("➡️ Retour vers la liste des produits.")
+
+        return redirect("produit")
+
+    # ==========================================================
+    # RÉCUPÉRATION DU FICHIER
+    # ==========================================================
+
+    fichier = request.FILES.get("fichier_excel")
+
+    if not fichier:
+
+        print("❌ Aucun fichier Excel reçu.")
+
+        messages.error(
+            request,
+            "Veuillez sélectionner un fichier Excel."
+        )
+
+        return redirect("produit")
+
+    print(f"📁 Fichier reçu : {fichier.name}")
+    print(f"📦 Taille : {fichier.size} octets")
+    print(f"📌 Content-Type : {fichier.content_type}")
+
+    # ==========================================================
+    # VÉRIFICATION DU FORMAT
+    # ==========================================================
+
+    nom_fichier = fichier.name.lower()
+
+    if not (
+        nom_fichier.endswith(".xlsx")
+        or nom_fichier.endswith(".xls")
+    ):
+
+        print("❌ Format de fichier non accepté.")
+
+        messages.error(
+            request,
+            "Le fichier doit être au format Excel (.xlsx ou .xls)."
+        )
+
+        return redirect("produit")
+
+    # ==========================================================
+    # LECTURE EXCEL
+    # ==========================================================
+
+    try:
+
+        print("📖 Lecture du fichier Excel avec pandas...")
+
+        df = pd.read_excel(fichier)
+
+        print("✅ Fichier Excel lu avec succès.")
+        print(f"📊 Nombre de lignes : {len(df)}")
+        print(f"📋 Colonnes trouvées : {list(df.columns)}")
+
+    except Exception as e:
+
+        print("\n")
+        print("❌❌❌ ERREUR LECTURE EXCEL ❌❌❌")
+        print(f"Type : {type(e).__name__}")
+        print(f"Message : {str(e)}")
+
+        messages.error(
+            request,
+            f"Impossible de lire le fichier Excel : {str(e)}"
+        )
+
+        return redirect("produit")
+
+    # ==========================================================
+    # NORMALISATION DES COLONNES
+    # ==========================================================
+
+    df.columns = [
+        str(col).strip().lower()
+        for col in df.columns
+    ]
+
+    print(f"📋 Colonnes normalisées : {list(df.columns)}")
+
+    # ==========================================================
+    # COLONNES OBLIGATOIRES
+    # ==========================================================
+
+    colonnes_obligatoires = [
+        "id",
+        "nom",
+        "pu",
+        "appartement",
+        "code_barre",
+    ]
+
+    colonnes_manquantes = [
+        colonne
+        for colonne in colonnes_obligatoires
+        if colonne not in df.columns
+    ]
+
+    if colonnes_manquantes:
+
+        print("❌ Colonnes Excel manquantes :")
+        print(colonnes_manquantes)
+
+        messages.error(
+            request,
+            "Colonnes Excel manquantes : "
+            + ", ".join(colonnes_manquantes)
+        )
+
+        return redirect("produit")
+
+    # ==========================================================
+    # NETTOYAGE
+    #
+    # IMPORTANT :
+    # code_barre N'EST PLUS dans dropna()
+    # ==========================================================
+
+    df = df.dropna(
+        subset=[
+            "id",
+            "nom",
+            "pu",
+            "appartement",
+        ]
+    )
+
+    print(f"📊 Lignes après nettoyage : {len(df)}")
+
+    # ==========================================================
+    # COMPTEURS
+    # ==========================================================
+
+    total_crees = 0
+    total_modifies = 0
+    total_erreurs = 0
+    total_sans_code_barre = 0
+
+    erreurs = []
+
+    # ==========================================================
+    # TRAITEMENT DES PRODUITS
+    # ==========================================================
+
+    for index, ligne in df.iterrows():
+
+        numero_ligne = index + 2
+
+        print("\n")
+        print("-" * 70)
+        print(f"📌 TRAITEMENT LIGNE EXCEL : {numero_ligne}")
+        print("-" * 70)
+
+        try:
+
+            # ==================================================
+            # ID PRODUIT
+            # ==================================================
+
+            try:
+
+                produit_id = int(
+                    float(
+                        str(ligne["id"]).strip()
+                    )
+                )
+
+            except Exception:
+
+                raise ValueError(
+                    "La colonne 'id' doit contenir un nombre entier."
+                )
+
+            if produit_id <= 0:
+
+                raise ValueError(
+                    "L'ID du produit doit être supérieur à 0."
+                )
+
+            print(f"🆔 Produit ID : {produit_id}")
+
+            # ==================================================
+            # NOM
+            # ==================================================
+
+            nom = str(
+                ligne["nom"]
+            ).strip()
+
+            if not nom:
+
+                raise ValueError(
+                    "Le nom du produit est vide."
+                )
+
+            print(f"📝 Nom : {nom}")
+
+            # ==================================================
+            # PRIX
+            # ==================================================
+
+            try:
+
+                prix = Decimal(
+                    str(ligne["pu"])
+                    .replace(",", ".")
+                    .strip()
+                )
+
+            except (InvalidOperation, ValueError):
+
+                raise ValueError(
+                    "La colonne 'pu' doit contenir un nombre valide."
+                )
+
+            if prix < 0:
+
+                raise ValueError(
+                    "Le prix 'pu' ne peut pas être négatif."
+                )
+
+            prix = prix.quantize(
+                Decimal("0.01")
+            )
+
+            print(f"💰 Prix : {prix}")
+
+            # ==================================================
+            # APPARTEMENT
+            # ==================================================
+
+            try:
+
+                appartement_id = int(
+                    float(
+                        str(
+                            ligne["appartement"]
+                        ).strip()
+                    )
+                )
+
+            except Exception:
+
+                raise ValueError(
+                    "La colonne 'appartement' doit contenir "
+                    "l'ID de l'appartement."
+                )
+
+            if appartement_id <= 0:
+
+                raise ValueError(
+                    "L'ID de l'appartement doit être supérieur à 0."
+                )
+
+            print(
+                f"🏢 Appartement ID : {appartement_id}"
+            )
+
+            appartement = (
+                Appartement.objects
+                .filter(id=appartement_id)
+                .first()
+            )
+
+            if not appartement:
+
+                raise ValueError(
+                    f"L'appartement ID {appartement_id} "
+                    f"n'existe pas dans la base de données."
+                )
+
+            print(
+                f"✅ Appartement trouvé : {appartement.nom}"
+            )
+
+            # ==================================================
+            # CODE BARRE
+            #
+            # IMPORTANT :
+            # Le code-barres est maintenant OPTIONNEL.
+            # ==================================================
+
+            valeur_code_barre = ligne["code_barre"]
+
+            if pd.isna(valeur_code_barre):
+
+                code_barre = None
+
+            else:
+
+                code_barre = str(
+                    valeur_code_barre
+                ).strip()
+
+                # Excel transforme parfois :
+                # 1234567890123
+                # en :
+                # 1234567890123.0
+
+                if code_barre.endswith(".0"):
+
+                    code_barre = code_barre[:-2]
+
+                # Chaîne vide = NULL
+
+                if not code_barre:
+
+                    code_barre = None
+
+            if code_barre is None:
+
+                print(
+                    "🏷️ Code-barre : aucun"
+                )
+
+                total_sans_code_barre += 1
+
+            else:
+
+                if len(code_barre) > 13:
+
+                    raise ValueError(
+                        "Le code_barre ne peut pas dépasser 13 caractères."
+                    )
+
+                print(
+                    f"🏷️ Code-barre : {code_barre}"
+                )
+
+            # ==================================================
+            # RECHERCHE DU PRODUIT
+            # ==================================================
+
+            produit = (
+                Produit.objects
+                .filter(id=produit_id)
+                .first()
+            )
+
+            # ==================================================
+            # VÉRIFICATION CODE-BARRE UNIQUE
+            #
+            # On vérifie UNIQUEMENT si le code-barres
+            # existe réellement.
+            # ==================================================
+
+            if code_barre is not None:
+
+                produit_code_barre = (
+                    Produit.objects
+                    .filter(
+                        code_barre=code_barre
+                    )
+                    .exclude(
+                        id=produit_id
+                    )
+                    .first()
+                )
+
+                if produit_code_barre:
+
+                    raise ValueError(
+                        f"Le code-barre {code_barre} "
+                        f"est déjà utilisé par le produit "
+                        f"ID {produit_code_barre.id}."
+                    )
+
+            # ==================================================
+            # PRODUIT EXISTANT
+            # ==================================================
+
+            if produit:
+
+                print(
+                    f"🔄 Produit existant trouvé : "
+                    f"ID {produit_id}"
+                )
+
+                produit.nom = nom
+                produit.pu = prix
+                produit.appartement = appartement
+                produit.code_barre = code_barre
+
+                # IMPORTANT :
+                # On ne touche PAS à quantite
+                # On ne touche PAS à stock_minimum
+
+                produit.save()
+
+                total_modifies += 1
+
+                print(
+                    f"✅ Produit ID {produit_id} mis à jour."
+                )
+
+            # ==================================================
+            # NOUVEAU PRODUIT
+            # ==================================================
+
+            else:
+
+                print(
+                    f"➕ Création du produit ID {produit_id}"
+                )
+
+                Produit.objects.create(
+
+                    id=produit_id,
+
+                    nom=nom,
+
+                    pu=prix,
+
+                    code_barre=code_barre,
+
+                    quantite=Decimal("0"),
+
+                    stock_minimum=Decimal("0"),
+
+                    appartement=appartement,
+                )
+
+                total_crees += 1
+
+                print(
+                    f"✅ Produit ID {produit_id} créé."
+                )
+
+        except Exception as e:
+
+            total_erreurs += 1
+
+            message_erreur = (
+                f"Ligne {numero_ligne} : {str(e)}"
+            )
+
+            erreurs.append(
+                message_erreur
+            )
+
+            print(
+                f"❌ {message_erreur}"
+            )
+
+    # ==========================================================
+    # SYNCHRONISATION DE LA SÉQUENCE POSTGRESQL
+    # ==========================================================
+
+    if total_crees > 0:
+
+        try:
+
+            max_id = (
+                Produit.objects
+                .aggregate(
+                    max_id=Max("id")
+                )["max_id"]
+            )
+
+            if max_id is not None:
+
+                with connection.cursor() as cursor:
+
+                    cursor.execute(
+                        """
+                        SELECT setval(
+                            pg_get_serial_sequence(%s, 'id'),
+                            %s,
+                            true
+                        )
+                        """,
+                        [
+                            Produit._meta.db_table,
+                            max_id,
+                        ]
+                    )
+
+                print(
+                    f"🔧 Séquence PostgreSQL synchronisée "
+                    f"avec l'ID {max_id}."
+                )
+
+        except Exception as e:
+
+            print(
+                "⚠️ Impossible de synchroniser "
+                f"la séquence PostgreSQL : {str(e)}"
+            )
+
+    # ==========================================================
+    # RÉSULTAT FINAL
+    # ==========================================================
+
+    print("\n")
+    print("=" * 70)
+    print("📊 RÉSULTAT FINAL IMPORT PRODUITS")
+    print("=" * 70)
+
+    print(
+        f"➕ Produits créés        : {total_crees}"
+    )
+
+    print(
+        f"🔄 Produits modifiés     : {total_modifies}"
+    )
+
+    print(
+        f"🏷️ Sans code-barre       : {total_sans_code_barre}"
+    )
+
+    print(
+        f"❌ Erreurs               : {total_erreurs}"
+    )
+
+    print("=" * 70)
+
+    # ==========================================================
+    # MESSAGES DJANGO
+    # ==========================================================
+
+    total_importes = (
+        total_crees + total_modifies
+    )
+
+    if total_importes > 0:
+
+        messages.success(
+            request,
+            f"Import terminé : "
+            f"{total_crees} produit(s) créé(s), "
+            f"{total_modifies} produit(s) mis à jour."
+        )
+
+    if total_sans_code_barre > 0:
+
+        messages.info(
+            request,
+            f"{total_sans_code_barre} produit(s) "
+            f"ont été importé(s) sans code-barres."
+        )
+
+    if total_erreurs > 0:
+
+        for erreur in erreurs[:20]:
+
+            messages.warning(
+                request,
+                erreur
+            )
+
+        if total_erreurs > 20:
+
+            messages.warning(
+                request,
+                f"{total_erreurs - 20} "
+                f"autre(s) erreur(s) non affichée(s). "
+                f"Consultez le terminal."
+            )
+
+    if total_importes == 0 and total_erreurs == 0:
+
+        messages.info(
+            request,
+            "Aucun produit n'a été importé."
+        )
+
+    print(
+        "➡️ Retour vers la liste des produits."
+    )
+
+    print(
+        "🏁 FIN IMPORT PRODUITS"
+    )
+
+    print("\n")
+
+    return redirect("produit")

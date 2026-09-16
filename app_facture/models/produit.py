@@ -21,7 +21,7 @@ class Produit(models.Model):
     code_barre = models.CharField(
         max_length=13,
         unique=True,
-        null=False,
+        null=True,
         blank=False,
         db_index=True
     )
