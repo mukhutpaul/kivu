@@ -1345,7 +1345,6 @@ def log_out(request):
 # ==========================================================
 # FACTURES
 # ==========================================================
-
 @login_required(login_url="sign_in")
 def facture(request):
 
@@ -1367,7 +1366,8 @@ def facture(request):
     )
 
     # ======================================================
-    # FACTURES
+    # FACTURES DU JOUR
+    # Utilisées uniquement pour les statistiques
     # ======================================================
 
     if profile and profile.id == 3:
@@ -1378,6 +1378,7 @@ def facture(request):
             imprimer=True
         )
 
+        # Toutes les factures de cet utilisateur
         queryset = Facture.objects.filter(
             user=request.user
         )
@@ -1389,6 +1390,7 @@ def facture(request):
             imprimer=True
         )
 
+        # Toutes les factures
         queryset = Facture.objects.all()
 
     # ======================================================
@@ -1431,7 +1433,20 @@ def facture(request):
     )["total"]
 
     # ======================================================
+    # TRI
+    # Les factures les plus récentes en premier
+    # ======================================================
+
+    queryset = queryset.order_by("-id")
+
+    # ======================================================
     # RECHERCHE
+    #
+    # Avec recherche :
+    # → recherche dans TOUTES les factures
+    #
+    # Sans recherche :
+    # → seulement les 2 dernières factures pour TEST
     # ======================================================
 
     if recherche:
@@ -1440,16 +1455,19 @@ def facture(request):
             id__icontains=recherche
         )
 
-    # ======================================================
-    # TRI
-    # ======================================================
+    else:
 
-    queryset = queryset.order_by(
-        "-id"
-    )
+        # ==================================================
+        # TEST :
+        # AFFICHER SEULEMENT LES 2 DERNIÈRES FACTURES
+        # ==================================================
+
+        queryset = queryset[:20]
 
     # ======================================================
     # PAGINATION
+    #
+    # 16 factures maximum par page
     # ======================================================
 
     paginator = Paginator(
@@ -1473,20 +1491,28 @@ def facture(request):
 
     ctx = {
 
+        # ==========================
+        # NOMBRE DE FACTURES AFFICHÉES
+        # ==========================
+
         "compte": compte,
+
+        # ==========================
+        # FACTURES
+        # ==========================
 
         "facture": pages,
 
         "lfact": "active",
 
         # ==========================
-        # TTC
+        # CA TTC
         # ==========================
 
         "somme": somme,
 
         # ==========================
-        # HT
+        # CA HT
         # ==========================
 
         "somme_ht": somme_ht,
@@ -1498,7 +1524,7 @@ def facture(request):
         "somme_tva": somme_tva,
 
         # ==========================
-        # NOMBRE FACTURES
+        # NOMBRE DE FACTURES DU JOUR
         # ==========================
 
         "facture_total_jour": nbr,
@@ -1526,12 +1552,16 @@ def facture(request):
         "recherche": recherche,
     }
 
+    # ======================================================
+    # AFFICHAGE
+    # ======================================================
+
     return render(
         request,
         "pages/facture.html",
         ctx
     )
-
+    
 @login_required(login_url="sign_in")
 def addFacture(request):
 
