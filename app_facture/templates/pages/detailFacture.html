@@ -237,77 +237,6 @@
 
 
 /* =========================================================
-   QUANTITÉ APRÈS SCAN
-========================================================= */
-
-.scanner-quantity-box {
-    display: none;
-    margin-top: 14px;
-    padding: 14px;
-    border-radius: 12px;
-    background: rgba(0, 0, 0, 0.16);
-    border: 1px solid rgba(32, 201, 151, 0.18);
-}
-
-.scanner-quantity-row {
-    display: flex;
-    align-items: flex-end;
-    gap: 10px;
-    flex-wrap: wrap;
-}
-
-.scanner-quantity-field {
-    flex: 1;
-    min-width: 180px;
-}
-
-.scanner-quantity-label {
-    display: block;
-    margin-bottom: 6px;
-    color: #ffffff;
-    font-size: 13px;
-    font-weight: 600;
-}
-
-.scanner-quantity-input {
-    width: 100%;
-    min-height: 46px;
-    border-radius: 10px;
-    background: rgba(0, 0, 0, 0.20);
-    border: 1px solid rgba(255, 255, 255, 0.14);
-    color: #ffffff;
-    padding: 8px 12px;
-    font-size: 17px;
-    font-weight: 700;
-    outline: none;
-}
-
-.scanner-quantity-input:focus {
-    border-color: #20c997;
-    box-shadow: 0 0 0 3px rgba(32, 201, 151, 0.12);
-}
-
-.scanner-add-button {
-    min-height: 46px;
-    border-radius: 10px;
-    padding: 8px 20px;
-    font-weight: 700;
-    white-space: nowrap;
-}
-
-.scanner-quantity-help {
-    display: block;
-    margin-top: 7px;
-    color: rgba(255, 255, 255, 0.52);
-    font-size: 11px;
-}
-
-.scanner-quantity-help strong {
-    color: rgba(255, 255, 255, 0.80);
-}
-
-
-/* =========================================================
    SÉPARATEUR
 ========================================================= */
 
@@ -649,6 +578,33 @@
     color: #20c997;
     font-size: 20px;
     font-weight: 800;
+}
+
+
+/* =========================================================
+   EQUIVALENT USD
+========================================================= */
+
+.total-usd {
+    margin-top: 14px;
+    padding-top: 14px;
+    border-top: 1px dashed rgba(255, 255, 255, 0.12);
+}
+
+.total-usd .label {
+    color: rgba(255, 255, 255, 0.62);
+}
+
+.total-usd .value {
+    color: #65e6a7;
+    font-size: 18px;
+    font-weight: 800;
+}
+
+.taux-info {
+    margin-top: 8px;
+    color: rgba(255, 255, 255, 0.45);
+    font-size: 11px;
 }
 
 
@@ -1006,20 +962,6 @@
         font-size: 15px !important;
     }
 
-    .scanner-quantity-row {
-        flex-direction: column;
-        align-items: stretch;
-    }
-
-    .scanner-quantity-field {
-        width: 100%;
-        min-width: 0;
-    }
-
-    .scanner-add-button {
-        width: 100%;
-    }
-
 }
 
 @media (max-width: 480px) {
@@ -1040,9 +982,10 @@
 
 </style>
 
+
 <div class="content-wrapper facture-page">
 
-```
+
 <!-- =====================================================
      MESSAGES DJANGO
 ====================================================== -->
@@ -1245,17 +1188,32 @@
 
                         {% csrf_token %}
 
+
                         <input
                             type="hidden"
                             name="facture"
                             value="{{ sel_facture.id }}"
                         >
 
+
                         <input
                             type="hidden"
                             name="code_barre"
                             id="hiddenBarcode"
                             value=""
+                        >
+
+
+                        <!--
+                            La quantité du scanner est récupérée
+                            depuis la zone quantité du formulaire manuel.
+                        -->
+
+                        <input
+                            type="hidden"
+                            name="qte"
+                            id="scannerQuantity"
+                            value="1"
                         >
 
 
@@ -1285,90 +1243,19 @@
                         </div>
 
 
-                        <!-- =================================================
-                             QUANTITÉ APRÈS SCAN
-                        ================================================== -->
-
-                        <div
-                            id="scannerQuantityBox"
-                            class="scanner-quantity-box"
-                        >
-
-                            <div class="scanner-quantity-row">
-
-                                <div class="scanner-quantity-field">
-
-                                    <label
-                                        for="scannerQuantity"
-                                        class="scanner-quantity-label"
-                                    >
-                                        Quantité à ajouter
-                                    </label>
-
-                                    <input
-                                        type="number"
-                                        id="scannerQuantity"
-                                        name="qte"
-                                        class="scanner-quantity-input"
-                                        value="1"
-                                        min="1"
-                                        step="1"
-                                        inputmode="numeric"
-                                        autocomplete="off"
-                                    >
-
-                                </div>
-
-
-                                <div>
-
-                                    <button
-                                        type="submit"
-                                        id="scannerSubmitButton"
-                                        class="btn btn-success scanner-add-button"
-                                    >
-
-                                        <i class="mdi mdi-cart-plus mr-1"></i>
-
-                                        Ajouter
-
-                                    </button>
-
-                                </div>
-
-                            </div>
-
-
-                            <small class="scanner-quantity-help">
-
-                                <strong>Astuce :</strong>
-
-                                laissez <strong>1</strong> pour une unité,
-
-                                ou saisissez par exemple
-
-                                <strong>20</strong>
-
-                                pour ajouter 20 unités.
-
-                                <br>
-
-                                <strong>Entrée</strong> pour ajouter.
-
-                                <strong>Échap</strong> pour annuler.
-
-                            </small>
-
-                        </div>
-
-
                         <small class="scanner-help">
 
                             <strong>Utilisation :</strong>
 
                             scannez le produit.
 
-                            Après le scan, indiquez la quantité souhaitée.
+                            Le produit est ajouté automatiquement.
+
+                            <br>
+
+                            La quantité utilisée est celle indiquée
+                            dans le champ <strong>Quantité</strong>
+                            ci-dessous.
 
                         </small>
 
@@ -1406,7 +1293,9 @@
                             class="form-label"
                             for="produitFacture"
                         >
+
                             Produit
+
                         </label>
 
 
@@ -1437,13 +1326,19 @@
                     >
 
 
+                    <!-- =================================================
+                         QUANTITÉ COMMUNE
+                    ================================================== -->
+
                     <div class="form-group">
 
                         <label
                             class="form-label"
                             for="quantiteFacture"
                         >
+
                             Quantité
+
                         </label>
 
                         <input
@@ -1678,7 +1573,9 @@
                                 {% if not sel_facture.imprimer %}
 
                                     <th class="text-center">
+
                                         Actions
+
                                     </th>
 
                                 {% endif %}
@@ -1695,24 +1592,36 @@
                             <tr>
 
                                 <td class="product-name">
+
                                     {{ f.produit }}
+
                                 </td>
 
+
                                 <td class="price-text">
+
                                     {{ f.pu }} Fc
+
                                 </td>
+
 
                                 <td>
 
                                     <span class="quantity-badge">
+
                                         {{ f.qte }}
+
                                     </span>
 
                                 </td>
 
+
                                 <td class="price-text">
+
                                     {{ f.total }} Fc
+
                                 </td>
+
 
                                 {% if not sel_facture.imprimer %}
 
@@ -1856,48 +1765,143 @@
 
                 <div class="total-box">
 
+                    <!-- =========================================
+                         TOTAL HT
+                    ========================================== -->
+
                     <div class="total-line">
 
                         <span class="label">
+
                             Total HT
+
                         </span>
 
                         <span class="value">
+
                             {{ total_ht }} Fc
+
                         </span>
 
                     </div>
 
+
+                    <!-- =========================================
+                         TVA
+                    ========================================== -->
 
                     <div class="total-line">
 
                         <span class="label">
+
                             TVA (16 %)
+
                         </span>
 
                         <span class="value total-tva">
+
                             {{ total_tva }} Fc
+
                         </span>
 
                     </div>
 
+
+                    <!-- =========================================
+                         TOTAL TTC
+                    ========================================== -->
 
                     <div class="total-line total-ttc">
 
                         <span class="label">
+
                             TOTAL TTC
+
                         </span>
 
                         <span class="value">
+
                             {{ sommefac }} Fc
+
                         </span>
 
                     </div>
+
+
+                    <!-- =========================================
+                         TAUX DU JOUR
+                    ========================================== -->
+
+                    {% if taux_jour %}
+
+                    <div class="total-line total-usd">
+
+                        <span class="label">
+
+                            <i class="mdi mdi-currency-usd mr-1"></i>
+
+                            Équivalent USD
+
+                        </span>
+
+                        {% if total_usd is not None %}
+
+                        <span class="value">
+
+                            {{ total_usd|floatformat:2 }} USD
+
+                        </span>
+
+                        {% else %}
+
+                        <span class="value text-warning">
+
+                            Non disponible
+
+                        </span>
+
+                        {% endif %}
+
+                    </div>
+
+
+                    <div class="taux-info text-right">
+
+                        1 USD =
+
+                        {{ taux_usd|floatformat:2 }}
+
+                        FC
+
+                    </div>
+
+                    {% else %}
+
+                    <div class="total-line total-usd">
+
+                        <span class="label">
+
+                            <i class="mdi mdi-currency-usd mr-1"></i>
+
+                            Équivalent USD
+
+                        </span>
+
+                        <span class="value text-warning">
+
+                            Taux non défini
+
+                        </span>
+
+                    </div>
+
+                    {% endif %}
 
                 </div>
 
 
                 <div class="action-buttons">
+
 
                     {% if sel_facture.imprimer %}
 
@@ -1952,6 +1956,7 @@
 
 </div>
 
+
 {% else %}
 
 
@@ -1972,11 +1977,15 @@
             </div>
 
             <h4 style="color:#ffffff;">
+
                 Aucun produit dans cette facture
+
             </h4>
 
             <p style="color:rgba(255,255,255,.55);">
+
                 Commencez par ajouter un produit à la facture.
+
             </p>
 
         </div>
@@ -1986,9 +1995,10 @@
 </div>
 
 {% endif %}
-```
+
 
 </div>
+
 
 <!-- =========================================================
      MODAL MANAGER
@@ -2000,138 +2010,143 @@
     aria-hidden="true"
 >
 
-```
-<div
-    class="manager-modal"
-    role="dialog"
-    aria-modal="true"
-    aria-labelledby="managerModalTitle"
->
+    <div
+        class="manager-modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="managerModalTitle"
+    >
 
-    <div class="manager-modal-header">
+        <div class="manager-modal-header">
 
-        <div class="manager-modal-icon">
+            <div class="manager-modal-icon">
 
-            <i class="mdi mdi-shield-lock-outline"></i>
+                <i class="mdi mdi-shield-lock-outline"></i>
+
+            </div>
+
+            <div>
+
+                <h4
+                    id="managerModalTitle"
+                    class="manager-modal-title"
+                >
+
+                    Autorisation du manager
+
+                </h4>
+
+                <p class="manager-modal-subtitle">
+
+                    Autorisation requise pour supprimer ce produit
+
+                </p>
+
+            </div>
 
         </div>
 
-        <div>
 
-            <h4
-                id="managerModalTitle"
-                class="manager-modal-title"
+        <div class="manager-modal-body">
+
+            <div class="manager-modal-product">
+
+                Produit à supprimer :
+
+                <strong id="managerProductName"></strong>
+
+            </div>
+
+
+            <label
+                for="managerPassword"
+                class="manager-password-label"
             >
-                Autorisation du manager
-            </h4>
 
-            <p class="manager-modal-subtitle">
-                Autorisation requise pour supprimer ce produit
-            </p>
+                Mot de passe du manager
 
-        </div>
-
-    </div>
+            </label>
 
 
-    <div class="manager-modal-body">
+            <div class="manager-password-wrapper">
 
-        <div class="manager-modal-product">
+                <input
+                    type="password"
+                    id="managerPassword"
+                    class="manager-password-input"
+                    placeholder="Entrez le mot de passe"
+                    autocomplete="off"
+                >
 
-            Produit à supprimer :
+                <button
+                    type="button"
+                    id="managerPasswordToggle"
+                    class="manager-password-toggle"
+                    title="Afficher le mot de passe"
+                    aria-label="Afficher le mot de passe"
+                >
 
-            <strong id="managerProductName"></strong>
+                    <i class="mdi mdi-eye-outline"></i>
 
-        </div>
+                </button>
 
-
-        <label
-            for="managerPassword"
-            class="manager-password-label"
-        >
-            Mot de passe du manager
-        </label>
+            </div>
 
 
-        <div class="manager-password-wrapper">
-
-            <input
-                type="password"
-                id="managerPassword"
-                class="manager-password-input"
-                placeholder="Entrez le mot de passe"
-                autocomplete="off"
+            <div
+                id="managerModalError"
+                class="manager-modal-error"
             >
+
+                <i class="mdi mdi-alert-circle-outline mr-1"></i>
+
+                <span id="managerModalErrorText"></span>
+
+            </div>
+
+        </div>
+
+
+        <div class="manager-modal-footer">
 
             <button
                 type="button"
-                id="managerPasswordToggle"
-                class="manager-password-toggle"
-                title="Afficher le mot de passe"
-                aria-label="Afficher le mot de passe"
+                class="manager-btn-cancel"
+                onclick="fermerModalSuppression()"
             >
 
-                <i class="mdi mdi-eye-outline"></i>
+                <i class="mdi mdi-close mr-1"></i>
+
+                Annuler
+
+            </button>
+
+
+            <button
+                type="button"
+                id="managerConfirmButton"
+                class="manager-btn-confirm"
+                onclick="confirmerSuppression()"
+            >
+
+                <span class="manager-loading">
+
+                    <i class="mdi mdi-loading mdi-spin"></i>
+
+                </span>
+
+                <i class="mdi mdi-delete-outline mr-1"></i>
+
+                Autoriser la suppression
 
             </button>
 
         </div>
 
-
-        <div
-            id="managerModalError"
-            class="manager-modal-error"
-        >
-
-            <i class="mdi mdi-alert-circle-outline mr-1"></i>
-
-            <span id="managerModalErrorText"></span>
-
-        </div>
-
-    </div>
-
-
-    <div class="manager-modal-footer">
-
-        <button
-            type="button"
-            class="manager-btn-cancel"
-            onclick="fermerModalSuppression()"
-        >
-
-            <i class="mdi mdi-close mr-1"></i>
-
-            Annuler
-
-        </button>
-
-
-        <button
-            type="button"
-            id="managerConfirmButton"
-            class="manager-btn-confirm"
-            onclick="confirmerSuppression()"
-        >
-
-            <span class="manager-loading">
-
-                <i class="mdi mdi-loading mdi-spin"></i>
-
-            </span>
-
-            <i class="mdi mdi-delete-outline mr-1"></i>
-
-            Autoriser la suppression
-
-        </button>
-
     </div>
 
 </div>
-```
 
-</div>
 
 <script>
 
@@ -2378,7 +2393,7 @@
 
 
 /* =========================================================
-   SCANNER CODE-BARRES + QUANTITÉ
+   SCANNER CODE-BARRES RAPIDE
 ========================================================= */
 
 (function () {
@@ -2406,21 +2421,15 @@
             );
 
 
-        const quantityBox =
-            document.getElementById(
-                "scannerQuantityBox"
-            );
-
-
-        const quantityInput =
+        const scannerQuantity =
             document.getElementById(
                 "scannerQuantity"
             );
 
 
-        const submitButton =
+        const manualQuantity =
             document.getElementById(
-                "scannerSubmitButton"
+                "quantiteFacture"
             );
 
 
@@ -2428,9 +2437,8 @@
             !scanner ||
             !scannerForm ||
             !hiddenBarcode ||
-            !quantityBox ||
-            !quantityInput ||
-            !submitButton
+            !scannerQuantity ||
+            !manualQuantity
         ) {
 
             return;
@@ -2471,48 +2479,43 @@
 
 
         /* =====================================================
-           ANNULER LE SCAN
+           RÉCUPÉRER LA QUANTITÉ MANUELLE
         ====================================================== */
 
-        function annulerScan() {
+        function recupererQuantite() {
 
-            scanEnCours = false;
-
-
-            scanner.value = "";
-
-            hiddenBarcode.value = "";
-
-            quantityInput.value = "1";
+            const valeur =
+                String(
+                    manualQuantity.value || ""
+                ).trim();
 
 
-            quantityBox.style.display = "none";
+            const nombre =
+                parseInt(
+                    valeur,
+                    10
+                );
 
 
-            scanner.disabled = false;
+            /*
+             * Si la quantité est supérieure à 1,
+             * on utilise cette quantité.
+             *
+             * Sinon :
+             * 1 par défaut.
+             */
 
-            scanner.classList.remove(
-                "scanner-disabled"
-            );
+            if (
+                !isNaN(nombre) &&
+                nombre > 1
+            ) {
+
+                return nombre;
+
+            }
 
 
-            submitButton.disabled = false;
-
-            submitButton.innerHTML =
-                `
-                <i class="mdi mdi-cart-plus mr-1"></i>
-                Ajouter
-                `;
-
-
-            setTimeout(
-                function () {
-
-                    focusScanner();
-
-                },
-                50
-            );
+            return 1;
 
         }
 
@@ -2522,12 +2525,15 @@
         ====================================================== */
 
         setTimeout(
+
             function () {
 
                 focusScanner();
 
             },
+
             250
+
         );
 
 
@@ -2536,14 +2542,25 @@
         ====================================================== */
 
         scanner.addEventListener(
+
             "keydown",
+
             function (event) {
+
 
                 if (event.key === "Escape") {
 
                     event.preventDefault();
 
-                    annulerScan();
+                    scanner.value = "";
+
+                    hiddenBarcode.value = "";
+
+                    scannerQuantity.value = "1";
+
+                    scanEnCours = false;
+
+                    focusScanner();
 
                     return;
 
@@ -2551,7 +2568,9 @@
 
 
                 if (event.key !== "Enter") {
+
                     return;
+
                 }
 
 
@@ -2559,7 +2578,9 @@
 
 
                 if (scanEnCours) {
+
                     return;
+
                 }
 
 
@@ -2581,10 +2602,9 @@
 
 
                 /*
-                 * IMPORTANT :
-                 *
                  * Le code-barres reste une chaîne.
-                 * On ne fait jamais Number(),
+                 *
+                 * Aucun Number(),
                  * parseInt() ou parseFloat()
                  * sur le code-barres.
                  */
@@ -2592,12 +2612,25 @@
                 hiddenBarcode.value = code;
 
 
+                /*
+                 * Récupérer la quantité
+                 * depuis le champ manuel.
+                 */
+
+                const quantite =
+                    recupererQuantite();
+
+
+                scannerQuantity.value =
+                    String(quantite);
+
+
                 scanEnCours = true;
 
 
                 /*
-                 * Bloquer le scanner pendant
-                 * la sélection de quantité.
+                 * Bloquer le scanner
+                 * pendant l'envoi.
                  */
 
                 scanner.disabled = true;
@@ -2608,46 +2641,36 @@
 
 
                 /*
-                 * Afficher la quantité.
+                 * Changer visuellement
+                 * le placeholder.
                  */
 
-                quantityBox.style.display =
-                    "block";
+                scanner.placeholder =
+                    "Ajout du produit...";
 
 
                 /*
-                 * Quantité par défaut.
+                 * Soumission immédiate.
+                 *
+                 * Aucun affichage de quantité.
+                 * Aucun clic supplémentaire.
                  */
 
-                quantityInput.value = "1";
-
-
-                /*
-                 * Donner immédiatement le focus
-                 * à la quantité.
-                 */
-
-                setTimeout(
-                    function () {
-
-                        quantityInput.focus();
-
-                        quantityInput.select();
-
-                    },
-                    80
-                );
+                scannerForm.submit();
 
             }
+
         );
 
 
         /* =====================================================
-           NETTOYAGE CODE SCANNER
+           NETTOYAGE DU SCANNER
         ====================================================== */
 
         scanner.addEventListener(
+
             "input",
+
             function () {
 
                 this.value =
@@ -2657,6 +2680,7 @@
                     );
 
             }
+
         );
 
 
@@ -2665,7 +2689,9 @@
         ====================================================== */
 
         scanner.addEventListener(
+
             "click",
+
             function () {
 
                 if (!scanEnCours) {
@@ -2675,15 +2701,18 @@
                 }
 
             }
+
         );
 
 
         /* =====================================================
-           QUANTITÉ
+           QUANTITÉ MANUELLE
         ====================================================== */
 
-        quantityInput.addEventListener(
+        manualQuantity.addEventListener(
+
             "input",
+
             function () {
 
                 let valeur =
@@ -2719,137 +2748,36 @@
                 }
 
 
-                this.value = String(nombre);
+                this.value =
+                    String(nombre);
 
             }
+
         );
 
 
         /* =====================================================
-           CLAVIER QUANTITÉ
+           QUANTITÉ MANUELLE : ENTRÉE
         ====================================================== */
 
-        quantityInput.addEventListener(
+        manualQuantity.addEventListener(
+
             "keydown",
+
             function (event) {
 
-                if (event.key === "Escape") {
-
-                    event.preventDefault();
-
-                    annulerScan();
-
+                if (event.key !== "Enter") {
                     return;
-
-                }
-
-
-                if (event.key === "Enter") {
-
-                    event.preventDefault();
-
-
-                    if (
-                        !this.value ||
-                        parseInt(
-                            this.value,
-                            10
-                        ) < 1
-                    ) {
-
-                        this.value = "1";
-
-                    }
-
-
-                    /*
-                     * Utilisation du bouton submit
-                     * afin de passer par la validation
-                     * normale du formulaire.
-                     */
-
-                    submitButton.click();
-
-                }
-
-            }
-        );
-
-
-        /* =====================================================
-           SUBMIT
-        ====================================================== */
-
-        scannerForm.addEventListener(
-            "submit",
-            function (event) {
-
-                if (!scanEnCours) {
-
-                    event.preventDefault();
-
-                    return;
-
-                }
-
-
-                const quantite =
-                    parseInt(
-                        quantityInput.value,
-                        10
-                    );
-
-
-                if (
-                    isNaN(quantite) ||
-                    quantite < 1
-                ) {
-
-                    event.preventDefault();
-
-
-                    quantityInput.value = "1";
-
-                    quantityInput.focus();
-
-                    quantityInput.select();
-
-                    return;
-
-                }
-
-
-                if (!hiddenBarcode.value.trim()) {
-
-                    event.preventDefault();
-
-                    annulerScan();
-
-                    return;
-
                 }
 
 
                 /*
-                 * Bloquer le bouton afin d'éviter
-                 * deux envois simultanés.
+                 * On laisse le formulaire
+                 * manuel fonctionner normalement.
                  */
 
-                submitButton.disabled = true;
-
-
-                submitButton.innerHTML =
-                    `
-                    <i class="mdi mdi-loading mdi-spin mr-1"></i>
-                    Ajout...
-                    `;
-
-
-                scanner.disabled = true;
-
-                quantityInput.disabled = true;
-
             }
+
         );
 
     }
@@ -2950,6 +2878,7 @@ function ouvrirModalSuppression(
 
     confirmButton.disabled = false;
 
+
     confirmButton.classList.remove(
         "loading"
     );
@@ -2967,12 +2896,15 @@ function ouvrirModalSuppression(
 
 
     setTimeout(
+
         function () {
 
             passwordInput.focus();
 
         },
+
         100
+
     );
 
 }
@@ -3041,6 +2973,7 @@ function fermerModalSuppression() {
 
     confirmButton.disabled = false;
 
+
     confirmButton.classList.remove(
         "loading"
     );
@@ -3061,12 +2994,15 @@ function fermerModalSuppression() {
     ) {
 
         setTimeout(
+
             function () {
 
                 scanner.focus();
 
             },
+
             100
+
         );
 
     }
@@ -3092,7 +3028,9 @@ function fermerModalSuppression() {
 
 
     toggle.addEventListener(
+
         "click",
+
         function () {
 
             const input =
@@ -3149,6 +3087,7 @@ function fermerModalSuppression() {
             }
 
         }
+
     );
 
 })();
@@ -3172,7 +3111,9 @@ function fermerModalSuppression() {
 
 
     passwordInput.addEventListener(
+
         "keydown",
+
         function (event) {
 
             if (event.key === "Enter") {
@@ -3193,6 +3134,7 @@ function fermerModalSuppression() {
             }
 
         }
+
     );
 
 })();
@@ -3216,7 +3158,9 @@ function fermerModalSuppression() {
 
 
     overlay.addEventListener(
+
         "click",
+
         function (event) {
 
             if (event.target === this) {
@@ -3226,6 +3170,7 @@ function fermerModalSuppression() {
             }
 
         }
+
     );
 
 })();
@@ -3351,8 +3296,11 @@ function confirmerSuppression() {
 
 
     fetch(
+
         url,
+
         {
+
             method: "POST",
 
             body: formData,
@@ -3363,10 +3311,13 @@ function confirmerSuppression() {
                 "X-Requested-With":
                     "XMLHttpRequest"
             }
+
         }
+
     )
 
     .then(
+
         function (response) {
 
             if (!response.ok) {
@@ -3382,9 +3333,11 @@ function confirmerSuppression() {
             return response.json();
 
         }
+
     )
 
     .then(
+
         function (data) {
 
             if (!data.success) {
@@ -3439,9 +3392,11 @@ function confirmerSuppression() {
             window.location.reload();
 
         }
+
     )
 
     .catch(
+
         function (error) {
 
             console.error(
@@ -3479,6 +3434,7 @@ function confirmerSuppression() {
             }
 
         }
+
     );
 
 }
@@ -3522,6 +3478,7 @@ function imprimerFacture(id) {
         function () {
 
             setTimeout(
+
                 function () {
 
                     fenetre.focus();
@@ -3529,7 +3486,9 @@ function imprimerFacture(id) {
                     fenetre.print();
 
                 },
+
                 500
+
             );
 
         };
@@ -3668,12 +3627,15 @@ function afficherErreurImpression() {
 
 
     closeButton.addEventListener(
+
         "click",
+
         function () {
 
             alert.remove();
 
         }
+
     );
 
 

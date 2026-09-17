@@ -1,517 +1,726 @@
+
 {% load static %}
 
 <!DOCTYPE html>
 <html lang="fr">
+
   <head>
+
     <meta charset="UTF-8" />
 
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta
+      http-equiv="X-UA-Compatible"
+      content="IE=edge"
+    />
 
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0"
+    />
 
     <title>Tanganika Futur - Facture</title>
 
     <style>
+
       /* =====================================================
-                       FORMAT TICKET A7
-                    ===================================================== */
+                         FORMAT TICKET A7
+                      ===================================================== */
+
       @page {
         size: A7 portrait;
         margin: 4mm;
       }
-      
+
       * {
         box-sizing: border-box;
       }
-      
+
       body {
         font-family: Arial, Helvetica, sans-serif;
-        font-size: 7px;
+        font-size: 8px;
         margin: 0;
         padding: 0;
         color: #111;
         background: #fff;
       }
-      
+
       .ticket {
         width: 100%;
         margin: 0 auto;
       }
-      
+
       .center {
         text-align: center;
       }
-      
+
+
       /* =====================================================
-                       EN-TÊTE ENTREPRISE
-                    ===================================================== */
-      
+                         EN-TÊTE ENTREPRISE
+                      ===================================================== */
+
       .entete {
         text-align: center;
         line-height: 1.15;
       }
-      
+
       .titre-entreprise {
         font-family: 'Times New Roman', Times, serif;
-        font-size: 11px;
+        font-size: 12px;
         font-weight: bold;
         letter-spacing: 0.2px;
         margin-bottom: 2px;
         text-transform: uppercase;
       }
-      
+
       .ligne-entreprise {
         font-family: 'Times New Roman', Times, serif;
-        font-size: 6.8px;
+        font-size: 7.5px;
         font-weight: bold;
         line-height: 1.35;
         white-space: nowrap;
       }
-      
+
       .ligne-entreprise.adresse {
-        font-size: 7px;
+        font-size: 7.5px;
         margin-top: 1px;
       }
-      
+
       .ligne-entreprise.telephone {
         margin-top: 1px;
       }
-      
+
       .fac-numero {
         font-family: 'Times New Roman', Times, serif;
-        font-size: 7px;
+        font-size: 8px;
         font-weight: bold;
         margin-top: 1px;
       }
-      
+
+
       /* =====================================================
-                       SEPARATEURS
-                    ===================================================== */
-      
+                         SEPARATEURS
+                      ===================================================== */
+
       .separator {
         border-top: 1px dashed #222;
         margin: 4px 0;
         height: 1px;
       }
-      
+
       .separator-double {
         border-top: 1.5px solid #111;
         border-bottom: 1.5px solid #111;
         margin: 5px 0;
         height: 4px;
       }
-      
+
+
       /* =====================================================
-                       INFORMATIONS FACTURE
-                    ===================================================== */
-      
+                         INFORMATIONS FACTURE
+                      ===================================================== */
+
       .infos-facture {
         width: 100%;
         border-collapse: collapse;
-        font-size: 6.5px;
+        font-size: 7.5px;
         margin-bottom: 2px;
       }
-      
+
       .infos-facture td {
         padding: 1px 0;
         vertical-align: top;
       }
-      
+
       .infos-facture .label {
         font-weight: bold;
       }
-      
+
       .infos-facture .right {
         text-align: right;
       }
-      
+
+
       /* =====================================================
-                       TABLE PRODUITS
-                    ===================================================== */
-      
+                         TABLE PRODUITS
+                      ===================================================== */
+
       .produits {
         width: 100%;
         border-collapse: collapse;
         table-layout: fixed;
-        font-size: 6.5px;
+        font-size: 7.5px;
       }
-      
+
       .produits th {
         font-weight: bold;
         border-bottom: 1px solid #111;
         padding: 2px 1px;
         text-align: left;
       }
-      
+
       .produits td {
-        padding: 2px 1px;
+        padding: 2.5px 1px;
         vertical-align: top;
         border-bottom: 1px dotted #bbb;
         word-wrap: break-word;
       }
-      
+
+
       /* =====================================================
-                       LARGEUR COLONNES
-                    ===================================================== */
-      
+                         LARGEUR COLONNES
+                      ===================================================== */
+
       .produits th:nth-child(1),
       .produits td:nth-child(1) {
         width: 43%;
         text-align: left;
       }
-      
+
       .produits th:nth-child(2),
       .produits td:nth-child(2) {
         width: 21%;
         text-align: right;
       }
-      
+
       .produits th:nth-child(3),
       .produits td:nth-child(3) {
         width: 13%;
         text-align: center;
       }
-      
+
       .produits th:nth-child(4),
       .produits td:nth-child(4) {
         width: 23%;
         text-align: right;
       }
-      
+
       .produit-nom {
         font-weight: 500;
       }
-      
+
       .prix {
         white-space: nowrap;
       }
-      
+
+
       /* =====================================================
-                       TOTAUX
-                    ===================================================== */
-      
+                         TOTAUX
+                      ===================================================== */
+
       .totaux {
         width: 100%;
         border-collapse: collapse;
         margin-top: 3px;
-        font-size: 7px;
+        font-size: 8px;
       }
-      
+
       .totaux td {
         padding: 1.5px 0;
       }
-      
+
       .totaux .libelle {
         text-align: left;
       }
-      
+
       .totaux .montant {
         text-align: right;
         font-weight: bold;
         white-space: nowrap;
       }
-      
+
       .total-ttc {
         border-top: 1px solid #111;
         border-bottom: 1px solid #111;
-        font-size: 9px;
+        font-size: 10px;
         font-weight: bold;
         padding-top: 3px !important;
         padding-bottom: 3px !important;
       }
+
+
+      /* =====================================================
+                         LOGO
+                      ===================================================== */
+
       .logo {
-        width: 18px;
-        height: 18px;
+        width: 20px;
+        height: 20px;
         object-fit: contain;
         display: block;
         margin: 0 auto 2px auto;
       }
-      
+
+
       /* =====================================================
-                       OPERATEUR + QR CODE
-                    ===================================================== */
-      
+                         OPERATEUR + QR CODE
+                      ===================================================== */
+
       .bas-ticket {
         width: 100%;
         border-collapse: collapse;
         margin-top: 5px;
       }
-      
+
       .bas-ticket td {
         vertical-align: middle;
       }
-      
+
       .operateur {
-        font-size: 6.5px;
+        font-size: 7.5px;
         line-height: 1.35;
       }
-      
+
       .operateur-nom {
-        font-size: 7px;
+        font-size: 8px;
         font-weight: bold;
       }
-      
+
       .qrcode-container {
         text-align: right;
       }
-      
+
       .qrcode {
-        width: 35px;
-        height: 35px;
+        width: 38px;
+        height: 38px;
         display: block;
         margin-left: auto;
         object-fit: contain;
       }
-      
+
+
       /* =====================================================
-                       FOOTER
-                    ===================================================== */
-      
+                         FOOTER
+                      ===================================================== */
+
       .footer {
         width: 100%;
         text-align: center;
         margin-top: 5px;
         padding-top: 4px;
-        font-size: 5.5px;
+        font-size: 6.5px;
         line-height: 1.3;
       }
-      
+
       .footer-separator {
         border-top: 1px solid #111;
         margin: 5px 0 0 0;
         height: 1px;
       }
-      
+
       .footer-company {
-        font-size: 6.5px;
+        font-size: 7px;
         font-weight: bold;
         letter-spacing: 0.3px;
         margin-bottom: 2px;
       }
-      
+
       .footer-contact {
-        font-size: 5.5px;
+        font-size: 6.5px;
         margin-top: 1px;
       }
-      
+
       .footer-contact strong {
         font-weight: bold;
       }
-      
+
       .footer-address {
         margin-top: 2px;
         padding-top: 2px;
-        font-size: 5.5px;
+        font-size: 6.5px;
       }
-      
+
       .footer-thanks {
         margin-top: 3px;
-        font-size: 6.5px;
+        font-size: 7px;
         font-weight: bold;
       }
-      
+
       .footer-legal {
         margin-top: 1px;
-        font-size: 5px;
+        font-size: 6px;
         line-height: 1.2;
       }
+
     </style>
+
   </head>
 
+
   <body>
+
     <div class="ticket">
-      <!--   =====================================================
-         EN-TÊTE TANGANYIKA FUTUR
-    =====================================================   -->
+
+
+      <!-- =====================================================
+           EN-TÊTE TANGANYIKA FUTUR
+      ===================================================== -->
 
       <div class="entete">
-        <img src="app_facture/static/images/tanganika.jpg" class="logo" alt="Tanganika Futur" />
 
-        <div class="titre-entreprise">TANGANYIKA FUTUR SA</div>
+        <img
+          src="{% static 'images/tanganika.jpg' %}"
+          class="logo"
+          alt="Tanganika Futur"
+        />
 
-        <div class="ligne-entreprise">RCCM : CD/KLM/RCCM/14-B/130</div>
+        <div class="titre-entreprise">
+          TANGANYIKA FUTUR SA
+        </div>
 
-        <div class="ligne-entreprise">ID NAT : 6-83-N60741G</div>
-        <div class="ligne-entreprise">N° Impôt : A2035150 F</div>
+        <div class="ligne-entreprise">
+          RCCM : CD/KLM/RCCM/14-B/130
+        </div>
 
-        <div class="ligne-entreprise adresse">22,Av. De la paix 1 Q.kituku / Av. Lukuga</div>
+        <div class="ligne-entreprise">
+          ID NAT : 6-83-N60741G
+        </div>
 
-        <div class="ligne-entreprise telephone">Tél : (+243) 81333083</div>
+        <div class="ligne-entreprise">
+          N° Impôt : A2035150 F
+        </div>
 
-        <div class="fac-numero">Fac N° : {{ facture.id }}</div>
+        <div class="ligne-entreprise adresse">
+          22,Av. De la paix 1 Q.kituku / Av. Lukuga
+        </div>
+
+        <div class="ligne-entreprise telephone">
+          Tél : (+243) 81333083
+        </div>
+
+        <div class="fac-numero">
+          Fac N° : {{ facture.id }}
+        </div>
+
       </div>
 
-      <!--   =====================================================
-         DOUBLE BARRE SOUS L'EN-TÊTE
-    =====================================================   -->
+
+      <!-- =====================================================
+           DOUBLE BARRE SOUS L'EN-TÊTE
+      ===================================================== -->
 
       <div class="separator-double"></div>
 
-      <!--   =====================================================
-         INFORMATIONS FACTURE
-    =====================================================   -->
+
+      <!-- =====================================================
+           INFORMATIONS FACTURE
+      ===================================================== -->
 
       <table class="infos-facture">
-        {% comment %} <tr>
+
+        {% comment %}
+        <tr>
+
           <td>
-            <span class="label">Facture :</span>
+
+            <span class="label">
+              Facture :
+            </span>
 
             #{{ facture.id }}
+
           </td>
 
           <td class="right">
+
             {% if facture.numero %}
+
               {{ facture.numero }}
+
             {% else %}
+
               Vente
+
             {% endif %}
+
           </td>
-        </tr> {% endcomment %}
+
+        </tr>
+        {% endcomment %}
+
 
         <tr>
+
           <td>
-            <span class="label">Date :</span>
+
+            <span class="label">
+              Date :
+            </span>
 
             {% if date_impression %}
+
               {{ date_impression|date:'d/m/Y' }}
+
             {% else %}
+
               -
+
             {% endif %}
+
           </td>
+
 
           <td class="right">
+
             {% if facture.client %}
+
               {{ facture.client }}
+
             {% endif %}
+
           </td>
+
         </tr>
+
       </table>
+
 
       <div class="separator"></div>
 
-      <!--   =====================================================
-         PRODUITS
-    =====================================================   -->
+
+      <!-- =====================================================
+           PRODUITS
+      ===================================================== -->
 
       <table class="produits">
+
         <thead>
+
           <tr>
-            <th>Produit</th>
 
-            <th>PU TTC</th>
+            <th>
+              Produit
+            </th>
 
-            <th>Qté</th>
+            <th>
+              PU TTC
+            </th>
 
-            <th>Total</th>
+            <th>
+              Qté
+            </th>
+
+            <th>
+              Total
+            </th>
+
           </tr>
+
         </thead>
 
+
         <tbody>
+
           {% for f in list_facture %}
+
             <tr>
-              <td class="produit-nom">{{ f.produit }}</td>
 
-              <td class="prix">{{ f.pu }} Fc</td>
+              <td class="produit-nom">
+                {{ f.produit }}
+              </td>
 
-              <td>{{ f.qte }}</td>
 
               <td class="prix">
-                <strong>{{ f.total }} Fc</strong>
+                {{ f.pu }} Fc
               </td>
+
+
+              <td>
+                {{ f.qte }}
+              </td>
+
+
+              <td class="prix">
+
+                <strong>
+                  {{ f.total }} Fc
+                </strong>
+
+              </td>
+
             </tr>
+
           {% empty %}
+
             <tr>
-              <td colspan="4" class="center">Aucun produit</td>
+
+              <td
+                colspan="4"
+                class="center"
+              >
+                Aucun produit
+              </td>
+
             </tr>
+
           {% endfor %}
+
         </tbody>
+
       </table>
+
 
       <div class="separator"></div>
 
-      <!--   =====================================================
-         TOTAUX
-    =====================================================   -->
+
+      <!-- =====================================================
+           TOTAUX
+      ===================================================== -->
 
       <table class="totaux">
-        <tr>
-          <td class="libelle">Total HT</td>
-
-          <td class="montant">{{ total_ht }} Fc</td>
-        </tr>
 
         <tr>
-          <td class="libelle">TVA (16%)</td>
 
-          <td class="montant">{{ total_tva }} Fc</td>
+          <td class="libelle">
+            Total HT
+          </td>
+
+          <td class="montant">
+            {{ total_ht }} Fc
+          </td>
+
         </tr>
+
 
         <tr>
-          <td class="libelle total-ttc">TOTAL TTC</td>
 
-          <td class="montant total-ttc">{{ sommefac }} Fc</td>
+          <td class="libelle">
+            TVA (16%)
+          </td>
+
+          <td class="montant">
+            {{ total_tva }} Fc
+          </td>
+
         </tr>
+
+
+        <tr>
+
+          <td class="libelle total-ttc">
+            TOTAL TTC
+          </td>
+
+          <td class="montant total-ttc">
+            {{ sommefac }} Fc
+          </td>
+
+        </tr>
+
       </table>
 
-      <!--   =====================================================
-         OPERATEUR + QR CODE
-    =====================================================   -->
+
+      <!-- =====================================================
+           OPERATEUR + QR CODE
+      ===================================================== -->
 
       <table class="bas-ticket">
+
         <tr>
+
           <td class="operateur">
-            <strong>Opérateur</strong>
+
+            <strong>
+              Opérateur
+            </strong>
 
             <br />
 
-            <span class="operateur-nom">{{ noms }}</span>
+            <span class="operateur-nom">
+              {{ noms }}
+            </span>
 
             <br />
 
-            <span>Vente validée</span>
+            <span>
+              Vente validée
+            </span>
+
           </td>
+
 
           <td class="qrcode-container">
+
             {% if img %}
-              <img src="mediafiles/facture/{{ img }}" class="qrcode" alt="QR Code" />
+
+              <img
+                src="mediafiles/facture/{{ img }}"
+                class="qrcode"
+                alt="QR Code"
+              />
+
             {% endif %}
+
           </td>
+
         </tr>
+
       </table>
 
-      <!--   =====================================================
-         BARRE AVANT FOOTER
-    =====================================================   -->
+
+      <!-- =====================================================
+           BARRE AVANT FOOTER
+      ===================================================== -->
 
       <div class="footer-separator"></div>
 
-      <!--   =====================================================
-         FOOTER / CONTACTS
-    =====================================================   -->
+
+      <!-- =====================================================
+           FOOTER / CONTACTS
+      ===================================================== -->
 
       <div class="footer">
+
         <div class="footer-contact">
-          <strong>Tél :</strong>
+
+          <strong>
+            Tél :
+          </strong>
 
           +243 821 041 414
+
         </div>
+
 
         <div class="footer-contact">
-          <strong>Email :</strong>
+
+          <strong>
+            Email :
+          </strong>
 
           tanganyikafuture.sa@gmail.com
+
         </div>
+
 
         <div class="footer-address">
-          <strong>Site :</strong>
+
+          <strong>
+            Site :
+          </strong>
 
           www.tanganyikafuture.com
+
         </div>
 
-        <div class="footer-thanks">Merci pour votre confiance !</div>
 
-        <div class="footer-legal">Conservez ce reçu comme preuve de votre achat.</div>
+        <div class="footer-thanks">
+
+          Merci pour votre confiance !
+
+        </div>
+
+
+        <div class="footer-legal">
+
+          Conservez ce reçu comme preuve de votre achat.
+
+        </div>
+
       </div>
+
     </div>
+
   </body>
+
 </html>
+

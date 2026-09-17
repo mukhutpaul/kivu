@@ -5,3 +5,4 @@ from .Detail_facture import *
 from .facture import *
 from .produit import *
 from .user import *
+from .taux import *

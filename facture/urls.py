@@ -149,6 +149,12 @@ path(
     views.modifierMotDePasseUser,
     name="modifierMotDePasseUser",
 ),
+
+ path(
+        "enregistrer-taux-jour/",
+        views.enregistrerTauxJour,
+        name="enregistrerTauxJour"
+    ),
     
      
 ]

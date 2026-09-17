@@ -26,6 +26,7 @@ import datetime
 import qrcode
 import json
 
+from app_facture.models.taux import TauxJour
 from app_facture.utils import render_to_pdf
 
 from app_facture.models import Detail_facture
@@ -1352,6 +1353,10 @@ def facture(request):
 
     datej = datetime.date.today()
 
+    # ======================================================
+    # RECHERCHE
+    # ======================================================
+
     recherche = request.GET.get(
         "q",
         request.POST.get("rech", "")
@@ -1368,8 +1373,30 @@ def facture(request):
     )
 
     # ======================================================
+    # AUTORISATION MODIFICATION TAUX
+    # ======================================================
+
+    peut_modifier_taux = (
+        request.user.is_superuser
+        or request.user.is_staff
+        or request.user.groups.filter(
+            name__in=[
+                "Manager",
+                "Proprietaire"
+            ]
+        ).exists()
+    )
+
+    # ======================================================
+    # TAUX DU JOUR
+    # ======================================================
+
+    taux_jour = TauxJour.objects.filter(
+        date=datej
+    ).first()
+
+    # ======================================================
     # FACTURES DU JOUR
-    # Utilisées uniquement pour les statistiques
     # ======================================================
 
     if profile and profile.id == 3:
@@ -1380,7 +1407,6 @@ def facture(request):
             imprimer=True
         )
 
-        # Toutes les factures de cet utilisateur
         queryset = Facture.objects.filter(
             user=request.user
         )
@@ -1392,7 +1418,6 @@ def facture(request):
             imprimer=True
         )
 
-        # Toutes les factures
         queryset = Facture.objects.all()
 
     # ======================================================
@@ -1436,19 +1461,14 @@ def facture(request):
 
     # ======================================================
     # TRI
-    # Les factures les plus récentes en premier
     # ======================================================
 
-    queryset = queryset.order_by("-id")
+    queryset = queryset.order_by(
+        "-id"
+    )
 
     # ======================================================
     # RECHERCHE
-    #
-    # Avec recherche :
-    # → recherche dans TOUTES les factures
-    #
-    # Sans recherche :
-    # → seulement les 2 dernières factures pour TEST
     # ======================================================
 
     if recherche:
@@ -1459,17 +1479,10 @@ def facture(request):
 
     else:
 
-        # ==================================================
-        # TEST :
-        # AFFICHER SEULEMENT LES 2 DERNIÈRES FACTURES
-        # ==================================================
-
         queryset = queryset[:20]
 
     # ======================================================
     # PAGINATION
-    #
-    # 16 factures maximum par page
     # ======================================================
 
     paginator = Paginator(
@@ -1488,70 +1501,94 @@ def facture(request):
     compte = paginator.count
 
     # ======================================================
+    # CALCUL DE L'ÉQUIVALENT USD
+    # ======================================================
+
+    if taux_jour:
+
+        taux_usd = Decimal(
+            taux_jour.taux_usd
+        )
+
+        if taux_usd > Decimal("0"):
+
+            for f in pages:
+
+                if f.total_ttc is not None:
+
+                    f.total_usd = (
+                        Decimal(f.total_ttc)
+                        / taux_usd
+                    ).quantize(
+                        Decimal("0.01"),
+                        rounding=ROUND_HALF_UP
+                    )
+
+                else:
+
+                    f.total_usd = Decimal(
+                        "0.00"
+                    )
+
+        else:
+
+            for f in pages:
+
+                f.total_usd = None
+
+    else:
+
+        for f in pages:
+
+            f.total_usd = None
+
+    # ======================================================
     # CONTEXT
     # ======================================================
 
     ctx = {
 
-        # ==========================
-        # NOMBRE DE FACTURES AFFICHÉES
-        # ==========================
-
         "compte": compte,
-
-        # ==========================
-        # FACTURES
-        # ==========================
 
         "facture": pages,
 
         "lfact": "active",
 
-        # ==========================
-        # CA TTC
-        # ==========================
-
         "somme": somme,
-
-        # ==========================
-        # CA HT
-        # ==========================
 
         "somme_ht": somme_ht,
 
-        # ==========================
-        # TVA
-        # ==========================
-
         "somme_tva": somme_tva,
 
-        # ==========================
-        # NOMBRE DE FACTURES DU JOUR
-        # ==========================
-
         "facture_total_jour": nbr,
-
-        # ==========================
-        # UTILISATEUR
-        # ==========================
 
         "noms": request.user.noms,
 
         "profile": profile,
 
-        # ==========================
-        # PAGINATION
-        # ==========================
-
         "pages": pages,
 
         "page_obj": pages,
 
-        # ==========================
-        # RECHERCHE
-        # ==========================
-
         "recherche": recherche,
+
+        # ==================================================
+        # TAUX DU JOUR
+        # ==================================================
+
+        "taux_jour": taux_jour,
+
+        "taux_usd": (
+            taux_jour.taux_usd
+            if taux_jour
+            else None
+        ),
+
+        # ==================================================
+        # AUTORISATION MODIFICATION TAUX
+        # ==================================================
+
+        "peut_modifier_taux": peut_modifier_taux,
     }
 
     # ======================================================
@@ -1563,7 +1600,7 @@ def facture(request):
         "pages/facture.html",
         ctx
     )
-    
+        
 @login_required(login_url="sign_in")
 def addFacture(request):
 
@@ -1627,6 +1664,12 @@ def addFacture(request):
 def detaiFacture(request, id):
 
     # ======================================================
+    # DATE DU JOUR
+    # ======================================================
+
+    datej = datetime.date.today()
+
+    # ======================================================
     # FACTURE
     # ======================================================
 
@@ -1653,6 +1696,31 @@ def detaiFacture(request, id):
     ).strip()
 
     # ======================================================
+    # TAUX DU JOUR
+    # ======================================================
+
+    taux_jour = TauxJour.objects.filter(
+        date=datej
+    ).first()
+
+    # ======================================================
+    # TAUX USD
+    # ======================================================
+
+    taux_usd = None
+
+    if taux_jour:
+
+        taux_usd = (
+            taux_jour.taux_usd
+            or Decimal("0.00")
+        )
+
+        if taux_usd <= Decimal("0"):
+
+            taux_usd = None
+
+    # ======================================================
     # DÉTAILS DE LA FACTURE
     #
     # IMPORTANT :
@@ -1661,7 +1729,9 @@ def detaiFacture(request, id):
 
     queryset = (
         Detail_facture.objects
-        .filter(facture_id=sel_facture.id)
+        .filter(
+            facture_id=sel_facture.id
+        )
         .select_related("produit")
         .only(
             "id",
@@ -1685,16 +1755,22 @@ def detaiFacture(request, id):
     if recherche:
 
         queryset = queryset.filter(
-            Q(produit__nom__icontains=recherche)
+            Q(
+                produit__nom__icontains=recherche
+            )
             |
-            Q(produit__code_barre__icontains=recherche)
+            Q(
+                produit__code_barre__icontains=recherche
+            )
         )
 
     # ======================================================
     # TRI
     # ======================================================
 
-    queryset = queryset.order_by("-id")
+    queryset = queryset.order_by(
+        "-id"
+    )
 
     # ======================================================
     # PAGINATION
@@ -1825,7 +1901,6 @@ def detaiFacture(request, id):
     # TOTAUX FACTURE
     #
     # On utilise les valeurs déjà enregistrées dans Facture.
-    # Pas besoin de recalculer toute la facture.
     # ======================================================
 
     total_ht = (
@@ -1853,48 +1928,100 @@ def detaiFacture(request, id):
     )
 
     # ======================================================
+    # ÉQUIVALENT USD
+    # ======================================================
+
+    total_usd = None
+
+    if taux_usd:
+
+        total_usd = (
+            total_ttc / taux_usd
+        ).quantize(
+            Decimal("0.01"),
+            rounding=ROUND_HALF_UP
+        )
+
+    # ======================================================
     # CONTEXT
     # ======================================================
 
     ctx = {
 
-        # Facture
+        # ==================================================
+        # FACTURE
+        # ==================================================
+
         "sel_facture": sel_facture,
 
-        # Détails
+        # ==================================================
+        # DÉTAILS
+        # ==================================================
+
         "list_facture": data_liste,
 
-        # Menu
+        # ==================================================
+        # MENU
+        # ==================================================
+
         "Llist_facture": "active",
 
         # ==================================================
-        # IMPORTANT
+        # PRODUITS
         #
-        # On NE CHARGE PLUS les 10 500 produits ici.
-        #
-        # La recherche produit doit maintenant être faite
-        # en AJAX / Select2.
+        # On NE CHARGE PAS les 10 500 produits ici.
         # ==================================================
 
         "liste_produit": [],
 
-        # Totaux
+        # ==================================================
+        # TOTAUX
+        # ==================================================
+
         "total_ht": total_ht,
+
         "total_tva": total_tva,
+
         "sommefac": total_ttc,
 
         "somme_ht": total_ht,
+
         "somme_tva": total_tva,
+
         "somme_ttc": total_ttc,
 
-        # Informations
+        # ==================================================
+        # TAUX DU JOUR
+        # ==================================================
+
+        "taux_jour": taux_jour,
+
+        "taux_usd": taux_usd,
+
+        # ==================================================
+        # ÉQUIVALENT USD DE LA FACTURE
+        # ==================================================
+
+        "total_usd": total_usd,
+
+        # ==================================================
+        # INFORMATIONS
+        # ==================================================
+
         "compte": compte,
 
-        # Pagination
+        # ==================================================
+        # PAGINATION
+        # ==================================================
+
         "pages": list_facture,
+
         "page_obj": list_facture,
 
-        # Recherche
+        # ==================================================
+        # RECHERCHE
+        # ==================================================
+
         "recherche": recherche,
     }
 
@@ -1907,7 +2034,6 @@ def detaiFacture(request, id):
         "pages/detailFacture.html",
         ctx
     )
-
 
 User = get_user_model()
 
@@ -6712,3 +6838,178 @@ def modifierMotDePasseUser(request, user_id):
     )
 
     return redirect("users")
+
+
+
+
+@login_required(login_url="sign_in")
+def enregistrerTauxJour(request):
+
+    # ======================================================
+    # VÉRIFIER LA MÉTHODE
+    # ======================================================
+
+    if request.method != "POST":
+
+        return JsonResponse(
+            {
+                "success": False,
+                "message": "Méthode non autorisée."
+            },
+            status=405
+        )
+
+
+    # ======================================================
+    # RÉCUPÉRER LE TAUX
+    # ======================================================
+
+    taux_saisi = request.POST.get(
+        "taux_usd",
+        ""
+    ).strip()
+
+
+    # ======================================================
+    # VÉRIFIER SI LE TAUX EST FOURNI
+    # ======================================================
+
+    if not taux_saisi:
+
+        return JsonResponse(
+            {
+                "success": False,
+                "message": "Veuillez renseigner le taux du jour."
+            },
+            status=400
+        )
+
+
+    # ======================================================
+    # NORMALISER LA VALEUR
+    # ======================================================
+
+    taux_saisi = taux_saisi.replace(
+        " ",
+        ""
+    ).replace(
+        ",",
+        "."
+    )
+
+
+    # ======================================================
+    # CONVERTIR EN DECIMAL
+    # ======================================================
+
+    try:
+
+        taux = Decimal(
+            taux_saisi
+        )
+
+    except (
+        InvalidOperation,
+        ValueError,
+        TypeError
+    ):
+
+        return JsonResponse(
+            {
+                "success": False,
+                "message": "Le taux saisi est invalide."
+            },
+            status=400
+        )
+
+
+    # ======================================================
+    # VÉRIFIER QUE LE TAUX EST POSITIF
+    # ======================================================
+
+    if taux <= Decimal("0"):
+
+        return JsonResponse(
+            {
+                "success": False,
+                "message": "Le taux doit être supérieur à zéro."
+            },
+            status=400
+        )
+
+
+    # ======================================================
+    # ARRONDIR À 2 DÉCIMALES
+    # ======================================================
+
+    taux = taux.quantize(
+        Decimal("0.01")
+    )
+
+
+    # ======================================================
+    # DATE DU JOUR
+    # ======================================================
+
+    date_jour = timezone.localdate()
+
+
+    # ======================================================
+    # ENREGISTRER / METTRE À JOUR
+    # ======================================================
+
+    try:
+
+        taux_objet, created = TauxJour.objects.update_or_create(
+
+            date=date_jour,
+
+            defaults={
+                "taux_usd": taux
+            }
+
+        )
+
+    except Exception as e:
+
+        return JsonResponse(
+            {
+                "success": False,
+                "message":
+                    "Erreur lors de l'enregistrement : "
+                    + str(e)
+            },
+            status=500
+        )
+
+
+    # ======================================================
+    # RÉPONSE
+    # ======================================================
+
+    if created:
+
+        message = (
+            "Taux du jour enregistré avec succès."
+        )
+
+    else:
+
+        message = (
+            "Taux du jour mis à jour avec succès."
+        )
+
+
+    return JsonResponse(
+        {
+            "success": True,
+            "message": message,
+            "date": date_jour.strftime(
+                "%d/%m/%Y"
+            ),
+            "taux": str(
+                taux_objet.taux_usd
+            ),
+            "created": created
+        }
+    )
