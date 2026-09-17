@@ -16,6 +16,8 @@ from django.db import transaction
 from django.db.models import Sum, Avg, Count, Q, F
 from django.db.models.functions import Coalesce
 from django.utils import timezone
+from django.http import JsonResponse
+from django.db.models import Q
 
 from decimal import Decimal, InvalidOperation, ROUND_HALF_UP
 
@@ -6480,3 +6482,58 @@ def approvisionnement(request):
 
 
     return redirect("appartement")
+
+
+@login_required(login_url="sign_in")
+def rechercherProduitFacture(request):
+
+    terme = request.GET.get("q", "").strip()
+
+    # Rien à rechercher
+    if not terme:
+        return JsonResponse({
+            "results": []
+        })
+
+    # Évite les recherches trop courtes
+    if len(terme) < 2:
+        return JsonResponse({
+            "results": []
+        })
+
+    produits = (
+        Produit.objects
+        .filter(
+            Q(nom__icontains=terme)
+            |
+            Q(code_barre__icontains=terme)
+        )
+        .only(
+            "id",
+            "nom",
+            "code_barre",
+            "pu",
+            "quantite",
+        )
+        .order_by("nom")[:30]
+    )
+
+    results = []
+
+    for produit in produits:
+
+        code = produit.code_barre or ""
+
+        if code:
+            texte = f"{produit.nom} — {code}"
+        else:
+            texte = produit.nom
+
+        results.append({
+            "id": produit.id,
+            "text": texte,
+        })
+
+    return JsonResponse({
+        "results": results
+    })

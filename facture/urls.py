@@ -137,6 +137,12 @@ path(
     views.approvisionnement,
     name="approvisionnement"
 ),
+
+path(
+    "rechercher-produit-facture/",
+    views.rechercherProduitFacture,
+    name="rechercherProduitFacture"
+),
     
      
 ]

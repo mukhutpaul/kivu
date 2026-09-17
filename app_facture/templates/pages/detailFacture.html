@@ -5,48 +5,47 @@
 
 <style>
 
-  /* =========================================================
-       PAGE FACTURE
-  ========================================================== */
+/* =========================================================
+   PAGE FACTURE
+========================================================= */
 
-  .facture-page {
+.facture-page {
     padding-bottom: 30px;
-  }
+}
 
-  .facture-page .card {
+.facture-page .card {
     border: none;
     border-radius: 16px;
     overflow: hidden;
     box-shadow: 0 6px 24px rgba(0, 0, 0, 0.18);
-  }
+}
 
+/* =========================================================
+   EN-TÊTE
+========================================================= */
 
-  /* =========================================================
-       EN-TÊTE FACTURE
-  ========================================================== */
-
-  .facture-header {
+.facture-header {
     background: linear-gradient(135deg, #0d6efd, #4f46e5);
     border-radius: 16px !important;
-  }
+}
 
-  .facture-header .card-body {
+.facture-header .card-body {
     padding: 24px;
-  }
+}
 
-  .facture-header h4 {
+.facture-header h4 {
     color: #ffffff;
     font-size: 22px;
     font-weight: 700;
     margin-bottom: 5px;
-  }
+}
 
-  .facture-header p {
+.facture-header p {
     color: rgba(255, 255, 255, 0.78);
     margin-bottom: 0;
-  }
+}
 
-  .facture-number {
+.facture-number {
     display: inline-flex;
     align-items: center;
     padding: 8px 14px;
@@ -55,112 +54,109 @@
     color: #ffffff;
     font-weight: 700;
     font-size: 13px;
-  }
+}
 
+/* =========================================================
+   TITRES
+========================================================= */
 
-  /* =========================================================
-       TITRES
-  ========================================================== */
-
-  .section-title {
+.section-title {
     color: #ffffff;
     font-size: 18px;
     font-weight: 700;
     margin-bottom: 20px;
-  }
+}
 
-  .section-title i {
+.section-title i {
     margin-right: 8px;
-  }
+}
 
-  .section-description {
+.section-description {
     color: rgba(255, 255, 255, 0.55);
     font-size: 13px;
-  }
+}
 
+/* =========================================================
+   FORMULAIRE
+========================================================= */
 
-  /* =========================================================
-       FORMULAIRE
-  ========================================================== */
-
-  .form-label {
+.form-label {
     color: #ffffff !important;
     font-weight: 600;
     font-size: 13px;
     margin-bottom: 8px;
-  }
+}
 
-  .form-control {
+.form-control {
     color: #ffffff !important;
     border-radius: 11px;
     min-height: 46px;
-  }
+}
 
-  .form-control:focus {
+.form-control:focus {
     color: #ffffff !important;
-  }
+}
 
-  .form-control::placeholder {
+.form-control::placeholder {
     color: rgba(255, 255, 255, 0.55) !important;
     opacity: 1;
-  }
+}
 
-  select.form-control {
+select.form-control {
     color: #ffffff !important;
-  }
+}
 
-  select.form-control option {
+select.form-control option {
     color: #ffffff !important;
     background-color: #252525 !important;
-  }
+}
 
-  .quantity-input {
+.quantity-input {
     max-width: 180px;
-  }
+}
 
-  .btn-valider {
+.btn-valider {
     min-height: 46px;
     padding: 8px 22px;
     font-weight: 600;
     border-radius: 11px;
     transition: all 0.2s ease;
-  }
+}
 
-  .btn-valider:hover {
+.btn-valider:hover {
     transform: translateY(-2px);
     box-shadow: 0 6px 16px rgba(13, 110, 253, 0.25);
-  }
+}
 
+/* =========================================================
+   SCANNER
+========================================================= */
 
-  /* =========================================================
-       SCANNER CODE-BARRES
-  ========================================================== */
-
-  .scanner-box {
+.scanner-box {
     position: relative;
     margin-bottom: 25px;
     padding: 18px;
     border-radius: 14px;
 
     background:
-      linear-gradient(
-        135deg,
-        rgba(13, 110, 253, 0.12),
-        rgba(79, 70, 229, 0.08)
-      );
+        linear-gradient(
+            135deg,
+            rgba(13, 110, 253, 0.12),
+            rgba(79, 70, 229, 0.08)
+        );
 
     border: 1px solid rgba(13, 110, 253, 0.25);
-  }
+}
 
-  .scanner-header {
+.scanner-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 12px;
     margin-bottom: 13px;
-  }
+}
 
-  .scanner-title {
+.scanner-title {
     display: flex;
     align-items: center;
     gap: 8px;
@@ -168,14 +164,14 @@
     color: #ffffff;
     font-size: 16px;
     font-weight: 700;
-  }
+}
 
-  .scanner-title i {
+.scanner-title i {
     color: #20c997;
     font-size: 22px;
-  }
+}
 
-  .scanner-status {
+.scanner-status {
     display: inline-flex;
     align-items: center;
     gap: 6px;
@@ -188,17 +184,17 @@
 
     font-size: 11px;
     font-weight: 700;
-  }
+}
 
-  .scanner-status i {
+.scanner-status i {
     font-size: 10px;
-  }
+}
 
-  .scanner-input-wrapper {
+.scanner-input-wrapper {
     position: relative;
-  }
+}
 
-  .scanner-input {
+.scanner-input {
     width: 100%;
     min-height: 52px !important;
 
@@ -219,21 +215,21 @@
     letter-spacing: 1px;
 
     outline: none;
-  }
+}
 
-  .scanner-input:focus {
+.scanner-input:focus {
     border-color: #0d6efd !important;
 
     box-shadow:
-      0 0 0 3px rgba(13, 110, 253, 0.15),
-      0 6px 18px rgba(13, 110, 253, 0.10);
-  }
+        0 0 0 3px rgba(13, 110, 253, 0.15),
+        0 6px 18px rgba(13, 110, 253, 0.10);
+}
 
-  .scanner-input::placeholder {
+.scanner-input::placeholder {
     color: rgba(255, 255, 255, 0.45) !important;
-  }
+}
 
-  .scanner-input-icon {
+.scanner-input-icon {
     position: absolute;
 
     left: 15px;
@@ -248,9 +244,9 @@
     z-index: 3;
 
     pointer-events: none;
-  }
+}
 
-  .scanner-help {
+.scanner-help {
     display: block;
 
     margin-top: 9px;
@@ -258,22 +254,21 @@
     color: rgba(255, 255, 255, 0.52);
 
     font-size: 12px;
-  }
+}
 
-  .scanner-help strong {
+.scanner-help strong {
     color: rgba(255, 255, 255, 0.80);
-  }
+}
 
-  .scanner-disabled {
+.scanner-disabled {
     opacity: 0.55;
-  }
+}
 
+/* =========================================================
+   SÉPARATEUR
+========================================================= */
 
-  /* =========================================================
-       SÉPARATEUR
-  ========================================================== */
-
-  .scanner-separator {
+.scanner-separator {
     display: flex;
     align-items: center;
 
@@ -286,10 +281,10 @@
 
     text-transform: uppercase;
     letter-spacing: 0.8px;
-  }
+}
 
-  .scanner-separator::before,
-  .scanner-separator::after {
+.scanner-separator::before,
+.scanner-separator::after {
     content: "";
 
     flex: 1;
@@ -297,86 +292,175 @@
     height: 1px;
 
     background: rgba(255, 255, 255, 0.08);
-  }
+}
 
-  .scanner-separator span {
+.scanner-separator span {
     padding: 0 12px;
-  }
+}
 
+/* =========================================================
+   SELECT2
+========================================================= */
 
-  /* =========================================================
-       SELECT2
-  ========================================================== */
-
-  .select2-container {
+#produitFacture + .select2-container {
     width: 100% !important;
-  }
+}
 
-  .select2-container--default .select2-selection--single {
+.select2-container {
+    width: 100% !important;
+}
+
+.select2-container--default
+.select2-selection--single {
     height: 46px !important;
+
     border-radius: 11px !important;
+
     background-color: transparent !important;
-    border-color: rgba(255, 255, 255, 0.15) !important;
-  }
 
-  .select2-container--default
-  .select2-selection--single
-  .select2-selection__rendered {
+    border: 1px solid rgba(255, 255, 255, 0.15) !important;
+}
+
+.select2-container--default
+.select2-selection--single
+.select2-selection__rendered {
     line-height: 46px !important;
+
     color: #ffffff !important;
+
     padding-left: 14px !important;
-  }
+    padding-right: 35px !important;
+}
 
-  .select2-container--default
-  .select2-selection--single
-  .select2-selection__placeholder {
+.select2-container--default
+.select2-selection--single
+.select2-selection__placeholder {
     color: rgba(255, 255, 255, 0.55) !important;
-  }
+}
 
-  .select2-container--default
-  .select2-selection--single
-  .select2-selection__arrow {
+.select2-container--default
+.select2-selection--single
+.select2-selection__arrow {
     height: 46px !important;
-  }
+    right: 8px;
+}
 
-  .select2-container--default
-  .select2-selection--single
-  .select2-selection__arrow b {
-    border-color: #ffffff transparent transparent transparent !important;
-  }
+.select2-container--default
+.select2-selection--single
+.select2-selection__arrow b {
+    border-color:
+        #ffffff
+        transparent
+        transparent
+        transparent !important;
+}
 
-  .select2-dropdown {
+.select2-dropdown {
     background: #252525 !important;
-    border-color: rgba(255, 255, 255, 0.15) !important;
-  }
 
-  .select2-container--default .select2-results__option {
-    color: #ffffff !important;
+    border: 1px solid rgba(255, 255, 255, 0.15) !important;
+
+    border-radius: 10px !important;
+
+    overflow: hidden !important;
+
+    z-index: 999999 !important;
+}
+
+.select2-search--dropdown {
+    padding: 8px !important;
     background: #252525 !important;
-  }
+}
 
-  .select2-container--default
-  .select2-results__option--highlighted {
-    color: #ffffff !important;
-  }
+.select2-search--dropdown
+.select2-search__field {
+    width: 100% !important;
 
-  .select2-search--dropdown .select2-search__field {
+    min-height: 40px !important;
+
+    padding: 8px 10px !important;
+
     color: #ffffff !important;
+
     background: #333333 !important;
-    border-color: rgba(255, 255, 255, 0.15) !important;
-  }
 
+    border: 1px solid rgba(255, 255, 255, 0.15) !important;
 
-  /* =========================================================
-       RECHERCHE
-  ========================================================== */
+    border-radius: 8px !important;
 
-  .search-wrapper {
+    outline: none !important;
+}
+
+.select2-search--dropdown
+.select2-search__field:focus {
+    border-color: #0d6efd !important;
+
+    box-shadow:
+        0 0 0 2px
+        rgba(13, 110, 253, 0.15) !important;
+}
+
+.select2-container--default
+.select2-results__option {
+    color: #ffffff !important;
+
+    background: #252525 !important;
+
+    padding: 11px 13px !important;
+
+    font-size: 13px !important;
+}
+
+.select2-container--default
+.select2-results__option--highlighted {
+    color: #ffffff !important;
+
+    background: #0d6efd !important;
+}
+
+.select2-container--default
+.select2-results__option[aria-selected="true"] {
+    background: rgba(13, 110, 253, 0.25) !important;
+
+    color: #ffffff !important;
+}
+
+.select2-results__message {
+    color: rgba(255, 255, 255, 0.65) !important;
+
+    background: #252525 !important;
+
+    padding: 12px !important;
+}
+
+.select2-container--default
+.select2-results__option--loading-results {
+    color: rgba(255, 255, 255, 0.65) !important;
+
+    background: #252525 !important;
+}
+
+.select2-container--default
+.select2-selection--single
+.select2-selection__clear {
+    color: #ffffff !important;
+
+    font-size: 20px !important;
+
+    margin-right: 8px !important;
+}
+
+/* =========================================================
+   RECHERCHE
+========================================================= */
+
+.search-wrapper {
     position: relative;
-  }
+}
 
-  .search-wrapper > i {
+.search-wrapper > i {
     position: absolute;
+
     left: 15px;
     top: 50%;
 
@@ -387,36 +471,37 @@
     font-size: 20px;
 
     z-index: 2;
-  }
+}
 
-  .search-wrapper .form-control {
+.search-wrapper .form-control {
     padding-left: 45px;
-  }
+}
 
+/* =========================================================
+   TABLE
+========================================================= */
 
-  /* =========================================================
-       TABLE PRODUITS
-  ========================================================== */
-
-  .table-responsive {
+.table-responsive {
     border-radius: 12px;
     overflow-x: auto;
-  }
+}
 
-  .facture-table {
+.facture-table {
     width: 100%;
+
     margin-bottom: 0;
 
     border-collapse: separate;
     border-spacing: 0;
-  }
+}
 
-  .facture-table thead th {
+.facture-table thead th {
     color: rgba(255, 255, 255, 0.72) !important;
 
     background: rgba(255, 255, 255, 0.045);
 
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+    border-bottom:
+        1px solid rgba(255, 255, 255, 0.1) !important;
 
     font-size: 11px;
 
@@ -427,39 +512,40 @@
     padding: 14px 10px;
 
     white-space: nowrap;
-  }
+}
 
-  .facture-table tbody td {
+.facture-table tbody td {
     color: #ffffff !important;
 
-    border-top: 1px solid rgba(255, 255, 255, 0.06) !important;
+    border-top:
+        1px solid rgba(255, 255, 255, 0.06) !important;
 
     padding: 13px 10px;
 
     vertical-align: middle;
 
     font-size: 13px;
-  }
+}
 
-  .facture-table tbody tr {
+.facture-table tbody tr {
     transition: all 0.2s ease;
-  }
+}
 
-  .facture-table tbody tr:hover {
+.facture-table tbody tr:hover {
     background: rgba(255, 255, 255, 0.035);
-  }
+}
 
-  .product-name {
+.product-name {
     font-weight: 600;
     color: #ffffff !important;
-  }
+}
 
-  .price-text {
+.price-text {
     color: #20c997 !important;
     font-weight: 700;
-  }
+}
 
-  .quantity-badge {
+.quantity-badge {
     display: inline-block;
 
     padding: 5px 9px;
@@ -471,9 +557,9 @@
     color: #ffffff;
 
     font-weight: 600;
-  }
+}
 
-  .action-delete {
+.action-delete {
     display: inline-flex;
 
     align-items: center;
@@ -495,22 +581,21 @@
     cursor: pointer;
 
     transition: all 0.2s ease;
-  }
+}
 
-  .action-delete:hover {
+.action-delete:hover {
     color: #ffffff;
 
     background: #dc3545;
 
     transform: translateY(-2px);
-  }
+}
 
+/* =========================================================
+   PAGINATION
+========================================================= */
 
-  /* =========================================================
-       PAGINATION
-  ========================================================== */
-
-  .pagination-wrapper {
+.pagination-wrapper {
     margin-top: 20px;
 
     padding: 14px;
@@ -520,48 +605,48 @@
     background: rgba(255, 255, 255, 0.035);
 
     border: 1px solid rgba(255, 255, 255, 0.07);
-  }
+}
 
-  .page-info {
+.page-info {
     color: #ffffff;
 
     font-weight: 600;
 
     font-size: 13px;
-  }
+}
 
-  .count-badge {
+.count-badge {
     padding: 7px 11px;
 
     border-radius: 20px;
-  }
+}
 
+/* =========================================================
+   TOTALS
+========================================================= */
 
-  /* =========================================================
-       TOTALS
-  ========================================================== */
-
-  .total-card {
+.total-card {
     position: relative;
-  }
+}
 
-  .total-card .card-body {
+.total-card .card-body {
     padding: 25px;
-  }
+}
 
-  .total-box {
+.total-box {
     padding: 18px;
 
     border-radius: 13px;
 
     background: rgba(255, 255, 255, 0.035);
 
-    border: 1px solid rgba(255, 255, 255, 0.07);
+    border:
+        1px solid rgba(255, 255, 255, 0.07);
 
     margin-bottom: 20px;
-  }
+}
 
-  .total-line {
+.total-line {
     display: flex;
 
     justify-content: space-between;
@@ -572,89 +657,88 @@
     color: #ffffff;
 
     font-size: 14px;
-  }
+}
 
-  .total-line .label {
+.total-line .label {
     color: rgba(255, 255, 255, 0.62);
-  }
+}
 
-  .total-line .value {
+.total-line .value {
     font-weight: 700;
 
     color: #ffffff;
-  }
+}
 
-  .total-tva {
+.total-tva {
     color: #ffc107 !important;
-  }
+}
 
-  .total-ttc {
-    border-top: 1px solid rgba(255, 255, 255, 0.15);
+.total-ttc {
+    border-top:
+        1px solid rgba(255, 255, 255, 0.15);
 
     margin-top: 7px;
 
     padding-top: 14px;
-  }
+}
 
-  .total-ttc .label {
+.total-ttc .label {
     color: #ffffff;
 
     font-size: 16px;
 
     font-weight: 700;
-  }
+}
 
-  .total-ttc .value {
+.total-ttc .value {
     color: #20c997;
 
     font-size: 20px;
 
     font-weight: 800;
-  }
+}
 
+/* =========================================================
+   BOUTONS
+========================================================= */
 
-  /* =========================================================
-       BOUTONS ACTION
-  ========================================================== */
-
-  .action-buttons {
+.action-buttons {
     display: flex;
 
     flex-wrap: wrap;
 
     gap: 10px;
-  }
+}
 
-  .action-buttons .btn {
+.action-buttons .btn {
     border-radius: 10px;
 
     font-weight: 600;
-  }
+}
 
-  .btn-print {
+.btn-print {
     flex: 1;
 
     min-width: 170px;
-  }
+}
 
-  .btn-factures {
+.btn-factures {
     flex: 1;
 
     min-width: 170px;
-  }
+}
 
+/* =========================================================
+   ETAT VIDE
+========================================================= */
 
-  /* =========================================================
-       ETAT VIDE
-  ========================================================== */
-
-  .empty-card {
+.empty-card {
     text-align: center;
 
     padding: 40px 20px;
-  }
+}
 
-  .empty-icon {
+.empty-icon {
     width: 65px;
     height: 65px;
 
@@ -668,24 +752,23 @@
     justify-content: center;
 
     background: rgba(13, 110, 253, 0.12);
-  }
+}
 
-  .empty-icon i {
+.empty-icon i {
     color: #ffffff;
 
     font-size: 32px;
-  }
+}
 
+/* =========================================================
+   MESSAGES
+========================================================= */
 
-  /* =========================================================
-       MESSAGES DJANGO
-  ========================================================== */
-
-  .messages-container {
+.messages-container {
     margin-bottom: 20px;
-  }
+}
 
-  .messages-container .alert {
+.messages-container .alert {
     border: none;
 
     border-radius: 12px;
@@ -698,57 +781,57 @@
 
     font-weight: 600;
 
-    box-shadow: 0 5px 18px rgba(0, 0, 0, 0.15);
-  }
+    box-shadow:
+        0 5px 18px rgba(0, 0, 0, 0.15);
+}
 
-  .messages-container .alert-danger {
+.messages-container .alert-danger {
     background: rgba(220, 53, 69, 0.15);
 
     border-left: 4px solid #dc3545;
 
     color: #ff8d98;
-  }
+}
 
-  .messages-container .alert-success {
+.messages-container .alert-success {
     background: rgba(25, 135, 84, 0.15);
 
     border-left: 4px solid #198754;
 
     color: #65e6a7;
-  }
+}
 
-  .messages-container .alert-warning {
+.messages-container .alert-warning {
     background: rgba(255, 193, 7, 0.15);
 
     border-left: 4px solid #ffc107;
 
     color: #ffd866;
-  }
+}
 
-  .messages-container .alert-info {
+.messages-container .alert-info {
     background: rgba(13, 202, 240, 0.15);
 
     border-left: 4px solid #0dcaf0;
 
     color: #73e8ff;
-  }
+}
 
-  .messages-container .close {
+.messages-container .close {
     color: #fff;
 
     opacity: 0.8;
-  }
+}
 
-  .messages-container .close:hover {
+.messages-container .close:hover {
     opacity: 1;
-  }
+}
 
+/* =========================================================
+   MODAL MANAGER
+========================================================= */
 
-  /* =========================================================
-       MODAL AUTORISATION MANAGER
-  ========================================================== */
-
-  .manager-modal-overlay {
+.manager-modal-overlay {
     position: fixed;
 
     inset: 0;
@@ -765,47 +848,53 @@
     background: rgba(0, 0, 0, 0.72);
 
     backdrop-filter: blur(5px);
-  }
+}
 
-  .manager-modal-overlay.active {
+.manager-modal-overlay.active {
     display: flex;
-  }
+}
 
-  .manager-modal {
+.manager-modal {
     width: 100%;
 
     max-width: 450px;
 
     background: #252525;
 
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border:
+        1px solid rgba(255, 255, 255, 0.1);
 
     border-radius: 18px;
 
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    box-shadow:
+        0 20px 60px rgba(0, 0, 0, 0.5);
 
     overflow: hidden;
 
-    animation: managerModalShow 0.2s ease-out;
-  }
+    animation:
+        managerModalShow 0.2s ease-out;
+}
 
-  @keyframes managerModalShow {
+@keyframes managerModalShow {
 
     from {
-      opacity: 0;
+        opacity: 0;
 
-      transform: translateY(-15px) scale(0.97);
+        transform:
+            translateY(-15px)
+            scale(0.97);
     }
 
     to {
-      opacity: 1;
+        opacity: 1;
 
-      transform: translateY(0) scale(1);
+        transform:
+            translateY(0)
+            scale(1);
     }
+}
 
-  }
-
-  .manager-modal-header {
+.manager-modal-header {
     display: flex;
 
     align-items: center;
@@ -814,12 +903,18 @@
 
     padding: 20px 22px;
 
-    background: linear-gradient(135deg, #343434, #252525);
+    background:
+        linear-gradient(
+            135deg,
+            #343434,
+            #252525
+        );
 
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-  }
+    border-bottom:
+        1px solid rgba(255, 255, 255, 0.08);
+}
 
-  .manager-modal-icon {
+.manager-modal-icon {
     width: 48px;
     height: 48px;
 
@@ -832,14 +927,15 @@
 
     border-radius: 13px;
 
-    background: rgba(255, 193, 7, 0.13);
+    background:
+        rgba(255, 193, 7, 0.13);
 
     color: #ffc107;
 
     font-size: 25px;
-  }
+}
 
-  .manager-modal-title {
+.manager-modal-title {
     margin: 0;
 
     color: #ffffff;
@@ -847,41 +943,43 @@
     font-size: 18px;
 
     font-weight: 700;
-  }
+}
 
-  .manager-modal-subtitle {
+.manager-modal-subtitle {
     margin: 3px 0 0;
 
     color: rgba(255, 255, 255, 0.55);
 
     font-size: 12px;
-  }
+}
 
-  .manager-modal-body {
+.manager-modal-body {
     padding: 22px;
-  }
+}
 
-  .manager-modal-product {
+.manager-modal-product {
     padding: 12px 14px;
 
     margin-bottom: 18px;
 
     border-radius: 10px;
 
-    background: rgba(255, 255, 255, 0.045);
+    background:
+        rgba(255, 255, 255, 0.045);
 
-    border: 1px solid rgba(255, 255, 255, 0.07);
+    border:
+        1px solid rgba(255, 255, 255, 0.07);
 
     color: rgba(255, 255, 255, 0.7);
 
     font-size: 13px;
-  }
+}
 
-  .manager-modal-product strong {
+.manager-modal-product strong {
     color: #ffffff;
-  }
+}
 
-  .manager-password-label {
+.manager-password-label {
     display: block;
 
     margin-bottom: 8px;
@@ -891,22 +989,24 @@
     font-size: 13px;
 
     font-weight: 600;
-  }
+}
 
-  .manager-password-wrapper {
+.manager-password-wrapper {
     position: relative;
-  }
+}
 
-  .manager-password-input {
+.manager-password-input {
     width: 100%;
 
     height: 48px;
 
-    padding: 0 48px 0 14px;
+    padding:
+        0 48px 0 14px;
 
     border-radius: 11px;
 
-    border: 1px solid rgba(255, 255, 255, 0.14);
+    border:
+        1px solid rgba(255, 255, 255, 0.14);
 
     background: #333333;
 
@@ -917,19 +1017,21 @@
     font-size: 14px;
 
     transition: all 0.2s ease;
-  }
+}
 
-  .manager-password-input:focus {
+.manager-password-input:focus {
     border-color: #0d6efd;
 
-    box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.13);
-  }
+    box-shadow:
+        0 0 0 3px
+        rgba(13, 110, 253, 0.13);
+}
 
-  .manager-password-input::placeholder {
+.manager-password-input::placeholder {
     color: rgba(255, 255, 255, 0.4);
-  }
+}
 
-  .manager-password-toggle {
+.manager-password-toggle {
     position: absolute;
 
     top: 50%;
@@ -946,13 +1048,13 @@
     cursor: pointer;
 
     font-size: 19px;
-  }
+}
 
-  .manager-password-toggle:hover {
+.manager-password-toggle:hover {
     color: #ffffff;
-  }
+}
 
-  .manager-modal-error {
+.manager-modal-error {
     display: none;
 
     margin-top: 12px;
@@ -961,7 +1063,8 @@
 
     border-radius: 9px;
 
-    background: rgba(220, 53, 69, 0.13);
+    background:
+        rgba(220, 53, 69, 0.13);
 
     border-left: 3px solid #dc3545;
 
@@ -970,13 +1073,13 @@
     font-size: 13px;
 
     font-weight: 600;
-  }
+}
 
-  .manager-modal-error.active {
+.manager-modal-error.active {
     display: block;
-  }
+}
 
-  .manager-modal-footer {
+.manager-modal-footer {
     display: flex;
 
     justify-content: flex-end;
@@ -985,10 +1088,11 @@
 
     padding: 16px 22px;
 
-    border-top: 1px solid rgba(255, 255, 255, 0.08);
-  }
+    border-top:
+        1px solid rgba(255, 255, 255, 0.08);
+}
 
-  .manager-modal-footer button {
+.manager-modal-footer button {
     min-height: 42px;
 
     padding: 8px 18px;
@@ -1000,2341 +1104,2455 @@
     cursor: pointer;
 
     transition: all 0.2s ease;
-  }
+}
 
-  .manager-btn-cancel {
-    border: 1px solid rgba(255, 255, 255, 0.15);
+.manager-btn-cancel {
+    border:
+        1px solid rgba(255, 255, 255, 0.15);
 
     background: transparent;
 
     color: rgba(255, 255, 255, 0.75);
-  }
+}
 
-  .manager-btn-cancel:hover {
-    background: rgba(255, 255, 255, 0.07);
+.manager-btn-cancel:hover {
+    background:
+        rgba(255, 255, 255, 0.07);
 
     color: #ffffff;
-  }
+}
 
-  .manager-btn-confirm {
+.manager-btn-confirm {
     border: none;
 
     background: #dc3545;
 
     color: #ffffff;
-  }
+}
 
-  .manager-btn-confirm:hover {
+.manager-btn-confirm:hover {
     background: #bb2d3b;
 
     transform: translateY(-1px);
-  }
+}
 
-  .manager-btn-confirm:disabled {
+.manager-btn-confirm:disabled {
     opacity: 0.6;
 
     cursor: not-allowed;
 
     transform: none;
-  }
+}
 
-  .manager-loading {
+.manager-loading {
     display: none;
 
     margin-right: 7px;
-  }
+}
 
-  .manager-btn-confirm.loading .manager-loading {
+.manager-btn-confirm.loading .manager-loading {
     display: inline-block;
-  }
+}
 
+/* =========================================================
+   RESPONSIVE
+========================================================= */
 
-  /* =========================================================
-       RESPONSIVE
-  ========================================================== */
-
-  @media (max-width: 767px) {
+@media (max-width: 767px) {
 
     .facture-header h4 {
-      font-size: 18px;
+        font-size: 18px;
     }
 
     .facture-table {
-      min-width: 650px;
+        min-width: 650px;
     }
 
     .quantity-input {
-      max-width: 100%;
+        max-width: 100%;
     }
 
     .action-buttons {
-      flex-direction: column;
+        flex-direction: column;
     }
 
     .action-buttons .btn {
-      width: 100%;
+        width: 100%;
     }
 
     .scanner-header {
-      align-items: flex-start;
+        align-items: flex-start;
 
-      flex-direction: column;
+        flex-direction: column;
     }
 
     .scanner-input {
-      font-size: 15px !important;
+        font-size: 15px !important;
     }
+}
 
-  }
-
-
-  @media (max-width: 480px) {
+@media (max-width: 480px) {
 
     .manager-modal {
-      max-width: 100%;
+        max-width: 100%;
     }
 
     .manager-modal-footer {
-      flex-direction: column-reverse;
+        flex-direction: column-reverse;
     }
 
     .manager-modal-footer button {
-      width: 100%;
+        width: 100%;
     }
-
-  }
+}
 
 </style>
 
+
 <div class="content-wrapper facture-page">
 
-  <!-- =========================================================
-       MESSAGES DJANGO
-  ========================================================== -->
+    <!-- =====================================================
+         MESSAGES DJANGO
+    ====================================================== -->
 
-{% if messages %}
+    {% if messages %}
 
+    <div class="messages-container">
 
-<div class="messages-container">
+        {% for message in messages %}
 
-  {% for message in messages %}
+        <div
+            class="alert
+            {% if message.tags == 'error' %}
+                alert-danger
+            {% elif message.tags == 'success' %}
+                alert-success
+            {% elif message.tags == 'warning' %}
+                alert-warning
+            {% else %}
+                alert-info
+            {% endif %}
+            alert-dismissible fade show"
+            role="alert"
+        >
 
-    <div
-      class="alert
-      {% if message.tags == 'error' %}
-        alert-danger
-      {% elif message.tags == 'success' %}
-        alert-success
-      {% elif message.tags == 'warning' %}
-        alert-warning
-      {% else %}
-        alert-info
-      {% endif %}
-      alert-dismissible fade show"
-      role="alert"
-    >
+            <div class="d-flex align-items-center">
 
-      <div class="d-flex align-items-center">
+                {% if message.tags == 'error' %}
 
-        {% if message.tags == 'error' %}
+                    <i
+                        class="mdi mdi-alert-circle-outline mr-2"
+                        style="font-size:22px;"
+                    ></i>
 
-          <i
-            class="mdi mdi-alert-circle-outline mr-2"
-            style="font-size:22px;"
-          ></i>
+                {% elif message.tags == 'success' %}
 
-        {% elif message.tags == 'success' %}
+                    <i
+                        class="mdi mdi-check-circle-outline mr-2"
+                        style="font-size:22px;"
+                    ></i>
 
-          <i
-            class="mdi mdi-check-circle-outline mr-2"
-            style="font-size:22px;"
-          ></i>
+                {% elif message.tags == 'warning' %}
 
-        {% elif message.tags == 'warning' %}
+                    <i
+                        class="mdi mdi-alert-outline mr-2"
+                        style="font-size:22px;"
+                    ></i>
 
-          <i
-            class="mdi mdi-alert-outline mr-2"
-            style="font-size:22px;"
-          ></i>
+                {% else %}
 
-        {% else %}
+                    <i
+                        class="mdi mdi-information-outline mr-2"
+                        style="font-size:22px;"
+                    ></i>
 
-          <i
-            class="mdi mdi-information-outline mr-2"
-            style="font-size:22px;"
-          ></i>
+                {% endif %}
 
-        {% endif %}
-
-        <span>{{ message }}</span>
-
-      </div>
-
-
-      <button
-        type="button"
-        class="close"
-        data-dismiss="alert"
-        aria-label="Fermer"
-      >
-
-        <span aria-hidden="true">&times;</span>
-
-      </button>
-
-    </div>
-
-  {% endfor %}
-
-</div>
-
-
-{% endif %}
-
-  <!-- =========================================================
-       EN-TÊTE DE LA FACTURE
-  ========================================================== -->
-
-  <div class="row">
-
-
-<div class="col-12 grid-margin stretch-card">
-
-  <div class="card facture-header">
-
-    <div class="card-body">
-
-      <div class="row align-items-center">
-
-        <div class="col-md-8">
-
-          <h4>
-
-            <i class="mdi mdi-file-document-outline"></i>
-
-            Gestion de la facture
-
-          </h4>
-
-
-          <p>
-            Ajoutez les produits et gérez le contenu de cette facture.
-          </p>
-
-        </div>
-
-
-        <div class="col-md-4 text-md-right mt-3 mt-md-0">
-
-          <span class="facture-number">
-
-            <i class="mdi mdi-receipt-text-outline mr-2"></i>
-
-            Facture N° {{ sel_facture.id }}
-
-          </span>
-
-        </div>
-
-      </div>
-
-    </div>
-
-  </div>
-
-</div>
-
-
-  </div>
-
-  <!-- =========================================================
-       AJOUT PRODUIT + INFORMATIONS FACTURE
-  ========================================================== -->
-
-  <div class="row">
-
-
-<!-- =======================================================
-     AJOUT PRODUIT
-======================================================== -->
-
-<div class="col-lg-6 grid-margin stretch-card">
-
-  <div class="card">
-
-    <div class="card-body">
-
-      <h4 class="section-title">
-
-        <i class="mdi mdi-cart-plus"></i>
-
-        Ajouter un produit
-
-      </h4>
-
-
-      <p class="section-description">
-
-        Scannez un produit ou sélectionnez-le manuellement.
-
-      </p>
-
-
-
-      <!-- =================================================
-           SCANNER CODE-BARRES
-      ================================================== -->
-
-      {% if sel_facture.imprimer == False %}
-
-        <div class="scanner-box">
-
-          <div class="scanner-header">
-
-            <div class="scanner-title">
-
-              <i class="mdi mdi-barcode-scan"></i>
-
-              Scanner un produit
+                <span>{{ message }}</span>
 
             </div>
 
-
-            <span class="scanner-status">
-
-              <i class="mdi mdi-circle"></i>
-
-              Lecteur prêt
-
-            </span>
-
-          </div>
-
-
-          <form
-            method="post"
-            action="{% url 'addDetailFacture' %}"
-            id="barcodeScanForm"
-            autocomplete="off"
-          >
-
-            {% csrf_token %}
-
-
-            <!-- Facture -->
-
-            <input
-              type="hidden"
-              name="facture"
-              value="{{ sel_facture.id }}"
+            <button
+                type="button"
+                class="close"
+                data-dismiss="alert"
+                aria-label="Fermer"
             >
+                <span aria-hidden="true">&times;</span>
+            </button>
+
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+    {% endif %}
 
 
-            <!--
-              UN SCAN = UNE UNITÉ
-            -->
+    <!-- =====================================================
+         EN-TÊTE
+    ====================================================== -->
 
-            <input
-              type="hidden"
-              name="qte"
-              value="1"
-            >
+    <div class="row">
 
+        <div class="col-12 grid-margin stretch-card">
 
-            <!--
-              IMPORTANT :
-              le code envoyé au serveur est stocké
-              dans ce champ caché.
-            -->
+            <div class="card facture-header">
 
-            <input
-              type="hidden"
-              name="code_barre"
-              id="hiddenBarcode"
-              value=""
-            >
+                <div class="card-body">
 
+                    <div class="row align-items-center">
 
-            <div class="scanner-input-wrapper">
+                        <div class="col-md-8">
 
-              <i
-                class="mdi mdi-barcode scanner-input-icon"
-              ></i>
+                            <h4>
 
+                                <i class="mdi mdi-file-document-outline"></i>
 
-              <!--
-                Le champ visible ne possède PAS
-                de name="code_barre".
+                                Gestion de la facture
 
-                Il sert uniquement à recevoir
-                et afficher le scan.
-              -->
+                            </h4>
 
-              <input
-                type="text"
-                id="barcodeScanner"
-                class="form-control scanner-input"
-                placeholder="Scannez le code-barres..."
-                inputmode="numeric"
-                autocomplete="off"
-                autocorrect="off"
-                autocapitalize="off"
-                spellcheck="false"
-                autofocus
-              >
+                            <p>
+                                Ajoutez les produits et gérez le contenu de cette facture.
+                            </p>
+
+                        </div>
+
+                        <div class="col-md-4 text-md-right mt-3 mt-md-0">
+
+                            <span class="facture-number">
+
+                                <i class="mdi mdi-receipt-text-outline mr-2"></i>
+
+                                Facture N° {{ sel_facture.id }}
+
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                </div>
 
             </div>
 
+        </div>
 
-            <small class="scanner-help">
+    </div>
 
-              <strong>Utilisation :</strong>
 
-              placez le curseur dans ce champ puis scannez le produit.
+    <!-- =====================================================
+         AJOUT PRODUIT + INFORMATIONS
+    ====================================================== -->
 
-              Le lecteur envoie automatiquement le code suivi de la touche
+    <div class="row">
 
-              <strong>Entrée</strong>.
+        <!-- =================================================
+             AJOUT PRODUIT
+        ================================================== -->
 
-              Chaque scan ajoute
+        <div class="col-lg-6 grid-margin stretch-card">
 
-              <strong>1 unité</strong>.
+            <div class="card">
 
-            </small>
+                <div class="card-body">
 
-          </form>
+                    <h4 class="section-title">
+
+                        <i class="mdi mdi-cart-plus"></i>
+
+                        Ajouter un produit
+
+                    </h4>
+
+                    <p class="section-description">
+
+                        Scannez un produit ou recherchez-le manuellement.
+
+                    </p>
+
+
+                    <!-- =====================================
+                         SCANNER
+                    ====================================== -->
+
+                    {% if not sel_facture.imprimer %}
+
+                    <div class="scanner-box">
+
+                        <div class="scanner-header">
+
+                            <div class="scanner-title">
+
+                                <i class="mdi mdi-barcode-scan"></i>
+
+                                Scanner un produit
+
+                            </div>
+
+                            <span class="scanner-status">
+
+                                <i class="mdi mdi-circle"></i>
+
+                                Lecteur prêt
+
+                            </span>
+
+                        </div>
+
+
+                        <form
+                            method="post"
+                            action="{% url 'addDetailFacture' %}"
+                            id="barcodeScanForm"
+                            autocomplete="off"
+                        >
+
+                            {% csrf_token %}
+
+                            <input
+                                type="hidden"
+                                name="facture"
+                                value="{{ sel_facture.id }}"
+                            >
+
+                            <input
+                                type="hidden"
+                                name="qte"
+                                value="1"
+                            >
+
+                            <input
+                                type="hidden"
+                                name="code_barre"
+                                id="hiddenBarcode"
+                                value=""
+                            >
+
+                            <div class="scanner-input-wrapper">
+
+                                <i
+                                    class="mdi mdi-barcode scanner-input-icon"
+                                ></i>
+
+                                <input
+                                    type="text"
+                                    id="barcodeScanner"
+                                    class="form-control scanner-input"
+                                    placeholder="Scannez le code-barres..."
+                                    inputmode="numeric"
+                                    autocomplete="off"
+                                    autocorrect="off"
+                                    autocapitalize="off"
+                                    spellcheck="false"
+                                    autofocus
+                                >
+
+                            </div>
+
+                            <small class="scanner-help">
+
+                                <strong>Utilisation :</strong>
+
+                                placez le curseur dans ce champ puis scannez le produit.
+
+                                Le lecteur termine normalement par
+
+                                <strong>Entrée</strong>.
+
+                                Chaque scan ajoute
+
+                                <strong>1 unité</strong>.
+
+                            </small>
+
+                        </form>
+
+                    </div>
+
+
+                    <div class="scanner-separator">
+
+                        <span>ou ajout manuel</span>
+
+                    </div>
+
+                    {% endif %}
+
+
+                    <!-- =====================================
+                         AJOUT MANUEL
+                    ====================================== -->
+
+                    <form
+                        method="post"
+                        action="{% url 'addDetailFacture' %}"
+                        autocomplete="off"
+                        id="formAjoutProduit"
+                    >
+
+                        {% csrf_token %}
+
+
+                        <!-- PRODUIT -->
+
+                        <div class="form-group">
+
+                            <label
+                                class="form-label"
+                                for="produitFacture"
+                            >
+                                Produit
+                            </label>
+
+                            <select
+                                name="produit"
+                                id="produitFacture"
+                                style="width:100%;"
+                                required
+                                {% if sel_facture.imprimer %}
+                                    disabled
+                                {% endif %}
+                            >
+
+                                <option value=""></option>
+
+                            </select>
+
+                        </div>
+
+
+                        <!-- FACTURE -->
+
+                        <input
+                            type="hidden"
+                            name="facture"
+                            value="{{ sel_facture.id }}"
+                        >
+
+
+                        <!-- QUANTITÉ -->
+
+                        <div class="form-group">
+
+                            <label
+                                class="form-label"
+                                for="quantiteFacture"
+                            >
+                                Quantité
+                            </label>
+
+                            <input
+                                type="number"
+                                required
+                                min="1"
+                                step="1"
+                                value="1"
+                                class="form-control quantity-input"
+                                name="qte"
+                                id="quantiteFacture"
+                                placeholder="Ex. 2"
+                                {% if sel_facture.imprimer %}
+                                    disabled
+                                {% endif %}
+                            >
+
+                        </div>
+
+
+                        <!-- BOUTON -->
+
+                        <button
+                            type="submit"
+                            class="btn btn-primary btn-rounded btn-valider"
+                            {% if sel_facture.imprimer %}
+                                disabled
+                            {% endif %}
+                        >
+
+                            <i class="mdi mdi-plus-circle-outline mr-1"></i>
+
+                            Ajouter à la facture
+
+                        </button>
+
+                    </form>
+
+                </div>
+
+            </div>
 
         </div>
 
 
         <!-- =================================================
-             SÉPARATEUR
+             INFORMATIONS FACTURE
         ================================================== -->
 
-        <div class="scanner-separator">
+        <div class="col-lg-6 grid-margin stretch-card">
 
-          <span>ou ajout manuel</span>
+            <div class="card">
+
+                <div class="card-body">
+
+                    <h4 class="section-title">
+
+                        <i class="mdi mdi-information-outline"></i>
+
+                        Informations facture
+
+                    </h4>
+
+
+                    <div class="total-box">
+
+                        <div class="total-line">
+
+                            <span class="label">
+                                Numéro
+                            </span>
+
+                            <span class="value">
+                                #{{ sel_facture.id }}
+                            </span>
+
+                        </div>
+
+
+                        <div class="total-line">
+
+                            <span class="label">
+                                Date de création
+                            </span>
+
+                            <span class="value">
+                                {{ sel_facture.createdAt }}
+                            </span>
+
+                        </div>
+
+
+                        <div class="total-line">
+
+                            <span class="label">
+                                Statut
+                            </span>
+
+                            <span class="value">
+
+                                {% if sel_facture.imprimer %}
+
+                                    <span class="badge badge-success">
+
+                                        <i class="mdi mdi-check-circle mr-1"></i>
+
+                                        Imprimée
+
+                                    </span>
+
+                                {% else %}
+
+                                    <span class="badge badge-warning">
+
+                                        <i class="mdi mdi-pencil-circle mr-1"></i>
+
+                                        En cours
+
+                                    </span>
+
+                                {% endif %}
+
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- =====================================
+                         RECHERCHE FACTURE
+                    ====================================== -->
+
+                    <h6 class="form-label">
+
+                        Rechercher dans les produits
+
+                    </h6>
+
+                    <form
+                        method="get"
+                        action="{% url 'detaiFacture' sel_facture.id %}"
+                        autocomplete="off"
+                    >
+
+                        <div class="search-wrapper">
+
+                            <i class="mdi mdi-magnify"></i>
+
+                            <input
+                                type="text"
+                                class="form-control"
+                                name="q"
+                                id="searchFacture"
+                                value="{{ recherche }}"
+                                placeholder="Rechercher..."
+                            >
+
+                        </div>
+
+                    </form>
+
+                </div>
+
+            </div>
 
         </div>
-
-      {% endif %}
-
-
-
-      <!-- =================================================
-           AJOUT MANUEL
-      ================================================== -->
-
-      <form
-        method="post"
-        action="{% url 'addDetailFacture' %}"
-        autocomplete="off"
-      >
-
-        {% csrf_token %}
-
-
-        <!-- Produit -->
-
-        <div class="form-group">
-
-          <label class="form-label">
-            Produit
-          </label>
-
-
-          <select
-            class="js-example-basic-single"
-            style="width:100%"
-            name="produit"
-            required
-            {% if sel_facture.imprimer %}
-              disabled
-            {% endif %}
-          >
-
-            <option value="">
-              ------ Sélectionner le produit ------
-            </option>
-
-
-            {% for p in liste_produit %}
-
-              <option value="{{ p.id }}">
-                {{ p.nom }}
-              </option>
-
-            {% endfor %}
-
-          </select>
-
-        </div>
-
-
-
-        <!-- Facture -->
-
-        <input
-          type="hidden"
-          name="facture"
-          value="{{ sel_facture.id }}"
-        />
-
-
-
-        <!-- Quantité -->
-
-        <div class="form-group">
-
-          <label class="form-label">
-            Quantité
-          </label>
-
-
-          <input
-            type="number"
-            required
-            min="1"
-            step="1"
-            value="1"
-            class="form-control quantity-input"
-            name="qte"
-            id="exampleInputUsername1"
-            placeholder="Ex. 2"
-            {% if sel_facture.imprimer %}
-              disabled
-            {% endif %}
-          />
-
-        </div>
-
-
-
-        <!-- Bouton -->
-
-        <button
-          type="submit"
-          class="btn btn-primary btn-rounded btn-valider"
-          {% if sel_facture.imprimer %}
-            disabled
-          {% endif %}
-        >
-
-          <i class="mdi mdi-plus-circle-outline mr-1"></i>
-
-          Ajouter à la facture
-
-        </button>
-
-      </form>
 
     </div>
 
-  </div>
 
-</div>
+    <!-- =====================================================
+         PRODUITS DE LA FACTURE
+    ====================================================== -->
 
+    {% if list_facture %}
 
-
-<!-- =======================================================
-     INFORMATIONS FACTURE
-======================================================== -->
-
-<div class="col-lg-6 grid-margin stretch-card">
-
-  <div class="card">
-
-    <div class="card-body">
-
-      <h4 class="section-title">
-
-        <i class="mdi mdi-information-outline"></i>
-
-        Informations facture
-
-      </h4>
-
-
-
-      <div class="total-box">
-
-
-        <!-- NUMÉRO -->
-
-        <div class="total-line">
-
-          <span class="label">
-            Numéro
-          </span>
-
-
-          <span class="value">
-            #{{ sel_facture.id }}
-          </span>
-
-        </div>
-
-
-
-        <!-- DATE -->
-
-        <div class="total-line">
-
-          <span class="label">
-            Date de création
-          </span>
-
-
-          <span class="value">
-            {{ sel_facture.createdAt }}
-          </span>
-
-        </div>
-
-
-
-        <!-- STATUT -->
-
-        <div class="total-line">
-
-          <span class="label">
-            Statut
-          </span>
-
-
-          <span class="value">
-
-            {% if sel_facture.imprimer %}
-
-              <span class="badge badge-success">
-
-                <i class="mdi mdi-check-circle mr-1"></i>
-
-                Imprimée
-
-              </span>
-
-            {% else %}
-
-              <span class="badge badge-warning">
-
-                <i class="mdi mdi-pencil-circle mr-1"></i>
-
-                En cours
-
-              </span>
-
-            {% endif %}
-
-          </span>
-
-        </div>
-
-      </div>
-
-
-
-      <!-- =================================================
-           RECHERCHE
-      ================================================== -->
-
-      <h6 class="form-label">
-        Rechercher dans les produits
-      </h6>
-
-
-      <form
-        method="post"
-        autocomplete="off"
-      >
-
-        {% csrf_token %}
-
-
-        <div class="search-wrapper">
-
-          <i class="mdi mdi-magnify"></i>
-
-
-          <input
-            type="text"
-            class="form-control"
-            name="rech"
-            id="searchFacture"
-            placeholder="Rechercher..."
-          />
-
-        </div>
-
-      </form>
-
-    </div>
-
-  </div>
-
-</div>
-
-
-  </div>
-
-  <!-- =========================================================
-       PRODUITS DE LA FACTURE
-  ========================================================== -->
-
-{% if list_facture %}
-
-
-<div class="row">
-
-
-  <!-- =====================================================
-       TABLE PRODUITS
-  ====================================================== -->
-
-  <div class="col-lg-7 grid-margin stretch-card">
-
-    <div class="card">
-
-      <div class="card-body">
-
-
-        <div class="d-flex justify-content-between align-items-center mb-3">
-
-          <div>
-
-            <h4 class="section-title mb-1">
-
-              <i class="mdi mdi-format-list-bulleted"></i>
-
-              Produits de la facture
-
-            </h4>
-
-
-            <span class="section-description">
-              Facture #{{ sel_facture.id }}
-            </span>
-
-          </div>
-
-
-          <span class="badge badge-info count-badge">
-
-            {{ compte }} produit(s)
-
-          </span>
-
-        </div>
-
-
+    <div class="row">
 
         <!-- =================================================
              TABLE
         ================================================== -->
 
-        <div class="table-responsive">
+        <div class="col-lg-7 grid-margin stretch-card">
 
-          <table class="table facture-table">
+            <div class="card">
 
-            <thead>
+                <div class="card-body">
 
-              <tr>
+                    <div class="d-flex justify-content-between align-items-center mb-3">
 
-                <th>
-                  Produit
-                </th>
+                        <div>
 
-                <th>
-                  Prix
-                </th>
+                            <h4 class="section-title mb-1">
 
-                <th>
-                  Quantité
-                </th>
+                                <i class="mdi mdi-format-list-bulleted"></i>
 
-                <th>
-                  Total
-                </th>
+                                Produits de la facture
 
+                            </h4>
 
-                {% if sel_facture.imprimer == False %}
+                            <span class="section-description">
 
-                  <th class="text-center">
-                    Actions
-                  </th>
+                                Facture #{{ sel_facture.id }}
 
-                {% endif %}
+                            </span>
 
-              </tr>
+                        </div>
 
-            </thead>
+                        <span class="badge badge-info count-badge">
+
+                            {{ compte }} produit(s)
+
+                        </span>
+
+                    </div>
 
 
-            <tbody>
+                    <div class="table-responsive">
 
-              {% for f in list_facture %}
+                        <table class="table facture-table">
 
-                <tr>
+                            <thead>
 
+                                <tr>
 
-                  <!-- PRODUIT -->
+                                    <th>
+                                        Produit
+                                    </th>
 
-                  <td class="product-name">
+                                    <th>
+                                        Prix
+                                    </th>
 
-                    {{ f.produit }}
+                                    <th>
+                                        Quantité
+                                    </th>
 
-                  </td>
+                                    <th>
+                                        Total
+                                    </th>
 
+                                    {% if not sel_facture.imprimer %}
 
+                                    <th class="text-center">
+                                        Actions
+                                    </th>
 
-                  <!-- PRIX -->
+                                    {% endif %}
 
-                  <td class="price-text">
+                                </tr>
 
-                    {{ f.pu }} Fc
-
-                  </td>
-
-
-
-                  <!-- QUANTITÉ -->
-
-                  <td>
-
-                    <span class="quantity-badge">
-
-                      {{ f.qte }}
-
-                    </span>
-
-                  </td>
+                            </thead>
 
 
+                            <tbody>
 
-                  <!-- TOTAL -->
+                                {% for f in list_facture %}
 
-                  <td class="price-text">
+                                <tr>
 
-                    {{ f.total }} Fc
+                                    <td class="product-name">
 
-                  </td>
+                                        {{ f.produit }}
 
-
-
-                  <!-- ACTION -->
-
-                  {% if sel_facture.imprimer == False %}
-
-                    <td class="text-center">
+                                    </td>
 
 
-                      <button
-                        type="button"
-                        class="action-delete"
-                        title="Supprimer"
-                        onclick="ouvrirModalSuppression(
-                          {{ f.id }},
-                          '{{ f.produit|escapejs }}'
-                        )"
-                      >
+                                    <td class="price-text">
 
-                        <i class="mdi mdi-delete-outline"></i>
+                                        {{ f.pu }} Fc
 
-                      </button>
+                                    </td>
 
-                    </td>
 
-                  {% endif %}
+                                    <td>
 
-                </tr>
+                                        <span class="quantity-badge">
 
-              {% endfor %}
+                                            {{ f.qte }}
 
-            </tbody>
+                                        </span>
 
-          </table>
+                                    </td>
+
+
+                                    <td class="price-text">
+
+                                        {{ f.total }} Fc
+
+                                    </td>
+
+
+                                    {% if not sel_facture.imprimer %}
+
+                                    <td class="text-center">
+
+                                        <button
+                                            type="button"
+                                            class="action-delete"
+                                            title="Supprimer"
+                                            onclick="ouvrirModalSuppression(
+                                                {{ f.id }},
+                                                '{{ f.produit|escapejs }}'
+                                            )"
+                                        >
+
+                                            <i class="mdi mdi-delete-outline"></i>
+
+                                        </button>
+
+                                    </td>
+
+                                    {% endif %}
+
+                                </tr>
+
+                                {% endfor %}
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+
+                    <!-- =====================================
+                         PAGINATION
+                    ====================================== -->
+
+                    <div class="pagination-wrapper">
+
+                        <div class="row align-items-center">
+
+                            <div class="col-md-4">
+
+                                {% if list_facture.has_previous %}
+
+                                <a
+                                    href="?page=1{% if recherche %}&q={{ recherche|urlencode }}{% endif %}"
+                                    class="btn btn-outline-light btn-sm btn-rounded"
+                                >
+
+                                    <i class="mdi mdi-page-first"></i>
+
+                                </a>
+
+
+                                <a
+                                    href="?page={{ list_facture.previous_page_number }}{% if recherche %}&q={{ recherche|urlencode }}{% endif %}"
+                                    class="btn btn-info btn-sm btn-rounded"
+                                >
+
+                                    <i class="mdi mdi-chevron-left"></i>
+
+                                    Précédent
+
+                                </a>
+
+                                {% endif %}
+
+                            </div>
+
+
+                            <div class="col-md-4 text-center my-2 my-md-0">
+
+                                <span class="page-info">
+
+                                    Page {{ list_facture.number }}
+
+                                    sur
+
+                                    {{ list_facture.paginator.num_pages }}
+
+                                </span>
+
+                            </div>
+
+
+                            <div class="col-md-4 text-md-right">
+
+                                {% if list_facture.has_next %}
+
+                                <a
+                                    href="?page={{ list_facture.next_page_number }}{% if recherche %}&q={{ recherche|urlencode }}{% endif %}"
+                                    class="btn btn-info btn-sm btn-rounded"
+                                >
+
+                                    Suivant
+
+                                    <i class="mdi mdi-chevron-right"></i>
+
+                                </a>
+
+
+                                <a
+                                    href="?page={{ list_facture.paginator.num_pages }}{% if recherche %}&q={{ recherche|urlencode }}{% endif %}"
+                                    class="btn btn-outline-light btn-sm btn-rounded"
+                                >
+
+                                    <i class="mdi mdi-page-last"></i>
+
+                                </a>
+
+                                {% endif %}
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
 
         </div>
-
 
 
         <!-- =================================================
-             PAGINATION
+             TOTAL FACTURE
         ================================================== -->
 
-        <div class="pagination-wrapper">
+        <div class="col-lg-5 grid-margin stretch-card">
 
-          <div class="row align-items-center">
+            <div class="card total-card">
 
+                <div class="card-body">
 
-            <div class="col-md-4">
+                    <h4 class="section-title">
 
-              {% if list_facture.has_previous %}
+                        <i class="mdi mdi-calculator-variant-outline"></i>
 
-                <a
-                  href="?page=1"
-                  class="btn btn-outline-light btn-sm btn-rounded"
-                >
+                        Récapitulatif
 
-                  <i class="mdi mdi-page-first"></i>
-
-                </a>
+                    </h4>
 
 
-                <a
-                  href="?page={{ list_facture.previous_page_number }}"
-                  class="btn btn-info btn-sm btn-rounded"
-                >
+                    <div class="total-box">
 
-                  <i class="mdi mdi-chevron-left"></i>
+                        <div class="total-line">
 
-                  Précédent
+                            <span class="label">
+                                Total HT
+                            </span>
 
-                </a>
+                            <span class="value">
+                                {{ total_ht }} Fc
+                            </span>
 
-              {% endif %}
+                        </div>
+
+
+                        <div class="total-line">
+
+                            <span class="label">
+                                TVA (16 %)
+                            </span>
+
+                            <span class="value total-tva">
+                                {{ total_tva }} Fc
+                            </span>
+
+                        </div>
+
+
+                        <div class="total-line total-ttc">
+
+                            <span class="label">
+                                TOTAL TTC
+                            </span>
+
+                            <span class="value">
+                                {{ sommefac }} Fc
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="action-buttons">
+
+                        {% if sel_facture.imprimer %}
+
+                        <button
+                            type="button"
+                            class="btn btn-secondary btn-rounded btn-print"
+                            disabled
+                            title="Cette facture a déjà été imprimée"
+                        >
+
+                            <i class="mdi mdi-lock-outline mr-1"></i>
+
+                            Facture déjà imprimée
+
+                        </button>
+
+                        {% else %}
+
+                        <button
+                            type="button"
+                            class="btn btn-primary btn-rounded btn-print"
+                            onclick="imprimerFacture({{ sel_facture.id }})"
+                        >
+
+                            <i class="mdi mdi-printer-outline mr-1"></i>
+
+                            Imprimer la facture
+
+                        </button>
+
+                        {% endif %}
+
+
+                        <a
+                            href="{% url 'facture' %}"
+                            class="btn btn-outline-light btn-rounded btn-factures"
+                        >
+
+                            <i class="mdi mdi-file-document-multiple-outline mr-1"></i>
+
+                            Mes factures
+
+                        </a>
+
+                    </div>
+
+                </div>
 
             </div>
 
+        </div>
+
+    </div>
+
+    {% else %}
+
+    <!-- =====================================================
+         AUCUN PRODUIT
+    ====================================================== -->
+
+    <div class="row">
+
+        <div class="col-12">
+
+            <div class="card empty-card">
+
+                <div class="empty-icon">
+
+                    <i class="mdi mdi-cart-off"></i>
+
+                </div>
 
 
-            <div class="col-md-4 text-center my-2 my-md-0">
+                <h4 style="color:#ffffff;">
 
-              <span class="page-info">
+                    Aucun produit dans cette facture
 
-                Page {{ list_facture.number }}
+                </h4>
 
-                sur
 
-                {{ list_facture.paginator.num_pages }}
+                <p style="color:rgba(255,255,255,.55);">
 
-              </span>
+                    Commencez par ajouter un produit à la facture.
+
+                </p>
 
             </div>
 
-
-
-            <div class="col-md-4 text-md-right">
-
-              {% if list_facture.has_next %}
-
-                <a
-                  href="?page={{ list_facture.next_page_number }}"
-                  class="btn btn-info btn-sm btn-rounded"
-                >
-
-                  Suivant
-
-                  <i class="mdi mdi-chevron-right"></i>
-
-                </a>
-
-
-                <a
-                  href="?page={{ list_facture.paginator.num_pages }}"
-                  class="btn btn-outline-light btn-sm btn-rounded"
-                >
-
-                  <i class="mdi mdi-page-last"></i>
-
-                </a>
-
-              {% endif %}
-
-            </div>
-
-          </div>
-
         </div>
-
-      </div>
 
     </div>
 
-  </div>
-
-
-
-  <!-- =====================================================
-       TOTAL FACTURE
-  ====================================================== -->
-
-  <div class="col-lg-5 grid-margin stretch-card">
-
-    <div class="card total-card">
-
-      <div class="card-body">
-
-        <h4 class="section-title">
-
-          <i class="mdi mdi-calculator-variant-outline"></i>
-
-          Récapitulatif
-
-        </h4>
-
-
-
-        <div class="total-box">
-
-
-          <!-- TOTAL HT -->
-
-          <div class="total-line">
-
-            <span class="label">
-              Total HT
-            </span>
-
-
-            <span class="value">
-              {{ total_ht }} Fc
-            </span>
-
-          </div>
-
-
-
-          <!-- TVA -->
-
-          <div class="total-line">
-
-            <span class="label">
-              TVA (16 %)
-            </span>
-
-
-            <span class="value total-tva">
-              {{ total_tva }} Fc
-            </span>
-
-          </div>
-
-
-
-          <!-- TTC -->
-
-          <div class="total-line total-ttc">
-
-            <span class="label">
-              TOTAL TTC
-            </span>
-
-
-            <span class="value">
-              {{ sommefac }} Fc
-            </span>
-
-          </div>
-
-        </div>
-
-
-
-        <!-- =================================================
-             ACTIONS
-        ================================================== -->
-
-        <div class="action-buttons">
-
-
-          {% if sel_facture.imprimer %}
-
-            <button
-              type="button"
-              class="btn btn-secondary btn-rounded btn-print"
-              disabled
-              title="Cette facture a déjà été imprimée"
-            >
-
-              <i class="mdi mdi-lock-outline mr-1"></i>
-
-              Facture déjà imprimée
-
-            </button>
-
-          {% else %}
-
-            <button
-              type="button"
-              class="btn btn-primary btn-rounded btn-print"
-              onclick="imprimerFacture({{ sel_facture.id }})"
-            >
-
-              <i class="mdi mdi-printer-outline mr-1"></i>
-
-              Imprimer la facture
-
-            </button>
-
-          {% endif %}
-
-
-
-          <a
-            href="{% url 'facture' %}"
-            class="btn btn-outline-light btn-rounded btn-factures"
-          >
-
-            <i class="mdi mdi-file-document-multiple-outline mr-1"></i>
-
-            Mes factures
-
-          </a>
-
-        </div>
-
-      </div>
-
-    </div>
-
-  </div>
+    {% endif %}
 
 </div>
 
-
-{% else %}
-
-<!-- =====================================================
-     AUCUN PRODUIT
-====================================================== -->
-
-<div class="row">
-
-  <div class="col-12">
-
-    <div class="card empty-card">
-
-      <div class="empty-icon">
-
-        <i class="mdi mdi-cart-off"></i>
-
-      </div>
-
-
-      <h4 style="color:#ffffff;">
-        Aucun produit dans cette facture
-      </h4>
-
-
-      <p style="color:rgba(255,255,255,.55);">
-
-        Commencez par ajouter un produit à la facture.
-
-      </p>
-
-    </div>
-
-  </div>
-
-</div>
-
-{% endif %}
-
-</div>
 
 <!-- =========================================================
      MODAL AUTORISATION MANAGER
-========================================================== -->
+========================================================= -->
 
 <div
-  id="managerModalOverlay"
-  class="manager-modal-overlay"
-  aria-hidden="true"
+    id="managerModalOverlay"
+    class="manager-modal-overlay"
+    aria-hidden="true"
 >
 
-  <div
-    class="manager-modal"
-    role="dialog"
-    aria-modal="true"
-    aria-labelledby="managerModalTitle"
-  >
-
-
-<!-- HEADER -->
-
-<div class="manager-modal-header">
-
-  <div class="manager-modal-icon">
-
-    <i class="mdi mdi-shield-lock-outline"></i>
-
-  </div>
-
-
-  <div>
-
-    <h4
-      id="managerModalTitle"
-      class="manager-modal-title"
+    <div
+        class="manager-modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="managerModalTitle"
     >
 
-      Autorisation du manager
+        <div class="manager-modal-header">
 
-    </h4>
+            <div class="manager-modal-icon">
 
+                <i class="mdi mdi-shield-lock-outline"></i>
 
-    <p class="manager-modal-subtitle">
+            </div>
 
-      Autorisation requise pour supprimer ce produit
 
-    </p>
+            <div>
 
-  </div>
+                <h4
+                    id="managerModalTitle"
+                    class="manager-modal-title"
+                >
 
-</div>
+                    Autorisation du manager
 
+                </h4>
 
 
-<!-- BODY -->
+                <p class="manager-modal-subtitle">
 
-<div class="manager-modal-body">
+                    Autorisation requise pour supprimer ce produit
 
-  <div class="manager-modal-product">
+                </p>
 
-    Produit à supprimer :
-
-    <strong id="managerProductName"></strong>
-
-  </div>
-
-
-  <label
-    for="managerPassword"
-    class="manager-password-label"
-  >
-
-    Mot de passe du manager
-
-  </label>
-
-
-  <div class="manager-password-wrapper">
-
-    <input
-      type="password"
-      id="managerPassword"
-      class="manager-password-input"
-      placeholder="Entrez le mot de passe"
-      autocomplete="off"
-    />
-
-
-    <button
-      type="button"
-      id="managerPasswordToggle"
-      class="manager-password-toggle"
-      title="Afficher le mot de passe"
-      aria-label="Afficher le mot de passe"
-    >
-
-      <i class="mdi mdi-eye-outline"></i>
-
-    </button>
-
-  </div>
-
-
-
-  <!-- ERREUR -->
-
-  <div
-    id="managerModalError"
-    class="manager-modal-error"
-  >
-
-    <i class="mdi mdi-alert-circle-outline mr-1"></i>
-
-    <span id="managerModalErrorText"></span>
-
-  </div>
-
-</div>
-
-
-
-<!-- FOOTER -->
-
-<div class="manager-modal-footer">
-
-  <button
-    type="button"
-    class="manager-btn-cancel"
-    onclick="fermerModalSuppression()"
-  >
-
-    <i class="mdi mdi-close mr-1"></i>
-
-    Annuler
-
-  </button>
-
-
-  <button
-    type="button"
-    id="managerConfirmButton"
-    class="manager-btn-confirm"
-    onclick="confirmerSuppression()"
-  >
-
-    <span class="manager-loading">
-
-      <i class="mdi mdi-loading mdi-spin"></i>
-
-    </span>
-
-
-    <i class="mdi mdi-delete-outline mr-1"></i>
-
-    Autoriser la suppression
-
-  </button>
-
-</div>
-
-
-  </div>
-
-</div>
-
-<script>
-
-
-  /* =========================================================
-       SCANNER CODE-BARRES
-  ========================================================== */
-
-  document.addEventListener(
-    'DOMContentLoaded',
-    function () {
-
-      const scanner =
-        document.getElementById(
-          'barcodeScanner'
-        )
-
-
-      const scannerForm =
-        document.getElementById(
-          'barcodeScanForm'
-        )
-
-
-      const hiddenBarcode =
-        document.getElementById(
-          'hiddenBarcode'
-        )
-
-
-      /*
-       * Vérifier que les trois éléments
-       * nécessaires existent.
-       */
-
-      if (
-        !scanner ||
-        !scannerForm ||
-        !hiddenBarcode
-      ) {
-
-        return
-
-      }
-
-
-      /*
-       * Empêche les doubles soumissions.
-       */
-
-      let scanEnCours = false
-
-
-      /*
-       * ---------------------------------------------------------
-       * FOCUS SCANNER
-       * ---------------------------------------------------------
-       */
-
-      function focusScanner() {
-
-        if (
-          scanner.disabled
-        ) {
-
-          return
-
-        }
-
-
-        scanner.focus()
-
-        scanner.select()
-
-      }
-
-
-      setTimeout(
-        function () {
-
-          focusScanner()
-
-        },
-        250
-      )
-
-
-      /*
-       * ---------------------------------------------------------
-       * TRAITEMENT DU SCAN
-       * ---------------------------------------------------------
-       */
-
-      scanner.addEventListener(
-        'keydown',
-        function (event) {
-
-          /*
-           * Le lecteur termine normalement
-           * son scan par ENTER.
-           */
-
-          if (
-            event.key !== 'Enter'
-          ) {
-
-            return
-
-          }
-
-
-          event.preventDefault()
-
-
-          /*
-           * Éviter un double envoi.
-           */
-
-          if (
-            scanEnCours
-          ) {
-
-            return
-
-          }
-
-
-          /*
-           * Récupérer le code comme TEXTE.
-           *
-           * Ne surtout pas utiliser :
-           *
-           * parseInt()
-           * Number()
-           * parseFloat()
-           *
-           * afin de conserver les zéros
-           * au début du code-barres.
-           */
-
-          const code =
-            scanner.value.trim()
-
-
-          /*
-           * Code vide.
-           */
-
-          if (!code) {
-
-            scanner.value = ''
-
-            hiddenBarcode.value = ''
-
-            focusScanner()
-
-            return
-
-          }
-
-
-          /*
-           * -----------------------------------------------------
-           * METTRE LE CODE EXACT DANS LE CHAMP ENVOYÉ
-           * -----------------------------------------------------
-           */
-
-          hiddenBarcode.value =
-            code
-
-
-          /*
-           * -----------------------------------------------------
-           * DEBUG
-           * -----------------------------------------------------
-           */
-
-          console.log(
-            '===================================='
-          )
-
-          console.log(
-            'SCAN CODE-BARRES'
-          )
-
-          console.log(
-            'Code scanné :',
-            code
-          )
-
-          console.log(
-            'Code envoyé :',
-            hiddenBarcode.value
-          )
-
-          console.log(
-            'Quantité envoyée :',
-            1
-          )
-
-          console.log(
-            'Facture :',
-            '{{ sel_facture.id }}'
-          )
-
-          console.log(
-            '===================================='
-          )
-
-
-          /*
-           * -----------------------------------------------------
-           * VERROUILLER LE SCANNER
-           * -----------------------------------------------------
-           */
-
-          scanEnCours = true
-
-          scanner.disabled = true
-
-          scanner.classList.add(
-            'scanner-disabled'
-          )
-
-
-          /*
-           * -----------------------------------------------------
-           * ENVOYER LE FORMULAIRE
-           *
-           * On utilise explicitement la méthode native
-           * du formulaire.
-           * -----------------------------------------------------
-           */
-
-          HTMLFormElement.prototype.submit.call(
-            scannerForm
-          )
-
-        }
-      )
-
-
-      /*
-       * ---------------------------------------------------------
-       * NETTOYAGE DES ESPACES
-       * ---------------------------------------------------------
-       */
-
-      scanner.addEventListener(
-        'input',
-        function () {
-
-          this.value =
-            this.value.replace(
-              /\s/g,
-              ''
-            )
-
-        }
-      )
-
-
-      /*
-       * ---------------------------------------------------------
-       * CLIC SUR LE SCANNER
-       * ---------------------------------------------------------
-       */
-
-      scanner.addEventListener(
-        'click',
-        function () {
-
-          if (
-            !scanEnCours
-          ) {
-
-            this.select()
-
-          }
-
-        }
-      )
-
-
-      /*
-       * ---------------------------------------------------------
-       * ESC = VIDER LE SCANNER
-       * ---------------------------------------------------------
-       */
-
-      scanner.addEventListener(
-        'keydown',
-        function (event) {
-
-          if (
-            event.key === 'Escape'
-          ) {
-
-            scanner.value = ''
-
-            hiddenBarcode.value = ''
-
-            focusScanner()
-
-          }
-
-        }
-      )
-
-    }
-  )
-
-
-
-  /* =========================================================
-       VARIABLE GLOBALE SUPPRESSION
-  ========================================================== */
-
-  let detailFactureASupprimer = null
-
-
-
-  /* =========================================================
-       OUVRIR MODAL SUPPRESSION
-  ========================================================== */
-
-  function ouvrirModalSuppression(
-    detailId,
-    produitNom
-  ) {
-
-    detailFactureASupprimer =
-      detailId
-
-
-    const overlay =
-      document.getElementById(
-        'managerModalOverlay'
-      )
-
-
-    const productName =
-      document.getElementById(
-        'managerProductName'
-      )
-
-
-    const passwordInput =
-      document.getElementById(
-        'managerPassword'
-      )
-
-
-    const errorBox =
-      document.getElementById(
-        'managerModalError'
-      )
-
-
-    const confirmButton =
-      document.getElementById(
-        'managerConfirmButton'
-      )
-
-
-    productName.textContent =
-      produitNom
-
-
-    passwordInput.value =
-      ''
-
-
-    errorBox.classList.remove(
-      'active'
-    )
-
-
-    confirmButton.disabled =
-      false
-
-
-    confirmButton.classList.remove(
-      'loading'
-    )
-
-
-    overlay.classList.add(
-      'active'
-    )
-
-
-    overlay.setAttribute(
-      'aria-hidden',
-      'false'
-    )
-
-
-    setTimeout(
-      function () {
-
-        passwordInput.focus()
-
-      },
-      100
-    )
-
-  }
-
-
-
-  /* =========================================================
-       FERMER MODAL SUPPRESSION
-  ========================================================== */
-
-  function fermerModalSuppression() {
-
-    const overlay =
-      document.getElementById(
-        'managerModalOverlay'
-      )
-
-
-    const passwordInput =
-      document.getElementById(
-        'managerPassword'
-      )
-
-
-    const errorBox =
-      document.getElementById(
-        'managerModalError'
-      )
-
-
-    const confirmButton =
-      document.getElementById(
-        'managerConfirmButton'
-      )
-
-
-    overlay.classList.remove(
-      'active'
-    )
-
-
-    overlay.setAttribute(
-      'aria-hidden',
-      'true'
-    )
-
-
-    passwordInput.value =
-      ''
-
-
-    errorBox.classList.remove(
-      'active'
-    )
-
-
-    confirmButton.disabled =
-      false
-
-
-    confirmButton.classList.remove(
-      'loading'
-    )
-
-
-    detailFactureASupprimer =
-      null
-
-
-    /*
-     * Remettre le focus sur le scanner.
-     */
-
-    const scanner =
-      document.getElementById(
-        'barcodeScanner'
-      )
-
-
-    if (scanner) {
-
-      setTimeout(
-        function () {
-
-          scanner.focus()
-
-        },
-        100
-      )
-
-    }
-
-  }
-
-
-
-  /* =========================================================
-       AFFICHER / MASQUER MOT DE PASSE
-  ========================================================== */
-
-  document
-    .getElementById(
-      'managerPasswordToggle'
-    )
-    .addEventListener(
-      'click',
-      function () {
-
-        const input =
-          document.getElementById(
-            'managerPassword'
-          )
-
-
-        const icon =
-          this.querySelector(
-            'i'
-          )
-
-
-        if (
-          input.type ===
-          'password'
-        ) {
-
-          input.type =
-            'text'
-
-
-          icon.className =
-            'mdi mdi-eye-off-outline'
-
-
-          this.title =
-            'Masquer le mot de passe'
-
-
-          this.setAttribute(
-            'aria-label',
-            'Masquer le mot de passe'
-          )
-
-        } else {
-
-          input.type =
-            'password'
-
-
-          icon.className =
-            'mdi mdi-eye-outline'
-
-
-          this.title =
-            'Afficher le mot de passe'
-
-
-          this.setAttribute(
-            'aria-label',
-            'Afficher le mot de passe'
-          )
-
-        }
-
-      }
-    )
-
-
-
-  /* =========================================================
-       CLAVIER MODAL
-  ========================================================== */
-
-  document
-    .getElementById(
-      'managerPassword'
-    )
-    .addEventListener(
-      'keydown',
-      function (event) {
-
-
-        if (
-          event.key ===
-          'Enter'
-        ) {
-
-          event.preventDefault()
-
-          confirmerSuppression()
-
-        }
-
-
-        if (
-          event.key ===
-          'Escape'
-        ) {
-
-          event.preventDefault()
-
-          fermerModalSuppression()
-
-        }
-
-      }
-    )
-
-
-
-  /* =========================================================
-       CLIQUER SUR LE FOND = FERMER
-  ========================================================== */
-
-  document
-    .getElementById(
-      'managerModalOverlay'
-    )
-    .addEventListener(
-      'click',
-      function (event) {
-
-        if (
-          event.target ===
-          this
-        ) {
-
-          fermerModalSuppression()
-
-        }
-
-      }
-    )
-
-
-
-  /* =========================================================
-       CONFIRMER SUPPRESSION
-  ========================================================== */
-
-  function confirmerSuppression() {
-
-
-    if (
-      !detailFactureASupprimer
-    ) {
-
-      return
-
-    }
-
-
-    const passwordInput =
-      document.getElementById(
-        'managerPassword'
-      )
-
-
-    const password =
-      passwordInput.value.trim()
-
-
-    const errorBox =
-      document.getElementById(
-        'managerModalError'
-      )
-
-
-    const errorText =
-      document.getElementById(
-        'managerModalErrorText'
-      )
-
-
-    const confirmButton =
-      document.getElementById(
-        'managerConfirmButton'
-      )
-
-
-    /*
-     * Mot de passe vide.
-     */
-
-    if (!password) {
-
-      errorText.textContent =
-        'Veuillez saisir le mot de passe du manager.'
-
-
-      errorBox.classList.add(
-        'active'
-      )
-
-
-      passwordInput.focus()
-
-
-      return
-
-    }
-
-
-    /*
-     * Préparation.
-     */
-
-    errorBox.classList.remove(
-      'active'
-    )
-
-
-    confirmButton.disabled =
-      true
-
-
-    confirmButton.classList.add(
-      'loading'
-    )
-
-
-    /*
-     * FormData.
-     */
-
-    const formData =
-      new FormData()
-
-
-    formData.append(
-      'password',
-      password
-    )
-
-
-    formData.append(
-      'csrfmiddlewaretoken',
-      '{{ csrf_token }}'
-    )
-
-
-    /*
-     * ---------------------------------------------------------
-     * IMPORTANT :
-     * Le nom de l'URL est celui qui existe dans ton projet :
-     *
-     * deletedetailFacture
-     *
-     * PAS deleteDetailFacture.
-     * ---------------------------------------------------------
-     */
-
-    const urlTemplate =
-      "{% url 'deletedetailFacture' 0 %}"
-
-
-    const url =
-      urlTemplate.replace(
-        '0',
-        detailFactureASupprimer
-      )
-
-
-    /*
-     * Envoi.
-     */
-
-    fetch(
-      url,
-      {
-        method: 'POST',
-
-        body: formData,
-
-        credentials: 'same-origin',
-
-        headers: {
-          'X-Requested-With':
-            'XMLHttpRequest'
-        }
-
-      }
-    )
-
-      .then(
-        function (response) {
-
-          return response.json()
-
-        }
-      )
-
-      .then(
-        function (data) {
-
-
-          /*
-           * ERREUR
-           */
-
-          if (!data.success) {
-
-            errorText.textContent =
-              data.message ||
-              'Autorisation refusée.'
-
-
-            errorBox.classList.add(
-              'active'
-            )
-
-
-            confirmButton.disabled =
-              false
-
-
-            confirmButton.classList.remove(
-              'loading'
-            )
-
-
-            passwordInput.value =
-              ''
-
-
-            passwordInput.focus()
-
-
-            return
-
-          }
-
-
-          /*
-           * SUCCÈS
-           */
-
-          fermerModalSuppression()
-
-
-          window.location.reload()
-
-        }
-      )
-
-      .catch(
-        function (error) {
-
-          console.error(
-            'Erreur suppression :',
-            error
-          )
-
-
-          errorText.textContent =
-            'Une erreur est survenue. Veuillez réessayer.'
-
-
-          errorBox.classList.add(
-            'active'
-          )
-
-
-          confirmButton.disabled =
-            false
-
-
-          confirmButton.classList.remove(
-            'loading'
-          )
-
-        }
-      )
-
-  }
-
-
-
-  /* =========================================================
-       IMPRESSION FACTURE
-  ========================================================== */
-
-  function imprimerFacture(id) {
-
-
-    const url =
-      "{% url 'print_facture' 0 %}"
-        .replace(
-          '/0',
-          '/' + id
-        )
-
-
-    const fenetre =
-      window.open(
-        url,
-        '_blank',
-        'width=1000,height=800'
-      )
-
-
-    /*
-     * Pop-up bloquée.
-     */
-
-    if (!fenetre) {
-
-      afficherErreurImpression()
-
-      return
-
-    }
-
-
-    /*
-     * Lancer l'impression automatiquement.
-     */
-
-    fenetre.onload =
-      function () {
-
-        setTimeout(
-          function () {
-
-            fenetre.focus()
-
-            fenetre.print()
-
-          },
-          500
-        )
-
-      }
-
-  }
-
-
-
-  /* =========================================================
-       MESSAGE POP-UP BLOQUÉE
-  ========================================================== */
-
-  function afficherErreurImpression() {
-
-
-    let container =
-      document.querySelector(
-        '.messages-container'
-      )
-
-
-    /*
-     * Créer le conteneur s'il n'existe pas.
-     */
-
-    if (!container) {
-
-      container =
-        document.createElement(
-          'div'
-        )
-
-
-      container.className =
-        'messages-container'
-
-
-      const page =
-        document.querySelector(
-          '.facture-page'
-        )
-
-
-      if (page) {
-
-        page.prepend(
-          container
-        )
-
-      }
-
-    }
-
-
-    /*
-     * Message.
-     */
-
-    container.innerHTML = `
-
-      <div
-        class="alert alert-danger alert-dismissible fade show"
-        role="alert"
-      >
-
-        <div class="d-flex align-items-center">
-
-          <i
-            class="mdi mdi-alert-circle-outline mr-2"
-            style="font-size:22px;"
-          ></i>
-
-
-          <span>
-
-            La fenêtre d'impression a été bloquée
-            par le navigateur.
-
-            Veuillez autoriser les fenêtres
-            pop-up pour ce site.
-
-          </span>
+            </div>
 
         </div>
 
 
-        <button
-          type="button"
-          class="close"
-          data-dismiss="alert"
-          aria-label="Fermer"
-        >
+        <div class="manager-modal-body">
 
-          <span aria-hidden="true">
-            &times;
-          </span>
+            <div class="manager-modal-product">
 
-        </button>
+                Produit à supprimer :
 
-      </div>
+                <strong id="managerProductName"></strong>
 
-    `
+            </div>
 
-  }
 
+            <label
+                for="managerPassword"
+                class="manager-password-label"
+            >
+
+                Mot de passe du manager
+
+            </label>
+
+
+            <div class="manager-password-wrapper">
+
+                <input
+                    type="password"
+                    id="managerPassword"
+                    class="manager-password-input"
+                    placeholder="Entrez le mot de passe"
+                    autocomplete="off"
+                >
+
+
+                <button
+                    type="button"
+                    id="managerPasswordToggle"
+                    class="manager-password-toggle"
+                    title="Afficher le mot de passe"
+                    aria-label="Afficher le mot de passe"
+                >
+
+                    <i class="mdi mdi-eye-outline"></i>
+
+                </button>
+
+            </div>
+
+
+            <div
+                id="managerModalError"
+                class="manager-modal-error"
+            >
+
+                <i class="mdi mdi-alert-circle-outline mr-1"></i>
+
+                <span id="managerModalErrorText"></span>
+
+            </div>
+
+        </div>
+
+
+        <div class="manager-modal-footer">
+
+            <button
+                type="button"
+                class="manager-btn-cancel"
+                onclick="fermerModalSuppression()"
+            >
+
+                <i class="mdi mdi-close mr-1"></i>
+
+                Annuler
+
+            </button>
+
+
+            <button
+                type="button"
+                id="managerConfirmButton"
+                class="manager-btn-confirm"
+                onclick="confirmerSuppression()"
+            >
+
+                <span class="manager-loading">
+
+                    <i class="mdi mdi-loading mdi-spin"></i>
+
+                </span>
+
+                <i class="mdi mdi-delete-outline mr-1"></i>
+
+                Autoriser la suppression
+
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+/* =========================================================
+   SELECT2 AJAX
+   INITIALISATION ROBUSTE
+========================================================= */
+
+(function () {
+
+    "use strict";
+
+    function initialiserSelectProduit() {
+
+        if (typeof window.jQuery === "undefined") {
+
+            console.warn(
+                "jQuery n'est pas encore disponible."
+            );
+
+            return false;
+        }
+
+        const $ = window.jQuery;
+
+        if (typeof $.fn.select2 === "undefined") {
+
+            console.warn(
+                "Select2 n'est pas encore disponible."
+            );
+
+            return false;
+        }
+
+        const $select = $("#produitFacture");
+
+        if (!$select.length) {
+
+            console.error(
+                "#produitFacture introuvable."
+            );
+
+            return false;
+        }
+
+
+        /* =====================================================
+           IMPORTANT
+
+           base.html peut avoir déjà initialisé Select2.
+
+           On détruit donc l'ancienne instance avant
+           d'initialiser notre version AJAX.
+        ===================================================== */
+
+        if ($select.hasClass("select2-hidden-accessible")) {
+
+            try {
+
+                $select.select2("destroy");
+
+            } catch (error) {
+
+                console.warn(
+                    "Impossible de détruire l'ancienne instance Select2.",
+                    error
+                );
+
+            }
+        }
+
+
+        /* =====================================================
+           INITIALISATION SELECT2
+        ===================================================== */
+
+        $select.select2({
+
+            width: "100%",
+
+            placeholder: "Rechercher un produit...",
+
+            allowClear: true,
+
+            minimumInputLength: 2,
+
+            closeOnSelect: true,
+
+            dropdownAutoWidth: false,
+
+            dropdownParent: $select.closest(".card-body"),
+
+            ajax: {
+
+                url: "{% url 'rechercherProduitFacture' %}",
+
+                dataType: "json",
+
+                delay: 150,
+
+                cache: true,
+
+                data: function (params) {
+
+                    const terme = $.trim(
+                        params.term || ""
+                    );
+
+                    console.log(
+                        "Recherche produit :",
+                        terme
+                    );
+
+                    return {
+                        q: terme
+                    };
+                },
+
+                processResults: function (data) {
+
+                    console.log(
+                        "Produits reçus :",
+                        data
+                    );
+
+                    if (
+                        !data ||
+                        !Array.isArray(data.results)
+                    ) {
+
+                        console.error(
+                            "Réponse JSON invalide :",
+                            data
+                        );
+
+                        return {
+                            results: []
+                        };
+                    }
+
+                    return {
+                        results: data.results
+                    };
+                },
+
+                error: function (
+                    xhr,
+                    status,
+                    error
+                ) {
+
+                    console.error(
+                        "Erreur AJAX recherche produit",
+                        {
+                            status: xhr.status,
+                            statusText: xhr.statusText,
+                            error: error,
+                            response: xhr.responseText
+                        }
+                    );
+                }
+
+            },
+
+            language: {
+
+                inputTooShort: function () {
+                    return "Tapez au moins 2 caractères...";
+                },
+
+                searching: function () {
+                    return "Recherche...";
+                },
+
+                noResults: function () {
+                    return "Aucun produit trouvé";
+                },
+
+                errorLoading: function () {
+                    return "Impossible de charger les produits.";
+                },
+
+                loadingMore: function () {
+                    return "Chargement...";
+                }
+
+            }
+
+        });
+
+
+        /* =====================================================
+           ÉVÉNEMENTS SELECT2
+        ===================================================== */
+
+        $select.on(
+            "select2:open",
+            function () {
+
+                console.log(
+                    "Select2 ouvert."
+                );
+
+            }
+        );
+
+
+        $select.on(
+            "select2:select",
+            function (event) {
+
+                console.log(
+                    "Produit sélectionné :",
+                    event.params.data
+                );
+
+            }
+        );
+
+
+        console.log(
+            "Select2 AJAX produit initialisé avec succès."
+        );
+
+        return true;
+    }
+
+
+    /* =========================================================
+       ATTENDRE JQUERY + SELECT2
+    ========================================================= */
+
+    function demarrerSelect2() {
+
+        let tentatives = 0;
+
+        const maximumTentatives = 50;
+
+        const interval = setInterval(
+            function () {
+
+                tentatives++;
+
+                if (initialiserSelectProduit()) {
+
+                    clearInterval(interval);
+
+                    return;
+                }
+
+                if (tentatives >= maximumTentatives) {
+
+                    clearInterval(interval);
+
+                    console.error(
+                        "Impossible d'initialiser Select2 après plusieurs tentatives."
+                    );
+                }
+
+            },
+            100
+        );
+    }
+
+
+    /* =========================================================
+       DOM READY
+    ========================================================= */
+
+    if (document.readyState === "loading") {
+
+        document.addEventListener(
+            "DOMContentLoaded",
+            demarrerSelect2,
+            {
+                once: true
+            }
+        );
+
+    } else {
+
+        demarrerSelect2();
+
+    }
+
+})();
+
+
+/* =========================================================
+   SCANNER CODE-BARRES
+========================================================= */
+
+(function () {
+
+    "use strict";
+
+
+    function initialiserScanner() {
+
+        const scanner =
+            document.getElementById(
+                "barcodeScanner"
+            );
+
+        const scannerForm =
+            document.getElementById(
+                "barcodeScanForm"
+            );
+
+        const hiddenBarcode =
+            document.getElementById(
+                "hiddenBarcode"
+            );
+
+
+        if (
+            !scanner ||
+            !scannerForm ||
+            !hiddenBarcode
+        ) {
+
+            return;
+        }
+
+
+        let scanEnCours = false;
+
+
+        /* =====================================================
+           FOCUS
+        ===================================================== */
+
+        function focusScanner() {
+
+            if (scanner.disabled) {
+
+                return;
+            }
+
+            try {
+
+                scanner.focus();
+
+                scanner.select();
+
+            } catch (error) {
+
+                console.warn(
+                    "Focus scanner impossible :",
+                    error
+                );
+
+            }
+        }
+
+
+        /* =====================================================
+           FOCUS INITIAL
+        ===================================================== */
+
+        setTimeout(
+            function () {
+
+                focusScanner();
+
+            },
+            250
+        );
+
+
+        /* =====================================================
+           SCAN
+        ===================================================== */
+
+        scanner.addEventListener(
+            "keydown",
+            function (event) {
+
+                if (event.key !== "Enter") {
+
+                    return;
+                }
+
+                event.preventDefault();
+
+
+                if (scanEnCours) {
+
+                    return;
+                }
+
+
+                const code =
+                    scanner.value.trim();
+
+
+                if (!code) {
+
+                    scanner.value = "";
+
+                    hiddenBarcode.value = "";
+
+                    focusScanner();
+
+                    return;
+                }
+
+
+                /*
+                 * Le code-barres reste une chaîne.
+                 *
+                 * Aucun Number()
+                 * Aucun parseInt()
+                 * Aucun parseFloat()
+                 *
+                 * Les zéros initiaux sont conservés.
+                 */
+
+                hiddenBarcode.value =
+                    code;
+
+
+                console.log(
+                    "SCAN :",
+                    code
+                );
+
+
+                scanEnCours = true;
+
+
+                scanner.disabled =
+                    true;
+
+                scanner.classList.add(
+                    "scanner-disabled"
+                );
+
+
+                /*
+                 * POST classique.
+                 *
+                 * Compatible avec addDetailFacture
+                 * qui redirige après l'ajout.
+                 */
+
+                HTMLFormElement.prototype.submit.call(
+                    scannerForm
+                );
+
+            }
+        );
+
+
+        /* =====================================================
+           NETTOYAGE
+        ===================================================== */
+
+        scanner.addEventListener(
+            "input",
+            function () {
+
+                this.value =
+                    this.value.replace(
+                        /\s/g,
+                        ""
+                    );
+
+            }
+        );
+
+
+        /* =====================================================
+           CLIC
+        ===================================================== */
+
+        scanner.addEventListener(
+            "click",
+            function () {
+
+                if (!scanEnCours) {
+
+                    this.select();
+
+                }
+
+            }
+        );
+
+
+        /* =====================================================
+           ESC
+        ===================================================== */
+
+        scanner.addEventListener(
+            "keydown",
+            function (event) {
+
+                if (event.key !== "Escape") {
+
+                    return;
+                }
+
+                event.preventDefault();
+
+                scanner.value = "";
+
+                hiddenBarcode.value = "";
+
+                focusScanner();
+
+            }
+        );
+
+    }
+
+
+    /* =====================================================
+       DOM READY
+    ===================================================== */
+
+    if (document.readyState === "loading") {
+
+        document.addEventListener(
+            "DOMContentLoaded",
+            initialiserScanner,
+            {
+                once: true
+            }
+        );
+
+    } else {
+
+        initialiserScanner();
+
+    }
+
+})();
+
+
+/* =========================================================
+   VARIABLE SUPPRESSION
+========================================================= */
+
+let detailFactureASupprimer = null;
+
+
+/* =========================================================
+   OUVRIR MODAL
+========================================================= */
+
+function ouvrirModalSuppression(
+    detailId,
+    produitNom
+) {
+
+    detailFactureASupprimer =
+        detailId;
+
+
+    const overlay =
+        document.getElementById(
+            "managerModalOverlay"
+        );
+
+    const productName =
+        document.getElementById(
+            "managerProductName"
+        );
+
+    const passwordInput =
+        document.getElementById(
+            "managerPassword"
+        );
+
+    const errorBox =
+        document.getElementById(
+            "managerModalError"
+        );
+
+    const confirmButton =
+        document.getElementById(
+            "managerConfirmButton"
+        );
+
+
+    if (
+        !overlay ||
+        !productName ||
+        !passwordInput ||
+        !errorBox ||
+        !confirmButton
+    ) {
+
+        return;
+    }
+
+
+    productName.textContent =
+        produitNom;
+
+
+    passwordInput.value =
+        "";
+
+
+    errorBox.classList.remove(
+        "active"
+    );
+
+
+    confirmButton.disabled =
+        false;
+
+
+    confirmButton.classList.remove(
+        "loading"
+    );
+
+
+    overlay.classList.add(
+        "active"
+    );
+
+
+    overlay.setAttribute(
+        "aria-hidden",
+        "false"
+    );
+
+
+    setTimeout(
+        function () {
+
+            passwordInput.focus();
+
+        },
+        100
+    );
+
+}
+
+
+/* =========================================================
+   FERMER MODAL
+========================================================= */
+
+function fermerModalSuppression() {
+
+    const overlay =
+        document.getElementById(
+            "managerModalOverlay"
+        );
+
+    const passwordInput =
+        document.getElementById(
+            "managerPassword"
+        );
+
+    const errorBox =
+        document.getElementById(
+            "managerModalError"
+        );
+
+    const confirmButton =
+        document.getElementById(
+            "managerConfirmButton"
+        );
+
+
+    if (
+        !overlay ||
+        !passwordInput ||
+        !errorBox ||
+        !confirmButton
+    ) {
+
+        return;
+    }
+
+
+    overlay.classList.remove(
+        "active"
+    );
+
+
+    overlay.setAttribute(
+        "aria-hidden",
+        "true"
+    );
+
+
+    passwordInput.value =
+        "";
+
+
+    errorBox.classList.remove(
+        "active"
+    );
+
+
+    confirmButton.disabled =
+        false;
+
+
+    confirmButton.classList.remove(
+        "loading"
+    );
+
+
+    detailFactureASupprimer =
+        null;
+
+
+    const scanner =
+        document.getElementById(
+            "barcodeScanner"
+        );
+
+
+    if (
+        scanner &&
+        !scanner.disabled
+    ) {
+
+        setTimeout(
+            function () {
+
+                scanner.focus();
+
+            },
+            100
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   AFFICHER / MASQUER MOT DE PASSE
+========================================================= */
+
+(function () {
+
+    const toggle =
+        document.getElementById(
+            "managerPasswordToggle"
+        );
+
+
+    if (!toggle) {
+
+        return;
+    }
+
+
+    toggle.addEventListener(
+        "click",
+        function () {
+
+            const input =
+                document.getElementById(
+                    "managerPassword"
+                );
+
+            const icon =
+                this.querySelector(
+                    "i"
+                );
+
+
+            if (
+                !input ||
+                !icon
+            ) {
+
+                return;
+            }
+
+
+            if (
+                input.type === "password"
+            ) {
+
+                input.type =
+                    "text";
+
+
+                icon.className =
+                    "mdi mdi-eye-off-outline";
+
+
+                this.title =
+                    "Masquer le mot de passe";
+
+
+                this.setAttribute(
+                    "aria-label",
+                    "Masquer le mot de passe"
+                );
+
+            } else {
+
+                input.type =
+                    "password";
+
+
+                icon.className =
+                    "mdi mdi-eye-outline";
+
+
+                this.title =
+                    "Afficher le mot de passe";
+
+
+                this.setAttribute(
+                    "aria-label",
+                    "Afficher le mot de passe"
+                );
+
+            }
+
+        }
+    );
+
+})();
+
+
+/* =========================================================
+   CLAVIER MODAL
+========================================================= */
+
+(function () {
+
+    const passwordInput =
+        document.getElementById(
+            "managerPassword"
+        );
+
+
+    if (!passwordInput) {
+
+        return;
+    }
+
+
+    passwordInput.addEventListener(
+        "keydown",
+        function (event) {
+
+            if (event.key === "Enter") {
+
+                event.preventDefault();
+
+                confirmerSuppression();
+
+            }
+
+
+            if (event.key === "Escape") {
+
+                event.preventDefault();
+
+                fermerModalSuppression();
+
+            }
+
+        }
+    );
+
+})();
+
+
+/* =========================================================
+   CLIQUER SUR LE FOND
+========================================================= */
+
+(function () {
+
+    const overlay =
+        document.getElementById(
+            "managerModalOverlay"
+        );
+
+
+    if (!overlay) {
+
+        return;
+    }
+
+
+    overlay.addEventListener(
+        "click",
+        function (event) {
+
+            if (event.target === this) {
+
+                fermerModalSuppression();
+
+            }
+
+        }
+    );
+
+})();
+
+
+/* =========================================================
+   CONFIRMER SUPPRESSION
+========================================================= */
+
+function confirmerSuppression() {
+
+    if (!detailFactureASupprimer) {
+
+        return;
+    }
+
+
+    const passwordInput =
+        document.getElementById(
+            "managerPassword"
+        );
+
+
+    const password =
+        passwordInput
+            ? passwordInput.value.trim()
+            : "";
+
+
+    const errorBox =
+        document.getElementById(
+            "managerModalError"
+        );
+
+
+    const errorText =
+        document.getElementById(
+            "managerModalErrorText"
+        );
+
+
+    const confirmButton =
+        document.getElementById(
+            "managerConfirmButton"
+        );
+
+
+    if (!password) {
+
+        if (errorText) {
+
+            errorText.textContent =
+                "Veuillez saisir le mot de passe du manager.";
+
+        }
+
+
+        if (errorBox) {
+
+            errorBox.classList.add(
+                "active"
+            );
+
+        }
+
+
+        if (passwordInput) {
+
+            passwordInput.focus();
+
+        }
+
+        return;
+    }
+
+
+    if (errorBox) {
+
+        errorBox.classList.remove(
+            "active"
+        );
+
+    }
+
+
+    if (confirmButton) {
+
+        confirmButton.disabled =
+            true;
+
+        confirmButton.classList.add(
+            "loading"
+        );
+
+    }
+
+
+    const formData =
+        new FormData();
+
+
+    formData.append(
+        "password",
+        password
+    );
+
+
+    formData.append(
+        "csrfmiddlewaretoken",
+        "{{ csrf_token }}"
+    );
+
+
+    const urlTemplate =
+        "{% url 'deletedetailFacture' 0 %}";
+
+
+    const url =
+        urlTemplate.replace(
+            "0",
+            detailFactureASupprimer
+        );
+
+
+    fetch(
+        url,
+        {
+            method: "POST",
+
+            body: formData,
+
+            credentials: "same-origin",
+
+            headers: {
+                "X-Requested-With":
+                    "XMLHttpRequest"
+            }
+
+        }
+    )
+    .then(
+        function (response) {
+
+            if (!response.ok) {
+
+                throw new Error(
+                    "HTTP " +
+                    response.status
+                );
+            }
+
+
+            return response.json();
+
+        }
+    )
+    .then(
+        function (data) {
+
+            if (!data.success) {
+
+                if (errorText) {
+
+                    errorText.textContent =
+                        data.message ||
+                        "Autorisation refusée.";
+
+                }
+
+
+                if (errorBox) {
+
+                    errorBox.classList.add(
+                        "active"
+                    );
+
+                }
+
+
+                if (confirmButton) {
+
+                    confirmButton.disabled =
+                        false;
+
+                    confirmButton.classList.remove(
+                        "loading"
+                    );
+
+                }
+
+
+                if (passwordInput) {
+
+                    passwordInput.value =
+                        "";
+
+                    passwordInput.focus();
+
+                }
+
+                return;
+            }
+
+
+            fermerModalSuppression();
+
+            window.location.reload();
+
+        }
+    )
+    .catch(
+        function (error) {
+
+            console.error(
+                "Erreur suppression :",
+                error
+            );
+
+
+            if (errorText) {
+
+                errorText.textContent =
+                    "Une erreur est survenue. Veuillez réessayer.";
+
+            }
+
+
+            if (errorBox) {
+
+                errorBox.classList.add(
+                    "active"
+                );
+
+            }
+
+
+            if (confirmButton) {
+
+                confirmButton.disabled =
+                    false;
+
+                confirmButton.classList.remove(
+                    "loading"
+                );
+
+            }
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   IMPRESSION FACTURE
+========================================================= */
+
+function imprimerFacture(id) {
+
+    const urlTemplate =
+        "{% url 'print_facture' 0 %}";
+
+
+    const url =
+        urlTemplate.replace(
+            "/0",
+            "/" + id
+        );
+
+
+    const fenetre =
+        window.open(
+            url,
+            "_blank",
+            "width=1000,height=800"
+        );
+
+
+    if (!fenetre) {
+
+        afficherErreurImpression();
+
+        return;
+    }
+
+
+    fenetre.onload =
+        function () {
+
+            setTimeout(
+                function () {
+
+                    fenetre.focus();
+
+                    fenetre.print();
+
+                },
+                500
+            );
+
+        };
+
+}
+
+
+/* =========================================================
+   MESSAGE POP-UP BLOQUÉE
+========================================================= */
+
+function afficherErreurImpression() {
+
+    let container =
+        document.querySelector(
+            ".messages-container"
+        );
+
+
+    if (!container) {
+
+        container =
+            document.createElement(
+                "div"
+            );
+
+
+        container.className =
+            "messages-container";
+
+
+        const page =
+            document.querySelector(
+                ".facture-page"
+            );
+
+
+        if (page) {
+
+            page.prepend(
+                container
+            );
+
+        }
+
+    }
+
+
+    if (!container) {
+
+        return;
+    }
+
+
+    container.innerHTML =
+
+        '<div class="alert alert-danger alert-dismissible fade show" role="alert">' +
+
+            '<div class="d-flex align-items-center">' +
+
+                '<i class="mdi mdi-alert-circle-outline mr-2" style="font-size:22px;"></i>' +
+
+                '<span>' +
+
+                    'La fenêtre d\'impression a été bloquée par le navigateur. ' +
+
+                    'Veuillez autoriser les fenêtres pop-up pour ce site.' +
+
+                '</span>' +
+
+            '</div>' +
+
+            '<button type="button" class="close" data-dismiss="alert" aria-label="Fermer">' +
+
+                '<span aria-hidden="true">&times;</span>' +
+
+            '</button>' +
+
+        '</div>';
+
+}
 
 </script>
 
