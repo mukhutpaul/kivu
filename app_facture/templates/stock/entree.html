@@ -8,278 +8,443 @@
 
     <div class="row justify-content-center">
 
-        <!-- =========================
-             FORMULAIRE
-        ========================== -->
-        <div class="col-md-9 col-lg-8 grid-margin stretch-card">
+        <!-- =====================================================
+             MESSAGE DJANGO
+        ====================================================== -->
 
-            <div class="card shadow-sm">
+        <div class="col-md-9 col-lg-8">
 
-                <div class="card-body p-4">
+            {% if messages %}
 
-                    <!-- En-tête -->
-                    <div class="mb-4">
+                {% for message in messages %}
 
-                        <h4 class="card-title mb-2">
-                            <i class="mdi mdi-package-down mr-2"></i>
-                            Entrée de stock
-                        </h4>
+                    <div
+                        class="alert
+                        {% if message.tags == 'success' %}
+                            alert-success
+                        {% elif message.tags == 'error' %}
+                            alert-danger
+                        {% elif message.tags == 'warning' %}
+                            alert-warning
+                        {% else %}
+                            alert-info
+                        {% endif %}
+                        shadow-sm mb-4"
+                        role="alert"
+                    >
 
-                        <p class="card-description mb-0">
-                            Enregistrer une nouvelle entrée de produit dans le stock
-                        </p>
+                        {% if message.tags == 'success' %}
+
+                            <i class="mdi mdi-check-circle-outline mr-2"></i>
+
+                        {% elif message.tags == 'error' %}
+
+                            <i class="mdi mdi-alert-circle-outline mr-2"></i>
+
+                        {% elif message.tags == 'warning' %}
+
+                            <i class="mdi mdi-alert-outline mr-2"></i>
+
+                        {% else %}
+
+                            <i class="mdi mdi-information-outline mr-2"></i>
+
+                        {% endif %}
+
+                        <strong>
+                            {{ message }}
+                        </strong>
 
                     </div>
 
-                    <hr class="mb-4">
+                {% endfor %}
+
+            {% endif %}
 
 
-                    <form class="forms-sample"
-                          method="post"
-                          action="{% url 'entree_stock' %}">
+            <!-- =====================================================
+                 FORMULAIRE
+            ====================================================== -->
 
-                        {% csrf_token %}
+            <div class="col-12 grid-margin stretch-card px-0">
+
+                <div class="card shadow-sm">
+
+                    <div class="card-body p-4">
+
+                        <!-- =================================================
+                             EN-TÊTE
+                        ================================================== -->
+
+                        <div class="mb-4">
+
+                            <h4 class="card-title mb-2">
+
+                                <i class="mdi mdi-package-down mr-2"></i>
+
+                                Entrée de stock
+
+                            </h4>
+
+                            <p class="card-description mb-0">
+
+                                Enregistrer une nouvelle entrée de produit
+                                dans le stock
+
+                            </p>
+
+                        </div>
 
 
-                        <!-- =========================
-                             PRODUIT
-                        ========================== -->
+                        <hr class="mb-4">
 
-                        <div class="form-group mb-4">
 
-                            <label for="produit" class="text-white font-weight-bold">
-                                Produit <span class="text-danger">*</span>
-                            </label>
+                        <!-- =================================================
+                             MESSAGE D'ERREUR DE VALIDATION
+                        ================================================== -->
 
-                            <select
-                                class="js-example-basic-single"
-                                required
-                                style="width:100%"
-                                name="produit"
-                                id="produit">
+                        {% if msg %}
 
-                                <option value="">
-                                    --- Sélectionner un produit ---
-                                </option>
+                            <div class="alert alert-danger shadow-sm mb-4">
 
-                                {% for produit in produits %}
+                                <i
+                                    class="mdi mdi-alert-circle-outline mr-2"
+                                ></i>
 
-                                    <option value="{{ produit.id }}">
-                                        {{ produit.nom }}
+                                {{ msg }}
+
+                            </div>
+
+                        {% endif %}
+
+
+                        <!-- =================================================
+                             FORMULAIRE
+                        ================================================== -->
+
+                        <form
+                            id="formEntreeStock"
+                            class="forms-sample"
+                            method="post"
+                            action="{% url 'entree_stock' %}"
+                            autocomplete="off"
+                        >
+
+                            {% csrf_token %}
+
+
+                            <!-- =================================================
+                                 PRODUIT
+                            ================================================== -->
+
+                            <div class="form-group mb-4">
+
+                                <label
+                                    for="produit"
+                                    class="text-white font-weight-bold"
+                                >
+
+                                    Produit
+
+                                    <span class="text-danger">*</span>
+
+                                </label>
+
+
+                                <select
+                                    class="js-example-basic-single"
+                                    required
+                                    style="width:100%;"
+                                    name="produit"
+                                    id="produit"
+                                    autocomplete="off"
+                                >
+
+                                    <option value="">
+                                        --- Sélectionner un produit ---
                                     </option>
 
-                                {% endfor %}
 
-                            </select>
+                                    {% for produit in produits %}
 
-                            <small class="text-muted">
-                                Recherchez directement le produit dans la liste.
-                            </small>
+                                        <option value="{{ produit.id }}">
 
-                        </div>
+                                            {{ produit.nom }}
+
+                                        </option>
+
+                                    {% endfor %}
+
+                                </select>
 
 
-                        <!-- =========================
-                             INFORMATIONS DU LOT
-                        ========================== -->
+                                <small class="text-muted">
 
-                        <div class="row">
+                                    Recherchez directement le produit
+                                    dans la liste.
 
-                            <!-- Numéro de lot -->
-                            <div class="col-md-6">
+                                </small>
 
-                                <div class="form-group mb-4">
+                            </div>
 
-                                    <label for="numero"
-                                           class="text-white font-weight-bold">
 
-                                        Numéro de lot
+                            <!-- =================================================
+                                 INFORMATIONS DU LOT
+                            ================================================== -->
 
-                                    </label>
+                            <div class="row">
 
-                                    <input
-                                        type="text"
-                                        name="numero"
-                                        class="form-control text-white"
-                                        id="numero"
-                                        placeholder="Exemple : LOT-2026-001">
+
+                                <!-- =================================================
+                                     NUMÉRO DE LOT
+                                ================================================== -->
+
+                                <div class="col-md-6">
+
+                                    <div class="form-group mb-4">
+
+                                        <label
+                                            class="text-white font-weight-bold"
+                                        >
+
+                                            Numéro de lot
+
+                                        </label>
+
+
+                                        <div class="lot-auto-field">
+
+                                            <div class="lot-icon">
+
+                                                <i class="mdi mdi-barcode"></i>
+
+                                            </div>
+
+
+                                            <div class="lot-content">
+
+                                                <div class="lot-title">
+
+                                                    Généré automatiquement
+
+                                                </div>
+
+                                                <div class="lot-format">
+
+                                                    LOT-année-001
+
+                                                </div>
+
+                                            </div>
+
+                                        </div>
+
+
+                                        <small class="text-muted">
+
+                                            Exemple :
+
+                                            <strong>LOT-2026-001</strong>,
+
+                                            <strong>LOT-2026-002</strong>,
+
+                                            <strong>LOT-2026-003</strong>
+
+                                        </small>
+
+                                    </div>
+
+                                </div>
+
+
+                                <!-- =================================================
+                                     QUANTITÉ
+                                ================================================== -->
+
+                                <div class="col-md-6">
+
+                                    <div class="form-group mb-4">
+
+                                        <label
+                                            for="quantite"
+                                            class="text-white font-weight-bold"
+                                        >
+
+                                            Quantité
+
+                                            <span class="text-danger">*</span>
+
+                                        </label>
+
+
+                                        <input
+                                            type="number"
+                                            name="quantite"
+                                            class="form-control text-white"
+                                            id="quantite"
+                                            placeholder="Exemple : 50"
+                                            min="0.01"
+                                            step="0.01"
+                                            required
+                                            autocomplete="off"
+                                        >
+
+                                    </div>
+
+                                </div>
+
+
+                                <!-- =================================================
+                                     DATE DE PÉREMPTION
+                                ================================================== -->
+
+                                <div class="col-md-6">
+
+                                    <div class="form-group mb-4">
+
+                                        <label
+                                            for="date_peremption"
+                                            class="text-white font-weight-bold"
+                                        >
+
+                                            Date de péremption
+
+                                            <span class="text-danger">*</span>
+
+                                        </label>
+
+
+                                        <input
+                                            type="date"
+                                            name="date_peremption"
+                                            class="form-control text-white"
+                                            id="date_peremption"
+                                            required
+                                        >
+
+                                    </div>
 
                                 </div>
 
                             </div>
 
 
-                            <!-- Quantité -->
-                            <div class="col-md-6">
+                            <!-- =================================================
+                                 MOTIF
+                            ================================================== -->
 
-                                <div class="form-group mb-4">
+                            <div class="form-group mb-4">
 
-                                    <label for="quantite"
-                                           class="text-white font-weight-bold">
+                                <label
+                                    for="motif"
+                                    class="text-white font-weight-bold"
+                                >
 
-                                        Quantité <span class="text-danger">*</span>
+                                    Motif
 
-                                    </label>
+                                </label>
 
-                                    <input
-                                        type="number"
-                                        name="quantite"
-                                        class="form-control text-white"
-                                        id="quantite"
-                                        placeholder="Exemple : 50"
-                                        min="0.01"
-                                        step="0.01"
-                                        required>
+
+                                <textarea
+                                    name="motif"
+                                    class="form-control text-white"
+                                    id="motif"
+                                    rows="4"
+                                    placeholder="Exemple : Réception fournisseur, nouvel approvisionnement..."
+                                    autocomplete="off"
+                                ></textarea>
+
+                            </div>
+
+
+                            <!-- =================================================
+                                 INFORMATION
+                            ================================================== -->
+
+                            <div class="alert alert-info shadow-sm mb-4">
+
+                                <div class="d-flex align-items-start">
+
+                                    <i
+                                        class="mdi mdi-information-outline mr-3"
+                                        style="font-size:24px;"
+                                    ></i>
+
+
+                                    <div>
+
+                                        <strong>
+                                            Information
+                                        </strong>
+
+
+                                        <p class="mb-0 mt-1">
+
+                                            Cette opération crée automatiquement
+                                            un nouveau lot et augmente le stock
+                                            total du produit.
+
+                                        </p>
+
+
+                                        <p class="mb-0 mt-1">
+
+                                            Le numéro de lot sera généré au format :
+
+                                            <strong>
+                                                LOT-année-001
+                                            </strong>
+
+                                        </p>
+
+                                    </div>
 
                                 </div>
 
                             </div>
 
 
-                            <!-- Date de péremption -->
-                            <div class="col-md-6">
+                            <!-- =================================================
+                                 BOUTONS
+                            ================================================== -->
 
-                                <div class="form-group mb-4">
+                            <div
+                                class="d-flex justify-content-end align-items-center"
+                            >
 
-                                    <label for="date_peremption"
-                                           class="text-white font-weight-bold">
+                                <a
+                                    href="{% url 'stock' %}"
+                                    class="btn btn-outline-secondary mr-2"
+                                >
 
-                                        Date de péremption <span class="text-danger">*</span>
+                                    <i class="mdi mdi-close mr-1"></i>
 
-                                    </label>
+                                    Annuler
 
-                                    <input
-                                        type="date"
-                                        name="date_peremption"
-                                        class="form-control text-white"
-                                        id="date_peremption"
-                                        required>
-
-                                </div>
-
-                            </div>
-
-                        </div>
+                                </a>
 
 
-                        <!-- =========================
-                             MOTIF
-                        ========================== -->
+                                <button
+                                    type="submit"
+                                    class="btn btn-primary"
+                                    id="btnEnregistrer"
+                                >
 
-                        <div class="form-group mb-4">
+                                    <i class="mdi mdi-content-save mr-1"></i>
 
-                            <label for="motif"
-                                   class="text-white font-weight-bold">
+                                    Enregistrer l'entrée
 
-                                Motif
-
-                            </label>
-
-                            <textarea
-                                name="motif"
-                                class="form-control text-white"
-                                id="motif"
-                                rows="4"
-                                placeholder="Exemple : Réception fournisseur, nouvel approvisionnement..."></textarea>
-
-                        </div>
-
-
-                        <!-- =========================
-                             INFORMATION
-                        ========================== -->
-
-                        <div class="alert alert-info shadow-sm mb-4">
-
-                            <div class="d-flex align-items-start">
-
-                                <i class="mdi mdi-information-outline mr-3"
-                                   style="font-size: 24px;">
-                                </i>
-
-                                <div>
-
-                                    <strong>
-                                        Information
-                                    </strong>
-
-                                    <p class="mb-0 mt-1">
-                                        Cette opération crée automatiquement un nouveau lot
-                                        et augmente le stock total du produit.
-                                    </p>
-
-                                </div>
+                                </button>
 
                             </div>
 
-                        </div>
+                        </form>
 
-
-                        <!-- =========================
-                             BOUTONS
-                        ========================== -->
-
-                        <div class="d-flex justify-content-end align-items-center">
-
-                            <a
-                                href="{% url 'stock' %}"
-                                class="btn btn-outline-secondary mr-2">
-
-                                <i class="mdi mdi-close mr-1"></i>
-
-                                Annuler
-
-                            </a>
-
-
-                            <button
-                                type="submit"
-                                class="btn btn-primary">
-
-                                <i class="mdi mdi-content-save mr-1"></i>
-
-                                Enregistrer l'entrée
-
-                            </button>
-
-                        </div>
-
-                    </form>
+                    </div>
 
                 </div>
 
             </div>
-
-        </div>
-
-
-        <!-- =========================
-             MESSAGES
-        ========================== -->
-
-        <div class="col-md-9 col-lg-8 grid-margin">
-
-            {% if msg %}
-
-                <div class="alert alert-danger shadow-sm">
-
-                    <i class="mdi mdi-alert-circle-outline mr-2"></i>
-
-                    {{ msg }}
-
-                </div>
-
-            {% elif msok %}
-
-                <div class="alert alert-success shadow-sm">
-
-                    <i class="mdi mdi-check-circle-outline mr-2"></i>
-
-                    {{ msok }}
-
-                </div>
-
-            {% endif %}
 
         </div>
 
@@ -288,73 +453,202 @@
 </div>
 
 
-<!-- =========================
+<!-- =========================================================
      STYLE
-========================== -->
+========================================================= -->
 
 <style>
 
-    /* Labels */
     .form-group label {
+
         margin-bottom: 8px;
+
         font-size: 14px;
+
     }
 
 
-    /* Champs */
     .form-control {
+
         border-radius: 6px;
+
         min-height: 45px;
+
     }
 
 
-    /* Texte saisi en blanc */
     .form-control.text-white {
+
         color: #ffffff !important;
+
     }
 
 
-    /* Placeholder */
     .form-control.text-white::placeholder {
+
         color: rgba(255, 255, 255, 0.55) !important;
+
     }
 
 
-    /* Texte du textarea */
     textarea.form-control.text-white {
+
         color: #ffffff !important;
+
     }
 
 
-    /* Date */
     input[type="date"].form-control.text-white {
+
         color: #ffffff !important;
+
     }
 
 
-    /* Icônes */
     .card-title i {
+
         font-size: 22px;
+
         vertical-align: middle;
+
     }
 
 
-    /* Carte */
     .card {
+
         border-radius: 10px;
+
         overflow: hidden;
+
     }
 
 
-    /* Boutons */
     .btn {
+
         border-radius: 6px;
+
     }
 
 
-    /* Select2 */
+    /* =========================================================
+       MESSAGE
+    ========================================================= */
+
+    .alert {
+
+        border-radius: 7px;
+
+    }
+
+
+    .alert-success {
+
+        border-left: 4px solid #28a745;
+
+    }
+
+
+    .alert-danger {
+
+        border-left: 4px solid #dc3545;
+
+    }
+
+
+    /* =========================================================
+       LOT AUTOMATIQUE
+    ========================================================= */
+
+    .lot-auto-field {
+
+        min-height: 45px;
+
+        width: 100%;
+
+        display: flex;
+
+        align-items: center;
+
+        border-radius: 6px;
+
+        border: 1px solid #444;
+
+        background-color: rgba(0, 123, 255, 0.08);
+
+        padding: 7px 12px;
+
+    }
+
+
+    .lot-icon {
+
+        width: 34px;
+
+        height: 34px;
+
+        min-width: 34px;
+
+        border-radius: 6px;
+
+        display: flex;
+
+        align-items: center;
+
+        justify-content: center;
+
+        background: rgba(0, 123, 255, 0.15);
+
+        color: #4dabf7;
+
+        margin-right: 10px;
+
+    }
+
+
+    .lot-icon i {
+
+        font-size: 18px;
+
+    }
+
+
+    .lot-content {
+
+        line-height: 1.2;
+
+    }
+
+
+    .lot-title {
+
+        color: #ffffff;
+
+        font-size: 14px;
+
+        font-weight: 600;
+
+    }
+
+
+    .lot-format {
+
+        color: rgba(255, 255, 255, 0.55);
+
+        font-size: 12px;
+
+        margin-top: 2px;
+
+    }
+
+
+    /* =========================================================
+       SELECT2
+    ========================================================= */
+
     .select2-container {
+
         width: 100% !important;
+
     }
 
 
@@ -403,12 +697,13 @@
     }
 
 
-    /* Liste Select2 */
     .select2-dropdown {
 
         background-color: #2a2a2a !important;
 
         border: 1px solid #444 !important;
+
+        z-index: 99999 !important;
 
     }
 
@@ -432,7 +727,6 @@
     }
 
 
-    /* Champ de recherche Select2 */
     .select2-search--dropdown {
 
         background-color: #2a2a2a !important;
@@ -455,6 +749,8 @@
 
         padding: 8px !important;
 
+        min-height: 38px;
+
     }
 
 
@@ -466,7 +762,15 @@
     }
 
 
-    /* Information */
+    .select2-results__message {
+
+        color: rgba(255, 255, 255, 0.65) !important;
+
+        padding: 10px 14px !important;
+
+    }
+
+
     .alert-info {
 
         border-radius: 7px;
@@ -474,27 +778,285 @@
     }
 
 
-    /* Responsive */
     @media (max-width: 768px) {
 
         .card-body {
+
             padding: 20px !important;
+
         }
+
 
         .d-flex.justify-content-end {
+
             flex-direction: column;
+
             align-items: stretch !important;
+
         }
 
+
         .d-flex.justify-content-end .btn {
+
             width: 100%;
+
             margin-right: 0 !important;
+
             margin-bottom: 10px;
+
+        }
+
+
+        .lot-auto-field {
+
+            margin-bottom: 3px;
+
         }
 
     }
 
 </style>
 
+
+<!-- =========================================================
+     JAVASCRIPT
+========================================================= -->
+
+<script>
+
+(function () {
+
+    "use strict";
+
+
+    /* =====================================================
+       ÉVITER DOUBLE SOUMISSION
+    ===================================================== */
+
+    const formulaire =
+        document.getElementById(
+            "formEntreeStock"
+        );
+
+
+    const bouton =
+        document.getElementById(
+            "btnEnregistrer"
+        );
+
+
+    if (formulaire && bouton) {
+
+        formulaire.addEventListener(
+            "submit",
+            function () {
+
+                bouton.disabled = true;
+
+                bouton.innerHTML =
+                    '<i class="mdi mdi-loading mdi-spin mr-1"></i>' +
+                    " Enregistrement...";
+
+            }
+        );
+
+    }
+
+
+    /* =====================================================
+       SELECT2
+    ===================================================== */
+
+    function initialiserSelectProduit() {
+
+        if (
+            typeof window.jQuery === "undefined"
+        ) {
+
+            return false;
+
+        }
+
+
+        const $ = window.jQuery;
+
+
+        if (
+            typeof $.fn.select2 === "undefined"
+        ) {
+
+            return false;
+
+        }
+
+
+        const $select =
+            $("#produit");
+
+
+        if (!$select.length) {
+
+            return false;
+
+        }
+
+
+        if (
+            $select.hasClass(
+                "select2-hidden-accessible"
+            )
+        ) {
+
+            try {
+
+                $select.select2(
+                    "destroy"
+                );
+
+            } catch (error) {
+
+                console.warn(
+                    "Impossible de détruire Select2.",
+                    error
+                );
+
+            }
+
+        }
+
+
+        $select.val("");
+
+
+        $select.select2({
+
+            width: "100%",
+
+            placeholder:
+                "--- Sélectionner un produit ---",
+
+            allowClear: true,
+
+            closeOnSelect: true,
+
+            dropdownAutoWidth: false,
+
+            dropdownParent:
+                $(document.body)
+
+        });
+
+
+        $select
+            .val("")
+            .trigger("change");
+
+
+        $select.on(
+            "select2:open",
+            function () {
+
+                const $search =
+                    $(".select2-container--open")
+                    .find(
+                        ".select2-search__field"
+                    );
+
+
+                if ($search.length) {
+
+                    $search
+                        .attr(
+                            "autocomplete",
+                            "off"
+                        )
+                        .val("");
+
+                }
+
+            }
+        );
+
+
+        return true;
+
+    }
+
+
+    /* =====================================================
+       DÉMARRAGE SELECT2
+    ===================================================== */
+
+    function demarrerSelect2() {
+
+        let tentatives = 0;
+
+        const maximumTentatives = 50;
+
+
+        const interval =
+            setInterval(
+                function () {
+
+                    tentatives++;
+
+
+                    if (
+                        initialiserSelectProduit()
+                    ) {
+
+                        clearInterval(
+                            interval
+                        );
+
+                        return;
+
+                    }
+
+
+                    if (
+                        tentatives >=
+                        maximumTentatives
+                    ) {
+
+                        clearInterval(
+                            interval
+                        );
+
+                        console.warn(
+                            "Select2 n'a pas pu être initialisé."
+                        );
+
+                    }
+
+                },
+                100
+            );
+
+    }
+
+
+    if (
+        document.readyState ===
+        "loading"
+    ) {
+
+        document.addEventListener(
+            "DOMContentLoaded",
+            demarrerSelect2,
+            {
+                once: true
+            }
+        );
+
+    } else {
+
+        demarrerSelect2();
+
+    }
+
+})();
+
+</script>
 
 {% endblock content %}

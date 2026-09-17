@@ -4382,176 +4382,305 @@ def stock(request):
 # ENTRÉE STOCK
 # ==========================================================
 
+
+from decimal import Decimal, InvalidOperation
+
+
 @login_required(login_url="sign_in")
 def entree_stock(request):
 
-    produits = Produit.objects.order_by(
-        "nom"
-    )
+    # =========================================================
+    # AFFICHAGE DU FORMULAIRE
+    # =========================================================
 
-    if request.method == "POST":
+    if request.method != "POST":
 
-        produit_id = request.POST.get(
-            "produit"
+        produits = (
+            Produit.objects
+            .only(
+                "id",
+                "nom",
+                "code_barre",
+                "quantite"
+            )
+            .order_by("nom")
         )
 
-        numero = request.POST.get(
-            "numero",
-            ""
-        ).strip()
-
-        quantite = request.POST.get(
-            "quantite"
+        return render(
+            request,
+            "stock/entree.html",
+            {
+                "produits": produits
+            }
         )
 
-        date_peremption = request.POST.get(
-            "date_peremption"
+    # =========================================================
+    # RÉCUPÉRATION DES DONNÉES
+    # =========================================================
+
+    produit_id = request.POST.get("produit", "").strip()
+    quantite_saisie = request.POST.get("quantite", "").strip()
+    date_peremption = request.POST.get(
+        "date_peremption",
+        ""
+    ).strip()
+    motif = request.POST.get(
+        "motif",
+        ""
+    ).strip()
+
+    # =========================================================
+    # VÉRIFICATION DU PRODUIT
+    # =========================================================
+
+    if not produit_id:
+
+        return render(
+            request,
+            "stock/entree.html",
+            {
+                "msg": "Veuillez sélectionner un produit."
+            }
         )
 
-        motif = request.POST.get(
-            "motif",
-            ""
-        ).strip()
+    # =========================================================
+    # VÉRIFICATION DE LA QUANTITÉ
+    # =========================================================
 
-        if (
-            not produit_id
-            or not quantite
-            or not date_peremption
-        ):
+    if not quantite_saisie:
 
-            messages.error(
-                request,
-                "Veuillez remplir tous les champs obligatoires."
-            )
-
-            return redirect(
-                "entree_stock"
-            )
-
-        try:
-
-            quantite = Decimal(
-                quantite
-            )
-
-            if quantite <= 0:
-
-                raise ValueError
-
-        except (
-            InvalidOperation,
-            ValueError,
-            TypeError
-        ):
-
-            messages.error(
-                request,
-                "La quantité doit être supérieure à zéro."
-            )
-
-            return redirect(
-                "entree_stock"
-            )
-
-        try:
-
-            date_peremption_obj = date.fromisoformat(
-                date_peremption
-            )
-
-        except ValueError:
-
-            messages.error(
-                request,
-                "La date de péremption est invalide."
-            )
-
-            return redirect(
-                "entree_stock"
-            )
-
-        if date_peremption_obj < date.today():
-
-            messages.error(
-                request,
-                "La date de péremption ne peut pas être dépassée."
-            )
-
-            return redirect(
-                "entree_stock"
-            )
-
-        produit = get_object_or_404(
-            Produit,
-            id=produit_id
+        return render(
+            request,
+            "stock/entree.html",
+            {
+                "msg": "Veuillez saisir une quantité."
+            }
         )
+
+    try:
+
+        # IMPORTANT :
+        # On utilise Decimal et non float,
+        # car Produit.quantite est un DecimalField.
+
+        quantite = Decimal(
+            quantite_saisie.replace(",", ".")
+        )
+
+    except (InvalidOperation, ValueError, TypeError):
+
+        return render(
+            request,
+            "stock/entree.html",
+            {
+                "msg": "La quantité saisie est invalide."
+            }
+        )
+
+    if quantite <= Decimal("0"):
+
+        return render(
+            request,
+            "stock/entree.html",
+            {
+                "msg": "La quantité doit être supérieure à zéro."
+            }
+        )
+
+    # =========================================================
+    # VÉRIFICATION DE LA DATE
+    # =========================================================
+
+    if not date_peremption:
+
+        return render(
+            request,
+            "stock/entree.html",
+            {
+                "msg": "Veuillez saisir la date de péremption."
+            }
+        )
+
+    # =========================================================
+    # TRANSACTION
+    # =========================================================
+
+    try:
 
         with transaction.atomic():
 
-            produit = Produit.objects.select_for_update().get(
-                id=produit.id
+            # =================================================
+            # RÉCUPÉRER ET VERROUILLER LE PRODUIT
+            # =================================================
+
+            try:
+
+                produit = (
+                    Produit.objects
+                    .select_for_update()
+                    .get(id=produit_id)
+                )
+
+            except Produit.DoesNotExist:
+
+                raise ValueError(
+                    "Le produit sélectionné n'existe pas."
+                )
+
+            # =================================================
+            # ANNÉE COURANTE
+            # =================================================
+
+            annee = timezone.now().year
+
+            prefixe = f"LOT-{annee}-"
+
+            # =================================================
+            # CHERCHER LE DERNIER LOT
+            # =================================================
+
+            dernier_lot = (
+                Lot.objects
+                .filter(
+                    numero__startswith=prefixe
+                )
+                .order_by("-numero")
+                .first()
             )
 
-            stock_avant = (
-                produit.quantite
-                or Decimal("0")
+            # =================================================
+            # CALCUL DU NUMÉRO DU LOT
+            # =================================================
+
+            dernier_numero = 0
+
+            if dernier_lot:
+
+                try:
+
+                    dernier_numero = int(
+                        dernier_lot.numero
+                        .split("-")[-1]
+                    )
+
+                except (
+                    ValueError,
+                    AttributeError,
+                    IndexError
+                ):
+
+                    dernier_numero = 0
+
+            nouveau_numero = dernier_numero + 1
+
+            numero_lot = (
+                f"LOT-{annee}-{nouveau_numero:03d}"
             )
 
-            lot = Lot.objects.create(
-                produit=produit,
-                numero=numero or None,
-                quantite=quantite,
-                date_peremption=date_peremption_obj
-            )
+            # =================================================
+            # ANCIEN STOCK
+            # =================================================
+
+            stock_avant = produit.quantite
+
+            # =================================================
+            # NOUVEAU STOCK
+            # =================================================
 
             stock_apres = (
-                stock_avant
-                + quantite
+                stock_avant + quantite
             )
+
+            # =================================================
+            # CRÉER LE LOT
+            # =================================================
+
+            lot = Lot.objects.create(
+
+                numero=numero_lot,
+
+                produit=produit,
+
+                quantite=quantite,
+
+                date_peremption=date_peremption
+
+            )
+
+            # =================================================
+            # METTRE À JOUR LE STOCK
+            # =================================================
 
             produit.quantite = stock_apres
 
             produit.save(
-                update_fields=[
-                    "quantite"
-                ]
+                update_fields=["quantite"]
             )
 
+            # =================================================
+            # CRÉER LE MOUVEMENT DE STOCK
+            # =================================================
+
             MouvementStock.objects.create(
+
                 produit=produit,
+
                 lot=lot,
-                user=request.user,
+
                 type=MouvementStock.TYPE_ENTREE,
+
                 quantite=quantite,
+
                 stock_avant=stock_avant,
+
                 stock_apres=stock_apres,
-                motif=(
-                    motif
-                    or "Entrée de stock"
-                )
+
+                motif=motif,
+
+                user=request.user
+
             )
+
+        # =====================================================
+        # SUCCÈS
+        # =====================================================
 
         messages.success(
             request,
-            f"Entrée de {quantite} unité(s) enregistrée avec succès."
+            (
+                "Entrée enregistrée avec succès. "
+                f"Lot : {numero_lot}"
+            )
         )
 
-        return redirect(
-            "stock"
+        return redirect("entree_stock")
+
+    # =========================================================
+    # ERREUR
+    # =========================================================
+
+    except ValueError as e:
+
+        return render(
+            request,
+            "stock/entree.html",
+            {
+                "msg": str(e)
+            }
         )
 
-    context = {
-        "produits": produits,
-        "lentree": "active",
-    }
+    except Exception as e:
 
-    return render(
-        request,
-        "stock/entree.html",
-        context
-    )
-
-
+        return render(
+            request,
+            "stock/entree.html",
+            {
+                "msg": (
+                    "Une erreur est survenue lors "
+                    "de l'enregistrement de l'entrée."
+                )
+            }
+        )
 # ==========================================================
 # SORTIE STOCK
 # ==========================================================
