@@ -6489,14 +6489,7 @@ def rechercherProduitFacture(request):
 
     terme = request.GET.get("q", "").strip()
 
-    # Rien à rechercher
-    if not terme:
-        return JsonResponse({
-            "results": []
-        })
-
-    # Évite les recherches trop courtes
-    if len(terme) < 2:
+    if not terme or len(terme) < 2:
         return JsonResponse({
             "results": []
         })
@@ -6513,7 +6506,7 @@ def rechercherProduitFacture(request):
             "nom",
             "code_barre",
             "pu",
-            "quantite",
+            "quantite"
         )
         .order_by("nom")[:30]
     )
@@ -6531,7 +6524,7 @@ def rechercherProduitFacture(request):
 
         results.append({
             "id": produit.id,
-            "text": texte,
+            "text": texte
         })
 
     return JsonResponse({

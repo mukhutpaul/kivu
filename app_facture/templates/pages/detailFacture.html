@@ -102,15 +102,6 @@
     opacity: 1;
 }
 
-select.form-control {
-    color: #ffffff !important;
-}
-
-select.form-control option {
-    color: #ffffff !important;
-    background-color: #252525 !important;
-}
-
 .quantity-input {
     max-width: 180px;
 }
@@ -137,14 +128,12 @@ select.form-control option {
     margin-bottom: 25px;
     padding: 18px;
     border-radius: 14px;
-
     background:
         linear-gradient(
             135deg,
             rgba(13, 110, 253, 0.12),
             rgba(79, 70, 229, 0.08)
         );
-
     border: 1px solid rgba(13, 110, 253, 0.25);
 }
 
@@ -160,7 +149,6 @@ select.form-control option {
     display: flex;
     align-items: center;
     gap: 8px;
-
     color: #ffffff;
     font-size: 16px;
     font-weight: 700;
@@ -175,13 +163,10 @@ select.form-control option {
     display: inline-flex;
     align-items: center;
     gap: 6px;
-
     padding: 5px 9px;
     border-radius: 20px;
-
     background: rgba(25, 135, 84, 0.13);
     color: #65e6a7;
-
     font-size: 11px;
     font-weight: 700;
 }
@@ -197,29 +182,20 @@ select.form-control option {
 .scanner-input {
     width: 100%;
     min-height: 52px !important;
-
     padding-left: 48px !important;
     padding-right: 15px !important;
-
     border-radius: 12px !important;
-
     background: rgba(0, 0, 0, 0.18) !important;
-
     border: 1px solid rgba(13, 110, 253, 0.35) !important;
-
     color: #ffffff !important;
-
     font-size: 17px !important;
     font-weight: 600;
-
     letter-spacing: 1px;
-
     outline: none;
 }
 
 .scanner-input:focus {
     border-color: #0d6efd !important;
-
     box-shadow:
         0 0 0 3px rgba(13, 110, 253, 0.15),
         0 6px 18px rgba(13, 110, 253, 0.10);
@@ -231,28 +207,19 @@ select.form-control option {
 
 .scanner-input-icon {
     position: absolute;
-
     left: 15px;
     top: 50%;
-
     transform: translateY(-50%);
-
     color: #20c997;
-
     font-size: 23px;
-
     z-index: 3;
-
     pointer-events: none;
 }
 
 .scanner-help {
     display: block;
-
     margin-top: 9px;
-
     color: rgba(255, 255, 255, 0.52);
-
     font-size: 12px;
 }
 
@@ -271,14 +238,10 @@ select.form-control option {
 .scanner-separator {
     display: flex;
     align-items: center;
-
     margin: 20px 0;
-
     color: rgba(255, 255, 255, 0.35);
-
     font-size: 11px;
     font-weight: 600;
-
     text-transform: uppercase;
     letter-spacing: 0.8px;
 }
@@ -286,11 +249,8 @@ select.form-control option {
 .scanner-separator::before,
 .scanner-separator::after {
     content: "";
-
     flex: 1;
-
     height: 1px;
-
     background: rgba(255, 255, 255, 0.08);
 }
 
@@ -302,10 +262,7 @@ select.form-control option {
    SELECT2
 ========================================================= */
 
-#produitFacture + .select2-container {
-    width: 100% !important;
-}
-
+#produitFacture + .select2-container,
 .select2-container {
     width: 100% !important;
 }
@@ -313,11 +270,8 @@ select.form-control option {
 .select2-container--default
 .select2-selection--single {
     height: 46px !important;
-
     border-radius: 11px !important;
-
-    background-color: transparent !important;
-
+    background: transparent !important;
     border: 1px solid rgba(255, 255, 255, 0.15) !important;
 }
 
@@ -325,9 +279,7 @@ select.form-control option {
 .select2-selection--single
 .select2-selection__rendered {
     line-height: 46px !important;
-
     color: #ffffff !important;
-
     padding-left: 14px !important;
     padding-right: 35px !important;
 }
@@ -342,7 +294,7 @@ select.form-control option {
 .select2-selection--single
 .select2-selection__arrow {
     height: 46px !important;
-    right: 8px;
+    right: 8px !important;
 }
 
 .select2-container--default
@@ -357,13 +309,9 @@ select.form-control option {
 
 .select2-dropdown {
     background: #252525 !important;
-
     border: 1px solid rgba(255, 255, 255, 0.15) !important;
-
     border-radius: 10px !important;
-
     overflow: hidden !important;
-
     z-index: 999999 !important;
 }
 
@@ -375,26 +323,18 @@ select.form-control option {
 .select2-search--dropdown
 .select2-search__field {
     width: 100% !important;
-
     min-height: 40px !important;
-
     padding: 8px 10px !important;
-
     color: #ffffff !important;
-
     background: #333333 !important;
-
     border: 1px solid rgba(255, 255, 255, 0.15) !important;
-
     border-radius: 8px !important;
-
     outline: none !important;
 }
 
 .select2-search--dropdown
 .select2-search__field:focus {
     border-color: #0d6efd !important;
-
     box-shadow:
         0 0 0 2px
         rgba(13, 110, 253, 0.15) !important;
@@ -403,40 +343,32 @@ select.form-control option {
 .select2-container--default
 .select2-results__option {
     color: #ffffff !important;
-
     background: #252525 !important;
-
     padding: 11px 13px !important;
-
     font-size: 13px !important;
 }
 
 .select2-container--default
 .select2-results__option--highlighted {
     color: #ffffff !important;
-
     background: #0d6efd !important;
 }
 
 .select2-container--default
 .select2-results__option[aria-selected="true"] {
     background: rgba(13, 110, 253, 0.25) !important;
-
     color: #ffffff !important;
 }
 
 .select2-results__message {
     color: rgba(255, 255, 255, 0.65) !important;
-
     background: #252525 !important;
-
     padding: 12px !important;
 }
 
 .select2-container--default
 .select2-results__option--loading-results {
     color: rgba(255, 255, 255, 0.65) !important;
-
     background: #252525 !important;
 }
 
@@ -444,9 +376,7 @@ select.form-control option {
 .select2-selection--single
 .select2-selection__clear {
     color: #ffffff !important;
-
     font-size: 20px !important;
-
     margin-right: 8px !important;
 }
 
@@ -460,16 +390,11 @@ select.form-control option {
 
 .search-wrapper > i {
     position: absolute;
-
     left: 15px;
     top: 50%;
-
     transform: translateY(-50%);
-
     color: rgba(255, 255, 255, 0.65);
-
     font-size: 20px;
-
     z-index: 2;
 }
 
@@ -488,42 +413,27 @@ select.form-control option {
 
 .facture-table {
     width: 100%;
-
     margin-bottom: 0;
-
     border-collapse: separate;
     border-spacing: 0;
 }
 
 .facture-table thead th {
     color: rgba(255, 255, 255, 0.72) !important;
-
     background: rgba(255, 255, 255, 0.045);
-
-    border-bottom:
-        1px solid rgba(255, 255, 255, 0.1) !important;
-
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
     font-size: 11px;
-
     text-transform: uppercase;
-
     letter-spacing: 0.4px;
-
     padding: 14px 10px;
-
     white-space: nowrap;
 }
 
 .facture-table tbody td {
     color: #ffffff !important;
-
-    border-top:
-        1px solid rgba(255, 255, 255, 0.06) !important;
-
+    border-top: 1px solid rgba(255, 255, 255, 0.06) !important;
     padding: 13px 10px;
-
     vertical-align: middle;
-
     font-size: 13px;
 }
 
@@ -547,47 +457,31 @@ select.form-control option {
 
 .quantity-badge {
     display: inline-block;
-
     padding: 5px 9px;
-
     border-radius: 8px;
-
     background: rgba(13, 110, 253, 0.14);
-
     color: #ffffff;
-
     font-weight: 600;
 }
 
 .action-delete {
     display: inline-flex;
-
     align-items: center;
     justify-content: center;
-
     width: 34px;
     height: 34px;
-
     border-radius: 9px;
-
     color: #ff6b6b;
-
     background: rgba(220, 53, 69, 0.1);
-
     text-decoration: none !important;
-
     border: none;
-
     cursor: pointer;
-
     transition: all 0.2s ease;
 }
 
 .action-delete:hover {
     color: #ffffff;
-
     background: #dc3545;
-
     transform: translateY(-2px);
 }
 
@@ -597,27 +491,20 @@ select.form-control option {
 
 .pagination-wrapper {
     margin-top: 20px;
-
     padding: 14px;
-
     border-radius: 12px;
-
     background: rgba(255, 255, 255, 0.035);
-
     border: 1px solid rgba(255, 255, 255, 0.07);
 }
 
 .page-info {
     color: #ffffff;
-
     font-weight: 600;
-
     font-size: 13px;
 }
 
 .count-badge {
     padding: 7px 11px;
-
     border-radius: 20px;
 }
 
@@ -635,27 +522,18 @@ select.form-control option {
 
 .total-box {
     padding: 18px;
-
     border-radius: 13px;
-
     background: rgba(255, 255, 255, 0.035);
-
-    border:
-        1px solid rgba(255, 255, 255, 0.07);
-
+    border: 1px solid rgba(255, 255, 255, 0.07);
     margin-bottom: 20px;
 }
 
 .total-line {
     display: flex;
-
     justify-content: space-between;
     align-items: center;
-
     padding: 8px 0;
-
     color: #ffffff;
-
     font-size: 14px;
 }
 
@@ -665,7 +543,6 @@ select.form-control option {
 
 .total-line .value {
     font-weight: 700;
-
     color: #ffffff;
 }
 
@@ -674,27 +551,20 @@ select.form-control option {
 }
 
 .total-ttc {
-    border-top:
-        1px solid rgba(255, 255, 255, 0.15);
-
+    border-top: 1px solid rgba(255, 255, 255, 0.15);
     margin-top: 7px;
-
     padding-top: 14px;
 }
 
 .total-ttc .label {
     color: #ffffff;
-
     font-size: 16px;
-
     font-weight: 700;
 }
 
 .total-ttc .value {
     color: #20c997;
-
     font-size: 20px;
-
     font-weight: 800;
 }
 
@@ -704,27 +574,22 @@ select.form-control option {
 
 .action-buttons {
     display: flex;
-
     flex-wrap: wrap;
-
     gap: 10px;
 }
 
 .action-buttons .btn {
     border-radius: 10px;
-
     font-weight: 600;
 }
 
 .btn-print {
     flex: 1;
-
     min-width: 170px;
 }
 
 .btn-factures {
     flex: 1;
-
     min-width: 170px;
 }
 
@@ -734,29 +599,22 @@ select.form-control option {
 
 .empty-card {
     text-align: center;
-
     padding: 40px 20px;
 }
 
 .empty-icon {
     width: 65px;
     height: 65px;
-
     margin: 0 auto 15px;
-
     border-radius: 17px;
-
     display: flex;
-
     align-items: center;
     justify-content: center;
-
     background: rgba(13, 110, 253, 0.12);
 }
 
 .empty-icon i {
     color: #ffffff;
-
     font-size: 32px;
 }
 
@@ -770,61 +628,41 @@ select.form-control option {
 
 .messages-container .alert {
     border: none;
-
     border-radius: 12px;
-
     padding: 14px 18px;
-
     margin-bottom: 10px;
-
     font-size: 14px;
-
     font-weight: 600;
-
-    box-shadow:
-        0 5px 18px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 5px 18px rgba(0, 0, 0, 0.15);
 }
 
 .messages-container .alert-danger {
     background: rgba(220, 53, 69, 0.15);
-
     border-left: 4px solid #dc3545;
-
     color: #ff8d98;
 }
 
 .messages-container .alert-success {
     background: rgba(25, 135, 84, 0.15);
-
     border-left: 4px solid #198754;
-
     color: #65e6a7;
 }
 
 .messages-container .alert-warning {
     background: rgba(255, 193, 7, 0.15);
-
     border-left: 4px solid #ffc107;
-
     color: #ffd866;
 }
 
 .messages-container .alert-info {
     background: rgba(13, 202, 240, 0.15);
-
     border-left: 4px solid #0dcaf0;
-
     color: #73e8ff;
 }
 
 .messages-container .close {
     color: #fff;
-
     opacity: 0.8;
-}
-
-.messages-container .close:hover {
-    opacity: 1;
 }
 
 /* =========================================================
@@ -833,20 +671,13 @@ select.form-control option {
 
 .manager-modal-overlay {
     position: fixed;
-
     inset: 0;
-
     z-index: 99999;
-
     display: none;
-
     align-items: center;
     justify-content: center;
-
     padding: 20px;
-
     background: rgba(0, 0, 0, 0.72);
-
     backdrop-filter: blur(5px);
 }
 
@@ -856,100 +687,59 @@ select.form-control option {
 
 .manager-modal {
     width: 100%;
-
     max-width: 450px;
-
     background: #252525;
-
-    border:
-        1px solid rgba(255, 255, 255, 0.1);
-
+    border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 18px;
-
-    box-shadow:
-        0 20px 60px rgba(0, 0, 0, 0.5);
-
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
     overflow: hidden;
-
-    animation:
-        managerModalShow 0.2s ease-out;
+    animation: managerModalShow 0.2s ease-out;
 }
 
 @keyframes managerModalShow {
-
     from {
         opacity: 0;
-
-        transform:
-            translateY(-15px)
-            scale(0.97);
+        transform: translateY(-15px) scale(0.97);
     }
 
     to {
         opacity: 1;
-
-        transform:
-            translateY(0)
-            scale(1);
+        transform: translateY(0) scale(1);
     }
 }
 
 .manager-modal-header {
     display: flex;
-
     align-items: center;
-
     gap: 14px;
-
     padding: 20px 22px;
-
-    background:
-        linear-gradient(
-            135deg,
-            #343434,
-            #252525
-        );
-
-    border-bottom:
-        1px solid rgba(255, 255, 255, 0.08);
+    background: linear-gradient(135deg, #343434, #252525);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .manager-modal-icon {
     width: 48px;
     height: 48px;
-
     flex-shrink: 0;
-
     display: flex;
-
     align-items: center;
     justify-content: center;
-
     border-radius: 13px;
-
-    background:
-        rgba(255, 193, 7, 0.13);
-
+    background: rgba(255, 193, 7, 0.13);
     color: #ffc107;
-
     font-size: 25px;
 }
 
 .manager-modal-title {
     margin: 0;
-
     color: #ffffff;
-
     font-size: 18px;
-
     font-weight: 700;
 }
 
 .manager-modal-subtitle {
     margin: 3px 0 0;
-
     color: rgba(255, 255, 255, 0.55);
-
     font-size: 12px;
 }
 
@@ -959,19 +749,11 @@ select.form-control option {
 
 .manager-modal-product {
     padding: 12px 14px;
-
     margin-bottom: 18px;
-
     border-radius: 10px;
-
-    background:
-        rgba(255, 255, 255, 0.045);
-
-    border:
-        1px solid rgba(255, 255, 255, 0.07);
-
+    background: rgba(255, 255, 255, 0.045);
+    border: 1px solid rgba(255, 255, 255, 0.07);
     color: rgba(255, 255, 255, 0.7);
-
     font-size: 13px;
 }
 
@@ -981,13 +763,9 @@ select.form-control option {
 
 .manager-password-label {
     display: block;
-
     margin-bottom: 8px;
-
     color: #ffffff;
-
     font-size: 13px;
-
     font-weight: 600;
 }
 
@@ -997,34 +775,20 @@ select.form-control option {
 
 .manager-password-input {
     width: 100%;
-
     height: 48px;
-
-    padding:
-        0 48px 0 14px;
-
+    padding: 0 48px 0 14px;
     border-radius: 11px;
-
-    border:
-        1px solid rgba(255, 255, 255, 0.14);
-
+    border: 1px solid rgba(255, 255, 255, 0.14);
     background: #333333;
-
     color: #ffffff;
-
     outline: none;
-
     font-size: 14px;
-
     transition: all 0.2s ease;
 }
 
 .manager-password-input:focus {
     border-color: #0d6efd;
-
-    box-shadow:
-        0 0 0 3px
-        rgba(13, 110, 253, 0.13);
+    box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.13);
 }
 
 .manager-password-input::placeholder {
@@ -1033,20 +797,13 @@ select.form-control option {
 
 .manager-password-toggle {
     position: absolute;
-
     top: 50%;
     right: 13px;
-
     transform: translateY(-50%);
-
     border: none;
-
     background: transparent;
-
     color: rgba(255, 255, 255, 0.55);
-
     cursor: pointer;
-
     font-size: 19px;
 }
 
@@ -1056,22 +813,13 @@ select.form-control option {
 
 .manager-modal-error {
     display: none;
-
     margin-top: 12px;
-
     padding: 10px 12px;
-
     border-radius: 9px;
-
-    background:
-        rgba(220, 53, 69, 0.13);
-
+    background: rgba(220, 53, 69, 0.13);
     border-left: 3px solid #dc3545;
-
     color: #ff8d98;
-
     font-size: 13px;
-
     font-weight: 600;
 }
 
@@ -1081,72 +829,51 @@ select.form-control option {
 
 .manager-modal-footer {
     display: flex;
-
     justify-content: flex-end;
-
     gap: 10px;
-
     padding: 16px 22px;
-
-    border-top:
-        1px solid rgba(255, 255, 255, 0.08);
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .manager-modal-footer button {
     min-height: 42px;
-
     padding: 8px 18px;
-
     border-radius: 10px;
-
     font-weight: 600;
-
     cursor: pointer;
-
     transition: all 0.2s ease;
 }
 
 .manager-btn-cancel {
-    border:
-        1px solid rgba(255, 255, 255, 0.15);
-
+    border: 1px solid rgba(255, 255, 255, 0.15);
     background: transparent;
-
     color: rgba(255, 255, 255, 0.75);
 }
 
 .manager-btn-cancel:hover {
-    background:
-        rgba(255, 255, 255, 0.07);
-
+    background: rgba(255, 255, 255, 0.07);
     color: #ffffff;
 }
 
 .manager-btn-confirm {
     border: none;
-
     background: #dc3545;
-
     color: #ffffff;
 }
 
 .manager-btn-confirm:hover {
     background: #bb2d3b;
-
     transform: translateY(-1px);
 }
 
 .manager-btn-confirm:disabled {
     opacity: 0.6;
-
     cursor: not-allowed;
-
     transform: none;
 }
 
 .manager-loading {
     display: none;
-
     margin-right: 7px;
 }
 
@@ -1182,7 +909,6 @@ select.form-control option {
 
     .scanner-header {
         align-items: flex-start;
-
         flex-direction: column;
     }
 
@@ -1374,9 +1100,9 @@ select.form-control option {
                     </p>
 
 
-                    <!-- =====================================
+                    <!-- =================================================
                          SCANNER
-                    ====================================== -->
+                    ================================================== -->
 
                     {% if not sel_facture.imprimer %}
 
@@ -1482,9 +1208,9 @@ select.form-control option {
                     {% endif %}
 
 
-                    <!-- =====================================
+                    <!-- =================================================
                          AJOUT MANUEL
-                    ====================================== -->
+                    ================================================== -->
 
                     <form
                         method="post"
@@ -1494,9 +1220,6 @@ select.form-control option {
                     >
 
                         {% csrf_token %}
-
-
-                        <!-- PRODUIT -->
 
                         <div class="form-group">
 
@@ -1516,15 +1239,11 @@ select.form-control option {
                                     disabled
                                 {% endif %}
                             >
-
                                 <option value=""></option>
-
                             </select>
 
                         </div>
 
-
-                        <!-- FACTURE -->
 
                         <input
                             type="hidden"
@@ -1532,8 +1251,6 @@ select.form-control option {
                             value="{{ sel_facture.id }}"
                         >
 
-
-                        <!-- QUANTITÉ -->
 
                         <div class="form-group">
 
@@ -1561,8 +1278,6 @@ select.form-control option {
 
                         </div>
 
-
-                        <!-- BOUTON -->
 
                         <button
                             type="submit"
@@ -1671,15 +1386,12 @@ select.form-control option {
                     </div>
 
 
-                    <!-- =====================================
-                         RECHERCHE FACTURE
-                    ====================================== -->
-
                     <h6 class="form-label">
 
                         Rechercher dans les produits
 
                     </h6>
+
 
                     <form
                         method="get"
@@ -1714,7 +1426,7 @@ select.form-control option {
 
 
     <!-- =====================================================
-         PRODUITS DE LA FACTURE
+         PRODUITS
     ====================================================== -->
 
     {% if list_facture %}
@@ -1768,28 +1480,18 @@ select.form-control option {
 
                                 <tr>
 
-                                    <th>
-                                        Produit
-                                    </th>
+                                    <th>Produit</th>
 
-                                    <th>
-                                        Prix
-                                    </th>
+                                    <th>Prix</th>
 
-                                    <th>
-                                        Quantité
-                                    </th>
+                                    <th>Quantité</th>
 
-                                    <th>
-                                        Total
-                                    </th>
+                                    <th>Total</th>
 
                                     {% if not sel_facture.imprimer %}
-
-                                    <th class="text-center">
-                                        Actions
-                                    </th>
-
+                                        <th class="text-center">
+                                            Actions
+                                        </th>
                                     {% endif %}
 
                                 </tr>
@@ -1804,36 +1506,24 @@ select.form-control option {
                                 <tr>
 
                                     <td class="product-name">
-
                                         {{ f.produit }}
-
                                     </td>
-
 
                                     <td class="price-text">
-
                                         {{ f.pu }} Fc
-
                                     </td>
-
 
                                     <td>
 
                                         <span class="quantity-badge">
-
                                             {{ f.qte }}
-
                                         </span>
 
                                     </td>
 
-
                                     <td class="price-text">
-
                                         {{ f.total }} Fc
-
                                     </td>
-
 
                                     {% if not sel_facture.imprimer %}
 
@@ -1843,10 +1533,7 @@ select.form-control option {
                                             type="button"
                                             class="action-delete"
                                             title="Supprimer"
-                                            onclick="ouvrirModalSuppression(
-                                                {{ f.id }},
-                                                '{{ f.produit|escapejs }}'
-                                            )"
+                                            onclick="ouvrirModalSuppression({{ f.id }}, '{{ f.produit|escapejs }}')"
                                         >
 
                                             <i class="mdi mdi-delete-outline"></i>
@@ -1868,9 +1555,9 @@ select.form-control option {
                     </div>
 
 
-                    <!-- =====================================
+                    <!-- =================================================
                          PAGINATION
-                    ====================================== -->
+                    ================================================== -->
 
                     <div class="pagination-wrapper">
 
@@ -1884,21 +1571,15 @@ select.form-control option {
                                     href="?page=1{% if recherche %}&q={{ recherche|urlencode }}{% endif %}"
                                     class="btn btn-outline-light btn-sm btn-rounded"
                                 >
-
                                     <i class="mdi mdi-page-first"></i>
-
                                 </a>
-
 
                                 <a
                                     href="?page={{ list_facture.previous_page_number }}{% if recherche %}&q={{ recherche|urlencode }}{% endif %}"
                                     class="btn btn-info btn-sm btn-rounded"
                                 >
-
                                     <i class="mdi mdi-chevron-left"></i>
-
                                     Précédent
-
                                 </a>
 
                                 {% endif %}
@@ -1911,9 +1592,7 @@ select.form-control option {
                                 <span class="page-info">
 
                                     Page {{ list_facture.number }}
-
                                     sur
-
                                     {{ list_facture.paginator.num_pages }}
 
                                 </span>
@@ -1935,7 +1614,6 @@ select.form-control option {
                                     <i class="mdi mdi-chevron-right"></i>
 
                                 </a>
-
 
                                 <a
                                     href="?page={{ list_facture.paginator.num_pages }}{% if recherche %}&q={{ recherche|urlencode }}{% endif %}"
@@ -1962,7 +1640,7 @@ select.form-control option {
 
 
         <!-- =================================================
-             TOTAL FACTURE
+             TOTAL
         ================================================== -->
 
         <div class="col-lg-5 grid-margin stretch-card">
@@ -2096,18 +1774,12 @@ select.form-control option {
 
                 </div>
 
-
                 <h4 style="color:#ffffff;">
-
                     Aucun produit dans cette facture
-
                 </h4>
 
-
                 <p style="color:rgba(255,255,255,.55);">
-
                     Commencez par ajouter un produit à la facture.
-
                 </p>
 
             </div>
@@ -2122,7 +1794,7 @@ select.form-control option {
 
 
 <!-- =========================================================
-     MODAL AUTORISATION MANAGER
+     MODAL MANAGER
 ========================================================= -->
 
 <div
@@ -2146,23 +1818,17 @@ select.form-control option {
 
             </div>
 
-
             <div>
 
                 <h4
                     id="managerModalTitle"
                     class="manager-modal-title"
                 >
-
                     Autorisation du manager
-
                 </h4>
 
-
                 <p class="manager-modal-subtitle">
-
                     Autorisation requise pour supprimer ce produit
-
                 </p>
 
             </div>
@@ -2185,9 +1851,7 @@ select.form-control option {
                 for="managerPassword"
                 class="manager-password-label"
             >
-
                 Mot de passe du manager
-
             </label>
 
 
@@ -2200,7 +1864,6 @@ select.form-control option {
                     placeholder="Entrez le mot de passe"
                     autocomplete="off"
                 >
-
 
                 <button
                     type="button"
@@ -2276,7 +1939,6 @@ select.form-control option {
 
 /* =========================================================
    SELECT2 AJAX
-   INITIALISATION ROBUSTE
 ========================================================= */
 
 (function () {
@@ -2286,66 +1948,40 @@ select.form-control option {
     function initialiserSelectProduit() {
 
         if (typeof window.jQuery === "undefined") {
-
-            console.warn(
-                "jQuery n'est pas encore disponible."
-            );
-
+            console.warn("jQuery n'est pas encore disponible.");
             return false;
         }
 
         const $ = window.jQuery;
 
         if (typeof $.fn.select2 === "undefined") {
-
-            console.warn(
-                "Select2 n'est pas encore disponible."
-            );
-
+            console.warn("Select2 n'est pas encore disponible.");
             return false;
         }
 
         const $select = $("#produitFacture");
 
         if (!$select.length) {
-
-            console.error(
-                "#produitFacture introuvable."
-            );
-
+            console.error("#produitFacture introuvable.");
             return false;
         }
 
-
-        /* =====================================================
-           IMPORTANT
-
-           base.html peut avoir déjà initialisé Select2.
-
-           On détruit donc l'ancienne instance avant
-           d'initialiser notre version AJAX.
-        ===================================================== */
-
+        /*
+         * Si base.html a déjà initialisé Select2,
+         * on détruit cette instance afin de repartir
+         * avec notre configuration AJAX.
+         */
         if ($select.hasClass("select2-hidden-accessible")) {
 
             try {
-
                 $select.select2("destroy");
-
             } catch (error) {
-
                 console.warn(
                     "Impossible de détruire l'ancienne instance Select2.",
                     error
                 );
-
             }
         }
-
-
-        /* =====================================================
-           INITIALISATION SELECT2
-        ===================================================== */
 
         $select.select2({
 
@@ -2361,7 +1997,7 @@ select.form-control option {
 
             dropdownAutoWidth: false,
 
-            dropdownParent: $select.closest(".card-body"),
+            dropdownParent: $select.closest(".card"),
 
             ajax: {
 
@@ -2401,19 +2037,16 @@ select.form-control option {
                         !Array.isArray(data.results)
                     ) {
 
-                        console.error(
-                            "Réponse JSON invalide :",
-                            data
-                        );
-
                         return {
                             results: []
                         };
+
                     }
 
                     return {
                         results: data.results
                     };
+
                 },
 
                 error: function (
@@ -2423,14 +2056,15 @@ select.form-control option {
                 ) {
 
                     console.error(
-                        "Erreur AJAX recherche produit",
+                        "Erreur recherche produit :",
                         {
                             status: xhr.status,
                             statusText: xhr.statusText,
-                            error: error,
-                            response: xhr.responseText
+                            response: xhr.responseText,
+                            error: error
                         }
                     );
+
                 }
 
             },
@@ -2461,23 +2095,6 @@ select.form-control option {
 
         });
 
-
-        /* =====================================================
-           ÉVÉNEMENTS SELECT2
-        ===================================================== */
-
-        $select.on(
-            "select2:open",
-            function () {
-
-                console.log(
-                    "Select2 ouvert."
-                );
-
-            }
-        );
-
-
         $select.on(
             "select2:select",
             function (event) {
@@ -2490,18 +2107,13 @@ select.form-control option {
             }
         );
 
-
         console.log(
-            "Select2 AJAX produit initialisé avec succès."
+            "Select2 produit initialisé avec succès."
         );
 
         return true;
     }
 
-
-    /* =========================================================
-       ATTENDRE JQUERY + SELECT2
-    ========================================================= */
 
     function demarrerSelect2() {
 
@@ -2521,26 +2133,29 @@ select.form-control option {
                     return;
                 }
 
-                if (tentatives >= maximumTentatives) {
+                if (
+                    tentatives >=
+                    maximumTentatives
+                ) {
 
                     clearInterval(interval);
 
                     console.error(
-                        "Impossible d'initialiser Select2 après plusieurs tentatives."
+                        "Impossible d'initialiser Select2."
                     );
+
                 }
 
             },
             100
         );
+
     }
 
 
-    /* =========================================================
-       DOM READY
-    ========================================================= */
-
-    if (document.readyState === "loading") {
+    if (
+        document.readyState === "loading"
+    ) {
 
         document.addEventListener(
             "DOMContentLoaded",
@@ -2567,7 +2182,6 @@ select.form-control option {
 
     "use strict";
 
-
     function initialiserScanner() {
 
         const scanner =
@@ -2585,28 +2199,20 @@ select.form-control option {
                 "hiddenBarcode"
             );
 
-
         if (
             !scanner ||
             !scannerForm ||
             !hiddenBarcode
         ) {
-
             return;
         }
-
 
         let scanEnCours = false;
 
 
-        /* =====================================================
-           FOCUS
-        ===================================================== */
-
         function focusScanner() {
 
             if (scanner.disabled) {
-
                 return;
             }
 
@@ -2624,50 +2230,74 @@ select.form-control option {
                 );
 
             }
+
         }
 
 
-        /* =====================================================
-           FOCUS INITIAL
-        ===================================================== */
-
         setTimeout(
             function () {
-
                 focusScanner();
-
             },
             250
         );
 
 
-        /* =====================================================
-           SCAN
-        ===================================================== */
-
         scanner.addEventListener(
             "keydown",
             function (event) {
 
-                if (event.key !== "Enter") {
+                if (event.key === "Enter") {
 
-                    return;
+                    event.preventDefault();
+
+                    if (scanEnCours) {
+                        return;
+                    }
+
+                    const code =
+                        scanner.value.trim();
+
+                    if (!code) {
+
+                        scanner.value = "";
+
+                        hiddenBarcode.value = "";
+
+                        focusScanner();
+
+                        return;
+
+                    }
+
+                    /*
+                     * Le code-barres reste une chaîne.
+                     * Ne jamais utiliser Number(),
+                     * parseInt() ou parseFloat().
+                     */
+                    hiddenBarcode.value = code;
+
+                    console.log(
+                        "SCAN :",
+                        code
+                    );
+
+                    scanEnCours = true;
+
+                    scanner.disabled = true;
+
+                    scanner.classList.add(
+                        "scanner-disabled"
+                    );
+
+                    HTMLFormElement.prototype.submit.call(
+                        scannerForm
+                    );
+
                 }
 
-                event.preventDefault();
+                if (event.key === "Escape") {
 
-
-                if (scanEnCours) {
-
-                    return;
-                }
-
-
-                const code =
-                    scanner.value.trim();
-
-
-                if (!code) {
+                    event.preventDefault();
 
                     scanner.value = "";
 
@@ -2675,59 +2305,11 @@ select.form-control option {
 
                     focusScanner();
 
-                    return;
                 }
-
-
-                /*
-                 * Le code-barres reste une chaîne.
-                 *
-                 * Aucun Number()
-                 * Aucun parseInt()
-                 * Aucun parseFloat()
-                 *
-                 * Les zéros initiaux sont conservés.
-                 */
-
-                hiddenBarcode.value =
-                    code;
-
-
-                console.log(
-                    "SCAN :",
-                    code
-                );
-
-
-                scanEnCours = true;
-
-
-                scanner.disabled =
-                    true;
-
-                scanner.classList.add(
-                    "scanner-disabled"
-                );
-
-
-                /*
-                 * POST classique.
-                 *
-                 * Compatible avec addDetailFacture
-                 * qui redirige après l'ajout.
-                 */
-
-                HTMLFormElement.prototype.submit.call(
-                    scannerForm
-                );
 
             }
         );
 
-
-        /* =====================================================
-           NETTOYAGE
-        ===================================================== */
 
         scanner.addEventListener(
             "input",
@@ -2743,44 +2325,13 @@ select.form-control option {
         );
 
 
-        /* =====================================================
-           CLIC
-        ===================================================== */
-
         scanner.addEventListener(
             "click",
             function () {
 
                 if (!scanEnCours) {
-
                     this.select();
-
                 }
-
-            }
-        );
-
-
-        /* =====================================================
-           ESC
-        ===================================================== */
-
-        scanner.addEventListener(
-            "keydown",
-            function (event) {
-
-                if (event.key !== "Escape") {
-
-                    return;
-                }
-
-                event.preventDefault();
-
-                scanner.value = "";
-
-                hiddenBarcode.value = "";
-
-                focusScanner();
 
             }
         );
@@ -2788,11 +2339,9 @@ select.form-control option {
     }
 
 
-    /* =====================================================
-       DOM READY
-    ===================================================== */
-
-    if (document.readyState === "loading") {
+    if (
+        document.readyState === "loading"
+    ) {
 
         document.addEventListener(
             "DOMContentLoaded",
@@ -2827,9 +2376,7 @@ function ouvrirModalSuppression(
     produitNom
 ) {
 
-    detailFactureASupprimer =
-        detailId;
-
+    detailFactureASupprimer = detailId;
 
     const overlay =
         document.getElementById(
@@ -2856,7 +2403,6 @@ function ouvrirModalSuppression(
             "managerConfirmButton"
         );
 
-
     if (
         !overlay ||
         !productName ||
@@ -2864,53 +2410,38 @@ function ouvrirModalSuppression(
         !errorBox ||
         !confirmButton
     ) {
-
         return;
     }
 
+    productName.textContent = produitNom;
 
-    productName.textContent =
-        produitNom;
-
-
-    passwordInput.value =
-        "";
-
+    passwordInput.value = "";
 
     errorBox.classList.remove(
         "active"
     );
 
-
-    confirmButton.disabled =
-        false;
-
+    confirmButton.disabled = false;
 
     confirmButton.classList.remove(
         "loading"
     );
 
-
     overlay.classList.add(
         "active"
     );
-
 
     overlay.setAttribute(
         "aria-hidden",
         "false"
     );
 
-
     setTimeout(
         function () {
-
             passwordInput.focus();
-
         },
         100
     );
-
 }
 
 
@@ -2940,56 +2471,42 @@ function fermerModalSuppression() {
             "managerConfirmButton"
         );
 
-
     if (
         !overlay ||
         !passwordInput ||
         !errorBox ||
         !confirmButton
     ) {
-
         return;
     }
-
 
     overlay.classList.remove(
         "active"
     );
-
 
     overlay.setAttribute(
         "aria-hidden",
         "true"
     );
 
-
-    passwordInput.value =
-        "";
-
+    passwordInput.value = "";
 
     errorBox.classList.remove(
         "active"
     );
 
-
-    confirmButton.disabled =
-        false;
-
+    confirmButton.disabled = false;
 
     confirmButton.classList.remove(
         "loading"
     );
 
-
-    detailFactureASupprimer =
-        null;
-
+    detailFactureASupprimer = null;
 
     const scanner =
         document.getElementById(
             "barcodeScanner"
         );
-
 
     if (
         scanner &&
@@ -2998,9 +2515,7 @@ function fermerModalSuppression() {
 
         setTimeout(
             function () {
-
                 scanner.focus();
-
             },
             100
         );
@@ -3011,7 +2526,7 @@ function fermerModalSuppression() {
 
 
 /* =========================================================
-   AFFICHER / MASQUER MOT DE PASSE
+   MOT DE PASSE
 ========================================================= */
 
 (function () {
@@ -3021,12 +2536,9 @@ function fermerModalSuppression() {
             "managerPasswordToggle"
         );
 
-
     if (!toggle) {
-
         return;
     }
-
 
     toggle.addEventListener(
         "click",
@@ -3038,35 +2550,21 @@ function fermerModalSuppression() {
                 );
 
             const icon =
-                this.querySelector(
-                    "i"
-                );
+                this.querySelector("i");
 
-
-            if (
-                !input ||
-                !icon
-            ) {
-
+            if (!input || !icon) {
                 return;
             }
 
+            if (input.type === "password") {
 
-            if (
-                input.type === "password"
-            ) {
-
-                input.type =
-                    "text";
-
+                input.type = "text";
 
                 icon.className =
                     "mdi mdi-eye-off-outline";
 
-
                 this.title =
                     "Masquer le mot de passe";
-
 
                 this.setAttribute(
                     "aria-label",
@@ -3075,17 +2573,13 @@ function fermerModalSuppression() {
 
             } else {
 
-                input.type =
-                    "password";
-
+                input.type = "password";
 
                 icon.className =
                     "mdi mdi-eye-outline";
 
-
                 this.title =
                     "Afficher le mot de passe";
-
 
                 this.setAttribute(
                     "aria-label",
@@ -3111,12 +2605,9 @@ function fermerModalSuppression() {
             "managerPassword"
         );
 
-
     if (!passwordInput) {
-
         return;
     }
-
 
     passwordInput.addEventListener(
         "keydown",
@@ -3129,7 +2620,6 @@ function fermerModalSuppression() {
                 confirmerSuppression();
 
             }
-
 
             if (event.key === "Escape") {
 
@@ -3146,7 +2636,7 @@ function fermerModalSuppression() {
 
 
 /* =========================================================
-   CLIQUER SUR LE FOND
+   FOND MODAL
 ========================================================= */
 
 (function () {
@@ -3156,12 +2646,9 @@ function fermerModalSuppression() {
             "managerModalOverlay"
         );
 
-
     if (!overlay) {
-
         return;
     }
-
 
     overlay.addEventListener(
         "click",
@@ -3186,40 +2673,33 @@ function fermerModalSuppression() {
 function confirmerSuppression() {
 
     if (!detailFactureASupprimer) {
-
         return;
     }
-
 
     const passwordInput =
         document.getElementById(
             "managerPassword"
         );
 
-
     const password =
         passwordInput
             ? passwordInput.value.trim()
             : "";
-
 
     const errorBox =
         document.getElementById(
             "managerModalError"
         );
 
-
     const errorText =
         document.getElementById(
             "managerModalErrorText"
         );
 
-
     const confirmButton =
         document.getElementById(
             "managerConfirmButton"
         );
-
 
     if (!password) {
 
@@ -3230,7 +2710,6 @@ function confirmerSuppression() {
 
         }
 
-
         if (errorBox) {
 
             errorBox.classList.add(
@@ -3238,7 +2717,6 @@ function confirmerSuppression() {
             );
 
         }
-
 
         if (passwordInput) {
 
@@ -3261,8 +2739,7 @@ function confirmerSuppression() {
 
     if (confirmButton) {
 
-        confirmButton.disabled =
-            true;
+        confirmButton.disabled = true;
 
         confirmButton.classList.add(
             "loading"
@@ -3274,12 +2751,10 @@ function confirmerSuppression() {
     const formData =
         new FormData();
 
-
     formData.append(
         "password",
         password
     );
-
 
     formData.append(
         "csrfmiddlewaretoken",
@@ -3289,7 +2764,6 @@ function confirmerSuppression() {
 
     const urlTemplate =
         "{% url 'deletedetailFacture' 0 %}";
-
 
     const url =
         urlTemplate.replace(
@@ -3311,9 +2785,9 @@ function confirmerSuppression() {
                 "X-Requested-With":
                     "XMLHttpRequest"
             }
-
         }
     )
+
     .then(
         function (response) {
 
@@ -3323,13 +2797,14 @@ function confirmerSuppression() {
                     "HTTP " +
                     response.status
                 );
-            }
 
+            }
 
             return response.json();
 
         }
     )
+
     .then(
         function (data) {
 
@@ -3343,7 +2818,6 @@ function confirmerSuppression() {
 
                 }
 
-
                 if (errorBox) {
 
                     errorBox.classList.add(
@@ -3351,7 +2825,6 @@ function confirmerSuppression() {
                     );
 
                 }
-
 
                 if (confirmButton) {
 
@@ -3364,11 +2837,9 @@ function confirmerSuppression() {
 
                 }
 
-
                 if (passwordInput) {
 
-                    passwordInput.value =
-                        "";
+                    passwordInput.value = "";
 
                     passwordInput.focus();
 
@@ -3384,6 +2855,7 @@ function confirmerSuppression() {
 
         }
     )
+
     .catch(
         function (error) {
 
@@ -3392,14 +2864,12 @@ function confirmerSuppression() {
                 error
             );
 
-
             if (errorText) {
 
                 errorText.textContent =
                     "Une erreur est survenue. Veuillez réessayer.";
 
             }
-
 
             if (errorBox) {
 
@@ -3408,7 +2878,6 @@ function confirmerSuppression() {
                 );
 
             }
-
 
             if (confirmButton) {
 
@@ -3428,7 +2897,7 @@ function confirmerSuppression() {
 
 
 /* =========================================================
-   IMPRESSION FACTURE
+   IMPRESSION
 ========================================================= */
 
 function imprimerFacture(id) {
@@ -3436,13 +2905,11 @@ function imprimerFacture(id) {
     const urlTemplate =
         "{% url 'print_facture' 0 %}";
 
-
     const url =
         urlTemplate.replace(
             "/0",
             "/" + id
         );
-
 
     const fenetre =
         window.open(
@@ -3451,14 +2918,12 @@ function imprimerFacture(id) {
             "width=1000,height=800"
         );
 
-
     if (!fenetre) {
 
         afficherErreurImpression();
 
         return;
     }
-
 
     fenetre.onload =
         function () {
@@ -3480,7 +2945,7 @@ function imprimerFacture(id) {
 
 
 /* =========================================================
-   MESSAGE POP-UP BLOQUÉE
+   ERREUR POP-UP
 ========================================================= */
 
 function afficherErreurImpression() {
@@ -3490,7 +2955,6 @@ function afficherErreurImpression() {
             ".messages-container"
         );
 
-
     if (!container) {
 
         container =
@@ -3498,59 +2962,109 @@ function afficherErreurImpression() {
                 "div"
             );
 
-
         container.className =
             "messages-container";
-
 
         const page =
             document.querySelector(
                 ".facture-page"
             );
 
-
         if (page) {
-
-            page.prepend(
-                container
-            );
-
+            page.prepend(container);
         }
 
     }
 
-
     if (!container) {
-
         return;
     }
 
 
-    container.innerHTML =
+    const alert =
+        document.createElement(
+            "div"
+        );
 
-        '<div class="alert alert-danger alert-dismissible fade show" role="alert">' +
+    alert.className =
+        "alert alert-danger alert-dismissible fade show";
 
-            '<div class="d-flex align-items-center">' +
+    alert.setAttribute(
+        "role",
+        "alert"
+    );
 
-                '<i class="mdi mdi-alert-circle-outline mr-2" style="font-size:22px;"></i>' +
 
-                '<span>' +
+    const content =
+        document.createElement(
+            "div"
+        );
 
-                    'La fenêtre d\'impression a été bloquée par le navigateur. ' +
+    content.className =
+        "d-flex align-items-center";
 
-                    'Veuillez autoriser les fenêtres pop-up pour ce site.' +
 
-                '</span>' +
+    const icon =
+        document.createElement(
+            "i"
+        );
 
-            '</div>' +
+    icon.className =
+        "mdi mdi-alert-circle-outline mr-2";
 
-            '<button type="button" class="close" data-dismiss="alert" aria-label="Fermer">' +
+    icon.style.fontSize =
+        "22px";
 
-                '<span aria-hidden="true">&times;</span>' +
 
-            '</button>' +
+    const text =
+        document.createElement(
+            "span"
+        );
 
-        '</div>';
+    text.textContent =
+        "La fenêtre d'impression a été bloquée par le navigateur. Veuillez autoriser les fenêtres pop-up pour ce site.";
+
+
+    content.appendChild(icon);
+
+    content.appendChild(text);
+
+
+    const closeButton =
+        document.createElement(
+            "button"
+        );
+
+    closeButton.type =
+        "button";
+
+    closeButton.className =
+        "close";
+
+    closeButton.setAttribute(
+        "aria-label",
+        "Fermer"
+    );
+
+    closeButton.innerHTML =
+        '<span aria-hidden="true">&times;</span>';
+
+
+    closeButton.addEventListener(
+        "click",
+        function () {
+
+            alert.remove();
+
+        }
+    );
+
+
+    alert.appendChild(content);
+
+    alert.appendChild(closeButton);
+
+    container.appendChild(alert);
 
 }
 
