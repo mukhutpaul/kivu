@@ -20,6 +20,7 @@
     box-shadow: 0 6px 24px rgba(0, 0, 0, 0.18);
 }
 
+
 /* =========================================================
    EN-TÊTE
 ========================================================= */
@@ -56,6 +57,7 @@
     font-size: 13px;
 }
 
+
 /* =========================================================
    TITRES
 ========================================================= */
@@ -75,6 +77,7 @@
     color: rgba(255, 255, 255, 0.55);
     font-size: 13px;
 }
+
 
 /* =========================================================
    FORMULAIRE
@@ -118,6 +121,7 @@
     transform: translateY(-2px);
     box-shadow: 0 6px 16px rgba(13, 110, 253, 0.25);
 }
+
 
 /* =========================================================
    SCANNER
@@ -231,6 +235,78 @@
     opacity: 0.55;
 }
 
+
+/* =========================================================
+   QUANTITÉ APRÈS SCAN
+========================================================= */
+
+.scanner-quantity-box {
+    display: none;
+    margin-top: 14px;
+    padding: 14px;
+    border-radius: 12px;
+    background: rgba(0, 0, 0, 0.16);
+    border: 1px solid rgba(32, 201, 151, 0.18);
+}
+
+.scanner-quantity-row {
+    display: flex;
+    align-items: flex-end;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.scanner-quantity-field {
+    flex: 1;
+    min-width: 180px;
+}
+
+.scanner-quantity-label {
+    display: block;
+    margin-bottom: 6px;
+    color: #ffffff;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.scanner-quantity-input {
+    width: 100%;
+    min-height: 46px;
+    border-radius: 10px;
+    background: rgba(0, 0, 0, 0.20);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    color: #ffffff;
+    padding: 8px 12px;
+    font-size: 17px;
+    font-weight: 700;
+    outline: none;
+}
+
+.scanner-quantity-input:focus {
+    border-color: #20c997;
+    box-shadow: 0 0 0 3px rgba(32, 201, 151, 0.12);
+}
+
+.scanner-add-button {
+    min-height: 46px;
+    border-radius: 10px;
+    padding: 8px 20px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.scanner-quantity-help {
+    display: block;
+    margin-top: 7px;
+    color: rgba(255, 255, 255, 0.52);
+    font-size: 11px;
+}
+
+.scanner-quantity-help strong {
+    color: rgba(255, 255, 255, 0.80);
+}
+
+
 /* =========================================================
    SÉPARATEUR
 ========================================================= */
@@ -257,6 +333,7 @@
 .scanner-separator span {
     padding: 0 12px;
 }
+
 
 /* =========================================================
    SELECT2
@@ -383,6 +460,7 @@
     margin-right: 8px !important;
 }
 
+
 /* =========================================================
    RECHERCHE
 ========================================================= */
@@ -404,6 +482,7 @@
 .search-wrapper .form-control {
     padding-left: 45px;
 }
+
 
 /* =========================================================
    TABLE
@@ -488,6 +567,7 @@
     transform: translateY(-2px);
 }
 
+
 /* =========================================================
    PAGINATION
 ========================================================= */
@@ -508,8 +588,8 @@
 
 .count-badge {
     padding: 7px 11px;
-    border-radius: 20px;
 }
+
 
 /* =========================================================
    TOTALS
@@ -571,6 +651,7 @@
     font-weight: 800;
 }
 
+
 /* =========================================================
    BOUTONS
 ========================================================= */
@@ -596,6 +677,7 @@
     min-width: 170px;
 }
 
+
 /* =========================================================
    ETAT VIDE
 ========================================================= */
@@ -620,6 +702,7 @@
     color: #ffffff;
     font-size: 32px;
 }
+
 
 /* =========================================================
    MESSAGES
@@ -667,6 +750,7 @@
     color: #fff;
     opacity: 0.8;
 }
+
 
 /* =========================================================
    MODAL MANAGER
@@ -886,6 +970,7 @@
     display: inline-block;
 }
 
+
 /* =========================================================
    RESPONSIVE
 ========================================================= */
@@ -921,6 +1006,20 @@
         font-size: 15px !important;
     }
 
+    .scanner-quantity-row {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .scanner-quantity-field {
+        width: 100%;
+        min-width: 0;
+    }
+
+    .scanner-add-button {
+        width: 100%;
+    }
+
 }
 
 @media (max-width: 480px) {
@@ -941,129 +1040,127 @@
 
 </style>
 
-
 <div class="content-wrapper facture-page">
 
-    <!-- =====================================================
-         MESSAGES DJANGO
-    ====================================================== -->
+```
+<!-- =====================================================
+     MESSAGES DJANGO
+====================================================== -->
 
-    {% if messages %}
+{% if messages %}
 
-    <div class="messages-container">
+<div class="messages-container">
 
-        {% for message in messages %}
+    {% for message in messages %}
 
-        <div
-            class="alert
+    <div
+        class="alert
+        {% if message.tags == 'error' %}
+            alert-danger
+        {% elif message.tags == 'success' %}
+            alert-success
+        {% elif message.tags == 'warning' %}
+            alert-warning
+        {% else %}
+            alert-info
+        {% endif %}
+        alert-dismissible fade show"
+        role="alert"
+    >
+
+        <div class="d-flex align-items-center">
+
             {% if message.tags == 'error' %}
-                alert-danger
+
+                <i
+                    class="mdi mdi-alert-circle-outline mr-2"
+                    style="font-size:22px;"
+                ></i>
+
             {% elif message.tags == 'success' %}
-                alert-success
+
+                <i
+                    class="mdi mdi-check-circle-outline mr-2"
+                    style="font-size:22px;"
+                ></i>
+
             {% elif message.tags == 'warning' %}
-                alert-warning
+
+                <i
+                    class="mdi mdi-alert-outline mr-2"
+                    style="font-size:22px;"
+                ></i>
+
             {% else %}
-                alert-info
+
+                <i
+                    class="mdi mdi-information-outline mr-2"
+                    style="font-size:22px;"
+                ></i>
+
             {% endif %}
-            alert-dismissible fade show"
-            role="alert"
-        >
 
-            <div class="d-flex align-items-center">
-
-                {% if message.tags == 'error' %}
-
-                    <i
-                        class="mdi mdi-alert-circle-outline mr-2"
-                        style="font-size:22px;"
-                    ></i>
-
-                {% elif message.tags == 'success' %}
-
-                    <i
-                        class="mdi mdi-check-circle-outline mr-2"
-                        style="font-size:22px;"
-                    ></i>
-
-                {% elif message.tags == 'warning' %}
-
-                    <i
-                        class="mdi mdi-alert-outline mr-2"
-                        style="font-size:22px;"
-                    ></i>
-
-                {% else %}
-
-                    <i
-                        class="mdi mdi-information-outline mr-2"
-                        style="font-size:22px;"
-                    ></i>
-
-                {% endif %}
-
-                <span>{{ message }}</span>
-
-            </div>
-
-            <button
-                type="button"
-                class="close"
-                data-dismiss="alert"
-                aria-label="Fermer"
-            >
-                <span aria-hidden="true">&times;</span>
-            </button>
+            <span>{{ message }}</span>
 
         </div>
 
-        {% endfor %}
+        <button
+            type="button"
+            class="close"
+            data-dismiss="alert"
+            aria-label="Fermer"
+        >
+            <span aria-hidden="true">&times;</span>
+        </button>
 
     </div>
 
-    {% endif %}
+    {% endfor %}
+
+</div>
+
+{% endif %}
 
 
-    <!-- =====================================================
-         EN-TÊTE
-    ====================================================== -->
+<!-- =====================================================
+     EN-TÊTE
+====================================================== -->
 
-    <div class="row">
+<div class="row">
 
-        <div class="col-12 grid-margin stretch-card">
+    <div class="col-12 grid-margin stretch-card">
 
-            <div class="card facture-header">
+        <div class="card facture-header">
 
-                <div class="card-body">
+            <div class="card-body">
 
-                    <div class="row align-items-center">
+                <div class="row align-items-center">
 
-                        <div class="col-md-8">
+                    <div class="col-md-8">
 
-                            <h4>
+                        <h4>
 
-                                <i class="mdi mdi-file-document-outline"></i>
+                            <i class="mdi mdi-file-document-outline"></i>
 
-                                Gestion de la facture
+                            Gestion de la facture
 
-                            </h4>
+                        </h4>
 
-                            <p>
-                                Ajoutez les produits et gérez le contenu de cette facture.
-                            </p>
+                        <p>
+                            Ajoutez les produits et gérez le contenu de cette facture.
+                        </p>
 
-                        </div>
+                    </div>
 
-                        <div class="col-md-4 text-md-right mt-3 mt-md-0">
+                    <div class="col-md-4 text-md-right mt-3 mt-md-0">
 
-                            <span class="facture-number">
+                        <span class="facture-number">
 
-                                <i class="mdi mdi-receipt-text-outline mr-2"></i>
+                            <i class="mdi mdi-receipt-text-outline mr-2"></i>
 
-                                Facture N° {{ sel_facture.id }}
+                            Facture N° {{ sel_facture.id }}
 
-                            </span>
-
-                        </div>
+                        </span>
 
                     </div>
 
@@ -1075,194 +1172,78 @@
 
     </div>
 
-
-    <!-- =====================================================
-         AJOUT PRODUIT + INFORMATIONS
-    ====================================================== -->
-
-    <div class="row">
-
-        <!-- =================================================
-             AJOUT PRODUIT
-        ================================================== -->
-
-        <div class="col-lg-6 grid-margin stretch-card">
-
-            <div class="card">
-
-                <div class="card-body">
-
-                    <h4 class="section-title">
-
-                        <i class="mdi mdi-cart-plus"></i>
-
-                        Ajouter un produit
-
-                    </h4>
-
-                    <p class="section-description">
-
-                        Scannez un produit ou recherchez-le manuellement.
-
-                    </p>
+</div>
 
 
-                    <!-- =================================================
-                         SCANNER
-                    ================================================== -->
+<!-- =====================================================
+     AJOUT PRODUIT + INFORMATIONS
+====================================================== -->
 
-                    {% if not sel_facture.imprimer %}
+<div class="row">
 
-                    <div class="scanner-box">
 
-                        <div class="scanner-header">
+    <!-- =================================================
+         AJOUT PRODUIT
+    ================================================== -->
 
-                            <div class="scanner-title">
+    <div class="col-lg-6 grid-margin stretch-card">
 
-                                <i class="mdi mdi-barcode-scan"></i>
+        <div class="card">
 
-                                Scanner un produit
+            <div class="card-body">
 
-                            </div>
+                <h4 class="section-title">
 
-                            <span class="scanner-status">
+                    <i class="mdi mdi-cart-plus"></i>
 
-                                <i class="mdi mdi-circle"></i>
+                    Ajouter un produit
 
-                                Lecteur prêt
+                </h4>
 
-                            </span>
+                <p class="section-description">
+
+                    Scannez un produit ou recherchez-le manuellement.
+
+                </p>
+
+
+                <!-- =================================================
+                     SCANNER
+                ================================================== -->
+
+                {% if not sel_facture.imprimer %}
+
+                <div class="scanner-box">
+
+                    <div class="scanner-header">
+
+                        <div class="scanner-title">
+
+                            <i class="mdi mdi-barcode-scan"></i>
+
+                            Scanner un produit
 
                         </div>
 
+                        <span class="scanner-status">
 
-                        <form
-                            method="post"
-                            action="{% url 'addDetailFacture' %}"
-                            id="barcodeScanForm"
-                            autocomplete="off"
-                        >
+                            <i class="mdi mdi-circle"></i>
 
-                            {% csrf_token %}
+                            Lecteur prêt
 
-                            <input
-                                type="hidden"
-                                name="facture"
-                                value="{{ sel_facture.id }}"
-                            >
-
-                            <input
-                                type="hidden"
-                                name="qte"
-                                value="1"
-                            >
-
-                            <input
-                                type="hidden"
-                                name="code_barre"
-                                id="hiddenBarcode"
-                                value=""
-                            >
-
-                            <div class="scanner-input-wrapper">
-
-                                <i
-                                    class="mdi mdi-barcode scanner-input-icon"
-                                ></i>
-
-                                <input
-                                    type="text"
-                                    id="barcodeScanner"
-                                    class="form-control scanner-input"
-                                    placeholder="Scannez le code-barres..."
-                                    inputmode="numeric"
-                                    autocomplete="off"
-                                    autocorrect="off"
-                                    autocapitalize="off"
-                                    spellcheck="false"
-                                    autofocus
-                                >
-
-                            </div>
-
-                            <small class="scanner-help">
-
-                                <strong>Utilisation :</strong>
-
-                                placez le curseur dans ce champ puis scannez le produit.
-
-                                Le lecteur termine normalement par
-
-                                <strong>Entrée</strong>.
-
-                                Chaque scan ajoute
-
-                                <strong>1 unité</strong>.
-
-                            </small>
-
-                        </form>
+                        </span>
 
                     </div>
 
-
-                    <div class="scanner-separator">
-
-                        <span>ou ajout manuel</span>
-
-                    </div>
-
-                    {% endif %}
-
-
-                    <!-- =================================================
-                         AJOUT MANUEL
-                    ================================================== -->
 
                     <form
                         method="post"
                         action="{% url 'addDetailFacture' %}"
+                        id="barcodeScanForm"
                         autocomplete="off"
-                        id="formAjoutProduit"
                     >
 
                         {% csrf_token %}
-
-                        <div class="form-group">
-
-                            <label
-                                class="form-label"
-                                for="produitFacture"
-                            >
-                                Produit
-                            </label>
-
-                            <!--
-                                IMPORTANT :
-                                Select vide au chargement.
-                                Les produits sont recherchés uniquement
-                                via AJAX après saisie de 2 caractères.
-                            -->
-
-                            <select
-                                name="produit"
-                                id="produitFacture"
-                                style="width:100%;"
-                                required
-                                {% if sel_facture.imprimer %}
-                                    disabled
-                                {% endif %}
-                            >
-
-                                <option
-                                    value=""
-                                    selected
-                                ></option>
-
-                            </select>
-
-                        </div>
-
 
                         <input
                             type="hidden"
@@ -1270,172 +1251,234 @@
                             value="{{ sel_facture.id }}"
                         >
 
+                        <input
+                            type="hidden"
+                            name="code_barre"
+                            id="hiddenBarcode"
+                            value=""
+                        >
 
-                        <div class="form-group">
 
-                            <label
-                                class="form-label"
-                                for="quantiteFacture"
-                            >
-                                Quantité
-                            </label>
+                        <!-- =================================================
+                             CHAMP SCANNER
+                        ================================================== -->
+
+                        <div class="scanner-input-wrapper">
+
+                            <i
+                                class="mdi mdi-barcode scanner-input-icon"
+                            ></i>
 
                             <input
-                                type="number"
-                                required
-                                min="1"
-                                step="1"
-                                value="1"
-                                class="form-control quantity-input"
-                                name="qte"
-                                id="quantiteFacture"
-                                placeholder="Ex. 2"
-                                {% if sel_facture.imprimer %}
-                                    disabled
-                                {% endif %}
+                                type="text"
+                                id="barcodeScanner"
+                                class="form-control scanner-input"
+                                placeholder="Scannez le code-barres..."
+                                inputmode="numeric"
+                                autocomplete="off"
+                                autocorrect="off"
+                                autocapitalize="off"
+                                spellcheck="false"
+                                autofocus
                             >
 
                         </div>
 
 
-                        <button
-                            type="submit"
-                            class="btn btn-primary btn-rounded btn-valider"
+                        <!-- =================================================
+                             QUANTITÉ APRÈS SCAN
+                        ================================================== -->
+
+                        <div
+                            id="scannerQuantityBox"
+                            class="scanner-quantity-box"
+                        >
+
+                            <div class="scanner-quantity-row">
+
+                                <div class="scanner-quantity-field">
+
+                                    <label
+                                        for="scannerQuantity"
+                                        class="scanner-quantity-label"
+                                    >
+                                        Quantité à ajouter
+                                    </label>
+
+                                    <input
+                                        type="number"
+                                        id="scannerQuantity"
+                                        name="qte"
+                                        class="scanner-quantity-input"
+                                        value="1"
+                                        min="1"
+                                        step="1"
+                                        inputmode="numeric"
+                                        autocomplete="off"
+                                    >
+
+                                </div>
+
+
+                                <div>
+
+                                    <button
+                                        type="submit"
+                                        id="scannerSubmitButton"
+                                        class="btn btn-success scanner-add-button"
+                                    >
+
+                                        <i class="mdi mdi-cart-plus mr-1"></i>
+
+                                        Ajouter
+
+                                    </button>
+
+                                </div>
+
+                            </div>
+
+
+                            <small class="scanner-quantity-help">
+
+                                <strong>Astuce :</strong>
+
+                                laissez <strong>1</strong> pour une unité,
+
+                                ou saisissez par exemple
+
+                                <strong>20</strong>
+
+                                pour ajouter 20 unités.
+
+                                <br>
+
+                                <strong>Entrée</strong> pour ajouter.
+
+                                <strong>Échap</strong> pour annuler.
+
+                            </small>
+
+                        </div>
+
+
+                        <small class="scanner-help">
+
+                            <strong>Utilisation :</strong>
+
+                            scannez le produit.
+
+                            Après le scan, indiquez la quantité souhaitée.
+
+                        </small>
+
+                    </form>
+
+                </div>
+
+
+                <div class="scanner-separator">
+
+                    <span>ou ajout manuel</span>
+
+                </div>
+
+                {% endif %}
+
+
+                <!-- =================================================
+                     AJOUT MANUEL
+                ================================================== -->
+
+                <form
+                    method="post"
+                    action="{% url 'addDetailFacture' %}"
+                    autocomplete="off"
+                    id="formAjoutProduit"
+                >
+
+                    {% csrf_token %}
+
+
+                    <div class="form-group">
+
+                        <label
+                            class="form-label"
+                            for="produitFacture"
+                        >
+                            Produit
+                        </label>
+
+
+                        <select
+                            name="produit"
+                            id="produitFacture"
+                            style="width:100%;"
+                            required
                             {% if sel_facture.imprimer %}
                                 disabled
                             {% endif %}
                         >
 
-                            <i class="mdi mdi-plus-circle-outline mr-1"></i>
+                            <option
+                                value=""
+                                selected
+                            ></option>
 
-                            Ajouter à la facture
-
-                        </button>
-
-                    </form>
-
-                </div>
-
-            </div>
-
-        </div>
-
-
-        <!-- =================================================
-             INFORMATIONS FACTURE
-        ================================================== -->
-
-        <div class="col-lg-6 grid-margin stretch-card">
-
-            <div class="card">
-
-                <div class="card-body">
-
-                    <h4 class="section-title">
-
-                        <i class="mdi mdi-information-outline"></i>
-
-                        Informations facture
-
-                    </h4>
-
-
-                    <div class="total-box">
-
-                        <div class="total-line">
-
-                            <span class="label">
-                                Numéro
-                            </span>
-
-                            <span class="value">
-                                #{{ sel_facture.id }}
-                            </span>
-
-                        </div>
-
-
-                        <div class="total-line">
-
-                            <span class="label">
-                                Date de création
-                            </span>
-
-                            <span class="value">
-                                {{ sel_facture.createdAt }}
-                            </span>
-
-                        </div>
-
-
-                        <div class="total-line">
-
-                            <span class="label">
-                                Statut
-                            </span>
-
-                            <span class="value">
-
-                                {% if sel_facture.imprimer %}
-
-                                    <span class="badge badge-success">
-
-                                        <i class="mdi mdi-check-circle mr-1"></i>
-
-                                        Imprimée
-
-                                    </span>
-
-                                {% else %}
-
-                                    <span class="badge badge-warning">
-
-                                        <i class="mdi mdi-pencil-circle mr-1"></i>
-
-                                        En cours
-
-                                    </span>
-
-                                {% endif %}
-
-                            </span>
-
-                        </div>
+                        </select>
 
                     </div>
 
 
-                    <h6 class="form-label">
-
-                        Rechercher dans les produits
-
-                    </h6>
-
-
-                    <form
-                        method="get"
-                        action="{% url 'detaiFacture' sel_facture.id %}"
-                        autocomplete="off"
+                    <input
+                        type="hidden"
+                        name="facture"
+                        value="{{ sel_facture.id }}"
                     >
 
-                        <div class="search-wrapper">
 
-                            <i class="mdi mdi-magnify"></i>
+                    <div class="form-group">
 
-                            <input
-                                type="text"
-                                class="form-control"
-                                name="q"
-                                id="searchFacture"
-                                value="{{ recherche }}"
-                                placeholder="Rechercher..."
-                            >
+                        <label
+                            class="form-label"
+                            for="quantiteFacture"
+                        >
+                            Quantité
+                        </label>
 
-                        </div>
+                        <input
+                            type="number"
+                            required
+                            min="1"
+                            step="1"
+                            value="1"
+                            class="form-control quantity-input"
+                            name="qte"
+                            id="quantiteFacture"
+                            placeholder="Ex. 2"
+                            {% if sel_facture.imprimer %}
+                                disabled
+                            {% endif %}
+                        >
 
-                    </form>
+                    </div>
 
-                </div>
+
+                    <button
+                        type="submit"
+                        class="btn btn-primary btn-rounded btn-valider"
+                        {% if sel_facture.imprimer %}
+                            disabled
+                        {% endif %}
+                    >
+
+                        <i class="mdi mdi-plus-circle-outline mr-1"></i>
+
+                        Ajouter à la facture
+
+                    </button>
+
+                </form>
 
             </div>
 
@@ -1444,335 +1487,342 @@
     </div>
 
 
-    <!-- =====================================================
-         PRODUITS
-    ====================================================== -->
+    <!-- =================================================
+         INFORMATIONS FACTURE
+    ================================================== -->
 
-    {% if list_facture %}
+    <div class="col-lg-6 grid-margin stretch-card">
 
-    <div class="row">
+        <div class="card">
 
-        <!-- =================================================
-             TABLE
-        ================================================== -->
+            <div class="card-body">
 
-        <div class="col-lg-7 grid-margin stretch-card">
+                <h4 class="section-title">
 
-            <div class="card">
+                    <i class="mdi mdi-information-outline"></i>
 
-                <div class="card-body">
+                    Informations facture
 
-                    <div class="d-flex justify-content-between align-items-center mb-3">
+                </h4>
 
-                        <div>
 
-                            <h4 class="section-title mb-1">
+                <div class="total-box">
 
-                                <i class="mdi mdi-format-list-bulleted"></i>
+                    <div class="total-line">
 
-                                Produits de la facture
+                        <span class="label">
+                            Numéro
+                        </span>
 
-                            </h4>
+                        <span class="value">
+                            #{{ sel_facture.id }}
+                        </span>
 
-                            <span class="section-description">
+                    </div>
 
-                                Facture #{{ sel_facture.id }}
 
-                            </span>
+                    <div class="total-line">
 
-                        </div>
+                        <span class="label">
+                            Date de création
+                        </span>
 
-                        <span class="badge badge-info count-badge">
+                        <span class="value">
+                            {{ sel_facture.createdAt }}
+                        </span>
 
-                            {{ compte }} produit(s)
+                    </div>
+
+
+                    <div class="total-line">
+
+                        <span class="label">
+                            Statut
+                        </span>
+
+                        <span class="value">
+
+                            {% if sel_facture.imprimer %}
+
+                                <span class="badge badge-success">
+
+                                    <i class="mdi mdi-check-circle mr-1"></i>
+
+                                    Imprimée
+
+                                </span>
+
+                            {% else %}
+
+                                <span class="badge badge-warning">
+
+                                    <i class="mdi mdi-pencil-circle mr-1"></i>
+
+                                    En cours
+
+                                </span>
+
+                            {% endif %}
+
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <h6 class="form-label">
+
+                    Rechercher dans les produits
+
+                </h6>
+
+
+                <form
+                    method="get"
+                    action="{% url 'detaiFacture' sel_facture.id %}"
+                    autocomplete="off"
+                >
+
+                    <div class="search-wrapper">
+
+                        <i class="mdi mdi-magnify"></i>
+
+                        <input
+                            type="text"
+                            class="form-control"
+                            name="q"
+                            id="searchFacture"
+                            value="{{ recherche }}"
+                            placeholder="Rechercher..."
+                        >
+
+                    </div>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =====================================================
+     PRODUITS
+====================================================== -->
+
+{% if list_facture %}
+
+<div class="row">
+
+
+    <!-- =================================================
+         TABLE
+    ================================================== -->
+
+    <div class="col-lg-7 grid-margin stretch-card">
+
+        <div class="card">
+
+            <div class="card-body">
+
+                <div class="d-flex justify-content-between align-items-center mb-3">
+
+                    <div>
+
+                        <h4 class="section-title mb-1">
+
+                            <i class="mdi mdi-format-list-bulleted"></i>
+
+                            Produits de la facture
+
+                        </h4>
+
+                        <span class="section-description">
+
+                            Facture #{{ sel_facture.id }}
 
                         </span>
 
                     </div>
 
 
-                    <div class="table-responsive">
+                    <span class="badge badge-info count-badge">
 
-                        <table class="table facture-table">
+                        {{ compte }} produit(s)
 
-                            <thead>
-
-                                <tr>
-
-                                    <th>Produit</th>
-
-                                    <th>Prix</th>
-
-                                    <th>Quantité</th>
-
-                                    <th>Total</th>
-
-                                    {% if not sel_facture.imprimer %}
-
-                                        <th class="text-center">
-                                            Actions
-                                        </th>
-
-                                    {% endif %}
-
-                                </tr>
-
-                            </thead>
-
-
-                            <tbody>
-
-                                {% for f in list_facture %}
-
-                                <tr>
-
-                                    <td class="product-name">
-                                        {{ f.produit }}
-                                    </td>
-
-                                    <td class="price-text">
-                                        {{ f.pu }} Fc
-                                    </td>
-
-                                    <td>
-
-                                        <span class="quantity-badge">
-                                            {{ f.qte }}
-                                        </span>
-
-                                    </td>
-
-                                    <td class="price-text">
-                                        {{ f.total }} Fc
-                                    </td>
-
-                                    {% if not sel_facture.imprimer %}
-
-                                    <td class="text-center">
-
-                                        <button
-                                            type="button"
-                                            class="action-delete"
-                                            title="Supprimer"
-                                            onclick="ouvrirModalSuppression({{ f.id }}, '{{ f.produit|escapejs }}')"
-                                        >
-
-                                            <i class="mdi mdi-delete-outline"></i>
-
-                                        </button>
-
-                                    </td>
-
-                                    {% endif %}
-
-                                </tr>
-
-                                {% endfor %}
-
-                            </tbody>
-
-                        </table>
-
-                    </div>
-
-
-                    <!-- =================================================
-                         PAGINATION
-                    ================================================== -->
-
-                    <div class="pagination-wrapper">
-
-                        <div class="row align-items-center">
-
-                            <div class="col-md-4">
-
-                                {% if list_facture.has_previous %}
-
-                                <a
-                                    href="?page=1{% if recherche %}&q={{ recherche|urlencode }}{% endif %}"
-                                    class="btn btn-outline-light btn-sm btn-rounded"
-                                >
-
-                                    <i class="mdi mdi-page-first"></i>
-
-                                </a>
-
-                                <a
-                                    href="?page={{ list_facture.previous_page_number }}{% if recherche %}&q={{ recherche|urlencode }}{% endif %}"
-                                    class="btn btn-info btn-sm btn-rounded"
-                                >
-
-                                    <i class="mdi mdi-chevron-left"></i>
-
-                                    Précédent
-
-                                </a>
-
-                                {% endif %}
-
-                            </div>
-
-
-                            <div class="col-md-4 text-center my-2 my-md-0">
-
-                                <span class="page-info">
-
-                                    Page {{ list_facture.number }}
-
-                                    sur
-
-                                    {{ list_facture.paginator.num_pages }}
-
-                                </span>
-
-                            </div>
-
-
-                            <div class="col-md-4 text-md-right">
-
-                                {% if list_facture.has_next %}
-
-                                <a
-                                    href="?page={{ list_facture.next_page_number }}{% if recherche %}&q={{ recherche|urlencode }}{% endif %}"
-                                    class="btn btn-info btn-sm btn-rounded"
-                                >
-
-                                    Suivant
-
-                                    <i class="mdi mdi-chevron-right"></i>
-
-                                </a>
-
-                                <a
-                                    href="?page={{ list_facture.paginator.num_pages }}{% if recherche %}&q={{ recherche|urlencode }}{% endif %}"
-                                    class="btn btn-outline-light btn-sm btn-rounded"
-                                >
-
-                                    <i class="mdi mdi-page-last"></i>
-
-                                </a>
-
-                                {% endif %}
-
-                            </div>
-
-                        </div>
-
-                    </div>
+                    </span>
 
                 </div>
 
-            </div>
 
-        </div>
+                <div class="table-responsive">
+
+                    <table class="table facture-table">
+
+                        <thead>
+
+                            <tr>
+
+                                <th>Produit</th>
+
+                                <th>Prix</th>
+
+                                <th>Quantité</th>
+
+                                <th>Total</th>
+
+                                {% if not sel_facture.imprimer %}
+
+                                    <th class="text-center">
+                                        Actions
+                                    </th>
+
+                                {% endif %}
+
+                            </tr>
+
+                        </thead>
 
 
-        <!-- =================================================
-             TOTAL
-        ================================================== -->
+                        <tbody>
 
-        <div class="col-lg-5 grid-margin stretch-card">
+                            {% for f in list_facture %}
 
-            <div class="card total-card">
+                            <tr>
 
-                <div class="card-body">
+                                <td class="product-name">
+                                    {{ f.produit }}
+                                </td>
 
-                    <h4 class="section-title">
+                                <td class="price-text">
+                                    {{ f.pu }} Fc
+                                </td>
 
-                        <i class="mdi mdi-calculator-variant-outline"></i>
+                                <td>
 
-                        Récapitulatif
+                                    <span class="quantity-badge">
+                                        {{ f.qte }}
+                                    </span>
 
-                    </h4>
+                                </td>
+
+                                <td class="price-text">
+                                    {{ f.total }} Fc
+                                </td>
+
+                                {% if not sel_facture.imprimer %}
+
+                                <td class="text-center">
+
+                                    <button
+                                        type="button"
+                                        class="action-delete"
+                                        title="Supprimer"
+                                        onclick="ouvrirModalSuppression({{ f.id }}, '{{ f.produit|escapejs }}')"
+                                    >
+
+                                        <i class="mdi mdi-delete-outline"></i>
+
+                                    </button>
+
+                                </td>
+
+                                {% endif %}
+
+                            </tr>
+
+                            {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
 
 
-                    <div class="total-box">
+                <!-- =================================================
+                     PAGINATION
+                ================================================== -->
 
-                        <div class="total-line">
+                <div class="pagination-wrapper">
 
-                            <span class="label">
-                                Total HT
-                            </span>
+                    <div class="row align-items-center">
 
-                            <span class="value">
-                                {{ total_ht }} Fc
+                        <div class="col-md-4">
+
+                            {% if list_facture.has_previous %}
+
+                            <a
+                                href="?page=1{% if recherche %}&q={{ recherche|urlencode }}{% endif %}"
+                                class="btn btn-outline-light btn-sm btn-rounded"
+                            >
+
+                                <i class="mdi mdi-page-first"></i>
+
+                            </a>
+
+                            <a
+                                href="?page={{ list_facture.previous_page_number }}{% if recherche %}&q={{ recherche|urlencode }}{% endif %}"
+                                class="btn btn-info btn-sm btn-rounded"
+                            >
+
+                                <i class="mdi mdi-chevron-left"></i>
+
+                                Précédent
+
+                            </a>
+
+                            {% endif %}
+
+                        </div>
+
+
+                        <div class="col-md-4 text-center my-2 my-md-0">
+
+                            <span class="page-info">
+
+                                Page {{ list_facture.number }}
+
+                                sur
+
+                                {{ list_facture.paginator.num_pages }}
+
                             </span>
 
                         </div>
 
 
-                        <div class="total-line">
+                        <div class="col-md-4 text-md-right">
 
-                            <span class="label">
-                                TVA (16 %)
-                            </span>
+                            {% if list_facture.has_next %}
 
-                            <span class="value total-tva">
-                                {{ total_tva }} Fc
-                            </span>
+                            <a
+                                href="?page={{ list_facture.next_page_number }}{% if recherche %}&q={{ recherche|urlencode }}{% endif %}"
+                                class="btn btn-info btn-sm btn-rounded"
+                            >
+
+                                Suivant
+
+                                <i class="mdi mdi-chevron-right"></i>
+
+                            </a>
+
+                            <a
+                                href="?page={{ list_facture.paginator.num_pages }}{% if recherche %}&q={{ recherche|urlencode }}{% endif %}"
+                                class="btn btn-outline-light btn-sm btn-rounded"
+                            >
+
+                                <i class="mdi mdi-page-last"></i>
+
+                            </a>
+
+                            {% endif %}
 
                         </div>
-
-
-                        <div class="total-line total-ttc">
-
-                            <span class="label">
-                                TOTAL TTC
-                            </span>
-
-                            <span class="value">
-                                {{ sommefac }} Fc
-                            </span>
-
-                        </div>
-
-                    </div>
-
-
-                    <div class="action-buttons">
-
-                        {% if sel_facture.imprimer %}
-
-                        <button
-                            type="button"
-                            class="btn btn-secondary btn-rounded btn-print"
-                            disabled
-                            title="Cette facture a déjà été imprimée"
-                        >
-
-                            <i class="mdi mdi-lock-outline mr-1"></i>
-
-                            Facture déjà imprimée
-
-                        </button>
-
-                        {% else %}
-
-                        <button
-                            type="button"
-                            class="btn btn-primary btn-rounded btn-print"
-                            onclick="imprimerFacture({{ sel_facture.id }})"
-                        >
-
-                            <i class="mdi mdi-printer-outline mr-1"></i>
-
-                            Imprimer la facture
-
-                        </button>
-
-                        {% endif %}
-
-
-                        <a
-                            href="{% url 'facture' %}"
-                            class="btn btn-outline-light btn-rounded btn-factures"
-                        >
-
-                            <i class="mdi mdi-file-document-multiple-outline mr-1"></i>
-
-                            Mes factures
-
-                        </a>
 
                     </div>
 
@@ -1784,42 +1834,161 @@
 
     </div>
 
-    {% else %}
 
-    <!-- =====================================================
-         AUCUN PRODUIT
-    ====================================================== -->
+    <!-- =================================================
+         TOTAL
+    ================================================== -->
 
-    <div class="row">
+    <div class="col-lg-5 grid-margin stretch-card">
 
-        <div class="col-12">
+        <div class="card total-card">
 
-            <div class="card empty-card">
+            <div class="card-body">
 
-                <div class="empty-icon">
+                <h4 class="section-title">
 
-                    <i class="mdi mdi-cart-off"></i>
+                    <i class="mdi mdi-calculator-variant-outline"></i>
 
-                </div>
+                    Récapitulatif
 
-                <h4 style="color:#ffffff;">
-                    Aucun produit dans cette facture
                 </h4>
 
-                <p style="color:rgba(255,255,255,.55);">
-                    Commencez par ajouter un produit à la facture.
-                </p>
+
+                <div class="total-box">
+
+                    <div class="total-line">
+
+                        <span class="label">
+                            Total HT
+                        </span>
+
+                        <span class="value">
+                            {{ total_ht }} Fc
+                        </span>
+
+                    </div>
+
+
+                    <div class="total-line">
+
+                        <span class="label">
+                            TVA (16 %)
+                        </span>
+
+                        <span class="value total-tva">
+                            {{ total_tva }} Fc
+                        </span>
+
+                    </div>
+
+
+                    <div class="total-line total-ttc">
+
+                        <span class="label">
+                            TOTAL TTC
+                        </span>
+
+                        <span class="value">
+                            {{ sommefac }} Fc
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <div class="action-buttons">
+
+                    {% if sel_facture.imprimer %}
+
+                    <button
+                        type="button"
+                        class="btn btn-secondary btn-rounded btn-print"
+                        disabled
+                        title="Cette facture a déjà été imprimée"
+                    >
+
+                        <i class="mdi mdi-lock-outline mr-1"></i>
+
+                        Facture déjà imprimée
+
+                    </button>
+
+                    {% else %}
+
+                    <button
+                        type="button"
+                        class="btn btn-primary btn-rounded btn-print"
+                        onclick="imprimerFacture({{ sel_facture.id }})"
+                    >
+
+                        <i class="mdi mdi-printer-outline mr-1"></i>
+
+                        Imprimer la facture
+
+                    </button>
+
+                    {% endif %}
+
+
+                    <a
+                        href="{% url 'facture' %}"
+                        class="btn btn-outline-light btn-rounded btn-factures"
+                    >
+
+                        <i class="mdi mdi-file-document-multiple-outline mr-1"></i>
+
+                        Mes factures
+
+                    </a>
+
+                </div>
 
             </div>
 
         </div>
 
     </div>
-
-    {% endif %}
 
 </div>
 
+{% else %}
+
+
+<!-- =====================================================
+     AUCUN PRODUIT
+====================================================== -->
+
+<div class="row">
+
+    <div class="col-12">
+
+        <div class="card empty-card">
+
+            <div class="empty-icon">
+
+                <i class="mdi mdi-cart-off"></i>
+
+            </div>
+
+            <h4 style="color:#ffffff;">
+                Aucun produit dans cette facture
+            </h4>
+
+            <p style="color:rgba(255,255,255,.55);">
+                Commencez par ajouter un produit à la facture.
+            </p>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endif %}
+```
+
+</div>
 
 <!-- =========================================================
      MODAL MANAGER
@@ -1831,139 +2000,141 @@
     aria-hidden="true"
 >
 
-    <div
-        class="manager-modal"
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="managerModalTitle"
-    >
+```
+<div
+    class="manager-modal"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="managerModalTitle"
+>
 
-        <div class="manager-modal-header">
+    <div class="manager-modal-header">
 
-            <div class="manager-modal-icon">
+        <div class="manager-modal-icon">
 
-                <i class="mdi mdi-shield-lock-outline"></i>
-
-            </div>
-
-            <div>
-
-                <h4
-                    id="managerModalTitle"
-                    class="manager-modal-title"
-                >
-                    Autorisation du manager
-                </h4>
-
-                <p class="manager-modal-subtitle">
-                    Autorisation requise pour supprimer ce produit
-                </p>
-
-            </div>
+            <i class="mdi mdi-shield-lock-outline"></i>
 
         </div>
 
+        <div>
 
-        <div class="manager-modal-body">
-
-            <div class="manager-modal-product">
-
-                Produit à supprimer :
-
-                <strong id="managerProductName"></strong>
-
-            </div>
-
-
-            <label
-                for="managerPassword"
-                class="manager-password-label"
+            <h4
+                id="managerModalTitle"
+                class="manager-modal-title"
             >
-                Mot de passe du manager
-            </label>
+                Autorisation du manager
+            </h4>
 
-
-            <div class="manager-password-wrapper">
-
-                <input
-                    type="password"
-                    id="managerPassword"
-                    class="manager-password-input"
-                    placeholder="Entrez le mot de passe"
-                    autocomplete="off"
-                >
-
-                <button
-                    type="button"
-                    id="managerPasswordToggle"
-                    class="manager-password-toggle"
-                    title="Afficher le mot de passe"
-                    aria-label="Afficher le mot de passe"
-                >
-
-                    <i class="mdi mdi-eye-outline"></i>
-
-                </button>
-
-            </div>
-
-
-            <div
-                id="managerModalError"
-                class="manager-modal-error"
-            >
-
-                <i class="mdi mdi-alert-circle-outline mr-1"></i>
-
-                <span id="managerModalErrorText"></span>
-
-            </div>
-
-        </div>
-
-
-        <div class="manager-modal-footer">
-
-            <button
-                type="button"
-                class="manager-btn-cancel"
-                onclick="fermerModalSuppression()"
-            >
-
-                <i class="mdi mdi-close mr-1"></i>
-
-                Annuler
-
-            </button>
-
-
-            <button
-                type="button"
-                id="managerConfirmButton"
-                class="manager-btn-confirm"
-                onclick="confirmerSuppression()"
-            >
-
-                <span class="manager-loading">
-
-                    <i class="mdi mdi-loading mdi-spin"></i>
-
-                </span>
-
-                <i class="mdi mdi-delete-outline mr-1"></i>
-
-                Autoriser la suppression
-
-            </button>
+            <p class="manager-modal-subtitle">
+                Autorisation requise pour supprimer ce produit
+            </p>
 
         </div>
 
     </div>
 
+
+    <div class="manager-modal-body">
+
+        <div class="manager-modal-product">
+
+            Produit à supprimer :
+
+            <strong id="managerProductName"></strong>
+
+        </div>
+
+
+        <label
+            for="managerPassword"
+            class="manager-password-label"
+        >
+            Mot de passe du manager
+        </label>
+
+
+        <div class="manager-password-wrapper">
+
+            <input
+                type="password"
+                id="managerPassword"
+                class="manager-password-input"
+                placeholder="Entrez le mot de passe"
+                autocomplete="off"
+            >
+
+            <button
+                type="button"
+                id="managerPasswordToggle"
+                class="manager-password-toggle"
+                title="Afficher le mot de passe"
+                aria-label="Afficher le mot de passe"
+            >
+
+                <i class="mdi mdi-eye-outline"></i>
+
+            </button>
+
+        </div>
+
+
+        <div
+            id="managerModalError"
+            class="manager-modal-error"
+        >
+
+            <i class="mdi mdi-alert-circle-outline mr-1"></i>
+
+            <span id="managerModalErrorText"></span>
+
+        </div>
+
+    </div>
+
+
+    <div class="manager-modal-footer">
+
+        <button
+            type="button"
+            class="manager-btn-cancel"
+            onclick="fermerModalSuppression()"
+        >
+
+            <i class="mdi mdi-close mr-1"></i>
+
+            Annuler
+
+        </button>
+
+
+        <button
+            type="button"
+            id="managerConfirmButton"
+            class="manager-btn-confirm"
+            onclick="confirmerSuppression()"
+        >
+
+            <span class="manager-loading">
+
+                <i class="mdi mdi-loading mdi-spin"></i>
+
+            </span>
+
+            <i class="mdi mdi-delete-outline mr-1"></i>
+
+            Autoriser la suppression
+
+        </button>
+
+    </div>
+
+</div>
+```
+
 </div>
 
-
 <script>
+
 
 /* =========================================================
    SELECT2 AJAX PRODUITS
@@ -1977,24 +2148,13 @@
     function initialiserSelectProduit() {
 
         if (typeof window.jQuery === "undefined") {
-
-            console.warn(
-                "⏳ jQuery n'est pas encore disponible."
-            );
-
             return false;
         }
-
 
         const $ = window.jQuery;
 
 
         if (typeof $.fn.select2 === "undefined") {
-
-            console.warn(
-                "⏳ Select2 n'est pas encore disponible."
-            );
-
             return false;
         }
 
@@ -2003,19 +2163,9 @@
 
 
         if (!$select.length) {
-
-            console.error(
-                "❌ #produitFacture introuvable."
-            );
-
             return false;
         }
 
-
-        /*
-         * Si base.html a déjà initialisé Select2,
-         * on détruit l'ancienne instance.
-         */
 
         if ($select.hasClass("select2-hidden-accessible")) {
 
@@ -2026,7 +2176,7 @@
             } catch (error) {
 
                 console.warn(
-                    "⚠️ Impossible de détruire l'ancienne instance Select2.",
+                    "Impossible de détruire Select2.",
                     error
                 );
 
@@ -2035,20 +2185,8 @@
         }
 
 
-        /*
-         * IMPORTANT :
-         * On vide complètement le select.
-         *
-         * Ainsi aucun produit ne sera préchargé
-         * lorsque la page s'ouvre.
-         */
-
         $select.empty();
 
-
-        /*
-         * Une seule option vide.
-         */
 
         $select.append(
             new Option(
@@ -2059,10 +2197,6 @@
             )
         );
 
-
-        /*
-         * Initialisation AJAX.
-         */
 
         $select.select2({
 
@@ -2094,25 +2228,14 @@
 
                 data: function (params) {
 
-                    const terme = $.trim(
-                        params.term || ""
-                    );
-
-
                     return {
-                        q: terme
+                        q: $.trim(params.term || "")
                     };
 
                 },
 
 
                 processResults: function (data) {
-
-                    console.log(
-                        "📦 Produits reçus :",
-                        data
-                    );
-
 
                     if (
                         !data ||
@@ -2133,21 +2256,16 @@
                 },
 
 
-                error: function (
-                    xhr,
-                    status,
-                    error
-                ) {
+                error: function (xhr) {
 
-                    console.error(
-                        "❌ Erreur recherche produit :",
-                        {
-                            status: xhr.status,
-                            statusText: xhr.statusText,
-                            response: xhr.responseText,
-                            error: error
-                        }
-                    );
+                    if (xhr.status !== 0) {
+
+                        console.error(
+                            "Erreur recherche produit :",
+                            xhr.status
+                        );
+
+                    }
 
                 }
 
@@ -2188,18 +2306,9 @@
         });
 
 
-        /*
-         * Force Select2 à rester vide.
-         */
-
         $select
             .val(null)
             .trigger("change");
-
-
-        console.log(
-            "✅ Select2 produit initialisé et vide."
-        );
 
 
         return true;
@@ -2215,6 +2324,7 @@
 
 
         const interval = setInterval(
+
             function () {
 
                 tentatives++;
@@ -2225,31 +2335,30 @@
                     clearInterval(interval);
 
                     return;
+
                 }
 
 
-                if (
-                    tentatives >= maximumTentatives
-                ) {
+                if (tentatives >= maximumTentatives) {
 
                     clearInterval(interval);
 
                     console.error(
-                        "❌ Impossible d'initialiser Select2."
+                        "Impossible d'initialiser Select2."
                     );
 
                 }
 
             },
+
             100
+
         );
 
     }
 
 
-    if (
-        document.readyState === "loading"
-    ) {
+    if (document.readyState === "loading") {
 
         document.addEventListener(
             "DOMContentLoaded",
@@ -2269,7 +2378,7 @@
 
 
 /* =========================================================
-   SCANNER CODE-BARRES
+   SCANNER CODE-BARRES + QUANTITÉ
 ========================================================= */
 
 (function () {
@@ -2297,10 +2406,31 @@
             );
 
 
+        const quantityBox =
+            document.getElementById(
+                "scannerQuantityBox"
+            );
+
+
+        const quantityInput =
+            document.getElementById(
+                "scannerQuantity"
+            );
+
+
+        const submitButton =
+            document.getElementById(
+                "scannerSubmitButton"
+            );
+
+
         if (
             !scanner ||
             !scannerForm ||
-            !hiddenBarcode
+            !hiddenBarcode ||
+            !quantityBox ||
+            !quantityInput ||
+            !submitButton
         ) {
 
             return;
@@ -2310,6 +2440,10 @@
 
         let scanEnCours = false;
 
+
+        /* =====================================================
+           FOCUS SCANNER
+        ====================================================== */
 
         function focusScanner() {
 
@@ -2327,7 +2461,7 @@
             } catch (error) {
 
                 console.warn(
-                    "Focus scanner impossible :",
+                    "Focus scanner impossible.",
                     error
                 );
 
@@ -2335,6 +2469,57 @@
 
         }
 
+
+        /* =====================================================
+           ANNULER LE SCAN
+        ====================================================== */
+
+        function annulerScan() {
+
+            scanEnCours = false;
+
+
+            scanner.value = "";
+
+            hiddenBarcode.value = "";
+
+            quantityInput.value = "1";
+
+
+            quantityBox.style.display = "none";
+
+
+            scanner.disabled = false;
+
+            scanner.classList.remove(
+                "scanner-disabled"
+            );
+
+
+            submitButton.disabled = false;
+
+            submitButton.innerHTML =
+                `
+                <i class="mdi mdi-cart-plus mr-1"></i>
+                Ajouter
+                `;
+
+
+            setTimeout(
+                function () {
+
+                    focusScanner();
+
+                },
+                50
+            );
+
+        }
+
+
+        /* =====================================================
+           FOCUS AUTOMATIQUE
+        ====================================================== */
 
         setTimeout(
             function () {
@@ -2346,87 +2531,120 @@
         );
 
 
+        /* =====================================================
+           SCAN
+        ====================================================== */
+
         scanner.addEventListener(
             "keydown",
             function (event) {
-
-                if (event.key === "Enter") {
-
-                    event.preventDefault();
-
-
-                    if (scanEnCours) {
-                        return;
-                    }
-
-
-                    const code =
-                        scanner.value.trim();
-
-
-                    if (!code) {
-
-                        scanner.value = "";
-
-                        hiddenBarcode.value = "";
-
-                        focusScanner();
-
-                        return;
-
-                    }
-
-
-                    /*
-                     * Le code-barres reste une chaîne.
-                     * Ne jamais utiliser Number(),
-                     * parseInt() ou parseFloat().
-                     */
-
-                    hiddenBarcode.value = code;
-
-
-                    console.log(
-                        "SCAN :",
-                        code
-                    );
-
-
-                    scanEnCours = true;
-
-
-                    scanner.disabled = true;
-
-
-                    scanner.classList.add(
-                        "scanner-disabled"
-                    );
-
-
-                    HTMLFormElement.prototype.submit.call(
-                        scannerForm
-                    );
-
-                }
-
 
                 if (event.key === "Escape") {
 
                     event.preventDefault();
 
+                    annulerScan();
+
+                    return;
+
+                }
+
+
+                if (event.key !== "Enter") {
+                    return;
+                }
+
+
+                event.preventDefault();
+
+
+                if (scanEnCours) {
+                    return;
+                }
+
+
+                const code =
+                    scanner.value.trim();
+
+
+                if (!code) {
 
                     scanner.value = "";
 
                     hiddenBarcode.value = "";
 
-
                     focusScanner();
 
+                    return;
+
                 }
+
+
+                /*
+                 * IMPORTANT :
+                 *
+                 * Le code-barres reste une chaîne.
+                 * On ne fait jamais Number(),
+                 * parseInt() ou parseFloat()
+                 * sur le code-barres.
+                 */
+
+                hiddenBarcode.value = code;
+
+
+                scanEnCours = true;
+
+
+                /*
+                 * Bloquer le scanner pendant
+                 * la sélection de quantité.
+                 */
+
+                scanner.disabled = true;
+
+                scanner.classList.add(
+                    "scanner-disabled"
+                );
+
+
+                /*
+                 * Afficher la quantité.
+                 */
+
+                quantityBox.style.display =
+                    "block";
+
+
+                /*
+                 * Quantité par défaut.
+                 */
+
+                quantityInput.value = "1";
+
+
+                /*
+                 * Donner immédiatement le focus
+                 * à la quantité.
+                 */
+
+                setTimeout(
+                    function () {
+
+                        quantityInput.focus();
+
+                        quantityInput.select();
+
+                    },
+                    80
+                );
 
             }
         );
 
+
+        /* =====================================================
+           NETTOYAGE CODE SCANNER
+        ====================================================== */
 
         scanner.addEventListener(
             "input",
@@ -2442,6 +2660,10 @@
         );
 
 
+        /* =====================================================
+           CLICK SCANNER
+        ====================================================== */
+
         scanner.addEventListener(
             "click",
             function () {
@@ -2455,12 +2677,185 @@
             }
         );
 
+
+        /* =====================================================
+           QUANTITÉ
+        ====================================================== */
+
+        quantityInput.addEventListener(
+            "input",
+            function () {
+
+                let valeur =
+                    this.value.replace(
+                        /\D/g,
+                        ""
+                    );
+
+
+                if (valeur === "") {
+
+                    this.value = "";
+
+                    return;
+
+                }
+
+
+                let nombre =
+                    parseInt(
+                        valeur,
+                        10
+                    );
+
+
+                if (
+                    isNaN(nombre) ||
+                    nombre < 1
+                ) {
+
+                    nombre = 1;
+
+                }
+
+
+                this.value = String(nombre);
+
+            }
+        );
+
+
+        /* =====================================================
+           CLAVIER QUANTITÉ
+        ====================================================== */
+
+        quantityInput.addEventListener(
+            "keydown",
+            function (event) {
+
+                if (event.key === "Escape") {
+
+                    event.preventDefault();
+
+                    annulerScan();
+
+                    return;
+
+                }
+
+
+                if (event.key === "Enter") {
+
+                    event.preventDefault();
+
+
+                    if (
+                        !this.value ||
+                        parseInt(
+                            this.value,
+                            10
+                        ) < 1
+                    ) {
+
+                        this.value = "1";
+
+                    }
+
+
+                    /*
+                     * Utilisation du bouton submit
+                     * afin de passer par la validation
+                     * normale du formulaire.
+                     */
+
+                    submitButton.click();
+
+                }
+
+            }
+        );
+
+
+        /* =====================================================
+           SUBMIT
+        ====================================================== */
+
+        scannerForm.addEventListener(
+            "submit",
+            function (event) {
+
+                if (!scanEnCours) {
+
+                    event.preventDefault();
+
+                    return;
+
+                }
+
+
+                const quantite =
+                    parseInt(
+                        quantityInput.value,
+                        10
+                    );
+
+
+                if (
+                    isNaN(quantite) ||
+                    quantite < 1
+                ) {
+
+                    event.preventDefault();
+
+
+                    quantityInput.value = "1";
+
+                    quantityInput.focus();
+
+                    quantityInput.select();
+
+                    return;
+
+                }
+
+
+                if (!hiddenBarcode.value.trim()) {
+
+                    event.preventDefault();
+
+                    annulerScan();
+
+                    return;
+
+                }
+
+
+                /*
+                 * Bloquer le bouton afin d'éviter
+                 * deux envois simultanés.
+                 */
+
+                submitButton.disabled = true;
+
+
+                submitButton.innerHTML =
+                    `
+                    <i class="mdi mdi-loading mdi-spin mr-1"></i>
+                    Ajout...
+                    `;
+
+
+                scanner.disabled = true;
+
+                quantityInput.disabled = true;
+
+            }
+        );
+
     }
 
 
-    if (
-        document.readyState === "loading"
-    ) {
+    if (document.readyState === "loading") {
 
         document.addEventListener(
             "DOMContentLoaded",
@@ -2541,7 +2936,8 @@ function ouvrirModalSuppression(
     }
 
 
-    productName.textContent = produitNom;
+    productName.textContent =
+        produitNom;
 
 
     passwordInput.value = "";
@@ -2553,7 +2949,6 @@ function ouvrirModalSuppression(
 
 
     confirmButton.disabled = false;
-
 
     confirmButton.classList.remove(
         "loading"
@@ -2646,7 +3041,6 @@ function fermerModalSuppression() {
 
     confirmButton.disabled = false;
 
-
     confirmButton.classList.remove(
         "loading"
     );
@@ -2716,9 +3110,7 @@ function fermerModalSuppression() {
             }
 
 
-            if (
-                input.type === "password"
-            ) {
+            if (input.type === "password") {
 
                 input.type = "text";
 
