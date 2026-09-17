@@ -143,6 +143,12 @@ path(
     views.rechercherProduitFacture,
     name="rechercherProduitFacture"
 ),
+
+path(
+    "modifier-mot-de-passe/<int:user_id>/",
+    views.modifierMotDePasseUser,
+    name="modifierMotDePasseUser",
+),
     
      
 ]

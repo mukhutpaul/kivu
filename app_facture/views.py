@@ -6530,3 +6530,56 @@ def rechercherProduitFacture(request):
     return JsonResponse({
         "results": results
     })
+    
+@login_required(login_url="sign_in")
+def modifierMotDePasseUser(request, user_id):
+
+    utilisateur = get_object_or_404(User, id=user_id)
+
+    if request.method != "POST":
+        return redirect("users")
+
+    nouveau_mot_de_passe = request.POST.get("nouveau_mot_de_passe", "").strip()
+    confirmation = request.POST.get("confirmation", "").strip()
+
+    # ==========================================
+    # VÉRIFICATION
+    # ==========================================
+
+    if not nouveau_mot_de_passe:
+        messages.error(
+            request,
+            "Veuillez saisir le nouveau mot de passe."
+        )
+        return redirect("users")
+
+    if len(nouveau_mot_de_passe) < 6:
+        messages.error(
+            request,
+            "Le mot de passe doit contenir au moins 6 caractères."
+        )
+        return redirect("users")
+
+    if nouveau_mot_de_passe != confirmation:
+        messages.error(
+            request,
+            "Les deux mots de passe ne correspondent pas."
+        )
+        return redirect("users")
+
+    # ==========================================
+    # MODIFICATION
+    # ==========================================
+
+    utilisateur.set_password(nouveau_mot_de_passe)
+
+    utilisateur.save(
+        update_fields=["password"]
+    )
+
+    messages.success(
+        request,
+        f"Le mot de passe de {utilisateur.username} a été modifié avec succès."
+    )
+
+    return redirect("users")

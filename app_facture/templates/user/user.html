@@ -35,16 +35,19 @@
 
         </div>
 
+
         <!-- =========================
              RECHERCHE + COMPTEUR
         ========================== -->
         <div class="row align-items-center mt-3">
 
             <div class="col-md-8 mb-2 mb-md-0">
+
                 <form action="" method="post">
                     {% csrf_token %}
 
                     <div class="input-group">
+
                         <input
                             type="text"
                             class="form-control"
@@ -55,6 +58,7 @@
                         >
 
                         <div class="input-group-append">
+
                             <button
                                 type="submit"
                                 class="btn btn-primary"
@@ -62,11 +66,15 @@
                                 <i class="mdi mdi-magnify"></i>
                                 Rechercher
                             </button>
+
                         </div>
+
                     </div>
 
                 </form>
+
             </div>
+
 
             <div class="col-md-4 text-md-right">
 
@@ -92,6 +100,7 @@
             <table class="table table-hover">
 
                 <thead>
+
                     <tr>
 
                         <th width="70">
@@ -114,12 +123,14 @@
                             Email
                         </th>
 
-                        <th class="text-center" width="150">
+                        <th class="text-center" width="190">
                             Actions
                         </th>
 
                     </tr>
+
                 </thead>
+
 
                 <tbody>
 
@@ -157,15 +168,25 @@
                                     </div>
 
                                     {% if u.is_active %}
+
                                         <small class="text-success">
-                                            <i class="mdi mdi-circle" style="font-size:7px;"></i>
+                                            <i
+                                                class="mdi mdi-circle"
+                                                style="font-size:7px;"
+                                            ></i>
                                             Actif
                                         </small>
+
                                     {% else %}
+
                                         <small class="text-danger">
-                                            <i class="mdi mdi-circle" style="font-size:7px;"></i>
+                                            <i
+                                                class="mdi mdi-circle"
+                                                style="font-size:7px;"
+                                            ></i>
                                             Inactif
                                         </small>
+
                                     {% endif %}
 
                                 </div>
@@ -177,9 +198,11 @@
 
                         <!-- NOM COMPLET -->
                         <td>
+
                             <span class="font-weight-medium">
                                 {{ u.noms }}
                             </span>
+
                         </td>
 
 
@@ -230,7 +253,7 @@
 
                             <div class="btn-group" role="group">
 
-                                <!-- Modifier -->
+                                <!-- MODIFIER -->
                                 <a
                                     href="{% url 'modifierUser' u.id %}"
                                     class="btn btn-sm btn-outline-primary"
@@ -240,12 +263,27 @@
                                 </a>
 
 
-                                <!-- Supprimer -->
+                                <!-- MODIFIER MOT DE PASSE -->
+                                <button
+                                    type="button"
+                                    class="btn btn-sm btn-outline-warning"
+                                    title="Modifier le mot de passe"
+                                    onclick="ouvrirModalMotDePasse(
+                                        {{ u.id }},
+                                        '{{ u.username|escapejs }}',
+                                        '{{ u.noms|escapejs }}'
+                                    )"
+                                >
+                                    <i class="mdi mdi-lock-reset"></i>
+                                </button>
+
+
+                                <!-- SUPPRIMER -->
                                 <a
                                     href="{% url 'deleteUser' u.id %}"
                                     class="btn btn-sm btn-outline-danger"
                                     title="Supprimer"
-                                    onclick="return confirm('Êtes-vous sûr de vouloir supprimer cet utilisateur ?')"
+                                    onclick="return confirmerSuppressionUtilisateur(event, this)"
                                 >
                                     <i class="mdi mdi-delete"></i>
                                 </a>
@@ -255,6 +293,7 @@
                         </td>
 
                     </tr>
+
 
                     {% empty %}
 
@@ -328,6 +367,7 @@
 
                         </li>
 
+
                         <li class="page-item">
 
                             <a
@@ -366,6 +406,7 @@
 
                         </li>
 
+
                         <li class="page-item">
 
                             <a
@@ -394,5 +435,520 @@
 
 
 </div>
+
+<!-- =========================================================
+     MODAL MODIFICATION MOT DE PASSE
+========================================================= -->
+
+<div
+    class="modal fade"
+    id="modalMotDePasse"
+    tabindex="-1"
+    role="dialog"
+    aria-labelledby="modalMotDePasseLabel"
+    aria-hidden="true"
+>
+
+
+<div
+    class="modal-dialog modal-dialog-centered"
+    role="document"
+>
+
+    <div class="modal-content">
+
+        <!-- HEADER -->
+
+        <div class="modal-header">
+
+            <h5
+                class="modal-title"
+                id="modalMotDePasseLabel"
+            >
+                <i class="mdi mdi-lock-reset text-warning mr-2"></i>
+                Modifier le mot de passe
+            </h5>
+
+            <button
+                type="button"
+                class="close"
+                data-dismiss="modal"
+                aria-label="Fermer"
+            >
+                <span aria-hidden="true">
+                    &times;
+                </span>
+            </button>
+
+        </div>
+
+
+        <!-- BODY -->
+
+        <form
+            method="POST"
+            id="formMotDePasse"
+            autocomplete="off"
+        >
+
+            {% csrf_token %}
+
+            <div class="modal-body">
+
+                <!-- UTILISATEUR -->
+
+                <div class="alert alert-info">
+
+                    <div class="d-flex align-items-center">
+
+                        <i
+                            class="mdi mdi-account-circle mr-2"
+                            style="font-size:28px;"
+                        ></i>
+
+                        <div>
+
+                            <strong id="modalUsername">
+                                -
+                            </strong>
+
+                            <br>
+
+                            <small id="modalNomComplet">
+                                -
+                            </small>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- NOUVEAU MOT DE PASSE -->
+
+                <div class="form-group">
+
+                    <label for="nouveauMotDePasse">
+
+                        <i class="mdi mdi-lock-outline mr-1"></i>
+                        Nouveau mot de passe
+
+                    </label>
+
+                    <div class="input-group">
+
+                        <input
+                            type="password"
+                            class="form-control"
+                            name="nouveau_mot_de_passe"
+                            id="nouveauMotDePasse"
+                            minlength="6"
+                            required
+                            autocomplete="new-password"
+                            placeholder="Minimum 6 caractères"
+                        >
+
+                        <div class="input-group-append">
+
+                            <button
+                                type="button"
+                                class="btn btn-outline-secondary"
+                                id="toggleNouveauMotDePasse"
+                                title="Afficher le mot de passe"
+                            >
+                                <i class="mdi mdi-eye-outline"></i>
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- CONFIRMATION -->
+
+                <div class="form-group mb-0">
+
+                    <label for="confirmationMotDePasse">
+
+                        <i class="mdi mdi-lock-check-outline mr-1"></i>
+                        Confirmer le mot de passe
+
+                    </label>
+
+                    <div class="input-group">
+
+                        <input
+                            type="password"
+                            class="form-control"
+                            name="confirmation"
+                            id="confirmationMotDePasse"
+                            minlength="6"
+                            required
+                            autocomplete="new-password"
+                            placeholder="Retapez le mot de passe"
+                        >
+
+                        <div class="input-group-append">
+
+                            <button
+                                type="button"
+                                class="btn btn-outline-secondary"
+                                id="toggleConfirmationMotDePasse"
+                                title="Afficher le mot de passe"
+                            >
+                                <i class="mdi mdi-eye-outline"></i>
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div
+                    id="erreurMotDePasse"
+                    class="alert alert-danger mt-3 d-none"
+                >
+                    <i class="mdi mdi-alert-circle mr-1"></i>
+                    <span id="texteErreurMotDePasse"></span>
+                </div>
+
+            </div>
+
+
+            <!-- FOOTER -->
+
+            <div class="modal-footer">
+
+                <button
+                    type="button"
+                    class="btn btn-secondary btn-rounded"
+                    data-dismiss="modal"
+                >
+                    <i class="mdi mdi-close mr-1"></i>
+                    Annuler
+                </button>
+
+                <button
+                    type="submit"
+                    class="btn btn-warning btn-rounded"
+                >
+                    <i class="mdi mdi-lock-reset mr-1"></i>
+                    Modifier le mot de passe
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+
+</div>
+
+<!-- =========================================================
+     JAVASCRIPT
+========================================================= -->
+
+<script>
+
+(function () {
+
+    "use strict";
+
+
+    /* =====================================================
+       VARIABLES
+    ===================================================== */
+
+    let utilisateurMotDePasseId = null;
+
+
+    /* =====================================================
+       OUVRIR LE MODAL
+    ===================================================== */
+
+    window.ouvrirModalMotDePasse = function (
+        userId,
+        username,
+        noms
+    ) {
+
+        utilisateurMotDePasseId = userId;
+
+
+        // Informations utilisateur
+
+        document.getElementById(
+            "modalUsername"
+        ).textContent = username;
+
+
+        document.getElementById(
+            "modalNomComplet"
+        ).textContent = noms || "Nom non renseigné";
+
+
+        // Réinitialiser les champs
+
+        document.getElementById(
+            "nouveauMotDePasse"
+        ).value = "";
+
+
+        document.getElementById(
+            "confirmationMotDePasse"
+        ).value = "";
+
+
+        // Cacher l'erreur
+
+        document.getElementById(
+            "erreurMotDePasse"
+        ).classList.add("d-none");
+
+
+        document.getElementById(
+            "texteErreurMotDePasse"
+        ).textContent = "";
+
+
+        // URL de modification
+
+        const urlTemplate =
+            "{% url 'modifierMotDePasseUser' 0 %}";
+
+
+        const url = urlTemplate.replace(
+            /\/0\/?$/,
+            "/" + userId + "/"
+        );
+
+
+        document.getElementById(
+            "formMotDePasse"
+        ).action = url;
+
+
+        // Ouvrir Bootstrap Modal
+
+        $("#modalMotDePasse").modal("show");
+
+
+        // Focus
+
+        setTimeout(function () {
+
+            document.getElementById(
+                "nouveauMotDePasse"
+            ).focus();
+
+        }, 500);
+
+    };
+
+
+    /* =====================================================
+       AFFICHER / MASQUER MOT DE PASSE
+    ===================================================== */
+
+    function configurerToggle(
+        boutonId,
+        inputId
+    ) {
+
+        const bouton =
+            document.getElementById(boutonId);
+
+        const input =
+            document.getElementById(inputId);
+
+
+        if (!bouton || !input) {
+            return;
+        }
+
+
+        bouton.addEventListener(
+            "click",
+            function () {
+
+                if (input.type === "password") {
+
+                    input.type = "text";
+
+                    bouton.innerHTML =
+                        '<i class="mdi mdi-eye-off-outline"></i>';
+
+                } else {
+
+                    input.type = "password";
+
+                    bouton.innerHTML =
+                        '<i class="mdi mdi-eye-outline"></i>';
+
+                }
+
+            }
+        );
+
+    }
+
+
+    configurerToggle(
+        "toggleNouveauMotDePasse",
+        "nouveauMotDePasse"
+    );
+
+
+    configurerToggle(
+        "toggleConfirmationMotDePasse",
+        "confirmationMotDePasse"
+    );
+
+
+    /* =====================================================
+       VALIDATION DU FORMULAIRE
+    ===================================================== */
+
+    document.getElementById(
+        "formMotDePasse"
+    ).addEventListener(
+        "submit",
+        function (event) {
+
+            const nouveau =
+                document.getElementById(
+                    "nouveauMotDePasse"
+                ).value.trim();
+
+
+            const confirmation =
+                document.getElementById(
+                    "confirmationMotDePasse"
+                ).value.trim();
+
+
+            const erreur =
+                document.getElementById(
+                    "erreurMotDePasse"
+                );
+
+
+            const texteErreur =
+                document.getElementById(
+                    "texteErreurMotDePasse"
+                );
+
+
+            // Minimum 6 caractères
+
+            if (nouveau.length < 6) {
+
+                event.preventDefault();
+
+                texteErreur.textContent =
+                    "Le mot de passe doit contenir au moins 6 caractères.";
+
+                erreur.classList.remove(
+                    "d-none"
+                );
+
+                return;
+
+            }
+
+
+            // Confirmation
+
+            if (nouveau !== confirmation) {
+
+                event.preventDefault();
+
+                texteErreur.textContent =
+                    "Les deux mots de passe ne correspondent pas.";
+
+                erreur.classList.remove(
+                    "d-none"
+                );
+
+                return;
+
+            }
+
+
+            erreur.classList.add(
+                "d-none"
+            );
+
+        }
+    );
+
+
+    /* =====================================================
+       CONFIRMATION SUPPRESSION
+       SweetAlert2
+    ===================================================== */
+
+    window.confirmerSuppressionUtilisateur = function (
+        event,
+        element
+    ) {
+
+        event.preventDefault();
+
+        const url = element.href;
+
+
+        if (typeof Swal === "undefined") {
+
+            window.location.href = url;
+
+            return false;
+
+        }
+
+
+        Swal.fire({
+
+            title: "Supprimer l'utilisateur ?",
+
+            text: "Cette action est irréversible.",
+
+            icon: "warning",
+
+            showCancelButton: true,
+
+            confirmButtonText: "Oui, supprimer",
+
+            cancelButtonText: "Annuler",
+
+            reverseButtons: true
+
+        }).then(function (result) {
+
+            if (result.isConfirmed) {
+
+                window.location.href = url;
+
+            }
+
+        });
+
+
+        return false;
+
+    };
+
+
+})();
+
+</script>
 
 {% endblock content %}

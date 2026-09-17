@@ -262,7 +262,10 @@
    SELECT2
 ========================================================= */
 
-#produitFacture + .select2-container,
+#produitFacture + .select2-container {
+    width: 100% !important;
+}
+
 .select2-container {
     width: 100% !important;
 }
@@ -697,6 +700,7 @@
 }
 
 @keyframes managerModalShow {
+
     from {
         opacity: 0;
         transform: translateY(-15px) scale(0.97);
@@ -706,6 +710,7 @@
         opacity: 1;
         transform: translateY(0) scale(1);
     }
+
 }
 
 .manager-modal-header {
@@ -915,6 +920,7 @@
     .scanner-input {
         font-size: 15px !important;
     }
+
 }
 
 @media (max-width: 480px) {
@@ -930,6 +936,7 @@
     .manager-modal-footer button {
         width: 100%;
     }
+
 }
 
 </style>
@@ -1230,6 +1237,13 @@
                                 Produit
                             </label>
 
+                            <!--
+                                IMPORTANT :
+                                Select vide au chargement.
+                                Les produits sont recherchés uniquement
+                                via AJAX après saisie de 2 caractères.
+                            -->
+
                             <select
                                 name="produit"
                                 id="produitFacture"
@@ -1239,7 +1253,12 @@
                                     disabled
                                 {% endif %}
                             >
-                                <option value=""></option>
+
+                                <option
+                                    value=""
+                                    selected
+                                ></option>
+
                             </select>
 
                         </div>
@@ -1489,9 +1508,11 @@
                                     <th>Total</th>
 
                                     {% if not sel_facture.imprimer %}
+
                                         <th class="text-center">
                                             Actions
                                         </th>
+
                                     {% endif %}
 
                                 </tr>
@@ -1571,15 +1592,20 @@
                                     href="?page=1{% if recherche %}&q={{ recherche|urlencode }}{% endif %}"
                                     class="btn btn-outline-light btn-sm btn-rounded"
                                 >
+
                                     <i class="mdi mdi-page-first"></i>
+
                                 </a>
 
                                 <a
                                     href="?page={{ list_facture.previous_page_number }}{% if recherche %}&q={{ recherche|urlencode }}{% endif %}"
                                     class="btn btn-info btn-sm btn-rounded"
                                 >
+
                                     <i class="mdi mdi-chevron-left"></i>
+
                                     Précédent
+
                                 </a>
 
                                 {% endif %}
@@ -1592,7 +1618,9 @@
                                 <span class="page-info">
 
                                     Page {{ list_facture.number }}
+
                                     sur
+
                                     {{ list_facture.paginator.num_pages }}
 
                                 </span>
@@ -1938,50 +1966,103 @@
 <script>
 
 /* =========================================================
-   SELECT2 AJAX
+   SELECT2 AJAX PRODUITS
 ========================================================= */
 
 (function () {
 
     "use strict";
 
+
     function initialiserSelectProduit() {
 
         if (typeof window.jQuery === "undefined") {
-            console.warn("jQuery n'est pas encore disponible.");
+
+            console.warn(
+                "⏳ jQuery n'est pas encore disponible."
+            );
+
             return false;
         }
+
 
         const $ = window.jQuery;
 
+
         if (typeof $.fn.select2 === "undefined") {
-            console.warn("Select2 n'est pas encore disponible.");
+
+            console.warn(
+                "⏳ Select2 n'est pas encore disponible."
+            );
+
             return false;
         }
+
 
         const $select = $("#produitFacture");
 
+
         if (!$select.length) {
-            console.error("#produitFacture introuvable.");
+
+            console.error(
+                "❌ #produitFacture introuvable."
+            );
+
             return false;
         }
 
+
         /*
          * Si base.html a déjà initialisé Select2,
-         * on détruit cette instance afin de repartir
-         * avec notre configuration AJAX.
+         * on détruit l'ancienne instance.
          */
+
         if ($select.hasClass("select2-hidden-accessible")) {
 
             try {
+
                 $select.select2("destroy");
+
             } catch (error) {
+
                 console.warn(
-                    "Impossible de détruire l'ancienne instance Select2.",
+                    "⚠️ Impossible de détruire l'ancienne instance Select2.",
                     error
                 );
+
             }
+
         }
+
+
+        /*
+         * IMPORTANT :
+         * On vide complètement le select.
+         *
+         * Ainsi aucun produit ne sera préchargé
+         * lorsque la page s'ouvre.
+         */
+
+        $select.empty();
+
+
+        /*
+         * Une seule option vide.
+         */
+
+        $select.append(
+            new Option(
+                "",
+                "",
+                true,
+                true
+            )
+        );
+
+
+        /*
+         * Initialisation AJAX.
+         */
 
         $select.select2({
 
@@ -1999,6 +2080,7 @@
 
             dropdownParent: $select.closest(".card"),
 
+
             ajax: {
 
                 url: "{% url 'rechercherProduitFacture' %}",
@@ -2009,28 +2091,28 @@
 
                 cache: true,
 
+
                 data: function (params) {
 
                     const terme = $.trim(
                         params.term || ""
                     );
 
-                    console.log(
-                        "Recherche produit :",
-                        terme
-                    );
 
                     return {
                         q: terme
                     };
+
                 },
+
 
                 processResults: function (data) {
 
                     console.log(
-                        "Produits reçus :",
+                        "📦 Produits reçus :",
                         data
                     );
+
 
                     if (
                         !data ||
@@ -2043,11 +2125,13 @@
 
                     }
 
+
                     return {
                         results: data.results
                     };
 
                 },
+
 
                 error: function (
                     xhr,
@@ -2056,7 +2140,7 @@
                 ) {
 
                     console.error(
-                        "Erreur recherche produit :",
+                        "❌ Erreur recherche produit :",
                         {
                             status: xhr.status,
                             statusText: xhr.statusText,
@@ -2069,49 +2153,57 @@
 
             },
 
+
             language: {
 
                 inputTooShort: function () {
+
                     return "Tapez au moins 2 caractères...";
+
                 },
+
 
                 searching: function () {
+
                     return "Recherche...";
+
                 },
+
 
                 noResults: function () {
+
                     return "Aucun produit trouvé";
+
                 },
+
 
                 errorLoading: function () {
-                    return "Impossible de charger les produits.";
-                },
 
-                loadingMore: function () {
-                    return "Chargement...";
+                    return "Impossible de charger les produits.";
+
                 }
 
             }
 
         });
 
-        $select.on(
-            "select2:select",
-            function (event) {
 
-                console.log(
-                    "Produit sélectionné :",
-                    event.params.data
-                );
+        /*
+         * Force Select2 à rester vide.
+         */
 
-            }
-        );
+        $select
+            .val(null)
+            .trigger("change");
+
 
         console.log(
-            "Select2 produit initialisé avec succès."
+            "✅ Select2 produit initialisé et vide."
         );
 
+
         return true;
+
     }
 
 
@@ -2121,10 +2213,12 @@
 
         const maximumTentatives = 50;
 
+
         const interval = setInterval(
             function () {
 
                 tentatives++;
+
 
                 if (initialiserSelectProduit()) {
 
@@ -2133,15 +2227,15 @@
                     return;
                 }
 
+
                 if (
-                    tentatives >=
-                    maximumTentatives
+                    tentatives >= maximumTentatives
                 ) {
 
                     clearInterval(interval);
 
                     console.error(
-                        "Impossible d'initialiser Select2."
+                        "❌ Impossible d'initialiser Select2."
                     );
 
                 }
@@ -2182,6 +2276,7 @@
 
     "use strict";
 
+
     function initialiserScanner() {
 
         const scanner =
@@ -2189,23 +2284,29 @@
                 "barcodeScanner"
             );
 
+
         const scannerForm =
             document.getElementById(
                 "barcodeScanForm"
             );
+
 
         const hiddenBarcode =
             document.getElementById(
                 "hiddenBarcode"
             );
 
+
         if (
             !scanner ||
             !scannerForm ||
             !hiddenBarcode
         ) {
+
             return;
+
         }
+
 
         let scanEnCours = false;
 
@@ -2215,6 +2316,7 @@
             if (scanner.disabled) {
                 return;
             }
+
 
             try {
 
@@ -2236,7 +2338,9 @@
 
         setTimeout(
             function () {
+
                 focusScanner();
+
             },
             250
         );
@@ -2250,12 +2354,15 @@
 
                     event.preventDefault();
 
+
                     if (scanEnCours) {
                         return;
                     }
 
+
                     const code =
                         scanner.value.trim();
+
 
                     if (!code) {
 
@@ -2269,25 +2376,32 @@
 
                     }
 
+
                     /*
                      * Le code-barres reste une chaîne.
                      * Ne jamais utiliser Number(),
                      * parseInt() ou parseFloat().
                      */
+
                     hiddenBarcode.value = code;
+
 
                     console.log(
                         "SCAN :",
                         code
                     );
 
+
                     scanEnCours = true;
 
+
                     scanner.disabled = true;
+
 
                     scanner.classList.add(
                         "scanner-disabled"
                     );
+
 
                     HTMLFormElement.prototype.submit.call(
                         scannerForm
@@ -2295,13 +2409,16 @@
 
                 }
 
+
                 if (event.key === "Escape") {
 
                     event.preventDefault();
 
+
                     scanner.value = "";
 
                     hiddenBarcode.value = "";
+
 
                     focusScanner();
 
@@ -2330,7 +2447,9 @@
             function () {
 
                 if (!scanEnCours) {
+
                     this.select();
+
                 }
 
             }
@@ -2378,30 +2497,36 @@ function ouvrirModalSuppression(
 
     detailFactureASupprimer = detailId;
 
+
     const overlay =
         document.getElementById(
             "managerModalOverlay"
         );
+
 
     const productName =
         document.getElementById(
             "managerProductName"
         );
 
+
     const passwordInput =
         document.getElementById(
             "managerPassword"
         );
+
 
     const errorBox =
         document.getElementById(
             "managerModalError"
         );
 
+
     const confirmButton =
         document.getElementById(
             "managerConfirmButton"
         );
+
 
     if (
         !overlay ||
@@ -2410,38 +2535,51 @@ function ouvrirModalSuppression(
         !errorBox ||
         !confirmButton
     ) {
+
         return;
+
     }
+
 
     productName.textContent = produitNom;
 
+
     passwordInput.value = "";
+
 
     errorBox.classList.remove(
         "active"
     );
 
+
     confirmButton.disabled = false;
+
 
     confirmButton.classList.remove(
         "loading"
     );
 
+
     overlay.classList.add(
         "active"
     );
+
 
     overlay.setAttribute(
         "aria-hidden",
         "false"
     );
 
+
     setTimeout(
         function () {
+
             passwordInput.focus();
+
         },
         100
     );
+
 }
 
 
@@ -2456,20 +2594,24 @@ function fermerModalSuppression() {
             "managerModalOverlay"
         );
 
+
     const passwordInput =
         document.getElementById(
             "managerPassword"
         );
+
 
     const errorBox =
         document.getElementById(
             "managerModalError"
         );
 
+
     const confirmButton =
         document.getElementById(
             "managerConfirmButton"
         );
+
 
     if (
         !overlay ||
@@ -2477,36 +2619,47 @@ function fermerModalSuppression() {
         !errorBox ||
         !confirmButton
     ) {
+
         return;
+
     }
+
 
     overlay.classList.remove(
         "active"
     );
+
 
     overlay.setAttribute(
         "aria-hidden",
         "true"
     );
 
+
     passwordInput.value = "";
+
 
     errorBox.classList.remove(
         "active"
     );
 
+
     confirmButton.disabled = false;
+
 
     confirmButton.classList.remove(
         "loading"
     );
 
+
     detailFactureASupprimer = null;
+
 
     const scanner =
         document.getElementById(
             "barcodeScanner"
         );
+
 
     if (
         scanner &&
@@ -2515,7 +2668,9 @@ function fermerModalSuppression() {
 
         setTimeout(
             function () {
+
                 scanner.focus();
+
             },
             100
         );
@@ -2536,9 +2691,11 @@ function fermerModalSuppression() {
             "managerPasswordToggle"
         );
 
+
     if (!toggle) {
         return;
     }
+
 
     toggle.addEventListener(
         "click",
@@ -2549,22 +2706,30 @@ function fermerModalSuppression() {
                     "managerPassword"
                 );
 
+
             const icon =
                 this.querySelector("i");
+
 
             if (!input || !icon) {
                 return;
             }
 
-            if (input.type === "password") {
+
+            if (
+                input.type === "password"
+            ) {
 
                 input.type = "text";
+
 
                 icon.className =
                     "mdi mdi-eye-off-outline";
 
+
                 this.title =
                     "Masquer le mot de passe";
+
 
                 this.setAttribute(
                     "aria-label",
@@ -2575,11 +2740,14 @@ function fermerModalSuppression() {
 
                 input.type = "password";
 
+
                 icon.className =
                     "mdi mdi-eye-outline";
 
+
                 this.title =
                     "Afficher le mot de passe";
+
 
                 this.setAttribute(
                     "aria-label",
@@ -2605,9 +2773,11 @@ function fermerModalSuppression() {
             "managerPassword"
         );
 
+
     if (!passwordInput) {
         return;
     }
+
 
     passwordInput.addEventListener(
         "keydown",
@@ -2620,6 +2790,7 @@ function fermerModalSuppression() {
                 confirmerSuppression();
 
             }
+
 
             if (event.key === "Escape") {
 
@@ -2646,9 +2817,11 @@ function fermerModalSuppression() {
             "managerModalOverlay"
         );
 
+
     if (!overlay) {
         return;
     }
+
 
     overlay.addEventListener(
         "click",
@@ -2676,30 +2849,36 @@ function confirmerSuppression() {
         return;
     }
 
+
     const passwordInput =
         document.getElementById(
             "managerPassword"
         );
+
 
     const password =
         passwordInput
             ? passwordInput.value.trim()
             : "";
 
+
     const errorBox =
         document.getElementById(
             "managerModalError"
         );
+
 
     const errorText =
         document.getElementById(
             "managerModalErrorText"
         );
 
+
     const confirmButton =
         document.getElementById(
             "managerConfirmButton"
         );
+
 
     if (!password) {
 
@@ -2710,6 +2889,7 @@ function confirmerSuppression() {
 
         }
 
+
         if (errorBox) {
 
             errorBox.classList.add(
@@ -2718,13 +2898,16 @@ function confirmerSuppression() {
 
         }
 
+
         if (passwordInput) {
 
             passwordInput.focus();
 
         }
 
+
         return;
+
     }
 
 
@@ -2751,10 +2934,12 @@ function confirmerSuppression() {
     const formData =
         new FormData();
 
+
     formData.append(
         "password",
         password
     );
+
 
     formData.append(
         "csrfmiddlewaretoken",
@@ -2764,6 +2949,7 @@ function confirmerSuppression() {
 
     const urlTemplate =
         "{% url 'deletedetailFacture' 0 %}";
+
 
     const url =
         urlTemplate.replace(
@@ -2800,6 +2986,7 @@ function confirmerSuppression() {
 
             }
 
+
             return response.json();
 
         }
@@ -2818,6 +3005,7 @@ function confirmerSuppression() {
 
                 }
 
+
                 if (errorBox) {
 
                     errorBox.classList.add(
@@ -2825,6 +3013,7 @@ function confirmerSuppression() {
                     );
 
                 }
+
 
                 if (confirmButton) {
 
@@ -2837,6 +3026,7 @@ function confirmerSuppression() {
 
                 }
 
+
                 if (passwordInput) {
 
                     passwordInput.value = "";
@@ -2845,11 +3035,14 @@ function confirmerSuppression() {
 
                 }
 
+
                 return;
+
             }
 
 
             fermerModalSuppression();
+
 
             window.location.reload();
 
@@ -2864,12 +3057,14 @@ function confirmerSuppression() {
                 error
             );
 
+
             if (errorText) {
 
                 errorText.textContent =
                     "Une erreur est survenue. Veuillez réessayer.";
 
             }
+
 
             if (errorBox) {
 
@@ -2878,6 +3073,7 @@ function confirmerSuppression() {
                 );
 
             }
+
 
             if (confirmButton) {
 
@@ -2905,11 +3101,13 @@ function imprimerFacture(id) {
     const urlTemplate =
         "{% url 'print_facture' 0 %}";
 
+
     const url =
         urlTemplate.replace(
             "/0",
             "/" + id
         );
+
 
     const fenetre =
         window.open(
@@ -2918,12 +3116,15 @@ function imprimerFacture(id) {
             "width=1000,height=800"
         );
 
+
     if (!fenetre) {
 
         afficherErreurImpression();
 
         return;
+
     }
+
 
     fenetre.onload =
         function () {
@@ -2955,6 +3156,7 @@ function afficherErreurImpression() {
             ".messages-container"
         );
 
+
     if (!container) {
 
         container =
@@ -2962,19 +3164,27 @@ function afficherErreurImpression() {
                 "div"
             );
 
+
         container.className =
             "messages-container";
+
 
         const page =
             document.querySelector(
                 ".facture-page"
             );
 
+
         if (page) {
-            page.prepend(container);
+
+            page.prepend(
+                container
+            );
+
         }
 
     }
+
 
     if (!container) {
         return;
@@ -2986,8 +3196,10 @@ function afficherErreurImpression() {
             "div"
         );
 
+
     alert.className =
         "alert alert-danger alert-dismissible fade show";
+
 
     alert.setAttribute(
         "role",
@@ -3000,6 +3212,7 @@ function afficherErreurImpression() {
             "div"
         );
 
+
     content.className =
         "d-flex align-items-center";
 
@@ -3009,8 +3222,10 @@ function afficherErreurImpression() {
             "i"
         );
 
+
     icon.className =
         "mdi mdi-alert-circle-outline mr-2";
+
 
     icon.style.fontSize =
         "22px";
@@ -3021,13 +3236,19 @@ function afficherErreurImpression() {
             "span"
         );
 
+
     text.textContent =
         "La fenêtre d'impression a été bloquée par le navigateur. Veuillez autoriser les fenêtres pop-up pour ce site.";
 
 
-    content.appendChild(icon);
+    content.appendChild(
+        icon
+    );
 
-    content.appendChild(text);
+
+    content.appendChild(
+        text
+    );
 
 
     const closeButton =
@@ -3035,16 +3256,20 @@ function afficherErreurImpression() {
             "button"
         );
 
+
     closeButton.type =
         "button";
 
+
     closeButton.className =
         "close";
+
 
     closeButton.setAttribute(
         "aria-label",
         "Fermer"
     );
+
 
     closeButton.innerHTML =
         '<span aria-hidden="true">&times;</span>';
@@ -3060,11 +3285,19 @@ function afficherErreurImpression() {
     );
 
 
-    alert.appendChild(content);
+    alert.appendChild(
+        content
+    );
 
-    alert.appendChild(closeButton);
 
-    container.appendChild(alert);
+    alert.appendChild(
+        closeButton
+    );
+
+
+    container.appendChild(
+        alert
+    );
 
 }
 
