@@ -1,4 +1,3 @@
-
 {% extends 'base.html' %}
 {% load static %}
 
@@ -8,11 +7,11 @@
 
     <div class="row justify-content-center">
 
-        <!-- =====================================================
-             MESSAGE DJANGO
-        ====================================================== -->
-
         <div class="col-md-9 col-lg-8">
+
+            <!-- =====================================================
+                 MESSAGES DJANGO
+            ====================================================== -->
 
             {% if messages %}
 
@@ -100,7 +99,7 @@
 
 
                         <!-- =================================================
-                             MESSAGE D'ERREUR DE VALIDATION
+                             MESSAGE D'ERREUR
                         ================================================== -->
 
                         {% if msg %}
@@ -151,37 +150,32 @@
                                 </label>
 
 
+                                <!--
+                                    IMPORTANT :
+
+                                    On ne charge plus les 10 500 produits
+                                    dans le HTML.
+
+                                    Select2 va les rechercher en AJAX.
+                                -->
+
                                 <select
                                     class="js-example-basic-single"
                                     required
                                     style="width:100%;"
                                     name="produit"
                                     id="produit"
-                                    autocomplete="off"
                                 >
 
-                                    <option value="">
-                                        --- Sélectionner un produit ---
-                                    </option>
-
-
-                                    {% for produit in produits %}
-
-                                        <option value="{{ produit.id }}">
-
-                                            {{ produit.nom }}
-
-                                        </option>
-
-                                    {% endfor %}
+                                    <option value=""></option>
 
                                 </select>
 
 
                                 <small class="text-muted">
 
-                                    Recherchez directement le produit
-                                    dans la liste.
+                                    Tapez au moins 2 caractères du nom
+                                    ou du code-barres pour rechercher le produit.
 
                                 </small>
 
@@ -555,6 +549,20 @@
     }
 
 
+    .alert-warning {
+
+        border-left: 4px solid #ffc107;
+
+    }
+
+
+    .alert-info {
+
+        border-left: 4px solid #17a2b8;
+
+    }
+
+
     /* =========================================================
        LOT AUTOMATIQUE
     ========================================================= */
@@ -771,12 +779,20 @@
     }
 
 
-    .alert-info {
+    /* =========================================================
+       LOADING SELECT2
+    ========================================================= */
 
-        border-radius: 7px;
+    .select2-results__option.loading-results {
+
+        color: rgba(255, 255, 255, 0.65) !important;
 
     }
 
+
+    /* =========================================================
+       MOBILE
+    ========================================================= */
 
     @media (max-width: 768px) {
 
@@ -830,7 +846,7 @@
 
 
     /* =====================================================
-       ÉVITER DOUBLE SOUMISSION
+       FORMULAIRE
     ===================================================== */
 
     const formulaire =
@@ -845,13 +861,42 @@
         );
 
 
-    if (formulaire && bouton) {
+    if (
+        formulaire &&
+        bouton
+    ) {
 
         formulaire.addEventListener(
             "submit",
             function () {
 
+                /*
+                 * Vérification supplémentaire :
+                 * empêcher l'envoi si aucun produit
+                 */
+
+                const produit =
+                    document.getElementById(
+                        "produit"
+                    );
+
+
+                if (
+                    !produit ||
+                    !produit.value
+                ) {
+
+                    return;
+
+                }
+
+
+                /*
+                 * Empêcher le double clic
+                 */
+
                 bouton.disabled = true;
+
 
                 bouton.innerHTML =
                     '<i class="mdi mdi-loading mdi-spin mr-1"></i>' +
@@ -864,13 +909,42 @@
 
 
     /* =====================================================
-       SELECT2
+       DATE DE PÉREMPTION
+    ===================================================== */
+
+    const datePeremption =
+        document.getElementById(
+            "date_peremption"
+        );
+
+
+    if (datePeremption) {
+
+        const aujourdHui =
+            new Date()
+                .toISOString()
+                .split("T")[0];
+
+
+        datePeremption.min =
+            aujourdHui;
+
+    }
+
+
+    /* =====================================================
+       INITIALISATION SELECT2 AJAX
     ===================================================== */
 
     function initialiserSelectProduit() {
 
+        /*
+         * Vérifier jQuery
+         */
+
         if (
-            typeof window.jQuery === "undefined"
+            typeof window.jQuery ===
+            "undefined"
         ) {
 
             return false;
@@ -878,17 +952,27 @@
         }
 
 
-        const $ = window.jQuery;
+        const $ =
+            window.jQuery;
 
+
+        /*
+         * Vérifier Select2
+         */
 
         if (
-            typeof $.fn.select2 === "undefined"
+            typeof $.fn.select2 ===
+            "undefined"
         ) {
 
             return false;
 
         }
 
+
+        /*
+         * Récupérer le select
+         */
 
         const $select =
             $("#produit");
@@ -900,6 +984,11 @@
 
         }
 
+
+        /*
+         * Détruire une ancienne
+         * instance éventuelle
+         */
 
         if (
             $select.hasClass(
@@ -925,8 +1014,9 @@
         }
 
 
-        $select.val("");
-
+        /*
+         * Select2 AJAX
+         */
 
         $select.select2({
 
@@ -939,18 +1029,86 @@
 
             closeOnSelect: true,
 
+            minimumInputLength: 2,
+
             dropdownAutoWidth: false,
 
             dropdownParent:
-                $(document.body)
+                $(document.body),
+
+
+            ajax: {
+
+                url:
+                    "{% url 'recherche_produit_stock' %}",
+
+                dataType:
+                    "json",
+
+                delay:
+                    250,
+
+
+                data:
+                    function (params) {
+
+                        return {
+
+                            q:
+                                params.term ||
+                                "",
+
+                            page:
+                                params.page ||
+                                1
+
+                        };
+
+                    },
+
+
+                processResults:
+                    function (
+                        data,
+                        params
+                    ) {
+
+                        params.page =
+                            params.page ||
+                            1;
+
+
+                        return {
+
+                            results:
+                                data.results ||
+                                [],
+
+                            pagination: {
+
+                                more:
+                                    data.more ||
+                                    false
+
+                            }
+
+                        };
+
+                    },
+
+
+                cache:
+                    true
+
+            }
 
         });
 
 
-        $select
-            .val("")
-            .trigger("change");
-
+        /*
+         * Nettoyer le champ de recherche
+         * lorsque Select2 s'ouvre
+         */
 
         $select.on(
             "select2:open",
@@ -969,8 +1127,7 @@
                         .attr(
                             "autocomplete",
                             "off"
-                        )
-                        .val("");
+                        );
 
                 }
 
@@ -1023,6 +1180,7 @@
                             interval
                         );
 
+
                         console.warn(
                             "Select2 n'a pas pu être initialisé."
                         );
@@ -1035,6 +1193,10 @@
 
     }
 
+
+    /* =====================================================
+       DOM READY
+    ===================================================== */
 
     if (
         document.readyState ===

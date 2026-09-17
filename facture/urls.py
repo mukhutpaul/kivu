@@ -155,6 +155,18 @@ path(
         views.enregistrerTauxJour,
         name="enregistrerTauxJour"
     ),
+ 
+ path(
+    "recherche-produit-stock/",
+    views.recherche_produit_stock,
+    name="recherche_produit_stock"
+),
+ 
+path(
+    "supprimer-facture/",
+    views.supprimer_facture,
+    name="supprimer_facture"
+),
     
      
 ]

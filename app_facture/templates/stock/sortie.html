@@ -7,101 +7,195 @@
 
     <div class="row justify-content-center">
 
-        <!-- =========================
-             FORMULAIRE
-        ========================== -->
         <div class="col-md-9 col-lg-8 grid-margin stretch-card">
 
             <div class="card shadow-sm">
 
                 <div class="card-body p-4">
 
-                    <!-- En-tête -->
+                    <!-- =================================================
+                         EN-TÊTE
+                    ================================================== -->
+
                     <div class="mb-4">
 
                         <h4 class="card-title mb-2">
+
                             <i class="mdi mdi-package-up mr-2"></i>
+
                             Sortie de stock
+
                         </h4>
 
+
                         <p class="card-description mb-0">
-                            Enregistrer une nouvelle sortie de produit du stock
+
+                            Enregistrer une nouvelle sortie de produit
+                            du stock
+
                         </p>
 
                     </div>
 
+
                     <hr class="mb-4">
 
 
-                    <form class="forms-sample"
-                          method="post"
-                          action="{% url 'sortie_stock' %}">
+                    <!-- =================================================
+                         MESSAGES
+                    ================================================== -->
+
+                    {% if msg %}
+
+                        <div class="alert alert-danger shadow-sm mb-4">
+
+                            <i
+                                class="mdi mdi-alert-circle-outline mr-2"
+                            ></i>
+
+                            {{ msg }}
+
+                        </div>
+
+                    {% endif %}
+
+
+                    {% if msok %}
+
+                        <div class="alert alert-success shadow-sm mb-4">
+
+                            <i
+                                class="mdi mdi-check-circle-outline mr-2"
+                            ></i>
+
+                            {{ msok }}
+
+                        </div>
+
+                    {% endif %}
+
+
+                    <!-- =================================================
+                         FORMULAIRE
+                    ================================================== -->
+
+                    <form
+                        id="formSortieStock"
+                        class="forms-sample"
+                        method="post"
+                        action="{% url 'sortie_stock' %}"
+                        autocomplete="off"
+                    >
 
                         {% csrf_token %}
 
 
-                        <!-- =========================
+                        <!-- =================================================
                              PRODUIT
-                        ========================== -->
+                        ================================================== -->
 
                         <div class="form-group mb-4">
 
-                            <label for="produit"
-                                   class="text-white font-weight-bold">
+                            <label
+                                for="produit"
+                                class="text-white font-weight-bold"
+                            >
 
-                                Produit <span class="text-danger">*</span>
+                                Produit
+
+                                <span class="text-danger">*</span>
 
                             </label>
+
+
+                            <!--
+                                IMPORTANT :
+
+                                Aucun produit n'est chargé ici.
+
+                                Select2 recherche les produits
+                                directement via AJAX.
+                            -->
 
                             <select
                                 class="js-example-basic-single"
                                 required
-                                style="width:100%"
+                                style="width:100%;"
                                 name="produit"
-                                id="produit">
+                                id="produit"
+                            >
 
-                                <option value="">
-                                    --- Sélectionner un produit ---
-                                </option>
-
-                                {% for produit in produits %}
-
-                                    <option value="{{ produit.id }}">
-
-                                        {{ produit.nom }}
-
-                                        {% if produit.quantite %}
-                                            — Stock disponible : {{ produit.quantite }}
-                                        {% else %}
-                                            — Stock disponible : 0
-                                        {% endif %}
-
-                                    </option>
-
-                                {% endfor %}
+                                <option value=""></option>
 
                             </select>
 
+
                             <small class="text-muted">
-                                Recherchez directement le produit dans la liste.
+
+                                Tapez au moins 2 caractères du nom
+                                ou du code-barres pour rechercher.
+
                             </small>
 
                         </div>
 
 
-                        <!-- =========================
+                        <!-- =================================================
+                             STOCK DISPONIBLE
+                        ================================================== -->
+
+                        <div
+                            id="stockInfo"
+                            class="stock-info d-none mb-4"
+                        >
+
+                            <div class="stock-info-icon">
+
+                                <i class="mdi mdi-package-variant"></i>
+
+                            </div>
+
+
+                            <div class="stock-info-content">
+
+                                <div class="stock-info-label">
+
+                                    Stock disponible
+
+                                </div>
+
+
+                                <div
+                                    id="stockDisponible"
+                                    class="stock-info-value"
+                                >
+
+                                    0
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- =================================================
                              QUANTITÉ
-                        ========================== -->
+                        ================================================== -->
 
                         <div class="form-group mb-4">
 
-                            <label for="quantite"
-                                   class="text-white font-weight-bold">
+                            <label
+                                for="quantite"
+                                class="text-white font-weight-bold"
+                            >
 
                                 Quantité à sortir
+
                                 <span class="text-danger">*</span>
 
                             </label>
+
 
                             <input
                                 type="number"
@@ -111,64 +205,87 @@
                                 placeholder="Exemple : 10"
                                 min="0.01"
                                 step="0.01"
-                                required>
+                                required
+                                autocomplete="off"
+                            >
 
-                            <small class="text-muted">
+
+                            <small
+                                id="quantiteHelp"
+                                class="text-muted"
+                            >
+
                                 Indiquez la quantité à retirer du stock.
+
                             </small>
 
                         </div>
 
 
-                        <!-- =========================
+                        <!-- =================================================
                              MOTIF
-                        ========================== -->
+                        ================================================== -->
 
                         <div class="form-group mb-4">
 
-                            <label for="motif"
-                                   class="text-white font-weight-bold">
+                            <label
+                                for="motif"
+                                class="text-white font-weight-bold"
+                            >
 
                                 Motif de la sortie
 
                             </label>
+
 
                             <textarea
                                 name="motif"
                                 class="form-control text-white"
                                 id="motif"
                                 rows="4"
-                                placeholder="Exemple : Produit endommagé, perte, utilisation interne, produit expiré..."></textarea>
+                                placeholder="Exemple : Produit endommagé, perte, utilisation interne, produit expiré..."
+                                autocomplete="off"
+                            ></textarea>
+
 
                             <small class="text-muted">
-                                Précisez la raison de la sortie pour assurer une bonne traçabilité.
+
+                                Précisez la raison de la sortie
+                                pour assurer une bonne traçabilité.
+
                             </small>
 
                         </div>
 
 
-                        <!-- =========================
+                        <!-- =================================================
                              INFORMATION LOTS
-                        ========================== -->
+                        ================================================== -->
 
                         <div class="alert alert-warning shadow-sm mb-4">
 
                             <div class="d-flex align-items-start">
 
-                                <i class="mdi mdi-alert-outline mr-3"
-                                   style="font-size: 24px;">
-                                </i>
+                                <i
+                                    class="mdi mdi-alert-outline mr-3"
+                                    style="font-size:24px;"
+                                ></i>
+
 
                                 <div>
 
                                     <strong>
+
                                         Gestion automatique des lots
+
                                     </strong>
+
 
                                     <p class="mb-0 mt-1">
 
-                                        Le système retire automatiquement la quantité
-                                        du lot dont la date de péremption est la plus proche.
+                                        Le système retire automatiquement
+                                        la quantité du lot dont la date
+                                        de péremption est la plus proche.
 
                                     </p>
 
@@ -179,29 +296,35 @@
                         </div>
 
 
-                        <!-- =========================
+                        <!-- =================================================
                              AVERTISSEMENT
-                        ========================== -->
+                        ================================================== -->
 
                         <div class="alert alert-danger shadow-sm mb-4">
 
                             <div class="d-flex align-items-start">
 
-                                <i class="mdi mdi-alert-circle-outline mr-3"
-                                   style="font-size: 24px;">
-                                </i>
+                                <i
+                                    class="mdi mdi-alert-circle-outline mr-3"
+                                    style="font-size:24px;"
+                                ></i>
+
 
                                 <div>
 
                                     <strong>
+
                                         Attention
+
                                     </strong>
+
 
                                     <p class="mb-0 mt-1">
 
-                                        Cette opération diminuera définitivement
-                                        le stock disponible. Vérifiez le produit
-                                        et la quantité avant de confirmer.
+                                        Cette opération diminuera
+                                        définitivement le stock disponible.
+                                        Vérifiez le produit et la quantité
+                                        avant de confirmer.
 
                                     </p>
 
@@ -212,15 +335,18 @@
                         </div>
 
 
-                        <!-- =========================
+                        <!-- =================================================
                              BOUTONS
-                        ========================== -->
+                        ================================================== -->
 
-                        <div class="d-flex justify-content-end align-items-center">
+                        <div
+                            class="d-flex justify-content-end align-items-center"
+                        >
 
                             <a
                                 href="{% url 'stock' %}"
-                                class="btn btn-outline-secondary mr-2">
+                                class="btn btn-outline-secondary mr-2"
+                            >
 
                                 <i class="mdi mdi-close mr-1"></i>
 
@@ -231,9 +357,13 @@
 
                             <button
                                 type="submit"
-                                class="btn btn-danger">
+                                class="btn btn-danger"
+                                id="btnEnregistrer"
+                            >
 
-                                <i class="mdi mdi-content-save mr-1"></i>
+                                <i
+                                    class="mdi mdi-content-save mr-1"
+                                ></i>
 
                                 Enregistrer la sortie
 
@@ -249,51 +379,20 @@
 
         </div>
 
-
-        <!-- =========================
-             MESSAGES
-        ========================== -->
-
-        <div class="col-md-9 col-lg-8 grid-margin">
-
-            {% if msg %}
-
-                <div class="alert alert-danger shadow-sm">
-
-                    <i class="mdi mdi-alert-circle-outline mr-2"></i>
-
-                    {{ msg }}
-
-                </div>
-
-            {% elif msok %}
-
-                <div class="alert alert-success shadow-sm">
-
-                    <i class="mdi mdi-check-circle-outline mr-2"></i>
-
-                    {{ msok }}
-
-                </div>
-
-            {% endif %}
-
-        </div>
-
     </div>
 
 </div>
 
 
-<!-- =========================
+<!-- =========================================================
      STYLE
-========================== -->
+========================================================= -->
 
 <style>
 
-    /* =========================================
+    /* =========================================================
        LIBELLÉS
-    ========================================= */
+    ========================================================= */
 
     .form-group label {
 
@@ -304,9 +403,9 @@
     }
 
 
-    /* =========================================
+    /* =========================================================
        CHAMPS
-    ========================================= */
+    ========================================================= */
 
     .form-control {
 
@@ -317,16 +416,12 @@
     }
 
 
-    /* Texte saisi en blanc */
-
     .form-control.text-white {
 
         color: #ffffff !important;
 
     }
 
-
-    /* Texte indicatif */
 
     .form-control.text-white::placeholder {
 
@@ -335,8 +430,6 @@
     }
 
 
-    /* Zone de texte */
-
     textarea.form-control.text-white {
 
         color: #ffffff !important;
@@ -344,9 +437,9 @@
     }
 
 
-    /* =========================================
-       ICÔNES
-    ========================================= */
+    /* =========================================================
+       ICÔNE TITRE
+    ========================================================= */
 
     .card-title i {
 
@@ -359,9 +452,9 @@
     }
 
 
-    /* =========================================
+    /* =========================================================
        CARTE
-    ========================================= */
+    ========================================================= */
 
     .card {
 
@@ -372,9 +465,9 @@
     }
 
 
-    /* =========================================
+    /* =========================================================
        BOUTONS
-    ========================================= */
+    ========================================================= */
 
     .btn {
 
@@ -382,8 +475,6 @@
 
     }
 
-
-    /* Bouton de sortie */
 
     .btn-danger {
 
@@ -403,9 +494,186 @@
     }
 
 
-    /* =========================================
+    .btn-danger:disabled {
+
+        opacity: 0.7;
+
+        cursor: not-allowed;
+
+    }
+
+
+    /* =========================================================
+       ALERTES
+    ========================================================= */
+
+    .alert {
+
+        border-radius: 7px;
+
+    }
+
+
+    .alert-success {
+
+        border-left: 4px solid #28a745;
+
+    }
+
+
+    .alert-danger {
+
+        border-left: 4px solid #dc3545;
+
+    }
+
+
+    .alert-warning {
+
+        border-left: 4px solid #ffc107;
+
+    }
+
+
+    /* =========================================================
+       INFORMATIONS STOCK
+    ========================================================= */
+
+    .stock-info {
+
+        display: flex;
+
+        align-items: center;
+
+        padding: 12px 15px;
+
+        border-radius: 7px;
+
+        border: 1px solid rgba(40, 167, 69, 0.35);
+
+        background: rgba(40, 167, 69, 0.08);
+
+    }
+
+
+    .stock-info-icon {
+
+        width: 40px;
+
+        height: 40px;
+
+        min-width: 40px;
+
+        border-radius: 7px;
+
+        display: flex;
+
+        align-items: center;
+
+        justify-content: center;
+
+        background: rgba(40, 167, 69, 0.15);
+
+        margin-right: 12px;
+
+    }
+
+
+    .stock-info-icon i {
+
+        font-size: 21px;
+
+        color: #28a745;
+
+    }
+
+
+    .stock-info-content {
+
+        line-height: 1.2;
+
+    }
+
+
+    .stock-info-label {
+
+        color: rgba(255, 255, 255, 0.55);
+
+        font-size: 12px;
+
+        margin-bottom: 4px;
+
+    }
+
+
+    .stock-info-value {
+
+        color: #ffffff;
+
+        font-size: 18px;
+
+        font-weight: 700;
+
+    }
+
+
+    /* =========================================================
+       STOCK FAIBLE
+    ========================================================= */
+
+    .stock-faible {
+
+        border-color: rgba(255, 193, 7, 0.4);
+
+        background: rgba(255, 193, 7, 0.08);
+
+    }
+
+
+    .stock-faible .stock-info-icon {
+
+        background: rgba(255, 193, 7, 0.15);
+
+    }
+
+
+    .stock-faible .stock-info-icon i {
+
+        color: #ffc107;
+
+    }
+
+
+    /* =========================================================
+       STOCK ÉPUISÉ
+    ========================================================= */
+
+    .stock-epuise {
+
+        border-color: rgba(220, 53, 69, 0.4);
+
+        background: rgba(220, 53, 69, 0.08);
+
+    }
+
+
+    .stock-epuise .stock-info-icon {
+
+        background: rgba(220, 53, 69, 0.15);
+
+    }
+
+
+    .stock-epuise .stock-info-icon i {
+
+        color: #dc3545;
+
+    }
+
+
+    /* =========================================================
        SELECT2
-    ========================================= */
+    ========================================================= */
 
     .select2-container {
 
@@ -459,15 +727,17 @@
     }
 
 
-    /* =========================================
-       LISTE DES PRODUITS
-    ========================================= */
+    /* =========================================================
+       DROPDOWN
+    ========================================================= */
 
     .select2-dropdown {
 
         background-color: #2a2a2a !important;
 
         border: 1px solid #444 !important;
+
+        z-index: 99999 !important;
 
     }
 
@@ -491,9 +761,9 @@
     }
 
 
-    /* =========================================
-       RECHERCHE DES PRODUITS
-    ========================================= */
+    /* =========================================================
+       RECHERCHE
+    ========================================================= */
 
     .select2-search--dropdown {
 
@@ -517,6 +787,8 @@
 
         padding: 8px !important;
 
+        min-height: 38px;
+
     }
 
 
@@ -528,34 +800,18 @@
     }
 
 
-    /* =========================================
-       ALERTES
-    ========================================= */
+    .select2-results__message {
 
-    .alert {
+        color: rgba(255, 255, 255, 0.65) !important;
 
-        border-radius: 7px;
+        padding: 10px 14px !important;
 
     }
 
 
-    .alert-warning {
-
-        color: #856404;
-
-    }
-
-
-    .alert-danger {
-
-        color: #721c24;
-
-    }
-
-
-    /* =========================================
-       RESPONSIVE
-    ========================================= */
+    /* =========================================================
+       MOBILE
+    ========================================================= */
 
     @media (max-width: 768px) {
 
@@ -565,6 +821,7 @@
 
         }
 
+
         .d-flex.justify-content-end {
 
             flex-direction: column;
@@ -572,6 +829,7 @@
             align-items: stretch !important;
 
         }
+
 
         .d-flex.justify-content-end .btn {
 
@@ -583,9 +841,636 @@
 
         }
 
+
+        .stock-info {
+
+            margin-top: -5px;
+
+        }
+
     }
 
 </style>
 
+
+<!-- =========================================================
+     JAVASCRIPT
+========================================================= -->
+
+<script>
+
+(function () {
+
+    "use strict";
+
+
+    /* =====================================================
+       VARIABLES
+    ===================================================== */
+
+    const formulaire =
+        document.getElementById(
+            "formSortieStock"
+        );
+
+
+    const bouton =
+        document.getElementById(
+            "btnEnregistrer"
+        );
+
+
+    const quantite =
+        document.getElementById(
+            "quantite"
+        );
+
+
+    const stockInfo =
+        document.getElementById(
+            "stockInfo"
+        );
+
+
+    const stockDisponible =
+        document.getElementById(
+            "stockDisponible"
+        );
+
+
+    /* =====================================================
+       STOCK COURANT
+    ===================================================== */
+
+    let stockActuel = null;
+
+
+    /* =====================================================
+       VALIDATION QUANTITÉ
+    ===================================================== */
+
+    function verifierQuantite() {
+
+        if (
+            stockActuel === null ||
+            !quantite
+        ) {
+
+            return true;
+
+        }
+
+
+        const valeur =
+            parseFloat(
+                quantite.value
+            );
+
+
+        if (
+            isNaN(valeur) ||
+            valeur <= 0
+        ) {
+
+            quantite.setCustomValidity(
+                ""
+            );
+
+            return true;
+
+        }
+
+
+        if (
+            valeur > stockActuel
+        ) {
+
+            quantite.setCustomValidity(
+                "La quantité demandée dépasse le stock disponible."
+            );
+
+            return false;
+
+        }
+
+
+        quantite.setCustomValidity("");
+
+        return true;
+
+    }
+
+
+    if (quantite) {
+
+        quantite.addEventListener(
+            "input",
+            verifierQuantite
+        );
+
+    }
+
+
+    /* =====================================================
+       AFFICHER STOCK
+    ===================================================== */
+
+    function afficherStock(
+        stock
+    ) {
+
+        if (
+            stock === null ||
+            typeof stock === "undefined"
+        ) {
+
+            stockActuel = null;
+
+            if (stockInfo) {
+
+                stockInfo.classList.add(
+                    "d-none"
+                );
+
+            }
+
+            return;
+
+        }
+
+
+        stockActuel =
+            parseFloat(stock) || 0;
+
+
+        if (stockInfo) {
+
+            stockInfo.classList.remove(
+                "d-none"
+            );
+
+            stockInfo.classList.remove(
+                "stock-faible",
+                "stock-epuise"
+            );
+
+        }
+
+
+        if (stockDisponible) {
+
+            stockDisponible.textContent =
+                stockActuel;
+
+        }
+
+
+        if (
+            stockActuel <= 0
+        ) {
+
+            if (stockInfo) {
+
+                stockInfo.classList.add(
+                    "stock-epuise"
+                );
+
+            }
+
+        }
+
+        else if (
+            stockActuel <= 5
+        ) {
+
+            if (stockInfo) {
+
+                stockInfo.classList.add(
+                    "stock-faible"
+                );
+
+            }
+
+        }
+
+
+        /*
+         * Adapter automatiquement
+         * la quantité maximale
+         */
+
+        if (quantite) {
+
+            quantite.max =
+                stockActuel;
+
+            quantite.value = "";
+
+        }
+
+    }
+
+
+    /* =====================================================
+       INITIALISATION SELECT2
+    ===================================================== */
+
+    function initialiserSelectProduit() {
+
+        if (
+            typeof window.jQuery ===
+            "undefined"
+        ) {
+
+            return false;
+
+        }
+
+
+        const $ =
+            window.jQuery;
+
+
+        if (
+            typeof $.fn.select2 ===
+            "undefined"
+        ) {
+
+            return false;
+
+        }
+
+
+        const $select =
+            $("#produit");
+
+
+        if (!$select.length) {
+
+            return false;
+
+        }
+
+
+        /*
+         * Éviter une double initialisation
+         */
+
+        if (
+            $select.hasClass(
+                "select2-hidden-accessible"
+            )
+        ) {
+
+            try {
+
+                $select.select2(
+                    "destroy"
+                );
+
+            } catch (error) {
+
+                console.warn(
+                    "Impossible de détruire Select2.",
+                    error
+                );
+
+            }
+
+        }
+
+
+        /* =================================================
+           SELECT2 AJAX
+        ================================================= */
+
+        $select.select2({
+
+            width: "100%",
+
+            placeholder:
+                "--- Sélectionner un produit ---",
+
+            allowClear: true,
+
+            closeOnSelect: true,
+
+            minimumInputLength: 2,
+
+            dropdownAutoWidth: false,
+
+            dropdownParent:
+                $(document.body),
+
+
+            ajax: {
+
+                url:
+                    "{% url 'recherche_produit_stock' %}",
+
+                dataType:
+                    "json",
+
+                delay:
+                    250,
+
+
+                data:
+                    function (params) {
+
+                        return {
+
+                            q:
+                                params.term ||
+                                "",
+
+                            page:
+                                params.page ||
+                                1
+
+                        };
+
+                    },
+
+
+                processResults:
+                    function (
+                        data,
+                        params
+                    ) {
+
+                        params.page =
+                            params.page ||
+                            1;
+
+
+                        return {
+
+                            results:
+                                data.results ||
+                                [],
+
+                            pagination: {
+
+                                more:
+                                    data.more ||
+                                    false
+
+                            }
+
+                        };
+
+                    },
+
+
+                cache:
+                    true
+
+            }
+
+        });
+
+
+        /* =================================================
+           PRODUIT SÉLECTIONNÉ
+        ================================================= */
+
+        $select.on(
+            "select2:select",
+            function (event) {
+
+                const data =
+                    event.params.data;
+
+
+                /*
+                 * Le endpoint doit retourner :
+                 *
+                 * id
+                 * text
+                 * stock
+                 */
+
+                if (
+                    typeof data.stock !==
+                    "undefined"
+                ) {
+
+                    afficherStock(
+                        data.stock
+                    );
+
+                }
+
+                else {
+
+                    afficherStock(
+                        null
+                    );
+
+                }
+
+            }
+        );
+
+
+        /* =================================================
+           PRODUIT DÉSÉLECTIONNÉ
+        ================================================= */
+
+        $select.on(
+            "select2:clear",
+            function () {
+
+                afficherStock(
+                    null
+                );
+
+            }
+        );
+
+
+        $select.on(
+            "select2:open",
+            function () {
+
+                const $search =
+                    $(".select2-container--open")
+                    .find(
+                        ".select2-search__field"
+                    );
+
+
+                if ($search.length) {
+
+                    $search.attr(
+                        "autocomplete",
+                        "off"
+                    );
+
+                }
+
+            }
+        );
+
+
+        return true;
+
+    }
+
+
+    /* =====================================================
+       DÉMARRAGE SELECT2
+    ===================================================== */
+
+    function demarrerSelect2() {
+
+        let tentatives = 0;
+
+        const maximumTentatives = 50;
+
+
+        const interval =
+            setInterval(
+                function () {
+
+                    tentatives++;
+
+
+                    if (
+                        initialiserSelectProduit()
+                    ) {
+
+                        clearInterval(
+                            interval
+                        );
+
+                        return;
+
+                    }
+
+
+                    if (
+                        tentatives >=
+                        maximumTentatives
+                    ) {
+
+                        clearInterval(
+                            interval
+                        );
+
+
+                        console.warn(
+                            "Select2 n'a pas pu être initialisé."
+                        );
+
+                    }
+
+                },
+                100
+            );
+
+    }
+
+
+    /* =====================================================
+       EMPÊCHER DOUBLE SOUMISSION
+    ===================================================== */
+
+    if (
+        formulaire &&
+        bouton
+    ) {
+
+        formulaire.addEventListener(
+            "submit",
+            function (event) {
+
+                /*
+                 * Vérifier le produit
+                 */
+
+                const produit =
+                    document.getElementById(
+                        "produit"
+                    );
+
+
+                if (
+                    !produit ||
+                    !produit.value
+                ) {
+
+                    event.preventDefault();
+
+                    produit.focus();
+
+                    return;
+
+                }
+
+
+                /*
+                 * Vérifier quantité
+                 */
+
+                if (
+                    !verifierQuantite()
+                ) {
+
+                    event.preventDefault();
+
+                    quantite.focus();
+
+                    return;
+
+                }
+
+
+                /*
+                 * Empêcher double clic
+                 */
+
+                bouton.disabled = true;
+
+
+                bouton.innerHTML =
+                    '<i class="mdi mdi-loading mdi-spin mr-1"></i>' +
+                    " Enregistrement...";
+
+            }
+        );
+
+    }
+
+
+    /* =====================================================
+       DOM READY
+    ===================================================== */
+
+    if (
+        document.readyState ===
+        "loading"
+    ) {
+
+        document.addEventListener(
+            "DOMContentLoaded",
+            demarrerSelect2,
+            {
+                once: true
+            }
+        );
+
+    }
+
+    else {
+
+        demarrerSelect2();
+
+    }
+
+})();
+
+</script>
 
 {% endblock content %}

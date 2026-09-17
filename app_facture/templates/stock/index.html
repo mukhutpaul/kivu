@@ -1,9 +1,9 @@
-
 {% extends 'base.html' %}
 
 {% block content %}
 
 <style>
+
     /* ==========================================================
        BARRE DE RECHERCHE
     =========================================================== */
@@ -30,10 +30,10 @@
         box-shadow: 0 0 0 1000px #191c24 inset !important;
     }
 
-    /* Texte du groupe de recherche */
     .stock-search-input + * {
         color: #ffffff;
     }
+
 </style>
 
 
@@ -56,8 +56,10 @@
 
                         <div class="col-3 col-sm-2 col-xl-2 text-center">
 
-                            <i class="mdi mdi-package-variant"
-                               style="font-size:65px;">
+                            <i
+                                class="mdi mdi-package-variant"
+                                style="font-size:65px;"
+                            >
                             </i>
 
                         </div>
@@ -82,8 +84,10 @@
 
                         <div class="col-3 col-sm-3 col-xl-2 text-center">
 
-                            <a href="{% url 'entree_stock' %}"
-                               class="btn btn-outline-light btn-rounded">
+                            <a
+                                href="{% url 'entree_stock' %}"
+                                class="btn btn-outline-light btn-rounded"
+                            >
 
                                 <i class="mdi mdi-plus mr-1"></i>
 
@@ -110,85 +114,285 @@
 
     <div class="row">
 
-        <!-- STOCK TOTAL -->
+
+        <!-- ======================================================
+             NOMBRE TOTAL DE PRODUITS
+        ======================================================= -->
+
         <div class="col-xl-3 col-md-6 grid-margin stretch-card">
+
             <div class="card">
+
                 <div class="card-body">
+
                     <p class="text-muted mb-2">
+
                         <i class="mdi mdi-package-variant mr-1"></i>
-                        Stock total
+
+                        Total produits
+
                     </p>
+
+
+                    <h2 class="mb-0 text-info">
+
+                        {{ total_produits }}
+
+                    </h2>
+
+
+                    <small class="text-muted">
+
+                        produit(s) enregistré(s)
+
+                    </small>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- ======================================================
+             STOCK TOTAL
+        ======================================================= -->
+
+        <div class="col-xl-3 col-md-6 grid-margin stretch-card">
+
+            <div class="card">
+
+                <div class="card-body">
+
+                    <p class="text-muted mb-2">
+
+                        <i class="mdi mdi-package-variant mr-1"></i>
+
+                        Stock total
+
+                    </p>
+
 
                     <h2 class="mb-0">
+
                         {{ total_stock|floatformat:2 }}
+
                     </h2>
 
+
                     <small class="text-muted">
+
                         unités disponibles
+
                     </small>
+
                 </div>
+
             </div>
+
         </div>
 
-        <!-- VALEUR DU STOCK -->
+
+        <!-- ======================================================
+             VALEUR DU STOCK
+        ======================================================= -->
+
         <div class="col-xl-3 col-md-6 grid-margin stretch-card">
+
             <div class="card">
+
                 <div class="card-body">
+
                     <p class="text-muted mb-2">
+
                         <i class="mdi mdi-cash-multiple mr-1"></i>
+
                         Valeur du stock
+
                     </p>
+
 
                     <h2 class="mb-0 text-success">
+
                         {{ valeur_stock|floatformat:2 }}
+
                     </h2>
 
+
                     <small class="text-muted">
+
                         valeur d'achat
+
                     </small>
+
                 </div>
+
             </div>
+
         </div>
 
-        <!-- STOCK FAIBLE -->
+
+        <!-- ======================================================
+             STOCK FAIBLE
+        ======================================================= -->
+
         <div class="col-xl-3 col-md-6 grid-margin stretch-card">
+
             <div class="card">
+
                 <div class="card-body">
+
                     <p class="text-muted mb-2">
+
                         <i class="mdi mdi-alert mr-1"></i>
+
                         Stock faible
+
                     </p>
+
 
                     <h2 class="mb-0 text-warning">
+
                         {{ produits_alerte }}
+
                     </h2>
 
+
                     <small class="text-muted">
+
                         produit(s)
+
                     </small>
+
                 </div>
+
             </div>
+
         </div>
 
-        <!-- CHIFFRE D'AFFAIRES -->
-        <div class="col-xl-3 col-md-6 grid-margin stretch-card">
+
+    </div>
+
+
+    <!-- ==========================================================
+         CHIFFRE D'AFFAIRES
+    =========================================================== -->
+
+    <div class="row">
+
+
+        <div class="col-xl-4 col-md-6 grid-margin stretch-card">
+
             <div class="card">
+
                 <div class="card-body">
+
                     <p class="text-muted mb-2">
+
                         <i class="mdi mdi-chart-line mr-1"></i>
-                        Chiffre d'affaires
+
+                        Chiffre d'affaires TTC
+
                     </p>
 
+
                     <h2 class="mb-0 text-primary">
+
                         {{ chiffre_affaires|floatformat:2 }}
+
                     </h2>
 
+
                     <small class="text-muted">
+
                         ventes réalisées
+
                     </small>
+
                 </div>
+
             </div>
+
         </div>
+
+
+        <!-- ======================================================
+             CHIFFRE D'AFFAIRES HT
+        ======================================================= -->
+
+        <div class="col-xl-4 col-md-6 grid-margin stretch-card">
+
+            <div class="card">
+
+                <div class="card-body">
+
+                    <p class="text-muted mb-2">
+
+                        <i class="mdi mdi-finance mr-1"></i>
+
+                        Chiffre d'affaires HT
+
+                    </p>
+
+
+                    <h2 class="mb-0">
+
+                        {{ chiffre_affaires_ht|floatformat:2 }}
+
+                    </h2>
+
+
+                    <small class="text-muted">
+
+                        hors TVA
+
+                    </small>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- ======================================================
+             TVA COLLECTÉE
+        ======================================================= -->
+
+        <div class="col-xl-4 col-md-6 grid-margin stretch-card">
+
+            <div class="card">
+
+                <div class="card-body">
+
+                    <p class="text-muted mb-2">
+
+                        <i class="mdi mdi-percent mr-1"></i>
+
+                        TVA collectée
+
+                    </p>
+
+
+                    <h2 class="mb-0 text-danger">
+
+                        {{ tva_collectee|floatformat:2 }}
+
+                    </h2>
+
+
+                    <small class="text-muted">
+
+                        TVA sur les ventes
+
+                    </small>
+
+                </div>
+
+            </div>
+
+        </div>
+
 
     </div>
 
@@ -201,7 +405,9 @@
 
         <div class="col-12 mb-3">
 
-            <div class="d-flex justify-content-between align-items-center flex-wrap">
+            <div
+                class="d-flex justify-content-between align-items-center flex-wrap"
+            >
 
 
                 <div>
@@ -211,6 +417,7 @@
                         État du stock
 
                     </h4>
+
 
                     <p class="text-muted mb-0">
 
@@ -223,8 +430,11 @@
 
                 <div class="mt-2 mt-md-0">
 
-                    <a href="{% url 'sortie_stock' %}"
-                       class="btn btn-outline-danger btn-rounded mr-2">
+
+                    <a
+                        href="{% url 'sortie_stock' %}"
+                        class="btn btn-outline-danger btn-rounded mr-2"
+                    >
 
                         <i class="mdi mdi-minus mr-1"></i>
 
@@ -233,8 +443,10 @@
                     </a>
 
 
-                    <a href="{% url 'mouvements_stock' %}"
-                       class="btn btn-outline-info btn-rounded">
+                    <a
+                        href="{% url 'mouvements_stock' %}"
+                        class="btn btn-outline-info btn-rounded"
+                    >
 
                         <i class="mdi mdi-history mr-1"></i>
 
@@ -263,8 +475,10 @@
 
                 <div class="card-body">
 
-                    <form method="GET"
-                          action="{% url 'stock' %}">
+                    <form
+                        method="GET"
+                        action="{% url 'stock' %}"
+                    >
 
                         <div class="row align-items-center">
 
@@ -368,7 +582,11 @@
 
                 Résultats de recherche pour :
 
-                <strong>"{{ rech }}"</strong>
+                <strong>
+
+                    "{{ rech }}"
+
+                </strong>
 
                 <span class="ml-2">
 
@@ -392,12 +610,14 @@
     <div class="row">
 
 
-        {% for item in page_obj %}
+        {% for item in donnees %}
 
 
         <div class="col-xl-4 col-lg-6 col-md-6 grid-margin stretch-card">
 
+
             <div class="card">
+
 
                 <div class="card-body">
 
@@ -406,7 +626,9 @@
                          PRODUIT
                     =================================================== -->
 
-                    <div class="d-flex justify-content-between align-items-start">
+                    <div
+                        class="d-flex justify-content-between align-items-start"
+                    >
 
 
                         <div>
@@ -446,6 +668,7 @@
 
                     <div class="d-flex justify-content-between mb-3">
 
+
                         <span class="text-muted">
 
                             Stock minimum
@@ -459,6 +682,7 @@
 
                         </strong>
 
+
                     </div>
 
 
@@ -467,7 +691,6 @@
                     =================================================== -->
 
                     {% for lot_data in item.lots %}
-
 
                     {% with lot=lot_data.lot statut=lot_data.statut %}
 
@@ -480,7 +703,9 @@
 
                         <!-- LOT + STATUT -->
 
-                        <div class="d-flex justify-content-between align-items-center">
+                        <div
+                            class="d-flex justify-content-between align-items-center"
+                        >
 
 
                             <div>
@@ -505,40 +730,57 @@
                             <div>
 
 
+                                <!-- ======================================
+                                     STATUT VERT
+                                ======================================= -->
+
                                 {% if statut == "vert" %}
 
                                     <span class="badge badge-success">
 
-                                        Normal
+                                        🟢 Normal
 
                                     </span>
 
+
+                                <!-- ======================================
+                                     STATUT ORANGE
+                                ======================================= -->
 
                                 {% elif statut == "orange" %}
 
                                     <span class="badge badge-warning">
 
-                                        Péremption proche
+                                        🟠 Attention
 
                                     </span>
 
+
+                                <!-- ======================================
+                                     STATUT ROUGE
+                                ======================================= -->
 
                                 {% elif statut == "rouge" %}
 
                                     <span class="badge badge-danger">
 
-                                        Urgent
+                                        🔴 Urgent
 
                                     </span>
 
+
+                                <!-- ======================================
+                                     STATUT PÉRIMÉ
+                                ======================================= -->
 
                                 {% elif statut == "perime" %}
 
                                     <span class="badge badge-dark">
 
-                                        Périmé
+                                        ⚫ Périmé
 
                                     </span>
+
 
                                 {% endif %}
 
@@ -580,29 +822,44 @@
                                 </small>
 
 
-                                <strong>
+                                {% if lot.date_peremption %}
 
-                                    {{ lot.date_peremption|date:"d/m/Y" }}
+                                    <strong>
 
-                                </strong>
+                                        {{ lot.date_peremption|date:"d/m/Y" }}
+
+                                    </strong>
+
+                                {% else %}
+
+                                    <strong class="text-muted">
+
+                                        Non définie
+
+                                    </strong>
+
+                                {% endif %}
 
                             </div>
 
 
                         </div>
 
+
                     </div>
 
 
                     {% endwith %}
 
-
                     {% empty %}
 
 
-                    <!-- AUCUN LOT -->
+                    <!-- ==================================================
+                         AUCUN LOT
+                    =================================================== -->
 
                     <div class="text-center py-3">
+
 
                         <i
                             class="mdi mdi-package-variant-closed"
@@ -617,6 +874,7 @@
 
                         </p>
 
+
                     </div>
 
 
@@ -626,6 +884,7 @@
                 </div>
 
             </div>
+
 
         </div>
 
@@ -665,7 +924,11 @@
 
                             Aucun produit ne correspond à la recherche
 
-                            <strong>"{{ rech }}"</strong>.
+                            <strong>
+
+                                "{{ rech }}"
+
+                            </strong>.
 
                         </p>
 
@@ -694,7 +957,8 @@
 
                         <p class="text-muted">
 
-                            Aucun produit n'est actuellement disponible dans le stock.
+                            Aucun produit n'est actuellement disponible
+                            dans le stock.
 
                         </p>
 
@@ -731,7 +995,9 @@
                 <div class="card-body">
 
 
-                    <div class="d-flex justify-content-between align-items-center flex-wrap">
+                    <div
+                        class="d-flex justify-content-between align-items-center flex-wrap"
+                    >
 
 
                         <!-- INFORMATIONS -->
@@ -1023,5 +1289,6 @@
 
 
 </div>
+
 
 {% endblock content %}

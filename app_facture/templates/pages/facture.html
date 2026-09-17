@@ -1,3 +1,4 @@
+
 {% extends 'base.html' %}
 {% load static %}
 
@@ -5,139 +6,129 @@
 
 <div class="content-wrapper">
 
-
 <!-- ===================================================== -->
 <!-- EN-TÊTE -->
 <!-- ===================================================== -->
 
 <div class="row">
 
-    <div class="col-12 grid-margin stretch-card">
+<div class="col-12 grid-margin stretch-card">
 
-        <div class="card corona-gradient-card shadow-sm">
+<div class="card corona-gradient-card shadow-sm">
 
-            <div class="card-body py-4 px-4">
+    <div class="card-body py-4 px-4">
 
-                <div class="row align-items-center">
+        <div class="row align-items-center">
 
-                    <!-- IMAGE -->
+            <!-- IMAGE -->
 
-                    <div class="col-3 col-sm-2 col-xl-1 text-center">
+            <div class="col-3 col-sm-2 col-xl-1 text-center">
 
-                        <img
-                            src="{% static 'images/dashboard/Group126@2x.png' %}"
-                            class="gradient-corona-img img-fluid"
-                            alt="Facturation"
-                            style="max-height:75px;"
-                        />
+                <img
+                    src="{% static 'images/dashboard/Group126@2x.png' %}"
+                    class="gradient-corona-img img-fluid"
+                    alt="Facturation"
+                    style="max-height:75px;"
+                />
 
-                    </div>
+            </div>
 
 
-                    <!-- TITRE -->
+            <!-- TITRE -->
 
-                    <div class="col-6 col-sm-7 col-xl-8">
+            <div class="col-6 col-sm-7 col-xl-8">
 
-                        <span
-                            class="badge badge-light mb-2 px-3 py-2"
-                            style="font-size:11px;"
+                <span
+                    class="badge badge-light mb-2 px-3 py-2"
+                    style="font-size:11px;"
+                >
+
+                    <i class="mdi mdi-file-document-outline mr-1"></i>
+
+                    FACTURATION
+
+                </span>
+
+
+                <h3 class="mb-1 font-weight-bold">
+
+                    Gestion des factures
+
+                </h3>
+
+
+                <p class="mb-0 font-weight-normal d-none d-sm-block">
+
+                    Créez, consultez et validez vos factures facilement.
+
+                </p>
+
+            </div>
+
+
+            <!-- ACTIONS -->
+
+            <div class="col-3 col-sm-3 col-xl-3 text-right">
+
+                {% if peut_modifier_taux %}
+
+                    <button
+                        type="button"
+                        class="btn btn-info btn-rounded mr-1 mb-1"
+                        data-toggle="modal"
+                        data-target="#modalTauxJour"
+                    >
+
+                        <i class="mdi mdi-currency-usd mr-1"></i>
+
+                        Taux du jour
+
+                    </button>
+
+                {% endif %}
+
+
+                {% if request.user.profile.id == 3 %}
+
+                    {% if facture_en_cours %}
+
+                        <a
+                            href="{% url 'detaiFacture' facture_en_cours.id %}"
+                            class="btn btn-warning btn-rounded mb-1 mt-2"
                         >
 
-                            <i class="mdi mdi-file-document-outline mr-1"></i>
+                            <i class="mdi mdi-file-edit-outline mr-1"></i>
 
-                            FACTURATION
+                            Continuer
 
-                        </span>
+                        </a>
 
+                    {% else %}
 
-                        <h3 class="mb-1 font-weight-bold">
+                        <a
+                            href="{% url 'addFacture' %}"
+                            class="btn btn-outline-light btn-rounded mb-1 mt-2"
+                        >
 
-                            Gestion des factures
+                            <i class="mdi mdi-plus mr-1"></i>
 
-                        </h3>
+                            Nouvelle facture
 
+                        </a>
 
-                        <p class="mb-0 font-weight-normal d-none d-sm-block">
+                    {% endif %}
 
-                            Créez, consultez et validez vos factures facilement.
-
-                        </p>
-
-                    </div>
-
-
-                    <!-- ACTIONS -->
-
-                    <div class="col-3 col-sm-3 col-xl-3 text-right">
-
-                        <!-- ================================================= -->
-                        <!-- BOUTON TAUX DU JOUR -->
-                        <!-- Visible uniquement pour les utilisateurs autorisés -->
-                        <!-- ================================================= -->
-
-                        {% if peut_modifier_taux %}
-
-                            <button
-                                type="button"
-                                class="btn btn-info btn-rounded mr-1 mb-1"
-                                data-toggle="modal"
-                                data-target="#modalTauxJour"
-                            >
-
-                                <i class="mdi mdi-currency-usd mr-1"></i>
-
-                                Taux du jour
-
-                            </button>
-
-                        {% endif %}
-
-
-                        <!-- ================================================= -->
-                        <!-- NOUVELLE FACTURE / CONTINUER -->
-                        <!-- ================================================= -->
-
-                        {% if request.user.profile.id == 3 %}
-
-                            {% if facture_en_cours %}
-
-                                <a
-                                    href="{% url 'detaiFacture' facture_en_cours.id %}"
-                                    class="btn btn-warning btn-rounded mb-1 mt-2"
-                                >
-
-                                    <i class="mdi mdi-file-edit-outline mr-1"></i>
-
-                                    Continuer
-
-                                </a>
-
-                            {% else %}
-
-                                <a
-                                    href="{% url 'addFacture' %}"
-                                    class="btn btn-outline-light btn-rounded mb-1 mt-2"
-                                >
-
-                                    <i class="mdi mdi-plus mr-1"></i>
-
-                                    Nouvelle facture
-
-                                </a>
-
-                            {% endif %}
-
-                        {% endif %}
-
-                    </div>
-
-                </div>
+                {% endif %}
 
             </div>
 
         </div>
 
     </div>
+
+</div>
+
+</div>
 
 </div>
 
@@ -148,105 +139,99 @@
 
 {% if facture_en_cours %}
 
-    <div class="row">
+<div class="row">
 
-        <div class="col-12 grid-margin">
+<div class="col-12 grid-margin">
+
+<div
+    class="alert alert-warning shadow-sm mb-0"
+    role="alert"
+    style="
+        border-left:5px solid #ffc107;
+        border-radius:8px;
+    "
+>
+
+    <div class="d-flex align-items-center flex-wrap">
+
+        <div class="mr-3">
 
             <div
-                class="alert alert-warning shadow-sm mb-0"
-                role="alert"
+                class="rounded-circle d-flex align-items-center justify-content-center"
                 style="
-                    border-left:5px solid #ffc107;
-                    border-radius:8px;
+                    width:52px;
+                    height:52px;
+                    background:rgba(255,193,7,.15);
                 "
             >
 
-                <div class="d-flex align-items-center flex-wrap">
-
-                    <!-- ICÔNE -->
-
-                    <div class="mr-3">
-
-                        <div
-                            class="rounded-circle d-flex align-items-center justify-content-center"
-                            style="
-                                width:52px;
-                                height:52px;
-                                background:rgba(255,193,7,.15);
-                            "
-                        >
-
-                            <i
-                                class="mdi mdi-alert-outline text-warning"
-                                style="font-size:28px;"
-                            ></i>
-
-                        </div>
-
-                    </div>
-
-
-                    <!-- MESSAGE -->
-
-                    <div class="flex-grow-1">
-
-                        <h5 class="font-weight-bold mb-1">
-
-                            Facture en cours de création
-
-                        </h5>
-
-
-                        <p class="mb-1">
-
-                            Vous avez déjà une facture
-
-                            <strong>
-
-                                #{{ facture_en_cours.id }}
-
-                            </strong>
-
-                            qui n'est pas encore validée.
-
-                        </p>
-
-
-                        <small class="text-muted">
-
-                            Créée le
-
-                            {{ facture_en_cours.createdAt|date:'d/m/Y à H:i' }}
-
-                        </small>
-
-                    </div>
-
-
-                    <!-- BOUTON -->
-
-                    <div class="ml-auto mt-2 mt-md-0">
-
-                        <a
-                            href="{% url 'detaiFacture' facture_en_cours.id %}"
-                            class="btn btn-warning btn-rounded"
-                        >
-
-                            <i class="mdi mdi-arrow-right-circle mr-1"></i>
-
-                            Continuer la facture
-
-                        </a>
-
-                    </div>
-
-                </div>
+                <i
+                    class="mdi mdi-alert-outline text-warning"
+                    style="font-size:28px;"
+                ></i>
 
             </div>
 
         </div>
 
+
+        <div class="flex-grow-1">
+
+            <h5 class="font-weight-bold mb-1">
+
+                Facture en cours de création
+
+            </h5>
+
+
+            <p class="mb-1">
+
+                Vous avez déjà une facture
+
+                <strong>
+
+                    #{{ facture_en_cours.id }}
+
+                </strong>
+
+                qui n'est pas encore validée.
+
+            </p>
+
+
+            <small class="text-muted">
+
+                Créée le
+
+                {{ facture_en_cours.createdAt|date:'d/m/Y à H:i' }}
+
+            </small>
+
+        </div>
+
+
+        <div class="ml-auto mt-2 mt-md-0">
+
+            <a
+                href="{% url 'detaiFacture' facture_en_cours.id %}"
+                class="btn btn-warning btn-rounded"
+            >
+
+                <i class="mdi mdi-arrow-right-circle mr-1"></i>
+
+                Continuer la facture
+
+            </a>
+
+        </div>
+
     </div>
+
+</div>
+
+</div>
+
+</div>
 
 {% endif %}
 
@@ -257,241 +242,241 @@
 
 <div class="row">
 
-    <!-- TOTAL FACTURES -->
+<!-- TOTAL FACTURES -->
 
-    <div class="col-md-6 col-xl-4 grid-margin stretch-card">
+<div class="col-md-6 col-xl-4 grid-margin stretch-card">
 
-        <div class="card shadow-sm h-100">
+<div class="card shadow-sm h-100">
 
-            <div class="card-body">
+    <div class="card-body">
 
-                <div class="d-flex align-items-center">
+        <div class="d-flex align-items-center">
 
-                    <div
-                        class="rounded-circle d-flex align-items-center justify-content-center mr-3"
-                        style="
-                            width:58px;
-                            height:58px;
-                            background:rgba(0,123,255,.10);
-                        "
-                    >
+            <div
+                class="rounded-circle d-flex align-items-center justify-content-center mr-3"
+                style="
+                    width:58px;
+                    height:58px;
+                    background:rgba(0,123,255,.10);
+                "
+            >
 
-                        <i
-                            class="mdi mdi-file-document-multiple-outline text-primary"
-                            style="font-size:28px;"
-                        ></i>
+                <i
+                    class="mdi mdi-file-document-multiple-outline text-primary"
+                    style="font-size:28px;"
+                ></i>
 
-                    </div>
-
-
-                    <div>
-
-                        <p class="text-muted mb-1">
-
-                            Total des factures
-
-                        </p>
+            </div>
 
 
-                        <h2 class="font-weight-bold mb-0">
+            <div>
 
-                            {{ compte }}
+                <p class="text-muted mb-1">
 
-                        </h2>
+                    Total des factures
 
-                    </div>
-
-                </div>
+                </p>
 
 
-                <hr />
+                <h2 class="font-weight-bold mb-0">
 
+                    {{ compte }}
 
-                <small class="text-muted">
-
-                    <i class="mdi mdi-database-outline mr-1"></i>
-
-                    Factures enregistrées
-
-                </small>
+                </h2>
 
             </div>
 
         </div>
 
+
+        <hr />
+
+
+        <small class="text-muted">
+
+            <i class="mdi mdi-database-outline mr-1"></i>
+
+            Factures enregistrées
+
+        </small>
+
     </div>
 
+</div>
 
-    <!-- FACTURES DU JOUR -->
-
-    <div class="col-md-6 col-xl-4 grid-margin stretch-card">
-
-        <div class="card shadow-sm h-100">
-
-            <div class="card-body">
-
-                <div class="d-flex align-items-center">
-
-                    <div
-                        class="rounded-circle d-flex align-items-center justify-content-center mr-3"
-                        style="
-                            width:58px;
-                            height:58px;
-                            background:rgba(40,167,69,.10);
-                        "
-                    >
-
-                        <i
-                            class="mdi mdi-calendar-check-outline text-success"
-                            style="font-size:28px;"
-                        ></i>
-
-                    </div>
+</div>
 
 
-                    <div>
+<!-- FACTURES DU JOUR -->
 
-                        <p class="text-muted mb-1">
+<div class="col-md-6 col-xl-4 grid-margin stretch-card">
 
-                            Factures aujourd'hui
+<div class="card shadow-sm h-100">
 
-                        </p>
+    <div class="card-body">
+
+        <div class="d-flex align-items-center">
+
+            <div
+                class="rounded-circle d-flex align-items-center justify-content-center mr-3"
+                style="
+                    width:58px;
+                    height:58px;
+                    background:rgba(40,167,69,.10);
+                "
+            >
+
+                <i
+                    class="mdi mdi-calendar-check-outline text-success"
+                    style="font-size:28px;"
+                ></i>
+
+            </div>
 
 
-                        <h2 class="font-weight-bold mb-0">
+            <div>
 
-                            {{ facture_total_jour }}
+                <p class="text-muted mb-1">
 
-                        </h2>
+                    Factures aujourd'hui
 
-                    </div>
-
-                </div>
+                </p>
 
 
-                <hr />
+                <h2 class="font-weight-bold mb-0">
 
+                    {{ facture_total_jour }}
 
-                <small class="text-muted">
-
-                    <i class="mdi mdi-calendar-today mr-1"></i>
-
-                    Factures créées aujourd'hui
-
-                </small>
+                </h2>
 
             </div>
 
         </div>
 
+
+        <hr />
+
+
+        <small class="text-muted">
+
+            <i class="mdi mdi-calendar-today mr-1"></i>
+
+            Factures créées aujourd'hui
+
+        </small>
+
     </div>
 
+</div>
 
-    <!-- ÉTAT FACTURATION -->
-
-    <div class="col-md-12 col-xl-4 grid-margin stretch-card">
-
-        <div class="card shadow-sm h-100">
-
-            <div class="card-body">
-
-                <div class="d-flex align-items-center">
-
-                    {% if facture_en_cours %}
-
-                        <div
-                            class="rounded-circle d-flex align-items-center justify-content-center mr-3"
-                            style="
-                                width:58px;
-                                height:58px;
-                                background:rgba(255,193,7,.12);
-                            "
-                        >
-
-                            <i
-                                class="mdi mdi-clock-alert-outline text-warning"
-                                style="font-size:28px;"
-                            ></i>
-
-                        </div>
+</div>
 
 
-                        <div>
+<!-- ÉTAT FACTURATION -->
 
-                            <p class="text-muted mb-1">
+<div class="col-md-12 col-xl-4 grid-margin stretch-card">
 
-                                État de votre facturation
+<div class="card shadow-sm h-100">
 
-                            </p>
+    <div class="card-body">
 
+        <div class="d-flex align-items-center">
 
-                            <h5 class="font-weight-bold text-warning mb-0">
+            {% if facture_en_cours %}
 
-                                Facture en cours
+                <div
+                    class="rounded-circle d-flex align-items-center justify-content-center mr-3"
+                    style="
+                        width:58px;
+                        height:58px;
+                        background:rgba(255,193,7,.12);
+                    "
+                >
 
-                            </h5>
-
-
-                            <small class="text-muted">
-
-                                Facture #{{ facture_en_cours.id }}
-
-                            </small>
-
-                        </div>
-
-                    {% else %}
-
-                        <div
-                            class="rounded-circle d-flex align-items-center justify-content-center mr-3"
-                            style="
-                                width:58px;
-                                height:58px;
-                                background:rgba(40,167,69,.10);
-                            "
-                        >
-
-                            <i
-                                class="mdi mdi-check-circle-outline text-success"
-                                style="font-size:28px;"
-                            ></i>
-
-                        </div>
-
-
-                        <div>
-
-                            <p class="text-muted mb-1">
-
-                                État de votre facturation
-
-                            </p>
-
-
-                            <h5 class="font-weight-bold text-success mb-0">
-
-                                Aucune facture en cours
-
-                            </h5>
-
-
-                            <small class="text-muted">
-
-                                Vous pouvez créer une facture
-
-                            </small>
-
-                        </div>
-
-                    {% endif %}
+                    <i
+                        class="mdi mdi-clock-alert-outline text-warning"
+                        style="font-size:28px;"
+                    ></i>
 
                 </div>
 
-            </div>
+
+                <div>
+
+                    <p class="text-muted mb-1">
+
+                        État de votre facturation
+
+                    </p>
+
+
+                    <h5 class="font-weight-bold text-warning mb-0">
+
+                        Facture en cours
+
+                    </h5>
+
+
+                    <small class="text-muted">
+
+                        Facture #{{ facture_en_cours.id }}
+
+                    </small>
+
+                </div>
+
+            {% else %}
+
+                <div
+                    class="rounded-circle d-flex align-items-center justify-content-center mr-3"
+                    style="
+                        width:58px;
+                        height:58px;
+                        background:rgba(40,167,69,.10);
+                    "
+                >
+
+                    <i
+                        class="mdi mdi-check-circle-outline text-success"
+                        style="font-size:28px;"
+                    ></i>
+
+                </div>
+
+
+                <div>
+
+                    <p class="text-muted mb-1">
+
+                        État de votre facturation
+
+                    </p>
+
+
+                    <h5 class="font-weight-bold text-success mb-0">
+
+                        Aucune facture en cours
+
+                    </h5>
+
+
+                    <small class="text-muted">
+
+                        Vous pouvez créer une facture
+
+                    </small>
+
+                </div>
+
+            {% endif %}
 
         </div>
 
     </div>
+
+</div>
+
+</div>
 
 </div>
 
@@ -502,109 +487,53 @@
 
 <div class="row">
 
-    <div class="col-12 grid-margin stretch-card">
+<div class="col-12 grid-margin stretch-card">
 
-        <div class="card shadow-sm">
+<div class="card shadow-sm">
 
-            <div class="card-body">
+    <div class="card-body">
 
-                <div class="row align-items-center">
+        <div class="row align-items-center">
 
-                    <!-- TITRE -->
+            <div class="col-md-5">
 
-                    <div class="col-md-5">
+                <div class="d-flex align-items-center">
 
-                        <div class="d-flex align-items-center">
+                    <div class="mr-3">
 
-                            <div class="mr-3">
+                        <div
+                            class="rounded-circle d-flex align-items-center justify-content-center"
+                            style="
+                                width:48px;
+                                height:48px;
+                                background:rgba(0,123,255,.08);
+                            "
+                        >
 
-                                <div
-                                    class="rounded-circle d-flex align-items-center justify-content-center"
-                                    style="
-                                        width:48px;
-                                        height:48px;
-                                        background:rgba(0,123,255,.08);
-                                    "
-                                >
-
-                                    <i
-                                        class="mdi mdi-format-list-bulleted text-primary"
-                                        style="font-size:24px;"
-                                    ></i>
-
-                                </div>
-
-                            </div>
-
-
-                            <div>
-
-                                <h4 class="card-title mb-1">
-
-                                    Liste des factures
-
-                                </h4>
-
-
-                                <p class="text-muted mb-0">
-
-                                    {{ compte }} facture(s) enregistrée(s)
-
-                                </p>
-
-                            </div>
+                            <i
+                                class="mdi mdi-format-list-bulleted text-primary"
+                                style="font-size:24px;"
+                            ></i>
 
                         </div>
 
                     </div>
 
 
-                    <!-- RECHERCHE -->
+                    <div>
 
-                    <div class="col-md-7 mt-3 mt-md-0">
+                        <h4 class="card-title mb-1">
 
-                        <form method="get">
+                            Liste des factures
 
-                            <div class="input-group">
-
-                                <div class="input-group-prepend">
-
-                                    <span class="input-group-text">
-
-                                        <i class="mdi mdi-magnify"></i>
-
-                                    </span>
-
-                                </div>
+                        </h4>
 
 
-                                <input
-                                    type="text"
-                                    class="form-control"
-                                    name="q"
-                                    value="{{ recherche }}"
-                                    placeholder="Rechercher une facture..."
-                                />
+                        <p class="text-muted mb-0">
 
+                            {{ compte }} facture(s) enregistrée(s)
 
-                                <div class="input-group-append">
-
-                                    <button
-                                        type="submit"
-                                        class="btn btn-primary px-4"
-                                    >
-
-                                        <i class="mdi mdi-magnify mr-1"></i>
-
-                                        Rechercher
-
-                                    </button>
-
-                                </div>
-
-                            </div>
-
-                        </form>
+                        </p>
 
                     </div>
 
@@ -612,9 +541,61 @@
 
             </div>
 
+
+            <div class="col-md-7 mt-3 mt-md-0">
+
+                <form method="get">
+
+                    <div class="input-group">
+
+                        <div class="input-group-prepend">
+
+                            <span class="input-group-text">
+
+                                <i class="mdi mdi-magnify"></i>
+
+                            </span>
+
+                        </div>
+
+
+                        <input
+                            type="text"
+                            class="form-control"
+                            name="q"
+                            value="{{ recherche }}"
+                            placeholder="Rechercher une facture..."
+                        />
+
+
+                        <div class="input-group-append">
+
+                            <button
+                                type="submit"
+                                class="btn btn-primary px-4"
+                            >
+
+                                <i class="mdi mdi-magnify mr-1"></i>
+
+                                Rechercher
+
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                </form>
+
+            </div>
+
         </div>
 
     </div>
+
+</div>
+
+</div>
 
 </div>
 
@@ -625,75 +606,75 @@
 
 <div class="row">
 
-    <div class="col-12 grid-margin stretch-card">
+<div class="col-12 grid-margin stretch-card">
 
-        <div class="card shadow-sm">
+<div class="card shadow-sm">
 
-            <div class="card-body py-3">
+    <div class="card-body py-3">
 
-                <div class="d-flex align-items-center justify-content-center">
+        <div class="d-flex align-items-center justify-content-center">
 
-                    <div
-                        class="rounded-circle d-flex align-items-center justify-content-center mr-3"
-                        style="
-                            width:50px;
-                            height:50px;
-                            background:rgba(23,162,184,.10);
-                        "
-                    >
+            <div
+                class="rounded-circle d-flex align-items-center justify-content-center mr-3"
+                style="
+                    width:50px;
+                    height:50px;
+                    background:rgba(23,162,184,.10);
+                "
+            >
 
-                        <i
-                            class="mdi mdi-currency-usd text-info"
-                            style="font-size:26px;"
-                        ></i>
+                <i
+                    class="mdi mdi-currency-usd text-info"
+                    style="font-size:26px;"
+                ></i>
 
-                    </div>
-
-
-                    <div>
-
-                        <small class="text-muted d-block">
-
-                            Taux du jour
-
-                        </small>
+            </div>
 
 
-                        {% if taux_jour %}
+            <div>
 
-                            <h4 class="font-weight-bold mb-0">
+                <small class="text-muted d-block">
 
-                                1 USD =
+                    Taux du jour
 
-                                <span class="text-success">
+                </small>
 
-                                    {{ taux_jour.taux_usd|floatformat:2 }}
 
-                                </span>
+                {% if taux_jour %}
 
-                                FC
+                    <h4 class="font-weight-bold mb-0">
 
-                            </h4>
+                        1 USD =
 
-                        {% else %}
+                        <span class="text-success">
 
-                            <h5 class="font-weight-bold text-warning mb-0">
+                            {{ taux_jour.taux_usd|floatformat:2 }}
 
-                                Taux non défini
+                        </span>
 
-                            </h5>
+                        FC
 
-                        {% endif %}
+                    </h4>
 
-                    </div>
+                {% else %}
 
-                </div>
+                    <h5 class="font-weight-bold text-warning mb-0">
+
+                        Taux non défini
+
+                    </h5>
+
+                {% endif %}
 
             </div>
 
         </div>
 
     </div>
+
+</div>
+
+</div>
 
 </div>
 
@@ -704,64 +685,222 @@
 
 <div class="row">
 
-    {% for f in facture %}
+{% for f in facture %}
 
-        <div class="col-xl-4 col-lg-6 col-md-6 grid-margin stretch-card">
+<div class="col-xl-4 col-lg-6 col-md-6 grid-margin stretch-card">
 
-            <div
-                class="card h-100 shadow-sm"
-                style="
-                    border-top:4px solid
-                    {% if f.imprimer %}
-                        #28a745
-                    {% else %}
-                        #ffc107
-                    {% endif %};
-                "
-            >
+    <div
+        class="card h-100 shadow-sm"
+        style="
+            border-top:4px solid
+            {% if f.imprimer %}
+                #28a745
+            {% else %}
+                #ffc107
+            {% endif %};
+        "
+    >
 
-                <div class="card-body">
-
-
-                    <!-- HEADER -->
-
-                    <div class="d-flex justify-content-between align-items-start mb-4">
-
-                        <div>
-
-                            <span class="text-muted small">
-
-                                FACTURE
-
-                            </span>
+        <div class="card-body">
 
 
-                            <h3 class="font-weight-bold mb-0">
+            <!-- HEADER -->
 
-                                #{{ f.id }}
+            <div class="d-flex justify-content-between align-items-start mb-4">
 
-                            </h3>
+                <div>
 
-                        </div>
+                    <span class="text-muted small">
+
+                        FACTURE
+
+                    </span>
 
 
-                        {% if f.imprimer %}
+                    <h3 class="font-weight-bold mb-0">
 
-                            <span class="badge badge-success px-3 py-2">
+                        #{{ f.id }}
 
-                                <i class="mdi mdi-check-circle mr-1"></i>
+                    </h3>
 
-                                Validée
+                </div>
 
-                            </span>
+
+                {% if f.imprimer %}
+
+                    <span class="badge badge-success px-3 py-2">
+
+                        <i class="mdi mdi-check-circle mr-1"></i>
+
+                        Validée
+
+                    </span>
+
+                {% else %}
+
+                    <span class="badge badge-warning px-3 py-2">
+
+                        <i class="mdi mdi-clock-outline mr-1"></i>
+
+                        Brouillon
+
+                    </span>
+
+                {% endif %}
+
+            </div>
+
+
+            <!-- INFORMATIONS -->
+
+            <div class="mb-4">
+
+                <div
+                    class="d-flex align-items-center text-muted small mb-2"
+                >
+
+                    <i class="mdi mdi-calendar-outline mr-2"></i>
+
+                    {{ f.createdAt|date:'d/m/Y à H:i' }}
+
+                </div>
+
+
+                {% if f.user %}
+
+                    <div
+                        class="d-flex align-items-center text-muted small"
+                    >
+
+                        <i class="mdi mdi-account-outline mr-2"></i>
+
+                        {{ f.user.noms }}
+
+                    </div>
+
+                {% endif %}
+
+            </div>
+
+
+            <hr />
+
+
+            <!-- MONTANTS -->
+
+            <div class="mt-4">
+
+                <div
+                    class="d-flex justify-content-between align-items-center mb-3"
+                >
+
+                    <span class="text-muted">
+
+                        Total HT
+
+                    </span>
+
+
+                    <strong>
+
+                        {{ f.total_ht|default:'0.00'|floatformat:2 }}
+
+                        FC
+
+                    </strong>
+
+                </div>
+
+
+                <div
+                    class="d-flex justify-content-between align-items-center mb-3"
+                >
+
+                    <span class="text-muted">
+
+                        TVA (16 %)
+
+                    </span>
+
+
+                    <strong class="text-warning">
+
+                        {{ f.total_tva|default:'0.00'|floatformat:2 }}
+
+                        FC
+
+                    </strong>
+
+                </div>
+
+
+                <div
+                    class="p-3 rounded"
+                    style="
+                        background:rgba(0,0,0,.04);
+                        border:1px solid rgba(0,0,0,.05);
+                    "
+                >
+
+                    <div
+                        class="d-flex justify-content-between align-items-center"
+                    >
+
+                        <span class="font-weight-bold">
+
+                            Total TTC
+
+                        </span>
+
+
+                        <span
+                            class="h4 mb-0 font-weight-bold text-primary"
+                        >
+
+                            {{ f.total_ttc|default:'0.00'|floatformat:2 }}
+
+                            <small class="font-weight-normal">
+
+                                FC
+
+                            </small>
+
+                        </span>
+
+                    </div>
+
+
+                    <div
+                        class="d-flex justify-content-between align-items-center mt-2 pt-2"
+                        style="
+                            border-top:1px dashed rgba(0,0,0,.12);
+                        "
+                    >
+
+                        <span class="text-muted">
+
+                            <i class="mdi mdi-currency-usd mr-1"></i>
+
+                            Équivalent USD
+
+                        </span>
+
+
+                        {% if f.total_usd is not None %}
+
+                            <strong class="text-success">
+
+                                {{ f.total_usd|floatformat:2 }}
+
+                                USD
+
+                            </strong>
 
                         {% else %}
 
-                            <span class="badge badge-warning px-3 py-2">
+                            <span class="text-muted">
 
-                                <i class="mdi mdi-clock-outline mr-1"></i>
-
-                                Brouillon
+                                Non disponible
 
                             </span>
 
@@ -769,332 +908,178 @@
 
                     </div>
 
+                </div>
 
-                    <!-- INFORMATIONS -->
-
-                    <div class="mb-4">
-
-                        <div
-                            class="d-flex align-items-center text-muted small mb-2"
-                        >
-
-                            <i class="mdi mdi-calendar-outline mr-2"></i>
-
-                            {{ f.createdAt|date:'d/m/Y à H:i' }}
-
-                        </div>
+            </div>
 
 
-                        {% if f.user %}
+            <!-- ================================================= -->
+            <!-- ACTIONS -->
+            <!-- ================================================= -->
 
-                            <div
-                                class="d-flex align-items-center text-muted small"
-                            >
+            <div
+                class="d-flex justify-content-between align-items-center mt-4"
+            >
 
-                                <i class="mdi mdi-account-outline mr-2"></i>
+                <!-- DÉTAILS -->
 
-                                {{ f.user.noms }}
+                <a
+                    href="{% url 'detaiFacture' f.id %}"
+                    class="btn btn-outline-primary btn-rounded"
+                >
 
-                            </div>
+                    <i class="mdi mdi-eye-outline mr-1"></i>
 
-                        {% endif %}
+                    Détails
 
-                    </div>
-
-
-                    <hr />
-
-
-                    <!-- ================================================= -->
-                    <!-- MONTANTS -->
-                    <!-- ================================================= -->
-
-                    <div class="mt-4">
-
-                        <!-- TOTAL HT -->
-
-                        <div
-                            class="d-flex justify-content-between align-items-center mb-3"
-                        >
-
-                            <span class="text-muted">
-
-                                Total HT
-
-                            </span>
+                </a>
 
 
-                            <strong>
+                <!-- ACTION DROITE -->
 
-                                {{ f.total_ht|default:'0.00'|floatformat:2 }}
-
-                                FC
-
-                            </strong>
-
-                        </div>
+                <div class="d-flex align-items-center">
 
 
-                        <!-- TVA -->
+                    {% if f.imprimer %}
 
-                        <div
-                            class="d-flex justify-content-between align-items-center mb-3"
-                        >
-
-                            <span class="text-muted">
-
-                                TVA (16 %)
-
-                            </span>
-
-
-                            <strong class="text-warning">
-
-                                {{ f.total_tva|default:'0.00'|floatformat:2 }}
-
-                                FC
-
-                            </strong>
-
-                        </div>
-
-
-                        <!-- TOTAL TTC -->
-
-                        <div
-                            class="p-3 rounded"
+                        <button
+                            type="button"
+                            class="btn btn-success btn-rounded mr-2"
+                            disabled
+                            title="Cette facture a déjà été imprimée"
                             style="
-                                background:rgba(0,0,0,.04);
-                                border:1px solid rgba(0,0,0,.05);
+                                cursor:not-allowed;
+                                opacity:.75;
                             "
                         >
 
-                            <div
-                                class="d-flex justify-content-between align-items-center"
-                            >
+                            <i class="mdi mdi-check-circle-outline mr-1"></i>
 
-                                <span class="font-weight-bold">
+                            Déjà imprimée
 
-                                    Total TTC
+                        </button>
 
-                                </span>
-
-
-                                <span
-                                    class="h4 mb-0 font-weight-bold text-primary"
-                                >
-
-                                    {{ f.total_ttc|default:'0.00'|floatformat:2 }}
-
-                                    <small class="font-weight-normal">
-
-                                        FC
-
-                                    </small>
-
-                                </span>
-
-                            </div>
-
-
-                            <!-- ================================================= -->
-                            <!-- ÉQUIVALENT USD -->
-                            <!-- Le taux n'est pas rappelé ici -->
-                            <!-- ================================================= -->
-
-                            <div
-                                class="d-flex justify-content-between align-items-center mt-2 pt-2"
-                                style="
-                                    border-top:1px dashed rgba(0,0,0,.12);
-                                "
-                            >
-
-                                <span class="text-muted">
-
-                                    <i class="mdi mdi-currency-usd mr-1"></i>
-
-                                    Équivalent USD
-
-                                </span>
-
-
-                                {% if f.total_usd is not None %}
-
-                                    <strong class="text-success">
-
-                                        {{ f.total_usd|floatformat:2 }}
-
-                                        USD
-
-                                    </strong>
-
-                                {% else %}
-
-                                    <span class="text-muted">
-
-                                        Non disponible
-
-                                    </span>
-
-                                {% endif %}
-
-                            </div>
-
-                        </div>
-
-                    </div>
-
-
-                    <!-- ================================================= -->
-                    <!-- ACTIONS -->
-                    <!-- ================================================= -->
-
-                    <div
-                        class="d-flex justify-content-between mt-4"
-                    >
-
-                        <!-- DÉTAILS -->
+                    {% else %}
 
                         <a
                             href="{% url 'detaiFacture' f.id %}"
-                            class="btn btn-outline-primary btn-rounded"
+                            class="btn btn-warning btn-rounded mr-2"
                         >
 
-                            <i class="mdi mdi-eye-outline mr-1"></i>
+                            <i class="mdi mdi-file-edit-outline mr-1"></i>
 
-                            Détails
+                            Continuer
 
                         </a>
 
-
-                        <!-- ÉTAT -->
-
-                        {% if f.imprimer %}
-
-                            <button
-                                type="button"
-                                class="btn btn-success btn-rounded"
-                                disabled
-                                title="Cette facture a déjà été imprimée"
-                                style="
-                                    cursor:not-allowed;
-                                    opacity:.75;
-                                "
-                            >
-
-                                <i class="mdi mdi-check-circle-outline mr-1"></i>
-
-                                Déjà imprimée
-
-                            </button>
-
-                        {% else %}
-
-                            <a
-                                href="{% url 'detaiFacture' f.id %}"
-                                class="btn btn-warning btn-rounded"
-                            >
-
-                                <i class="mdi mdi-file-edit-outline mr-1"></i>
-
-                                Continuer
-
-                            </a>
-
-                        {% endif %}
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </div>
-
-
-    {% empty %}
-
-        <!-- ================================================= -->
-        <!-- AUCUNE FACTURE -->
-        <!-- ================================================= -->
-
-        <div class="col-12">
-
-            <div class="card shadow-sm">
-
-                <div class="card-body text-center py-5">
-
-                    <div class="mb-4">
-
-                        <div
-                            class="rounded-circle mx-auto d-flex align-items-center justify-content-center"
-                            style="
-                                width:90px;
-                                height:90px;
-                                background:rgba(0,123,255,.08);
-                            "
-                        >
-
-                            <i
-                                class="mdi mdi-file-document-outline text-primary"
-                                style="font-size:45px;"
-                            ></i>
-
-                        </div>
-
-                    </div>
-
-
-                    <h4 class="font-weight-bold">
-
-                        Aucune facture trouvée
-
-                    </h4>
-
-
-                    <p class="text-muted mb-4">
-
-                        {% if recherche %}
-
-                            Aucune facture ne correspond à
-
-                            « {{ recherche }} ».
-
-                        {% else %}
-
-                            Aucune facture n'a encore été créée.
-
-                        {% endif %}
-
-                    </p>
-
-
-                    {% if not recherche and request.user.profile.id == 3 %}
-
-                        {% if not facture_en_cours %}
-
-                            <a
-                                href="{% url 'addFacture' %}"
-                                class="btn btn-primary btn-rounded"
-                            >
-
-                                <i class="mdi mdi-plus mr-1"></i>
-
-                                Créer une facture
-
-                            </a>
-
-                        {% endif %}
-
                     {% endif %}
 
+
+                    <!-- SUPPRIMER -->
+
+                    <button
+                        type="button"
+                        class="btn btn-outline-danger btn-rounded btn-supprimer-facture"
+                        data-toggle="modal"
+                        data-target="#modalSuppressionFacture"
+                        data-facture-id="{{ f.id }}"
+                        data-facture-total="{{ f.total_ttc|default:'0.00'|floatformat:2 }}"
+                        title="Supprimer la facture #{{ f.id }}"
+                    >
+
+                        <i class="mdi mdi-delete-outline"></i>
+
+                    </button>
+
                 </div>
 
             </div>
 
         </div>
 
-    {% endfor %}
+    </div>
+
+</div>
+
+{% empty %}
+
+<div class="col-12">
+
+    <div class="card shadow-sm">
+
+        <div class="card-body text-center py-5">
+
+            <div class="mb-4">
+
+                <div
+                    class="rounded-circle mx-auto d-flex align-items-center justify-content-center"
+                    style="
+                        width:90px;
+                        height:90px;
+                        background:rgba(0,123,255,.08);
+                    "
+                >
+
+                    <i
+                        class="mdi mdi-file-document-outline text-primary"
+                        style="font-size:45px;"
+                    ></i>
+
+                </div>
+
+            </div>
+
+
+            <h4 class="font-weight-bold">
+
+                Aucune facture trouvée
+
+            </h4>
+
+
+            <p class="text-muted mb-4">
+
+                {% if recherche %}
+
+                    Aucune facture ne correspond à
+
+                    « {{ recherche }} ».
+
+                {% else %}
+
+                    Aucune facture n'a encore été créée.
+
+                {% endif %}
+
+            </p>
+
+
+            {% if not recherche and request.user.profile.id == 3 %}
+
+                {% if not facture_en_cours %}
+
+                    <a
+                        href="{% url 'addFacture' %}"
+                        class="btn btn-primary btn-rounded"
+                    >
+
+                        <i class="mdi mdi-plus mr-1"></i>
+
+                        Créer une facture
+
+                    </a>
+
+                {% endif %}
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endfor %}
 
 </div>
 
@@ -1105,112 +1090,100 @@
 
 {% if facture.paginator.num_pages > 1 %}
 
-    <div class="row">
+<div class="row">
 
-        <div class="col-12">
+<div class="col-12">
 
-            <div class="card shadow-sm">
+<div class="card shadow-sm">
 
-                <div class="card-body">
+    <div class="card-body">
 
-                    <div
-                        class="d-flex justify-content-between align-items-center flex-wrap"
+        <div
+            class="d-flex justify-content-between align-items-center flex-wrap"
+        >
+
+            <div class="text-muted mb-2 mb-md-0">
+
+                <i class="mdi mdi-file-multiple-outline mr-1"></i>
+
+                Page
+
+                <strong>
+
+                    {{ facture.number }}
+
+                </strong>
+
+                sur
+
+                <strong>
+
+                    {{ facture.paginator.num_pages }}
+
+                </strong>
+
+            </div>
+
+
+            <div>
+
+                {% if facture.has_previous %}
+
+                    <a
+                        href="?page=1{% if recherche %}&q={{ recherche|urlencode }}{% endif %}"
+                        class="btn btn-outline-secondary btn-sm mr-1"
                     >
 
-                        <!-- INFORMATIONS -->
+                        <i class="mdi mdi-page-first"></i>
 
-                        <div class="text-muted mb-2 mb-md-0">
-
-                            <i class="mdi mdi-file-multiple-outline mr-1"></i>
-
-                            Page
-
-                            <strong>
-
-                                {{ facture.number }}
-
-                            </strong>
-
-                            sur
-
-                            <strong>
-
-                                {{ facture.paginator.num_pages }}
-
-                            </strong>
-
-                        </div>
+                    </a>
 
 
-                        <!-- BOUTONS -->
+                    <a
+                        href="?page={{ facture.previous_page_number }}{% if recherche %}&q={{ recherche|urlencode }}{% endif %}"
+                        class="btn btn-outline-primary btn-sm mr-1"
+                    >
 
-                        <div>
+                        <i class="mdi mdi-chevron-left"></i>
 
-                            {% if facture.has_previous %}
+                        Précédent
 
-                                <a
-                                    href="?page=1{% if recherche %}&q={{ recherche|urlencode }}{% endif %}"
-                                    class="btn btn-outline-secondary btn-sm mr-1"
-                                    title="Première page"
-                                >
+                    </a>
 
-                                    <i class="mdi mdi-page-first"></i>
-
-                                </a>
+                {% endif %}
 
 
-                                <a
-                                    href="?page={{ facture.previous_page_number }}{% if recherche %}&q={{ recherche|urlencode }}{% endif %}"
-                                    class="btn btn-outline-primary btn-sm mr-1"
-                                >
+                <span class="btn btn-primary btn-sm mr-1">
 
-                                    <i class="mdi mdi-chevron-left"></i>
+                    {{ facture.number }}
 
-                                    Précédent
-
-                                </a>
-
-                            {% endif %}
+                </span>
 
 
-                            <span class="btn btn-primary btn-sm mr-1">
+                {% if facture.has_next %}
 
-                                {{ facture.number }}
+                    <a
+                        href="?page={{ facture.next_page_number }}{% if recherche %}&q={{ recherche|urlencode }}{% endif %}"
+                        class="btn btn-outline-primary btn-sm mr-1"
+                    >
 
-                            </span>
+                        Suivant
 
+                        <i class="mdi mdi-chevron-right"></i>
 
-                            {% if facture.has_next %}
-
-                                <a
-                                    href="?page={{ facture.next_page_number }}{% if recherche %}&q={{ recherche|urlencode }}{% endif %}"
-                                    class="btn btn-outline-primary btn-sm mr-1"
-                                >
-
-                                    Suivant
-
-                                    <i class="mdi mdi-chevron-right"></i>
-
-                                </a>
+                    </a>
 
 
-                                <a
-                                    href="?page={{ facture.paginator.num_pages }}{% if recherche %}&q={{ recherche|urlencode }}{% endif %}"
-                                    class="btn btn-outline-secondary btn-sm"
-                                    title="Dernière page"
-                                >
+                    <a
+                        href="?page={{ facture.paginator.num_pages }}{% if recherche %}&q={{ recherche|urlencode }}{% endif %}"
+                        class="btn btn-outline-secondary btn-sm"
+                    >
 
-                                    <i class="mdi mdi-page-last"></i>
+                        <i class="mdi mdi-page-last"></i>
 
-                                </a>
+                    </a>
 
-                            {% endif %}
-
-                        </div>
-
-                    </div>
-
-                </div>
+                {% endif %}
 
             </div>
 
@@ -1218,21 +1191,22 @@
 
     </div>
 
-{% endif %}
-
+</div>
 
 </div>
 
+</div>
+
+{% endif %}
+
+</div>
+
+
 <!-- ===================================================== -->
-
 <!-- MODAL TAUX DU JOUR -->
-
-<!-- Visible uniquement pour les utilisateurs autorisés -->
-
 <!-- ===================================================== -->
 
 {% if peut_modifier_taux %}
-
 
 <div
     class="modal fade"
@@ -1243,249 +1217,496 @@
     aria-hidden="true"
 >
 
-    <div
-        class="modal-dialog modal-dialog-centered"
-        role="document"
-    >
+<div
+    class="modal-dialog modal-dialog-centered"
+    role="document"
+>
 
-        <div class="modal-content">
+<div class="modal-content">
 
 
-            <!-- HEADER -->
+    <div class="modal-header">
 
-            <div class="modal-header">
+        <div>
+
+            <h5
+                class="modal-title font-weight-bold"
+                id="modalTauxJourLabel"
+            >
+
+                <i
+                    class="mdi mdi-currency-usd text-success mr-1"
+                ></i>
+
+                Taux du jour
+
+            </h5>
+
+
+            <small class="text-muted">
+
+                Définissez le taux de conversion FC / USD
+
+            </small>
+
+        </div>
+
+
+        <button
+            type="button"
+            class="close"
+            data-dismiss="modal"
+            aria-label="Fermer"
+        >
+
+            <span aria-hidden="true">
+
+                &times;
+
+            </span>
+
+        </button>
+
+    </div>
+
+
+    <div class="modal-body">
+
+        <div
+            class="alert alert-info"
+            style="
+                border-left:4px solid #17a2b8;
+                border-radius:8px;
+            "
+        >
+
+            <div class="d-flex align-items-center">
+
+                <i
+                    class="mdi mdi-information-outline mr-2"
+                    style="font-size:24px;"
+                ></i>
+
 
                 <div>
 
-                    <h5
-                        class="modal-title font-weight-bold"
-                        id="modalTauxJourLabel"
-                    >
+                    <strong>
 
-                        <i
-                            class="mdi mdi-currency-usd text-success mr-1"
-                        ></i>
+                        Taux actuel
 
-                        Taux du jour
-
-                    </h5>
+                    </strong>
 
 
-                    <small class="text-muted">
+                    <div>
 
-                        Définissez le taux de conversion FC / USD
+                        {% if taux_jour %}
 
-                    </small>
-
-                </div>
-
-
-                <button
-                    type="button"
-                    class="close"
-                    data-dismiss="modal"
-                    aria-label="Fermer"
-                >
-
-                    <span aria-hidden="true">
-
-                        &times;
-
-                    </span>
-
-                </button>
-
-            </div>
-
-
-            <!-- BODY -->
-
-            <div class="modal-body">
-
-
-                <!-- TAUX ACTUEL -->
-
-                <div
-                    class="alert alert-info"
-                    style="
-                        border-left:4px solid #17a2b8;
-                        border-radius:8px;
-                    "
-                >
-
-                    <div class="d-flex align-items-center">
-
-                        <i
-                            class="mdi mdi-information-outline mr-2"
-                            style="font-size:24px;"
-                        ></i>
-
-
-                        <div>
+                            1 USD =
 
                             <strong>
 
-                                Taux actuel
+                                {{ taux_jour.taux_usd|floatformat:2 }} FC
 
                             </strong>
 
+                        {% else %}
 
-                            <div>
+                            <span class="text-warning">
 
-                                {% if taux_jour %}
+                                Aucun taux enregistré aujourd'hui.
 
-                                    1 USD =
+                            </span>
 
-                                    <strong>
-
-                                        {{ taux_jour.taux_usd|floatformat:2 }} FC
-
-                                    </strong>
-
-                                {% else %}
-
-                                    <span class="text-warning">
-
-                                        Aucun taux enregistré aujourd'hui.
-
-                                    </span>
-
-                                {% endif %}
-
-                            </div>
-
-                        </div>
+                        {% endif %}
 
                     </div>
 
                 </div>
-
-
-                <!-- FORMULAIRE -->
-
-                <form
-                    id="formTauxJour"
-                    method="POST"
-                    action="{% url 'enregistrerTauxJour' %}"
-                >
-
-                    {% csrf_token %}
-
-
-                    <div class="form-group">
-
-                        <label
-                            for="taux_usd"
-                            class="font-weight-bold"
-                        >
-
-                            Taux USD du jour
-
-                        </label>
-
-
-                        <div class="input-group">
-
-                            <div class="input-group-prepend">
-
-                                <span class="input-group-text">
-
-                                    1 USD =
-
-                                </span>
-
-                            </div>
-
-
-                            <input
-                                type="text"
-                                class="form-control"
-                                id="taux_usd"
-                                name="taux_usd"
-                                placeholder="Ex : 2850"
-                                value="{% if taux_jour %}{{ taux_jour.taux_usd }}{% endif %}"
-                                autocomplete="off"
-                            />
-
-
-                            <div class="input-group-append">
-
-                                <span class="input-group-text">
-
-                                    FC
-
-                                </span>
-
-                            </div>
-
-                        </div>
-
-
-                        <small class="form-text text-muted">
-
-                            Exemple : si 1 USD = 2 850 FC,
-                            saisissez <strong>2850</strong>.
-
-                        </small>
-
-                    </div>
-
-
-                    <div
-                        id="messageTauxJour"
-                        class="mt-3"
-                        style="display:none;"
-                    ></div>
-
-                </form>
-
-            </div>
-
-
-            <!-- FOOTER -->
-
-            <div class="modal-footer">
-
-                <button
-                    type="button"
-                    class="btn btn-light btn-rounded"
-                    data-dismiss="modal"
-                >
-
-                    Annuler
-
-                </button>
-
-
-                <button
-                    type="button"
-                    class="btn btn-success btn-rounded"
-                    id="btnEnregistrerTaux"
-                >
-
-                    <i
-                        class="mdi mdi-content-save-outline mr-1"
-                    ></i>
-
-                    Enregistrer le taux
-
-                </button>
 
             </div>
 
         </div>
 
+
+        <form
+            id="formTauxJour"
+            method="POST"
+            action="{% url 'enregistrerTauxJour' %}"
+        >
+
+            {% csrf_token %}
+
+
+            <div class="form-group">
+
+                <label
+                    for="taux_usd"
+                    class="font-weight-bold"
+                >
+
+                    Taux USD du jour
+
+                </label>
+
+
+                <div class="input-group">
+
+                    <div class="input-group-prepend">
+
+                        <span class="input-group-text">
+
+                            1 USD =
+
+                        </span>
+
+                    </div>
+
+
+                    <input
+                        type="text"
+                        class="form-control"
+                        id="taux_usd"
+                        name="taux_usd"
+                        placeholder="Ex : 2850"
+                        value="{% if taux_jour %}{{ taux_jour.taux_usd }}{% endif %}"
+                        autocomplete="off"
+                    />
+
+
+                    <div class="input-group-append">
+
+                        <span class="input-group-text">
+
+                            FC
+
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <small class="form-text text-muted">
+
+                    Exemple : si 1 USD = 2 850 FC,
+                    saisissez <strong>2850</strong>.
+
+                </small>
+
+            </div>
+
+
+            <div
+                id="messageTauxJour"
+                class="mt-3"
+                style="display:none;"
+            ></div>
+
+        </form>
+
+    </div>
+
+
+    <div class="modal-footer">
+
+        <button
+            type="button"
+            class="btn btn-light btn-rounded"
+            data-dismiss="modal"
+        >
+
+            Annuler
+
+        </button>
+
+
+        <button
+            type="button"
+            class="btn btn-success btn-rounded"
+            id="btnEnregistrerTaux"
+        >
+
+            <i class="mdi mdi-content-save-outline mr-1"></i>
+
+            Enregistrer le taux
+
+        </button>
+
     </div>
 
 </div>
 
+</div>
+
+</div>
 
 {% endif %}
 
+
+<!-- ===================================================== -->
+<!-- MODAL SUPPRESSION FACTURE -->
 <!-- ===================================================== -->
 
-<!-- JAVASCRIPT TAUX DU JOUR -->
+<div
+    class="modal fade"
+    id="modalSuppressionFacture"
+    tabindex="-1"
+    role="dialog"
+    aria-labelledby="modalSuppressionFactureLabel"
+    aria-hidden="true"
+>
 
+<div
+    class="modal-dialog modal-dialog-centered"
+    role="document"
+>
+
+<div class="modal-content">
+
+
+    <!-- HEADER -->
+
+    <div class="modal-header">
+
+        <div>
+
+            <h5
+                class="modal-title font-weight-bold text-danger"
+                id="modalSuppressionFactureLabel"
+            >
+
+                <i class="mdi mdi-delete-alert-outline mr-1"></i>
+
+                Supprimer la facture
+
+            </h5>
+
+
+            <small class="text-muted">
+
+                Autorisation du manager requise
+
+            </small>
+
+        </div>
+
+
+        <button
+            type="button"
+            class="close"
+            data-dismiss="modal"
+            aria-label="Fermer"
+        >
+
+            <span aria-hidden="true">
+
+                &times;
+
+            </span>
+
+        </button>
+
+    </div>
+
+
+    <!-- BODY -->
+
+    <div class="modal-body">
+
+
+        <div
+            class="alert alert-danger"
+            style="
+                border-left:4px solid #dc3545;
+                border-radius:8px;
+            "
+        >
+
+            <div class="d-flex align-items-start">
+
+                <i
+                    class="mdi mdi-alert-outline mr-2"
+                    style="font-size:25px;"
+                ></i>
+
+
+                <div>
+
+                    <strong>
+
+                        Attention
+
+                    </strong>
+
+
+                    <p class="mb-0 mt-1">
+
+                        Cette opération supprimera la facture
+                        ainsi que tous ses détails.
+
+                        Cette action est irréversible.
+
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- FACTURE -->
+
+        <div
+            class="text-center mb-4"
+        >
+
+            <span class="text-muted">
+
+                Facture
+
+            </span>
+
+
+            <h3
+                class="font-weight-bold mb-0"
+                id="factureSuppressionNumero"
+            >
+
+                #
+
+            </h3>
+
+
+            <small
+                class="text-muted"
+                id="factureSuppressionMontant"
+            ></small>
+
+        </div>
+
+
+        <!-- FORMULAIRE -->
+
+        <form
+            id="formSuppressionFacture"
+            method="POST"
+            action="{% url 'supprimer_facture' %}"
+        >
+
+            {% csrf_token %}
+
+
+            <input
+                type="hidden"
+                name="facture_id"
+                id="suppressionFactureId"
+            />
+
+
+            <div class="form-group">
+
+                <label
+                    for="mot_de_passe_manager"
+                    class="font-weight-bold"
+                >
+
+                    <i class="mdi mdi-lock-outline mr-1"></i>
+
+                    Mot de passe du manager
+
+                </label>
+
+
+                <div class="input-group">
+
+                    <div class="input-group-prepend">
+
+                        <span class="input-group-text">
+
+                            <i class="mdi mdi-key-outline"></i>
+
+                        </span>
+
+                    </div>
+
+
+                    <input
+                        type="password"
+                        class="form-control"
+                        id="mot_de_passe_manager"
+                        name="mot_de_passe"
+                        placeholder="Saisissez le mot de passe du manager"
+                        autocomplete="off"
+                        required
+                    />
+
+                </div>
+
+
+                <small class="form-text text-muted">
+
+                    Le manager n'a pas besoin d'être connecté.
+                    Son mot de passe suffit pour autoriser la suppression.
+
+                </small>
+
+            </div>
+
+
+            <!-- MESSAGE -->
+
+            <div
+                id="messageSuppressionFacture"
+                class="mt-3"
+                style="display:none;"
+            ></div>
+
+        </form>
+
+    </div>
+
+
+    <!-- FOOTER -->
+
+    <div class="modal-footer">
+
+        <button
+            type="button"
+            class="btn btn-light btn-rounded"
+            data-dismiss="modal"
+        >
+
+            <i class="mdi mdi-close mr-1"></i>
+
+            Annuler
+
+        </button>
+
+
+        <button
+            type="button"
+            class="btn btn-danger btn-rounded"
+            id="btnConfirmerSuppression"
+        >
+
+            <i class="mdi mdi-delete-outline mr-1"></i>
+
+            Supprimer définitivement
+
+        </button>
+
+    </div>
+
+</div>
+
+</div>
+
+</div>
+
+
+<!-- ===================================================== -->
+<!-- JAVASCRIPT TAUX DU JOUR -->
 <!-- ===================================================== -->
 
 {% if peut_modifier_taux %}
@@ -1496,30 +1717,26 @@
 
     "use strict";
 
-    /* =====================================================
-       RÉCUPÉRER LES ÉLÉMENTS
-    ===================================================== */
+    const formulaire =
+        document.getElementById(
+            "formTauxJour"
+        );
 
-    const formulaire = document.getElementById(
-        "formTauxJour"
-    );
+    const bouton =
+        document.getElementById(
+            "btnEnregistrerTaux"
+        );
 
-    const bouton = document.getElementById(
-        "btnEnregistrerTaux"
-    );
+    const input =
+        document.getElementById(
+            "taux_usd"
+        );
 
-    const input = document.getElementById(
-        "taux_usd"
-    );
+    const message =
+        document.getElementById(
+            "messageTauxJour"
+        );
 
-    const message = document.getElementById(
-        "messageTauxJour"
-    );
-
-
-    /* =====================================================
-       VÉRIFICATION
-    ===================================================== */
 
     if (
         !formulaire ||
@@ -1527,18 +1744,10 @@
         !input
     ) {
 
-        console.error(
-            "Éléments du formulaire du taux du jour introuvables."
-        );
-
         return;
 
     }
 
-
-    /* =====================================================
-       AFFICHER UN MESSAGE
-    ===================================================== */
 
     function afficherMessage(
         type,
@@ -1563,10 +1772,6 @@
     }
 
 
-    /* =====================================================
-       MASQUER LE MESSAGE
-    ===================================================== */
-
     function masquerMessage() {
 
         if (!message) {
@@ -1582,10 +1787,6 @@
     }
 
 
-    /* =====================================================
-       RESTAURER LE BOUTON
-    ===================================================== */
-
     function restaurerBouton() {
 
         bouton.disabled =
@@ -1598,27 +1799,16 @@
     }
 
 
-    /* =====================================================
-       ENREGISTRER LE TAUX
-    ===================================================== */
-
     function enregistrerTauxJour() {
 
         masquerMessage();
 
 
-        /* =================================================
-           RÉCUPÉRER LE TAUX
-        ================================================= */
+        const taux =
+            input.value
+                .trim()
+                .replace(",", ".");
 
-        const taux = input.value
-            .trim()
-            .replace(",", ".");
-
-
-        /* =================================================
-           TAUX MANQUANT
-        ================================================= */
 
         if (!taux) {
 
@@ -1634,17 +1824,9 @@
         }
 
 
-        /* =================================================
-           CONVERSION NUMÉRIQUE
-        ================================================= */
-
         const tauxNumerique =
             Number(taux);
 
-
-        /* =================================================
-           TAUX INVALIDE
-        ================================================= */
 
         if (
             !Number.isFinite(
@@ -1665,34 +1847,6 @@
         }
 
 
-        /* =================================================
-           CONFIRMATION AVEC CONFIRM NATIF
-        ================================================= */
-
-        const confirmation = window.confirm(
-
-            "Voulez-vous enregistrer ce taux pour aujourd'hui ?\n\n" +
-
-            "1 USD = " +
-
-            tauxNumerique.toLocaleString("fr-FR") +
-
-            " FC"
-
-        );
-
-
-        if (!confirmation) {
-
-            return;
-
-        }
-
-
-        /* =================================================
-           DÉSACTIVER LE BOUTON
-        ================================================= */
-
         bouton.disabled =
             true;
 
@@ -1701,112 +1855,35 @@
             ' Enregistrement...';
 
 
-        /* =================================================
-           CSRF
-        ================================================= */
-
-        const csrfInput =
-            formulaire.querySelector(
-                'input[name="csrfmiddlewaretoken"]'
-            );
-
-
-        if (!csrfInput) {
-
-            restaurerBouton();
-
-            afficherMessage(
-                "danger",
-                "Le jeton de sécurité Django est introuvable."
-            );
-
-            return;
-
-        }
-
-
-        /* =================================================
-           FORM DATA
-        ================================================= */
-
         const formData =
             new FormData(
                 formulaire
             );
 
 
-        /* =================================================
-           ENVOI AJAX
-        ================================================= */
-
         fetch(
-
             formulaire.action,
-
             {
-
                 method: "POST",
-
                 body: formData,
-
+                credentials: "same-origin",
                 headers: {
-
                     "X-Requested-With":
                         "XMLHttpRequest"
-
-                },
-
-                credentials:
-                    "same-origin"
-
+                }
             }
-
         )
-
-
-        /* =================================================
-           RÉPONSE
-        ================================================= */
 
         .then(
             function (response) {
 
-                return response.text();
+                return response.json();
 
             }
         )
 
-
-        /* =================================================
-           TRAITEMENT
-        ================================================= */
-
         .then(
-            function (text) {
-
-                let data;
-
-                try {
-
-                    data =
-                        JSON.parse(
-                            text
-                        );
-
-                }
-
-                catch (error) {
-
-                    throw new Error(
-                        "Le serveur a retourné une réponse invalide."
-                    );
-
-                }
-
-
-                /* =========================================
-                   SUCCÈS
-                ========================================= */
+            function (data) {
 
                 if (
                     data &&
@@ -1814,27 +1891,15 @@
                 ) {
 
                     afficherMessage(
-
                         "success",
-
                         "<strong>Succès !</strong><br>" +
-
                         data.message +
-
                         "<br>" +
-
                         "1 USD = " +
-
                         data.taux +
-
                         " FC"
-
                     );
 
-
-                    /* =====================================
-                       FERMER LE MODAL APRÈS 1,5 SECONDE
-                    ===================================== */
 
                     setTimeout(
                         function () {
@@ -1845,43 +1910,29 @@
                             window.location.reload();
 
                         },
-                        1500
+                        1200
                     );
-
 
                     return;
 
                 }
 
 
-                /* =========================================
-                   ERREUR MÉTIER
-                ========================================= */
-
                 throw new Error(
-
                     data &&
                     data.message
-
                         ? data.message
-
                         : "Le taux n'a pas été enregistré."
-
                 );
 
             }
         )
 
-
-        /* =================================================
-           ERREUR
-        ================================================= */
-
         .catch(
             function (error) {
 
                 console.error(
-                    "Erreur :",
+                    "Erreur taux :",
                     error
                 );
 
@@ -1890,17 +1941,12 @@
 
 
                 afficherMessage(
-
                     "danger",
-
                     "<strong>Erreur :</strong><br>" +
-
                     (
                         error.message ||
-
                         "Impossible de contacter le serveur."
                     )
-
                 );
 
             }
@@ -1909,14 +1955,8 @@
     }
 
 
-    /* =====================================================
-       BOUTON ENREGISTRER
-    ===================================================== */
-
     bouton.addEventListener(
-
         "click",
-
         function (event) {
 
             event.preventDefault();
@@ -1924,18 +1964,11 @@
             enregistrerTauxJour();
 
         }
-
     );
 
-
-    /* =====================================================
-       FORMULAIRE
-    ===================================================== */
 
     formulaire.addEventListener(
-
         "submit",
-
         function (event) {
 
             event.preventDefault();
@@ -1943,26 +1976,6 @@
             enregistrerTauxJour();
 
         }
-
-    );
-
-
-    /* =====================================================
-       NETTOYER À L'OUVERTURE DU MODAL
-    ===================================================== */
-
-    $("#modalTauxJour").on(
-
-        "shown.bs.modal",
-
-        function () {
-
-            masquerMessage();
-
-            input.focus();
-
-        }
-
     );
 
 
@@ -1972,4 +1985,593 @@
 
 {% endif %}
 
+
+<!-- ===================================================== -->
+<!-- JAVASCRIPT SUPPRESSION FACTURE -->
+<!-- ===================================================== -->
+
+<script>
+
+(function () {
+
+    "use strict";
+
+
+    console.log(
+        "JavaScript suppression facture chargé."
+    );
+
+
+    /* ===================================================== */
+    /* RÉCUPÉRATION DES ÉLÉMENTS */
+    /* ===================================================== */
+
+    const modalElement =
+        document.getElementById(
+            "modalSuppressionFacture"
+        );
+
+    const formulaire =
+        document.getElementById(
+            "formSuppressionFacture"
+        );
+
+    const inputFacture =
+        document.getElementById(
+            "suppressionFactureId"
+        );
+
+    const inputPassword =
+        document.getElementById(
+            "mot_de_passe_manager"
+        );
+
+    const boutonSuppression =
+        document.getElementById(
+            "btnConfirmerSuppression"
+        );
+
+    const message =
+        document.getElementById(
+            "messageSuppressionFacture"
+        );
+
+    const numeroFacture =
+        document.getElementById(
+            "factureSuppressionNumero"
+        );
+
+    const montantFacture =
+        document.getElementById(
+            "factureSuppressionMontant"
+        );
+
+
+    /* ===================================================== */
+    /* VÉRIFICATION */
+    /* ===================================================== */
+
+    if (
+        !modalElement ||
+        !formulaire ||
+        !inputFacture ||
+        !inputPassword ||
+        !boutonSuppression
+    ) {
+
+        console.error(
+            "Éléments du modal de suppression introuvables."
+        );
+
+        return;
+
+    }
+
+
+    /* ===================================================== */
+    /* AFFICHER MESSAGE */
+    /* ===================================================== */
+
+    function afficherMessage(
+        type,
+        texte
+    ) {
+
+        if (!message) {
+            return;
+        }
+
+
+        message.className =
+            "alert alert-" +
+            type +
+            " mt-3";
+
+
+        message.innerHTML =
+            texte;
+
+
+        message.style.display =
+            "block";
+
+    }
+
+
+    /* ===================================================== */
+    /* MASQUER MESSAGE */
+    /* ===================================================== */
+
+    function masquerMessage() {
+
+        if (!message) {
+            return;
+        }
+
+
+        message.style.display =
+            "none";
+
+
+        message.innerHTML =
+            "";
+
+    }
+
+
+    /* ===================================================== */
+    /* RESTAURER BOUTON */
+    /* ===================================================== */
+
+    function restaurerBouton() {
+
+        boutonSuppression.disabled =
+            false;
+
+
+        boutonSuppression.innerHTML =
+            '<i class="mdi mdi-delete-outline mr-1"></i>' +
+            ' Supprimer définitivement';
+
+    }
+
+
+    /* ===================================================== */
+    /* OUVERTURE DU MODAL */
+    /* ===================================================== */
+
+    document
+        .querySelectorAll(
+            ".btn-supprimer-facture"
+        )
+        .forEach(
+            function (bouton) {
+
+                bouton.addEventListener(
+                    "click",
+                    function () {
+
+                        const factureId =
+                            bouton.dataset.factureId;
+
+
+                        const factureTotal =
+                            bouton.dataset.factureTotal;
+
+
+                        console.log(
+                            "Facture sélectionnée :",
+                            factureId
+                        );
+
+
+                        inputFacture.value =
+                            factureId || "";
+
+
+                        numeroFacture.textContent =
+                            "#" +
+                            (
+                                factureId ||
+                                ""
+                            );
+
+
+                        if (
+                            factureTotal &&
+                            factureTotal !== "None"
+                        ) {
+
+                            montantFacture.textContent =
+                                "Total TTC : " +
+                                factureTotal +
+                                " FC";
+
+                        }
+
+                        else {
+
+                            montantFacture.textContent =
+                                "";
+
+                        }
+
+
+                        inputPassword.value =
+                            "";
+
+
+                        masquerMessage();
+
+
+                        restaurerBouton();
+
+                    }
+                );
+
+            }
+        );
+
+
+    /* ===================================================== */
+    /* FOCUS SUR MOT DE PASSE */
+    /* ===================================================== */
+
+    if (
+        window.jQuery &&
+        typeof $.fn.modal === "function"
+    ) {
+
+        $("#modalSuppressionFacture").on(
+            "shown.bs.modal",
+            function () {
+
+                inputPassword.focus();
+
+            }
+        );
+
+    }
+
+
+    /* ===================================================== */
+    /* FERMETURE DU MODAL */
+    /* ===================================================== */
+
+    if (
+        window.jQuery &&
+        typeof $.fn.modal === "function"
+    ) {
+
+        $("#modalSuppressionFacture").on(
+            "hidden.bs.modal",
+            function () {
+
+                inputFacture.value =
+                    "";
+
+                inputPassword.value =
+                    "";
+
+                masquerMessage();
+
+                restaurerBouton();
+
+            }
+        );
+
+    }
+
+
+    /* ===================================================== */
+    /* SUPPRESSION */
+    /* ===================================================== */
+
+    boutonSuppression.addEventListener(
+        "click",
+        function (event) {
+
+            event.preventDefault();
+
+
+            console.log(
+                "Bouton supprimer cliqué."
+            );
+
+
+            masquerMessage();
+
+
+            const factureId =
+                inputFacture.value.trim();
+
+
+            const motDePasse =
+                inputPassword.value.trim();
+
+
+            /* ============================================= */
+            /* FACTURE */
+            /* ============================================= */
+
+            if (!factureId) {
+
+                afficherMessage(
+                    "danger",
+                    "La facture à supprimer est introuvable."
+                );
+
+                return;
+
+            }
+
+
+            /* ============================================= */
+            /* MOT DE PASSE */
+            /* ============================================= */
+
+            if (!motDePasse) {
+
+                afficherMessage(
+                    "warning",
+                    "Veuillez renseigner le mot de passe du manager."
+                );
+
+
+                inputPassword.focus();
+
+
+                return;
+
+            }
+
+
+            /* ============================================= */
+            /* CSRF */
+            /* ============================================= */
+
+            const csrfInput =
+                formulaire.querySelector(
+                    'input[name="csrfmiddlewaretoken"]'
+                );
+
+
+            if (!csrfInput) {
+
+                afficherMessage(
+                    "danger",
+                    "Le jeton CSRF Django est introuvable."
+                );
+
+
+                return;
+
+            }
+
+
+            /* ============================================= */
+            /* CHARGEMENT */
+            /* ============================================= */
+
+            boutonSuppression.disabled =
+                true;
+
+
+            boutonSuppression.innerHTML =
+                '<i class="mdi mdi-loading mdi-spin mr-1"></i>' +
+                ' Vérification...';
+
+
+            /* ============================================= */
+            /* FORM DATA */
+            /* ============================================= */
+
+            const formData =
+                new FormData();
+
+
+            formData.append(
+                "facture_id",
+                factureId
+            );
+
+
+            formData.append(
+                "mot_de_passe",
+                motDePasse
+            );
+
+
+            formData.append(
+                "csrfmiddlewaretoken",
+                csrfInput.value
+            );
+
+
+            /* ============================================= */
+            /* REQUÊTE */
+            /* ============================================= */
+
+            fetch(
+                formulaire.action,
+                {
+                    method: "POST",
+                    body: formData,
+                    credentials: "same-origin",
+                    headers: {
+                        "X-Requested-With":
+                            "XMLHttpRequest"
+                    }
+                }
+            )
+
+            .then(
+                async function (response) {
+
+                    const texte =
+                        await response.text();
+
+
+                    console.log(
+                        "Réponse serveur :",
+                        texte
+                    );
+
+
+                    let data;
+
+
+                    try {
+
+                        data =
+                            JSON.parse(
+                                texte
+                            );
+
+                    }
+
+                    catch (error) {
+
+                        throw new Error(
+                            "Réponse invalide du serveur."
+                        );
+
+                    }
+
+
+                    if (
+                        !response.ok
+                    ) {
+
+                        throw new Error(
+                            data.message ||
+                            "Erreur serveur."
+                        );
+
+                    }
+
+
+                    return data;
+
+                }
+            )
+
+            .then(
+                function (data) {
+
+                    console.log(
+                        "Données reçues :",
+                        data
+                    );
+
+
+                    if (
+                        data &&
+                        data.success === true
+                    ) {
+
+                        afficherMessage(
+                            "success",
+                            "<strong>Suppression réussie.</strong><br>" +
+                            data.message
+                        );
+
+
+                        boutonSuppression.disabled =
+                            true;
+
+
+                        boutonSuppression.innerHTML =
+                            '<i class="mdi mdi-check mr-1"></i>' +
+                            ' Supprimée';
+
+
+                        setTimeout(
+                            function () {
+
+                                window.location.reload();
+
+                            },
+                            1000
+                        );
+
+
+                        return;
+
+                    }
+
+
+                    throw new Error(
+                        data &&
+                        data.message
+                            ? data.message
+                            : "La suppression n'a pas été effectuée."
+                    );
+
+                }
+            )
+
+            .catch(
+                function (error) {
+
+                    console.error(
+                        "Erreur suppression facture :",
+                        error
+                    );
+
+
+                    restaurerBouton();
+
+
+                    afficherMessage(
+                        "danger",
+                        "<strong>Suppression refusée.</strong><br>" +
+                        (
+                            error.message ||
+                            "Impossible de contacter le serveur."
+                        )
+                    );
+
+
+                    inputPassword.focus();
+
+
+                    inputPassword.select();
+
+                }
+            );
+
+        }
+    );
+
+
+    /* ===================================================== */
+    /* TOUCHE ENTRÉE */
+    /* ===================================================== */
+
+    inputPassword.addEventListener(
+        "keydown",
+        function (event) {
+
+            if (
+                event.key === "Enter"
+            ) {
+
+                event.preventDefault();
+
+
+                boutonSuppression.click();
+
+            }
+
+        }
+    );
+
+
+})();
+
+</script>
+
+
 {% endblock %}
+

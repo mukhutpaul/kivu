@@ -13,7 +13,7 @@ from django.contrib.auth import authenticate, login as auth_login, logout
 from django.contrib import messages
 
 from django.db import transaction
-from django.db.models import Sum, Avg, Count, Q, F
+from django.db.models import Sum, Avg, Count, Q, F, Prefetch
 from django.db.models.functions import Coalesce
 from django.utils import timezone
 from django.http import JsonResponse
@@ -4264,47 +4264,64 @@ def statut_peremption(date_peremption):
 @login_required
 def stock(request):
 
-    # ==============================
+    # ==========================================================
     # RECHERCHE
-    # ==============================
+    # ==========================================================
 
     rech = request.GET.get(
         "rech",
         ""
     ).strip()
 
-    # ==============================
+    # ==========================================================
+    # DATE ACTUELLE
+    # ==========================================================
+
+    aujourd_hui = date.today()
+
+    # ==========================================================
     # PRODUITS
-    # ==============================
+    # ==========================================================
 
     produits = (
         Produit.objects
         .select_related("appartement")
-        .prefetch_related("lots")
+        .prefetch_related(
+            Prefetch(
+                "lots",
+                queryset=Lot.objects.order_by(
+                    "date_peremption"
+                )
+            )
+        )
         .order_by("nom")
     )
 
-    # ==============================
+    # ==========================================================
     # FILTRE DE RECHERCHE
-    # ==============================
+    # ==========================================================
 
     if rech:
 
         produits = produits.filter(
             Q(nom__icontains=rech)
-            | Q(appartement__nom__icontains=rech)
-            | Q(lots__numero__icontains=rech)
+            |
+            Q(appartement__nom__icontains=rech)
+            |
+            Q(lots__numero__icontains=rech)
         ).distinct()
 
-    # ==============================
-    # DATE ACTUELLE
-    # ==============================
+    # ==========================================================
+    # NOMBRE TOTAL DE PRODUITS
+    # ==========================================================
 
-    aujourd_hui = date.today()
+    total_produits = (
+        Produit.objects.count()
+    )
 
-    # ==============================
+    # ==========================================================
     # STOCK TOTAL
-    # ==============================
+    # ==========================================================
 
     total_stock = (
         Produit.objects.aggregate(
@@ -4315,9 +4332,9 @@ def stock(request):
         )["total"]
     )
 
-    # ==============================
+    # ==========================================================
     # PRODUITS EN STOCK FAIBLE
-    # ==============================
+    # ==========================================================
 
     produits_alerte = (
         Produit.objects
@@ -4327,9 +4344,9 @@ def stock(request):
         .count()
     )
 
-    # ==============================
+    # ==========================================================
     # LOTS PÉRIMÉS
-    # ==============================
+    # ==========================================================
 
     lots_perimes = (
         Lot.objects
@@ -4340,35 +4357,28 @@ def stock(request):
         .count()
     )
 
-    # ==============================
+    # ==========================================================
     # VALEUR DU STOCK
     #
     # quantité × prix de vente TTC
-    # ==============================
+    #
+    # CALCUL DIRECTEMENT EN BASE DE DONNÉES
+    # ==========================================================
 
-    valeur_stock = Decimal("0.00")
+    valeur_stock = (
+        Produit.objects.aggregate(
+            total=Coalesce(
+                Sum(
+                    F("quantite") * F("pu")
+                ),
+                Decimal("0.00")
+            )
+        )["total"]
+    )
 
-    produits_valeur = Produit.objects.all()
-
-    for produit in produits_valeur:
-
-        quantite = (
-            produit.quantite
-            or Decimal("0.00")
-        )
-
-        prix = (
-            produit.pu
-            or Decimal("0.00")
-        )
-
-        valeur_stock += (
-            quantite * prix
-        )
-
-    # ==============================
+    # ==========================================================
     # CHIFFRE D'AFFAIRES TTC
-    # ==============================
+    # ==========================================================
 
     chiffre_affaires = (
         Facture.objects
@@ -4383,9 +4393,9 @@ def stock(request):
         )["total"]
     )
 
-    # ==============================
+    # ==========================================================
     # CHIFFRE D'AFFAIRES HT
-    # ==============================
+    # ==========================================================
 
     chiffre_affaires_ht = (
         Facture.objects
@@ -4400,9 +4410,9 @@ def stock(request):
         )["total"]
     )
 
-    # ==============================
+    # ==========================================================
     # TVA COLLECTÉE
-    # ==============================
+    # ==========================================================
 
     tva_collectee = (
         Facture.objects
@@ -4417,54 +4427,61 @@ def stock(request):
         )["total"]
     )
 
-    # ==============================
-    # PRÉPARATION DES DONNÉES
-    # ==============================
-
-    donnees = []
-
-    for produit in produits:
-
-        lots_data = []
-
-        for lot in produit.lots.all().order_by(
-            "date_peremption"
-        ):
-
-            statut = statut_peremption(
-                lot.date_peremption
-            )
-
-            lots_data.append({
-                "lot": lot,
-                "statut": statut,
-            })
-
-        donnees.append({
-            "produit": produit,
-            "lots": lots_data,
-        })
-
-    # ==============================
+    # ==========================================================
     # PAGINATION
-    # ==============================
+    #
+    # IMPORTANT :
+    # La pagination est maintenant faite AVANT la boucle.
+    # Django ne récupère donc que les produits de la page.
+    # ==========================================================
 
     paginator = Paginator(
-        donnees,
+        produits,
         12
     )
 
     page_number = request.GET.get(
-        "page"
+        "page",
+        1
     )
 
     page_obj = paginator.get_page(
         page_number
     )
 
-    # ==============================
+    # ==========================================================
+    # PRÉPARATION DES DONNÉES DE LA PAGE
+    # ==========================================================
+
+    donnees = []
+
+    for produit in page_obj.object_list:
+
+        lots_data = []
+
+        for lot in produit.lots.all():
+
+            statut = statut_peremption(
+                lot.date_peremption
+            )
+
+            lots_data.append(
+                {
+                    "lot": lot,
+                    "statut": statut,
+                }
+            )
+
+        donnees.append(
+            {
+                "produit": produit,
+                "lots": lots_data,
+            }
+        )
+
+    # ==========================================================
     # RENDU
-    # ==============================
+    # ==========================================================
 
     return render(
         request,
@@ -4472,13 +4489,15 @@ def stock(request):
         {
             "page_obj": page_obj,
 
-            "donnees": page_obj.object_list,
+            "donnees": donnees,
 
             "rech": rech,
 
-            # ======================
+            # ==================================================
             # STATISTIQUES STOCK
-            # ======================
+            # ==================================================
+
+            "total_produits": total_produits,
 
             "total_stock": total_stock,
 
@@ -4487,11 +4506,12 @@ def stock(request):
             "produits_alerte": produits_alerte,
 
             "lots_perimes": lots_perimes,
+
             "lstock": "active",
 
-            # ======================
+            # ==================================================
             # CHIFFRE D'AFFAIRES
-            # ======================
+            # ==================================================
 
             "chiffre_affaires": chiffre_affaires,
 
@@ -4502,8 +4522,6 @@ def stock(request):
             "taux_tva": TVA_TAUX,
         }
     )
-
-
 # ==========================================================
 # ENTRÉE STOCK
 # ==========================================================
@@ -5001,29 +5019,52 @@ def mouvements_stock(request):
         ""
     ).strip()
 
+    # ======================================================
+    # REQUÊTE PRINCIPALE
+    # ======================================================
+
     mouvements = (
         MouvementStock.objects
         .select_related(
             "produit",
+            "produit__appartement",
             "lot",
             "user",
         )
-        .order_by(
-            "-createdAt",
-            "-id"
-        )
     )
+
+    # ======================================================
+    # RECHERCHE
+    # ======================================================
 
     if rech:
 
         mouvements = mouvements.filter(
             Q(produit__nom__icontains=rech)
-            | Q(lot__numero__icontains=rech)
-            | Q(type__icontains=rech)
-            | Q(user__username__icontains=rech)
-            | Q(user__noms__icontains=rech)
-            | Q(motif__icontains=rech)
-        ).distinct()
+            |
+            Q(lot__numero__icontains=rech)
+            |
+            Q(type__icontains=rech)
+            |
+            Q(user__username__icontains=rech)
+            |
+            Q(user__noms__icontains=rech)
+            |
+            Q(motif__icontains=rech)
+        )
+
+    # ======================================================
+    # TRI
+    # ======================================================
+
+    mouvements = mouvements.order_by(
+        "-createdAt",
+        "-id"
+    )
+
+    # ======================================================
+    # PAGINATION
+    # ======================================================
 
     paginator = Paginator(
         mouvements,
@@ -5031,16 +5072,32 @@ def mouvements_stock(request):
     )
 
     page_number = request.GET.get(
-        "page"
+        "page",
+        1
     )
 
     page_obj = paginator.get_page(
         page_number
     )
 
+    # ======================================================
+    # NUMÉROS DE PAGES COMPACTS
+    # ======================================================
+
+    page_numbers = paginator.get_elided_page_range(
+        page_obj.number,
+        on_each_side=2,
+        on_ends=1
+    )
+
+    # ======================================================
+    # CONTEXTE
+    # ======================================================
+
     context = {
         "mouvements": page_obj.object_list,
         "page_obj": page_obj,
+        "page_numbers": page_numbers,
         "total_mouvements": paginator.count,
         "rech": rech,
         "lmouvements": "active",
@@ -5080,12 +5137,16 @@ def produits_peremption(request):
     # LOTS ARRIVANT À EXPIRATION
     # ==============================
 
-    lots = Lot.objects.select_related(
-        "produit",
-        "produit__appartement"
-    ).filter(
-        quantite__gt=0,
-        date_peremption__lte=limite_4_mois
+    lots = (
+        Lot.objects
+        .select_related(
+            "produit",
+            "produit__appartement"
+        )
+        .filter(
+            quantite__gt=0,
+            date_peremption__lte=limite_4_mois
+        )
     )
 
     # ==============================
@@ -5095,9 +5156,17 @@ def produits_peremption(request):
     if rech:
 
         lots = lots.filter(
-            Q(produit__nom__icontains=rech)
-            | Q(produit__appartement__nom__icontains=rech)
-            | Q(numero__icontains=rech)
+            Q(
+                produit__nom__icontains=rech
+            )
+            |
+            Q(
+                produit__appartement__nom__icontains=rech
+            )
+            |
+            Q(
+                numero__icontains=rech
+            )
         )
 
     # ==============================
@@ -5121,12 +5190,31 @@ def produits_peremption(request):
     ).count()
 
     # ==============================
+    # PAGINATION DIRECTE DU QUERYSET
+    # ==============================
+
+    paginator = Paginator(
+        lots,
+        50
+    )
+
+    page_number = request.GET.get(
+        "page",
+        1
+    )
+
+    page_obj = paginator.get_page(
+        page_number
+    )
+
+    # ==============================
     # PRÉPARATION DES DONNÉES
+    # UNIQUEMENT POUR LA PAGE COURANTE
     # ==============================
 
     donnees = []
 
-    for lot in lots:
+    for lot in page_obj.object_list:
 
         jours_restants = (
             lot.date_peremption
@@ -5145,31 +5233,16 @@ def produits_peremption(request):
 
             classe = "surveiller"
 
-        donnees.append({
-            "lot": lot,
-            "produit": lot.produit,
-            "appartement": lot.produit.appartement,
-            "date_peremption": lot.date_peremption,
-            "jours_restants": jours_restants,
-            "classe": classe,
-        })
-
-    # ==============================
-    # PAGINATION
-    # ==============================
-
-    paginator = Paginator(
-        donnees,
-        50
-    )
-
-    page_number = request.GET.get(
-        "page"
-    )
-
-    page_obj = paginator.get_page(
-        page_number
-    )
+        donnees.append(
+            {
+                "lot": lot,
+                "produit": lot.produit,
+                "appartement": lot.produit.appartement,
+                "date_peremption": lot.date_peremption,
+                "jours_restants": jours_restants,
+                "classe": classe,
+            }
+        )
 
     # ==============================
     # RENDU
@@ -5179,7 +5252,7 @@ def produits_peremption(request):
         request,
         "stock/peremption.html",
         {
-            "produits_peremption": page_obj.object_list,
+            "produits_peremption": donnees,
             "page_obj": page_obj,
             "total_peremption": total_peremption,
             "total_perimes": total_perimes,
@@ -7013,3 +7086,205 @@ def enregistrerTauxJour(request):
             "created": created
         }
     )
+    
+    
+
+@login_required
+def recherche_produit_stock(request):
+
+    terme = request.GET.get(
+        "q",
+        ""
+    ).strip()
+
+    produits = (
+        Produit.objects
+        .select_related("appartement")
+        .order_by("nom")
+    )
+
+    if terme:
+
+        produits = produits.filter(
+            Q(nom__icontains=terme)
+            |
+            Q(code_barre__icontains=terme)
+        )
+
+    produits = produits[:20]
+
+    results = []
+
+    for produit in produits:
+
+        results.append(
+            {
+                "id": produit.id,
+                "text": produit.nom,
+            }
+        )
+
+    return JsonResponse(
+        {
+            "results": results
+        }
+    )
+    
+    
+
+@login_required(login_url="sign_in")
+def supprimer_facture(request):
+
+    if request.method != "POST":
+
+        return JsonResponse(
+            {
+                "success": False,
+                "message": "Méthode non autorisée."
+            },
+            status=405
+        )
+
+    facture_id = request.POST.get(
+        "facture_id",
+        ""
+    ).strip()
+
+    mot_de_passe = request.POST.get(
+        "mot_de_passe",
+        ""
+    )
+
+    # ==================================================
+    # VALIDATION
+    # ==================================================
+
+    if not facture_id:
+
+        return JsonResponse(
+            {
+                "success": False,
+                "message": "Facture introuvable."
+            },
+            status=400
+        )
+
+    if not mot_de_passe:
+
+        return JsonResponse(
+            {
+                "success": False,
+                "message":
+                    "Veuillez saisir le mot de passe du Manager."
+            },
+            status=400
+        )
+
+    # ==================================================
+    # RECHERCHER LES UTILISATEURS
+    # AYANT LE PROFIL MANAGER (PROFILE ID = 1)
+    # ==================================================
+
+    managers = User.objects.filter(
+        profile_id=1,
+        is_active=True
+    )
+
+    if not managers.exists():
+
+        return JsonResponse(
+            {
+                "success": False,
+                "message":
+                    "Aucun utilisateur avec le profil Manager "
+                    "n'a été trouvé."
+            },
+            status=404
+        )
+
+    # ==================================================
+    # VÉRIFICATION DU MOT DE PASSE
+    # ==================================================
+
+    manager_valide = None
+
+    for manager in managers:
+
+        if manager.check_password(
+            mot_de_passe
+        ):
+
+            manager_valide = manager
+
+            break
+
+    # ==================================================
+    # MOT DE PASSE INCORRECT
+    # ==================================================
+
+    if manager_valide is None:
+
+        return JsonResponse(
+            {
+                "success": False,
+                "message":
+                    "Le mot de passe du Manager est incorrect."
+            },
+            status=403
+        )
+
+    # ==================================================
+    # RÉCUPÉRER LA FACTURE
+    # ==================================================
+
+    try:
+
+        facture = Facture.objects.get(
+            id=facture_id
+        )
+
+    except Facture.DoesNotExist:
+
+        return JsonResponse(
+            {
+                "success": False,
+                "message":
+                    "Cette facture n'existe pas."
+            },
+            status=404
+        )
+
+    # ==================================================
+    # SUPPRESSION
+    # ==================================================
+
+    try:
+
+        with transaction.atomic():
+
+            Detail_facture.objects.filter(
+                facture=facture
+            ).delete()
+
+            facture.delete()
+
+        return JsonResponse(
+            {
+                "success": True,
+                "message":
+                    f"La facture #{facture_id} "
+                    "a été supprimée avec succès."
+            }
+        )
+
+    except Exception as e:
+
+        return JsonResponse(
+            {
+                "success": False,
+                "message":
+                    "Erreur lors de la suppression : "
+                    + str(e)
+            },
+            status=500
+        )
