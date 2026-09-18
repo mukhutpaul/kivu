@@ -2120,24 +2120,6 @@ def deletedetailFacture(request, id):
     # ==========================================================
     # RECHERCHER LES UTILISATEURS AYANT LE PROFIL MANAGER
     # ==========================================================
-    #
-    # Ton modèle utilise :
-    #
-    # profile = models.ForeignKey(Profile, ...)
-    #
-    # et Profile contient :
-    #
-    # name = models.CharField(...)
-    #
-    # On utilise donc :
-    #
-    # profile__name__iexact="MANAGER"
-    #
-    # iexact permet d'accepter :
-    # MANAGER
-    # Manager
-    # manager
-    # ==========================================================
 
     managers = User.objects.filter(
         profile__name__iexact="MANAGER",
@@ -2155,6 +2137,7 @@ def deletedetailFacture(request, id):
         if manager.check_password(password):
 
             manager_authorise = manager
+
             break
 
     # ==========================================================
@@ -2181,38 +2164,176 @@ def deletedetailFacture(request, id):
     produit_nom = str(df.produit)
 
     # ==========================================================
-    # SUPPRESSION DU PRODUIT
+    # SUPPRESSION DU DÉTAIL
     # ==========================================================
 
     df.delete()
 
     # ==========================================================
-    # MESSAGE DE SUCCÈS
+    # RECALCULER LES TOTAUX DE LA FACTURE
     # ==========================================================
 
-    messages.success(
-        request,
-        (
-            f"Le produit « {produit_nom} » "
-            "a été supprimé de la facture."
-        )
+    from decimal import Decimal
+
+    from django.db.models import Sum
+
+    TVA = Decimal("0.16")
+
+    # ----------------------------------------------------------
+    # SOMME DES TOTAUX DES LIGNES RESTANTES
+    # ----------------------------------------------------------
+
+    resultat = Detail_facture.objects.filter(
+        facture=dt
+    ).aggregate(
+        total_ht=Sum("total")
+    )
+
+    total_ht = resultat["total_ht"] or Decimal("0")
+
+    # ----------------------------------------------------------
+    # CALCUL TVA
+    # ----------------------------------------------------------
+
+    total_tva = (
+        total_ht * TVA
+    )
+
+    # ----------------------------------------------------------
+    # CALCUL TOTAL TTC
+    # ----------------------------------------------------------
+
+    total_ttc = (
+        total_ht + total_tva
+    )
+
+    # ----------------------------------------------------------
+    # ARRONDIR À 2 DÉCIMALES
+    # ----------------------------------------------------------
+
+    total_ht = total_ht.quantize(
+        Decimal("0.01")
+    )
+
+    total_tva = total_tva.quantize(
+        Decimal("0.01")
+    )
+
+    total_ttc = total_ttc.quantize(
+        Decimal("0.01")
     )
 
     # ==========================================================
-    # RÉPONSE JSON POUR LE MODAL JAVASCRIPT
+    # ENREGISTRER LES NOUVEAUX TOTAUX DANS LA FACTURE
+    # ==========================================================
+
+    dt.total_ht = total_ht
+
+    dt.total_tva = total_tva
+
+    dt.total_ttc = total_ttc
+
+    dt.save(
+        update_fields=[
+            "total_ht",
+            "total_tva",
+            "total_ttc"
+        ]
+    )
+
+    # ==========================================================
+    # COMPTER LES PRODUITS RESTANTS
+    # ==========================================================
+
+    compte = Detail_facture.objects.filter(
+        facture=dt
+    ).count()
+
+    # ==========================================================
+    # CALCUL ÉQUIVALENT USD
+    # ==========================================================
+    #
+    # On essaie de récupérer le taux du jour.
+    # Si ton projet utilise un autre système pour le taux,
+    # cette partie pourra être adaptée.
+    # ==========================================================
+
+    total_usd = None
+
+    try:
+
+        taux_usd = Decimal(
+            str(
+                request.session.get(
+                    "taux_usd",
+                    "0"
+                )
+            )
+        )
+
+        if taux_usd > 0:
+
+            total_usd = (
+                total_ttc / taux_usd
+            ).quantize(
+                Decimal("0.01")
+            )
+
+    except (
+        TypeError,
+        ValueError,
+        ArithmeticError
+    ):
+
+        total_usd = None
+
+    # ==========================================================
+    # MESSAGE DE SUCCÈS
+    # ==========================================================
+
+    message = (
+        f"Le produit « {produit_nom} » "
+        "a été supprimé de la facture."
+    )
+
+    messages.success(
+        request,
+        message
+    )
+
+    # ==========================================================
+    # RÉPONSE JSON POUR AJAX
     # ==========================================================
 
     return JsonResponse(
         {
             "success": True,
-            "message": (
-                f"Le produit « {produit_nom} » "
-                "a été supprimé de la facture."
+
+            "message": message,
+
+            "facture_id": id_facture,
+
+            "total_ht": str(
+                total_ht
             ),
-            "facture_id": id_facture
+
+            "total_tva": str(
+                total_tva
+            ),
+
+            "total_ttc": str(
+                total_ttc
+            ),
+
+            "total_usd": (
+                str(total_usd)
+                if total_usd is not None
+                else None
+            ),
+
+            "compte": compte
         }
     )
-
 
 @login_required(login_url="sign_in")
 def addDetailFacture(request):
@@ -2249,13 +2370,17 @@ def addDetailFacture(request):
     # =========================================================
 
     try:
-        qte = Decimal(qte_str or "1")
+
+        qte = Decimal(
+            qte_str or "1"
+        )
 
     except (
         InvalidOperation,
         TypeError,
         ValueError
     ):
+
         messages.error(
             request,
             "La quantité saisie est invalide."
@@ -2266,6 +2391,7 @@ def addDetailFacture(request):
         )
 
     if qte <= 0:
+
         messages.error(
             request,
             "La quantité doit être supérieure à zéro."
@@ -2297,19 +2423,15 @@ def addDetailFacture(request):
     )
 
     # =========================================================
-    # IDENTIFIER LE TYPE D'AJOUT
-    # =========================================================
-
-    scan_code = bool(code_barre)
-
-    # =========================================================
     # RÉCUPÉRER LE PRODUIT
+    #
+    # SCANNER OU FORMULAIRE NORMAL
     # =========================================================
 
-    if scan_code:
+    if code_barre:
 
         # -----------------------------------------------------
-        # RECHERCHE DIRECTE PAR CODE-BARRES
+        # AJOUT PAR SCANNER
         # -----------------------------------------------------
 
         try:
@@ -2339,7 +2461,7 @@ def addDetailFacture(request):
     else:
 
         # -----------------------------------------------------
-        # RECHERCHE MANUELLE
+        # AJOUT PAR FORMULAIRE NORMAL
         # -----------------------------------------------------
 
         if not produit_id:
@@ -2407,7 +2529,10 @@ def addDetailFacture(request):
 
             messages.error(
                 request,
-                "Cette facture est déjà validée et ne peut plus être modifiée."
+                (
+                    "Cette facture est déjà validée "
+                    "et ne peut plus être modifiée."
+                )
             )
 
             return redirect(
@@ -2415,12 +2540,31 @@ def addDetailFacture(request):
             )
 
         # =====================================================
-        # PRIX TTC
+        # PRIX TTC DU PRODUIT
         # =====================================================
 
-        pu_ttc = Decimal(
-            pro.pu or "0.00"
-        ).quantize(
+        try:
+
+            pu_ttc = Decimal(
+                str(pro.pu or "0")
+            )
+
+        except (
+            InvalidOperation,
+            TypeError,
+            ValueError
+        ):
+
+            messages.error(
+                request,
+                f"Le prix du produit « {pro.nom} » est invalide."
+            )
+
+            return redirect(
+                f"/detaiFacture/{fact.id}"
+            )
+
+        pu_ttc = pu_ttc.quantize(
             Decimal("0.01"),
             rounding=ROUND_HALF_UP
         )
@@ -2437,24 +2581,30 @@ def addDetailFacture(request):
             )
 
         # =====================================================
-        # CALCUL TVA
+        # TVA
         # =====================================================
 
         taux_tva = TVA_TAUX
+
+        # -----------------------------------------------------
+        # LE PRIX DU PRODUIT EST TTC
+        #
+        # On récupère donc HT + TVA depuis le TTC.
+        # -----------------------------------------------------
 
         pu_ht, tva_unitaire = calcul_tva_depuis_ttc(
             pu_ttc
         )
 
         pu_ht = Decimal(
-            pu_ht or "0.00"
+            str(pu_ht or "0")
         ).quantize(
             Decimal("0.01"),
             rounding=ROUND_HALF_UP
         )
 
         tva_unitaire = Decimal(
-            tva_unitaire or "0.00"
+            str(tva_unitaire or "0")
         ).quantize(
             Decimal("0.01"),
             rounding=ROUND_HALF_UP
@@ -2483,7 +2633,9 @@ def addDetailFacture(request):
         if detail_existant:
 
             ancienne_qte = Decimal(
-                detail_existant.quantite or "0"
+                str(
+                    detail_existant.quantite or "0"
+                )
             )
 
         # =====================================================
@@ -2496,8 +2648,6 @@ def addDetailFacture(request):
 
         # =====================================================
         # STOCK DISPONIBLE
-        #
-        # UNE SEULE AGRÉGATION POUR CE PRODUIT
         # =====================================================
 
         stock_disponible = (
@@ -2516,7 +2666,9 @@ def addDetailFacture(request):
         )
 
         stock_disponible = Decimal(
-            stock_disponible or "0"
+            str(
+                stock_disponible or "0"
+            )
         )
 
         # =====================================================
@@ -2552,93 +2704,7 @@ def addDetailFacture(request):
             )
 
         # =====================================================
-        # MONTANTS DE LA NOUVELLE LIGNE
-        # =====================================================
-
-        nouveau_total_ht = (
-            pu_ht * nouvelle_qte
-        ).quantize(
-            Decimal("0.01"),
-            rounding=ROUND_HALF_UP
-        )
-
-        nouveau_total_tva = (
-            tva_unitaire * nouvelle_qte
-        ).quantize(
-            Decimal("0.01"),
-            rounding=ROUND_HALF_UP
-        )
-
-        nouveau_total_ttc = (
-            pu_ttc * nouvelle_qte
-        ).quantize(
-            Decimal("0.01"),
-            rounding=ROUND_HALF_UP
-        )
-
-        # =====================================================
-        # ANCIENS MONTANTS DE LA LIGNE
-        # =====================================================
-
-        ancien_total_ht = Decimal("0")
-        ancien_total_tva = Decimal("0")
-        ancien_total_ttc = Decimal("0")
-
-        if detail_existant:
-
-            ancien_pu_ht = Decimal(
-                detail_existant.pu_ht or "0"
-            )
-
-            ancien_tva = Decimal(
-                detail_existant.tva_unitaire or "0"
-            )
-
-            ancien_pu_ttc = Decimal(
-                detail_existant.pu_ttc or "0"
-            )
-
-            ancien_total_ht = (
-                ancien_pu_ht * ancienne_qte
-            ).quantize(
-                Decimal("0.01"),
-                rounding=ROUND_HALF_UP
-            )
-
-            ancien_total_tva = (
-                ancien_tva * ancienne_qte
-            ).quantize(
-                Decimal("0.01"),
-                rounding=ROUND_HALF_UP
-            )
-
-            ancien_total_ttc = (
-                ancien_pu_ttc * ancienne_qte
-            ).quantize(
-                Decimal("0.01"),
-                rounding=ROUND_HALF_UP
-            )
-
-        # =====================================================
-        # DIFFÉRENCE
-        #
-        # AU LIEU DE RECALCULER TOUTE LA FACTURE
-        # =====================================================
-
-        difference_ht = (
-            nouveau_total_ht - ancien_total_ht
-        )
-
-        difference_tva = (
-            nouveau_total_tva - ancien_total_tva
-        )
-
-        difference_ttc = (
-            nouveau_total_ttc - ancien_total_ttc
-        )
-
-        # =====================================================
-        # AJOUT / MISE À JOUR
+        # AJOUT / MISE À JOUR DU DÉTAIL
         # =====================================================
 
         if detail_existant:
@@ -2673,43 +2739,121 @@ def addDetailFacture(request):
             )
 
         # =====================================================
-        # METTRE À JOUR LES TOTAUX
+        # RECALCUL COMPLET DE LA FACTURE
         #
-        # PAS BESOIN DE RELIRE TOUS LES DÉTAILS
-        # =====================================================
-
-        fact.total_ht = (
-            Decimal(fact.total_ht or "0")
-            + difference_ht
-        ).quantize(
-            Decimal("0.01"),
-            rounding=ROUND_HALF_UP
-        )
-
-        fact.total_tva = (
-            Decimal(fact.total_tva or "0")
-            + difference_tva
-        ).quantize(
-            Decimal("0.01"),
-            rounding=ROUND_HALF_UP
-        )
-
-        # =====================================================
-        # TTC
+        # IMPORTANT :
+        # On ne fait plus :
         #
-        # ON CONSERVE LA COHÉRENCE HT + TVA
+        # ancien_total + différence
+        #
+        # On relit les détails réellement présents.
+        # Cela évite les erreurs après ajout/suppression.
         # =====================================================
 
-        fact.total_ttc = (
-            fact.total_ht + fact.total_tva
+        details_facture = (
+            Detail_facture.objects
+            .filter(
+                facture=fact
+            )
+            .only(
+                "quantite",
+                "pu_ttc",
+                "pu_ht",
+                "tva_unitaire"
+            )
+        )
+
+        total_ht = Decimal("0.00")
+        total_tva = Decimal("0.00")
+        total_ttc = Decimal("0.00")
+
+        for detail in details_facture:
+
+            quantite = Decimal(
+                str(
+                    detail.quantite or "0"
+                )
+            )
+
+            pu_ht_detail = Decimal(
+                str(
+                    detail.pu_ht or "0"
+                )
+            )
+
+            pu_ttc_detail = Decimal(
+                str(
+                    detail.pu_ttc or "0"
+                )
+            )
+
+            # -------------------------------------------------
+            # TOTAL HT DE LA LIGNE
+            # -------------------------------------------------
+
+            ligne_ht = (
+                pu_ht_detail * quantite
+            ).quantize(
+                Decimal("0.01"),
+                rounding=ROUND_HALF_UP
+            )
+
+            # -------------------------------------------------
+            # TOTAL TTC DE LA LIGNE
+            # -------------------------------------------------
+
+            ligne_ttc = (
+                pu_ttc_detail * quantite
+            ).quantize(
+                Decimal("0.01"),
+                rounding=ROUND_HALF_UP
+            )
+
+            total_ht += ligne_ht
+            total_ttc += ligne_ttc
+
+        # =====================================================
+        # TVA
+        #
+        # Pour garantir :
+        #
+        # TTC = HT + TVA
+        #
+        # on calcule la TVA comme différence.
+        # =====================================================
+
+        total_ht = total_ht.quantize(
+            Decimal("0.01"),
+            rounding=ROUND_HALF_UP
+        )
+
+        total_ttc = total_ttc.quantize(
+            Decimal("0.01"),
+            rounding=ROUND_HALF_UP
+        )
+
+        total_tva = (
+            total_ttc - total_ht
         ).quantize(
             Decimal("0.01"),
             rounding=ROUND_HALF_UP
         )
 
         # =====================================================
-        # SAUVEGARDE FACTURE
+        # PROTECTION
         # =====================================================
+
+        if total_tva < 0:
+
+            total_tva = Decimal("0.00")
+
+        # =====================================================
+        # ENREGISTRER LES TOTAUX
+        # =====================================================
+
+        fact.total_ht = total_ht
+        fact.total_tva = total_tva
+        fact.total_ttc = total_ttc
 
         fact.save(
             update_fields=[
@@ -7288,3 +7432,320 @@ def supprimer_facture(request):
             },
             status=500
         )
+        
+from decimal import Decimal
+
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth import get_user_model
+from django.db import transaction
+from django.db.models import (
+    F,
+    Sum,
+    DecimalField,
+    ExpressionWrapper
+)
+from django.http import JsonResponse
+from django.shortcuts import get_object_or_404
+
+
+User = get_user_model()
+
+
+@login_required(login_url="sign_in")
+def deletedetailFacture(request, id):
+
+    # ==========================================================
+    # VÉRIFIER LA MÉTHODE HTTP
+    # ==========================================================
+
+    if request.method != "POST":
+
+        return JsonResponse(
+            {
+                "success": False,
+                "message": "Méthode non autorisée."
+            },
+            status=405
+        )
+
+    # ==========================================================
+    # RÉCUPÉRER LE MOT DE PASSE DU MANAGER
+    # ==========================================================
+
+    password = request.POST.get(
+        "password",
+        ""
+    ).strip()
+
+    if not password:
+
+        return JsonResponse(
+            {
+                "success": False,
+                "message": (
+                    "Veuillez saisir le mot de passe "
+                    "du manager."
+                )
+            },
+            status=400
+        )
+
+    # ==========================================================
+    # RECHERCHER LES UTILISATEURS AYANT LE PROFIL MANAGER
+    # ==========================================================
+
+    managers = User.objects.filter(
+        profile__name__iexact="MANAGER",
+        is_active=True
+    )
+
+    # ==========================================================
+    # VÉRIFIER LE MOT DE PASSE
+    # ==========================================================
+
+    manager_autorise = None
+
+    for manager in managers:
+
+        if manager.check_password(password):
+
+            manager_autorise = manager
+
+            break
+
+    # ==========================================================
+    # REFUSER SI AUCUN MANAGER N'A VALIDÉ
+    # ==========================================================
+
+    if manager_autorise is None:
+
+        return JsonResponse(
+            {
+                "success": False,
+                "message": (
+                    "Mot de passe incorrect. "
+                    "L'autorisation du manager est refusée."
+                )
+            },
+            status=403
+        )
+
+    # ==========================================================
+    # TRANSACTION
+    # ==========================================================
+
+    with transaction.atomic():
+
+        # ======================================================
+        # RÉCUPÉRER LE DÉTAIL
+        # ======================================================
+
+        df = get_object_or_404(
+            Detail_facture.objects.select_related(
+                "facture",
+                "produit"
+            ),
+            pk=id
+        )
+
+        # ======================================================
+        # RÉCUPÉRER ET VERROUILLER LA FACTURE
+        # ======================================================
+
+        dt = get_object_or_404(
+            Facture.objects.select_for_update(),
+            pk=df.facture_id
+        )
+
+        id_facture = dt.id
+
+        # ======================================================
+        # EMPÊCHER LA MODIFICATION D'UNE FACTURE VALIDÉE
+        # ======================================================
+
+        if dt.imprimer:
+
+            return JsonResponse(
+                {
+                    "success": False,
+                    "message": (
+                        "Impossible de modifier une facture "
+                        "déjà validée."
+                    )
+                },
+                status=400
+            )
+
+        # ======================================================
+        # CONSERVER LE NOM DU PRODUIT AVANT SUPPRESSION
+        # ======================================================
+
+        produit_nom = str(df.produit)
+
+        # ======================================================
+        # SUPPRIMER LE DÉTAIL
+        # ======================================================
+
+        df.delete()
+
+        # ======================================================
+        # CALCUL DU TOTAL HT
+        #
+        # HT ligne = PU HT × quantité
+        # ======================================================
+
+        total_ht_resultat = (
+            Detail_facture.objects
+            .filter(facture=dt)
+            .aggregate(
+                total_ht=Sum(
+                    ExpressionWrapper(
+                        F("pu_ht") * F("quantite"),
+                        output_field=DecimalField(
+                            max_digits=30,
+                            decimal_places=2
+                        )
+                    )
+                )
+            )
+        )
+
+        total_ht = (
+            total_ht_resultat["total_ht"]
+            or Decimal("0.00")
+        )
+
+        # ======================================================
+        # CALCUL DU TOTAL TVA
+        #
+        # TVA ligne = TVA unitaire × quantité
+        # ======================================================
+
+        total_tva_resultat = (
+            Detail_facture.objects
+            .filter(facture=dt)
+            .aggregate(
+                total_tva=Sum(
+                    ExpressionWrapper(
+                        F("tva_unitaire") * F("quantite"),
+                        output_field=DecimalField(
+                            max_digits=30,
+                            decimal_places=2
+                        )
+                    )
+                )
+            )
+        )
+
+        total_tva = (
+            total_tva_resultat["total_tva"]
+            or Decimal("0.00")
+        )
+
+        # ======================================================
+        # CALCUL DU TOTAL TTC
+        #
+        # TTC ligne = PU TTC × quantité
+        # ======================================================
+
+        total_ttc_resultat = (
+            Detail_facture.objects
+            .filter(facture=dt)
+            .aggregate(
+                total_ttc=Sum(
+                    ExpressionWrapper(
+                        F("pu_ttc") * F("quantite"),
+                        output_field=DecimalField(
+                            max_digits=30,
+                            decimal_places=2
+                        )
+                    )
+                )
+            )
+        )
+
+        total_ttc = (
+            total_ttc_resultat["total_ttc"]
+            or Decimal("0.00")
+        )
+
+        # ======================================================
+        # ARRONDIR LES TOTAUX À 2 DÉCIMALES
+        # ======================================================
+
+        total_ht = total_ht.quantize(
+            Decimal("0.01")
+        )
+
+        total_tva = total_tva.quantize(
+            Decimal("0.01")
+        )
+
+        total_ttc = total_ttc.quantize(
+            Decimal("0.01")
+        )
+
+        # ======================================================
+        # METTRE À JOUR LA FACTURE
+        # ======================================================
+
+        dt.total_ht = total_ht
+        dt.total_tva = total_tva
+        dt.total_ttc = total_ttc
+
+        dt.save(
+            update_fields=[
+                "total_ht",
+                "total_tva",
+                "total_ttc"
+            ]
+        )
+
+        # ======================================================
+        # COMPTER LES DÉTAILS RESTANTS
+        # ======================================================
+
+        compte = Detail_facture.objects.filter(
+            facture=dt
+        ).count()
+
+    # ==========================================================
+    # MESSAGE DE SUCCÈS
+    # ==========================================================
+
+    message = (
+        f"Le produit « {produit_nom} » "
+        "a été supprimé de la facture."
+    )
+
+    messages.success(
+        request,
+        message
+    )
+
+    # ==========================================================
+    # RÉPONSE AJAX
+    # ==========================================================
+
+    return JsonResponse(
+        {
+            "success": True,
+            "message": message,
+            "facture_id": id_facture,
+
+            # ================================
+            # NOUVEAUX TOTAUX
+            # ================================
+
+            "total_ht": str(total_ht),
+            "total_tva": str(total_tva),
+            "total_ttc": str(total_ttc),
+
+            # ================================
+            # NOMBRE DE PRODUITS RESTANTS
+            # ================================
+
+            "compte": compte
+        }
+    )
