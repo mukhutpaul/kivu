@@ -1,1294 +1,1448 @@
 {% extends 'base.html' %}
 
 {% block content %}
-
-<style>
-
+  <style>
     /* ==========================================================
-       BARRE DE RECHERCHE
-    =========================================================== */
-
+           BARRE DE RECHERCHE
+        ========================================================== */
+    
     .stock-search-input {
-        color: #ffffff !important;
-        background-color: #191c24 !important;
+      color: #ffffff !important;
+      background-color: #191c24 !important;
     }
-
+    
     .stock-search-input::placeholder {
-        color: rgba(255, 255, 255, 0.60) !important;
-        opacity: 1;
+      color: rgba(255, 255, 255, 0.6) !important;
+      opacity: 1;
     }
-
+    
     .stock-search-input:focus {
-        color: #ffffff !important;
-        background-color: #191c24 !important;
+      color: #ffffff !important;
+      background-color: #191c24 !important;
     }
-
+    
     .stock-search-input:-webkit-autofill,
     .stock-search-input:-webkit-autofill:hover,
     .stock-search-input:-webkit-autofill:focus {
-        -webkit-text-fill-color: #ffffff !important;
-        box-shadow: 0 0 0 1000px #191c24 inset !important;
+      -webkit-text-fill-color: #ffffff !important;
+      box-shadow: 0 0 0 1000px #191c24 inset !important;
     }
-
-    .stock-search-input + * {
-        color: #ffffff;
+    
+    /* ==========================================================
+           BOUTON MODIFIER
+        ========================================================== */
+    
+    .btn-modifier-lot {
+      padding: 4px 10px;
+      font-size: 12px;
+      border-radius: 20px;
+      cursor: pointer;
     }
+    
+    /* ==========================================================
+           MODAL MODIFICATION LOT
+           MODAL 100% INDÉPENDANT DE BOOTSTRAP
+        ========================================================== */
+    
+    #modalModifierLot {
+      /* État fermé */
+      display: none !important;
+    
+      position: fixed !important;
+    
+      top: 0 !important;
+      left: 0 !important;
+    
+      width: 100vw !important;
+      height: 100vh !important;
+    
+      z-index: 2147483647 !important;
+    
+      background: rgba(0, 0, 0, 0.78) !important;
+    
+      padding: 20px !important;
+    
+      overflow-y: auto !important;
+    
+      align-items: center !important;
+      justify-content: center !important;
+    
+      box-sizing: border-box !important;
+    
+      opacity: 0;
+    
+      visibility: hidden;
+    
+      pointer-events: none;
+    
+      transition: opacity 0.15s ease, visibility 0.15s ease;
+    }
+    
+    /* ==========================================================
+           MODAL OUVERT
+        ========================================================== */
+    
+    #modalModifierLot.modal-lot-visible {
+      display: flex !important;
+    
+      opacity: 1 !important;
+    
+      visibility: visible !important;
+    
+      pointer-events: auto !important;
+    }
+    
+    /* ==========================================================
+           CONTENEUR
+        ========================================================== */
+    
+    #modalModifierLot .modal-dialog {
+      width: 100% !important;
+    
+      max-width: 500px !important;
+    
+      margin: auto !important;
+    
+      position: relative !important;
+    
+      transform: none !important;
+    
+      box-sizing: border-box !important;
+    }
+    
+    /* ==========================================================
+           CONTENU
+        ========================================================== */
+    
+    #modalModifierLot .modal-content {
+      width: 100% !important;
+    
+      background-color: #191c24 !important;
+    
+      color: #ffffff !important;
+    
+      border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    
+      border-radius: 12px !important;
+    
+      box-shadow: 0 15px 50px rgba(0, 0, 0, 0.6) !important;
+    
+      overflow: hidden !important;
+    
+      position: relative !important;
+    }
+    
+    /* ==========================================================
+           HEADER
+        ========================================================== */
+    
+    #modalModifierLot .modal-header {
+      display: flex !important;
+    
+      align-items: center !important;
+    
+      justify-content: space-between !important;
+    
+      padding: 18px 20px !important;
+    
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+    }
+    
+    /* ==========================================================
+           TITRE
+        ========================================================== */
+    
+    #modalModifierLot .modal-title {
+      margin: 0 !important;
+    
+      color: #ffffff !important;
+    
+      font-size: 18px !important;
+    
+      font-weight: 600 !important;
+    }
+    
+    #modalModifierLot .modal-title i {
+      margin-right: 5px;
+    }
+    
+    /* ==========================================================
+           BOUTON X
+        ========================================================== */
+    
+    #modalModifierLot .close {
+      color: #ffffff !important;
+    
+      opacity: 0.8 !important;
+    
+      border: none !important;
+    
+      background: transparent !important;
+    
+      font-size: 28px !important;
+    
+      line-height: 1 !important;
+    
+      cursor: pointer !important;
+    
+      padding: 0 !important;
+    
+      margin: 0 !important;
+    
+      outline: none !important;
+    
+      box-shadow: none !important;
+    }
+    
+    #modalModifierLot .close:hover {
+      opacity: 1 !important;
+    }
+    
+    /* ==========================================================
+           BODY
+        ========================================================== */
+    
+    #modalModifierLot .modal-body {
+      padding: 20px !important;
+    }
+    
+    /* ==========================================================
+           FOOTER
+        ========================================================== */
+    
+    #modalModifierLot .modal-footer {
+      display: flex !important;
+    
+      justify-content: flex-end !important;
+    
+      align-items: center !important;
+    
+      gap: 8px !important;
+    
+      padding: 15px 20px !important;
+    
+      border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
+    }
+    
+    /* ==========================================================
+           LABEL
+        ========================================================== */
+    
+    #modalModifierLot label {
+      color: #ffffff !important;
+    
+      font-weight: 500 !important;
+    }
+    
+    /* ==========================================================
+           INPUT
+        ========================================================== */
+    
+    #modalModifierLot .form-control {
+      background-color: #11141a !important;
+    
+      color: #ffffff !important;
+    
+      border: 1px solid rgba(255, 255, 255, 0.15) !important;
+    
+      border-radius: 6px !important;
+    }
+    
+    /* ==========================================================
+           INPUT FOCUS
+        ========================================================== */
+    
+    #modalModifierLot .form-control:focus {
+      background-color: #11141a !important;
+    
+      color: #ffffff !important;
+    
+      border-color: #0090e7 !important;
+    
+      box-shadow: 0 0 0 2px rgba(0, 144, 231, 0.15) !important;
+    }
+    
+    /* ==========================================================
+           READONLY
+        ========================================================== */
+    
+    #modalModifierLot .form-control[readonly] {
+      background-color: #11141a !important;
+    
+      color: #aaa !important;
+    }
+    
+    /* ==========================================================
+           MESSAGE
+        ========================================================== */
+    
+    #messageModificationLot {
+      display: none;
+    }
+    
+    /* ==========================================================
+           EMPÊCHER LE SCROLL DE LA PAGE
+        ========================================================== */
+    
+    body.modal-lot-open {
+      overflow: hidden !important;
+    }
+    
+    /* ==========================================================
+           RESPONSIVE
+        ========================================================== */
+    
+    @media (max-width: 576px) {
+      #modalModifierLot {
+        padding: 10px !important;
+      }
+    
+      #modalModifierLot .modal-dialog {
+        max-width: 100% !important;
+      }
+    
+      #modalModifierLot .modal-header {
+        padding: 15px !important;
+      }
+    
+      #modalModifierLot .modal-body {
+        padding: 15px !important;
+      }
+    
+      #modalModifierLot .modal-footer {
+        padding: 15px !important;
+      }
+    }
+    
+    /* ==========================================================
+           ANIMATION
+        ========================================================== */
+    
+    #modalModifierLot.modal-lot-visible .modal-content {
+      animation: apparitionModalLot 0.18s ease-out;
+    }
+    
+    @keyframes apparitionModalLot {
+      from {
+        opacity: 0;
+    
+        transform: translateY(-15px) scale(0.98);
+      }
+    
+      to {
+        opacity: 1;
+    
+        transform: translateY(0) scale(1);
+      }
+    }
+  </style>
 
-</style>
-
-
-<div class="content-wrapper">
-
-
-    <!-- ==========================================================
-         HEADER
-    =========================================================== -->
+  <div class="content-wrapper">
+    <!--   ==========================================================
+     HEADER
+==========================================================   -->
 
     <div class="row">
+      <div class="col-12 grid-margin stretch-card">
+        <div class="card corona-gradient-card">
+          <div class="card-body py-0 px-0 px-sm-3">
+            <div class="row align-items-center">
+              <div class="col-3 col-sm-2 col-xl-2 text-center">
+                <i class="mdi mdi-package-variant" style="font-size:65px;"></i>
+              </div>
 
-        <div class="col-12 grid-margin stretch-card">
+              <div class="col-6 col-sm-7 col-xl-8">
+                <h4 class="mb-1">Gestion du stock</h4>
 
-            <div class="card corona-gradient-card">
+                <p class="mb-0 font-weight-normal">Suivi des produits, lots et dates de péremption</p>
+              </div>
 
-                <div class="card-body py-0 px-0 px-sm-3">
+              <div class="col-3 col-sm-3 col-xl-2 text-center">
+                <a href="{% url 'entree_stock' %}" class="btn btn-outline-light btn-rounded">
+                  <i class="mdi mdi-plus mr-1"></i>
 
-                    <div class="row align-items-center">
-
-                        <div class="col-3 col-sm-2 col-xl-2 text-center">
-
-                            <i
-                                class="mdi mdi-package-variant"
-                                style="font-size:65px;"
-                            >
-                            </i>
-
-                        </div>
-
-
-                        <div class="col-6 col-sm-7 col-xl-8">
-
-                            <h4 class="mb-1">
-
-                                Gestion du stock
-
-                            </h4>
-
-                            <p class="mb-0 font-weight-normal">
-
-                                Suivi des produits, lots et dates de péremption
-
-                            </p>
-
-                        </div>
-
-
-                        <div class="col-3 col-sm-3 col-xl-2 text-center">
-
-                            <a
-                                href="{% url 'entree_stock' %}"
-                                class="btn btn-outline-light btn-rounded"
-                            >
-
-                                <i class="mdi mdi-plus mr-1"></i>
-
-                                Entrée
-
-                            </a>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
+                  Entrée
+                </a>
+              </div>
             </div>
-
+          </div>
         </div>
-
+      </div>
     </div>
 
-
-    <!-- ==========================================================
-         STATISTIQUES
-    =========================================================== -->
+    <!--   ==========================================================
+     STATISTIQUES
+==========================================================   -->
 
     <div class="row">
+      <!-- TOTAL PRODUITS -->
 
+      <div class="col-xl-3 col-md-6 grid-margin stretch-card">
+        <div class="card">
+          <div class="card-body">
+            <p class="text-muted mb-2">
+              <i class="mdi mdi-package-variant mr-1"></i>
 
-        <!-- ======================================================
-             NOMBRE TOTAL DE PRODUITS
-        ======================================================= -->
+              Total produits
+            </p>
 
-        <div class="col-xl-3 col-md-6 grid-margin stretch-card">
+            <h2 class="mb-0 text-info">{{ total_produits }}</h2>
 
-            <div class="card">
-
-                <div class="card-body">
-
-                    <p class="text-muted mb-2">
-
-                        <i class="mdi mdi-package-variant mr-1"></i>
-
-                        Total produits
-
-                    </p>
-
-
-                    <h2 class="mb-0 text-info">
-
-                        {{ total_produits }}
-
-                    </h2>
-
-
-                    <small class="text-muted">
-
-                        produit(s) enregistré(s)
-
-                    </small>
-
-                </div>
-
-            </div>
-
+            <small class="text-muted">produit(s) enregistré(s)</small>
+          </div>
         </div>
+      </div>
 
+      <!-- STOCK TOTAL -->
 
-        <!-- ======================================================
-             STOCK TOTAL
-        ======================================================= -->
+      <div class="col-xl-3 col-md-6 grid-margin stretch-card">
+        <div class="card">
+          <div class="card-body">
+            <p class="text-muted mb-2">
+              <i class="mdi mdi-package-variant mr-1"></i>
 
-        <div class="col-xl-3 col-md-6 grid-margin stretch-card">
+              Stock total
+            </p>
 
-            <div class="card">
+            <h2 class="mb-0">{{ total_stock|floatformat:2 }}</h2>
 
-                <div class="card-body">
-
-                    <p class="text-muted mb-2">
-
-                        <i class="mdi mdi-package-variant mr-1"></i>
-
-                        Stock total
-
-                    </p>
-
-
-                    <h2 class="mb-0">
-
-                        {{ total_stock|floatformat:2 }}
-
-                    </h2>
-
-
-                    <small class="text-muted">
-
-                        unités disponibles
-
-                    </small>
-
-                </div>
-
-            </div>
-
+            <small class="text-muted">unités disponibles</small>
+          </div>
         </div>
+      </div>
 
+      <!-- VALEUR DU STOCK -->
 
-        <!-- ======================================================
-             VALEUR DU STOCK
-        ======================================================= -->
+      <div class="col-xl-3 col-md-6 grid-margin stretch-card">
+        <div class="card">
+          <div class="card-body">
+            <p class="text-muted mb-2">
+              <i class="mdi mdi-cash-multiple mr-1"></i>
 
-        <div class="col-xl-3 col-md-6 grid-margin stretch-card">
+              Valeur du stock
+            </p>
 
-            <div class="card">
+            <h2 class="mb-0 text-success">{{ valeur_stock|floatformat:2 }}</h2>
 
-                <div class="card-body">
-
-                    <p class="text-muted mb-2">
-
-                        <i class="mdi mdi-cash-multiple mr-1"></i>
-
-                        Valeur du stock
-
-                    </p>
-
-
-                    <h2 class="mb-0 text-success">
-
-                        {{ valeur_stock|floatformat:2 }}
-
-                    </h2>
-
-
-                    <small class="text-muted">
-
-                        valeur d'achat
-
-                    </small>
-
-                </div>
-
-            </div>
-
+            <small class="text-muted">valeur d'achat</small>
+          </div>
         </div>
+      </div>
 
+      <!-- STOCK FAIBLE -->
 
-        <!-- ======================================================
-             STOCK FAIBLE
-        ======================================================= -->
+      <div class="col-xl-3 col-md-6 grid-margin stretch-card">
+        <div class="card">
+          <div class="card-body">
+            <p class="text-muted mb-2">
+              <i class="mdi mdi-alert mr-1"></i>
 
-        <div class="col-xl-3 col-md-6 grid-margin stretch-card">
+              Stock faible
+            </p>
 
-            <div class="card">
+            <h2 class="mb-0 text-warning">{{ produits_alerte }}</h2>
 
-                <div class="card-body">
-
-                    <p class="text-muted mb-2">
-
-                        <i class="mdi mdi-alert mr-1"></i>
-
-                        Stock faible
-
-                    </p>
-
-
-                    <h2 class="mb-0 text-warning">
-
-                        {{ produits_alerte }}
-
-                    </h2>
-
-
-                    <small class="text-muted">
-
-                        produit(s)
-
-                    </small>
-
-                </div>
-
-            </div>
-
+            <small class="text-muted">produit(s)</small>
+          </div>
         </div>
-
-
+      </div>
     </div>
 
-
-    <!-- ==========================================================
-         CHIFFRE D'AFFAIRES
-    =========================================================== -->
+    <!--   ==========================================================
+     CHIFFRE D'AFFAIRES
+==========================================================   -->
 
     <div class="row">
+      <div class="col-xl-4 col-md-6 grid-margin stretch-card">
+        <div class="card">
+          <div class="card-body">
+            <p class="text-muted mb-2">
+              <i class="mdi mdi-chart-line mr-1"></i>
 
+              Chiffre d'affaires TTC
+            </p>
 
-        <div class="col-xl-4 col-md-6 grid-margin stretch-card">
+            <h2 class="mb-0 text-primary">{{ chiffre_affaires|floatformat:2 }}</h2>
 
-            <div class="card">
-
-                <div class="card-body">
-
-                    <p class="text-muted mb-2">
-
-                        <i class="mdi mdi-chart-line mr-1"></i>
-
-                        Chiffre d'affaires TTC
-
-                    </p>
-
-
-                    <h2 class="mb-0 text-primary">
-
-                        {{ chiffre_affaires|floatformat:2 }}
-
-                    </h2>
-
-
-                    <small class="text-muted">
-
-                        ventes réalisées
-
-                    </small>
-
-                </div>
-
-            </div>
-
+            <small class="text-muted">ventes réalisées</small>
+          </div>
         </div>
+      </div>
 
+      <div class="col-xl-4 col-md-6 grid-margin stretch-card">
+        <div class="card">
+          <div class="card-body">
+            <p class="text-muted mb-2">
+              <i class="mdi mdi-finance mr-1"></i>
 
-        <!-- ======================================================
-             CHIFFRE D'AFFAIRES HT
-        ======================================================= -->
+              Chiffre d'affaires HT
+            </p>
 
-        <div class="col-xl-4 col-md-6 grid-margin stretch-card">
+            <h2 class="mb-0">{{ chiffre_affaires_ht|floatformat:2 }}</h2>
 
-            <div class="card">
-
-                <div class="card-body">
-
-                    <p class="text-muted mb-2">
-
-                        <i class="mdi mdi-finance mr-1"></i>
-
-                        Chiffre d'affaires HT
-
-                    </p>
-
-
-                    <h2 class="mb-0">
-
-                        {{ chiffre_affaires_ht|floatformat:2 }}
-
-                    </h2>
-
-
-                    <small class="text-muted">
-
-                        hors TVA
-
-                    </small>
-
-                </div>
-
-            </div>
-
+            <small class="text-muted">hors TVA</small>
+          </div>
         </div>
+      </div>
 
+      <div class="col-xl-4 col-md-6 grid-margin stretch-card">
+        <div class="card">
+          <div class="card-body">
+            <p class="text-muted mb-2">
+              <i class="mdi mdi-percent mr-1"></i>
 
-        <!-- ======================================================
-             TVA COLLECTÉE
-        ======================================================= -->
+              TVA collectée
+            </p>
 
-        <div class="col-xl-4 col-md-6 grid-margin stretch-card">
+            <h2 class="mb-0 text-danger">{{ tva_collectee|floatformat:2 }}</h2>
 
-            <div class="card">
-
-                <div class="card-body">
-
-                    <p class="text-muted mb-2">
-
-                        <i class="mdi mdi-percent mr-1"></i>
-
-                        TVA collectée
-
-                    </p>
-
-
-                    <h2 class="mb-0 text-danger">
-
-                        {{ tva_collectee|floatformat:2 }}
-
-                    </h2>
-
-
-                    <small class="text-muted">
-
-                        TVA sur les ventes
-
-                    </small>
-
-                </div>
-
-            </div>
-
+            <small class="text-muted">TVA sur les ventes</small>
+          </div>
         </div>
-
-
+      </div>
     </div>
 
-
-    <!-- ==========================================================
-         ACTIONS
-    =========================================================== -->
+    <!--   ==========================================================
+     ACTIONS
+==========================================================   -->
 
     <div class="row">
+      <div class="col-12 mb-3">
+        <div class="d-flex justify-content-between align-items-center flex-wrap">
+          <div>
+            <h4 class="mb-1">État du stock</h4>
 
-        <div class="col-12 mb-3">
+            <p class="text-muted mb-0">Les couleurs indiquent l'état de péremption des lots.</p>
+          </div>
 
-            <div
-                class="d-flex justify-content-between align-items-center flex-wrap"
-            >
+          <div class="mt-2 mt-md-0">
+            <a href="{% url 'sortie_stock' %}" class="btn btn-outline-danger btn-rounded mr-2">
+              <i class="mdi mdi-minus mr-1"></i>
 
+              Sortie
+            </a>
 
-                <div>
+            <a href="{% url 'mouvements_stock' %}" class="btn btn-outline-info btn-rounded">
+              <i class="mdi mdi-history mr-1"></i>
 
-                    <h4 class="mb-1">
-
-                        État du stock
-
-                    </h4>
-
-
-                    <p class="text-muted mb-0">
-
-                        Les couleurs indiquent l'état de péremption des lots.
-
-                    </p>
-
-                </div>
-
-
-                <div class="mt-2 mt-md-0">
-
-
-                    <a
-                        href="{% url 'sortie_stock' %}"
-                        class="btn btn-outline-danger btn-rounded mr-2"
-                    >
-
-                        <i class="mdi mdi-minus mr-1"></i>
-
-                        Sortie
-
-                    </a>
-
-
-                    <a
-                        href="{% url 'mouvements_stock' %}"
-                        class="btn btn-outline-info btn-rounded"
-                    >
-
-                        <i class="mdi mdi-history mr-1"></i>
-
-                        Historique
-
-                    </a>
-
-                </div>
-
-            </div>
-
+              Historique
+            </a>
+          </div>
         </div>
-
+      </div>
     </div>
 
-
-    <!-- ==========================================================
-         BARRE DE RECHERCHE
-    =========================================================== -->
+    <!--   ==========================================================
+     RECHERCHE
+==========================================================   -->
 
     <div class="row mb-4">
+      <div class="col-12">
+        <div class="card">
+          <div class="card-body">
+            <form method="GET" action="{% url 'stock' %}">
+              <div class="row align-items-center">
+                <div class="col-md-9 mb-2 mb-md-0">
+                  <div class="input-group">
+                    <div class="input-group-prepend">
+                      <span class="input-group-text"><i class="mdi mdi-magnify"></i></span>
+                    </div>
 
-        <div class="col-12">
-
-            <div class="card">
-
-                <div class="card-body">
-
-                    <form
-                        method="GET"
-                        action="{% url 'stock' %}"
-                    >
-
-                        <div class="row align-items-center">
-
-
-                            <!-- CHAMP DE RECHERCHE -->
-
-                            <div class="col-md-9 mb-2 mb-md-0">
-
-                                <div class="input-group">
-
-
-                                    <div class="input-group-prepend">
-
-                                        <span class="input-group-text">
-
-                                            <i class="mdi mdi-magnify"></i>
-
-                                        </span>
-
-                                    </div>
-
-
-                                    <input
-                                        type="text"
-                                        name="rech"
-                                        class="form-control stock-search-input"
-                                        value="{{ rech }}"
-                                        placeholder="Rechercher un produit ou un lot..."
-                                        autocomplete="off"
-                                    >
-
-                                </div>
-
-                            </div>
-
-
-                            <!-- BOUTONS -->
-
-                            <div class="col-md-3">
-
-                                <div class="d-flex">
-
-
-                                    <button
-                                        type="submit"
-                                        class="btn btn-primary btn-rounded mr-2"
-                                    >
-
-                                        <i class="mdi mdi-magnify mr-1"></i>
-
-                                        Rechercher
-
-                                    </button>
-
-
-                                    {% if rech %}
-
-                                    <a
-                                        href="{% url 'stock' %}"
-                                        class="btn btn-outline-secondary btn-rounded"
-                                        title="Effacer la recherche"
-                                    >
-
-                                        <i class="mdi mdi-close"></i>
-
-                                    </a>
-
-                                    {% endif %}
-
-
-                                </div>
-
-                            </div>
-
-                        </div>
-
-                    </form>
-
+                    <input type="text" name="rech" class="form-control stock-search-input" value="{{ rech }}" placeholder="Rechercher un produit ou un lot..." autocomplete="off" />
+                  </div>
                 </div>
 
-            </div>
-
-        </div>
-
-    </div>
-
-
-    <!-- ==========================================================
-         MESSAGE DE RECHERCHE
-    =========================================================== -->
-
-    {% if rech %}
-
-    <div class="row mb-3">
-
-        <div class="col-12">
-
-            <div class="alert alert-info">
-
-                <i class="mdi mdi-information-outline mr-1"></i>
-
-                Résultats de recherche pour :
-
-                <strong>
-
-                    "{{ rech }}"
-
-                </strong>
-
-                <span class="ml-2">
-
-                    — {{ page_obj.paginator.count }} produit(s)
-
-                </span>
-
-            </div>
-
-        </div>
-
-    </div>
-
-    {% endif %}
-
-
-    <!-- ==========================================================
-         STOCK
-    =========================================================== -->
-
-    <div class="row">
-
-
-        {% for item in donnees %}
-
-
-        <div class="col-xl-4 col-lg-6 col-md-6 grid-margin stretch-card">
-
-
-            <div class="card">
-
-
-                <div class="card-body">
-
-
-                    <!-- ==================================================
-                         PRODUIT
-                    =================================================== -->
-
-                    <div
-                        class="d-flex justify-content-between align-items-start"
-                    >
-
-
-                        <div>
-
-                            <h4 class="mb-1">
-
-                                {{ item.produit.nom }}
-
-                            </h4>
-
-
-                            <p class="text-muted mb-0">
-
-                                {{ item.produit.appartement.nom }}
-
-                            </p>
-
-                        </div>
-
-
-                        <span class="badge badge-primary p-2">
-
-                            {{ item.produit.quantite|floatformat:2 }}
-
-                        </span>
-
-
-                    </div>
-
-
-                    <hr>
-
-
-                    <!-- ==================================================
-                         SEUIL
-                    =================================================== -->
-
-                    <div class="d-flex justify-content-between mb-3">
-
-
-                        <span class="text-muted">
-
-                            Stock minimum
-
-                        </span>
-
-
-                        <strong>
-
-                            {{ item.produit.stock_minimum|floatformat:2 }}
-
-                        </strong>
-
-
-                    </div>
-
-
-                    <!-- ==================================================
-                         LOTS
-                    =================================================== -->
-
-                    {% for lot_data in item.lots %}
-
-                    {% with lot=lot_data.lot statut=lot_data.statut %}
-
-
-                    <div
-                        class="p-3 mb-2 rounded"
-                        style="border:1px solid rgba(255,255,255,0.08);"
-                    >
-
-
-                        <!-- LOT + STATUT -->
-
-                        <div
-                            class="d-flex justify-content-between align-items-center"
-                        >
-
-
-                            <div>
-
-                                <strong>
-
-                                    {% if lot.numero %}
-
-                                        {{ lot.numero }}
-
-                                    {% else %}
-
-                                        Lot #{{ lot.id }}
-
-                                    {% endif %}
-
-                                </strong>
-
-                            </div>
-
-
-                            <div>
-
-
-                                <!-- ======================================
-                                     STATUT VERT
-                                ======================================= -->
-
-                                {% if statut == "vert" %}
-
-                                    <span class="badge badge-success">
-
-                                        🟢 Normal
-
-                                    </span>
-
-
-                                <!-- ======================================
-                                     STATUT ORANGE
-                                ======================================= -->
-
-                                {% elif statut == "orange" %}
-
-                                    <span class="badge badge-warning">
-
-                                        🟠 Attention
-
-                                    </span>
-
-
-                                <!-- ======================================
-                                     STATUT ROUGE
-                                ======================================= -->
-
-                                {% elif statut == "rouge" %}
-
-                                    <span class="badge badge-danger">
-
-                                        🔴 Urgent
-
-                                    </span>
-
-
-                                <!-- ======================================
-                                     STATUT PÉRIMÉ
-                                ======================================= -->
-
-                                {% elif statut == "perime" %}
-
-                                    <span class="badge badge-dark">
-
-                                        ⚫ Périmé
-
-                                    </span>
-
-
-                                {% endif %}
-
-
-                            </div>
-
-                        </div>
-
-
-                        <!-- INFORMATIONS DU LOT -->
-
-                        <div class="row mt-3">
-
-
-                            <div class="col-6">
-
-                                <small class="text-muted d-block">
-
-                                    Quantité
-
-                                </small>
-
-
-                                <strong>
-
-                                    {{ lot.quantite|floatformat:2 }}
-
-                                </strong>
-
-                            </div>
-
-
-                            <div class="col-6">
-
-                                <small class="text-muted d-block">
-
-                                    Péremption
-
-                                </small>
-
-
-                                {% if lot.date_peremption %}
-
-                                    <strong>
-
-                                        {{ lot.date_peremption|date:"d/m/Y" }}
-
-                                    </strong>
-
-                                {% else %}
-
-                                    <strong class="text-muted">
-
-                                        Non définie
-
-                                    </strong>
-
-                                {% endif %}
-
-                            </div>
-
-
-                        </div>
-
-
-                    </div>
-
-
-                    {% endwith %}
-
-                    {% empty %}
-
-
-                    <!-- ==================================================
-                         AUCUN LOT
-                    =================================================== -->
-
-                    <div class="text-center py-3">
-
-
-                        <i
-                            class="mdi mdi-package-variant-closed"
-                            style="font-size:35px;"
-                        >
-                        </i>
-
-
-                        <p class="text-muted mb-0">
-
-                            Aucun lot enregistré
-
-                        </p>
-
-
-                    </div>
-
-
-                    {% endfor %}
-
-
-                </div>
-
-            </div>
-
-
-        </div>
-
-
-        {% empty %}
-
-
-        <!-- ======================================================
-             AUCUN PRODUIT
-        ======================================================= -->
-
-        <div class="col-12">
-
-            <div class="card">
-
-                <div class="card-body text-center py-5">
-
-
-                    <i
-                        class="mdi mdi-package-variant-closed"
-                        style="font-size:60px;"
-                    >
-                    </i>
-
+                <div class="col-md-3">
+                  <div class="d-flex">
+                    <button type="submit" class="btn btn-primary btn-rounded mr-2">
+                      <i class="mdi mdi-magnify mr-1"></i>
+
+                      Rechercher
+                    </button>
 
                     {% if rech %}
-
-
-                        <h4 class="mt-3">
-
-                            Aucun résultat
-
-                        </h4>
-
-
-                        <p class="text-muted">
-
-                            Aucun produit ne correspond à la recherche
-
-                            <strong>
-
-                                "{{ rech }}"
-
-                            </strong>.
-
-                        </p>
-
-
-                        <a
-                            href="{% url 'stock' %}"
-                            class="btn btn-outline-primary btn-rounded"
-                        >
-
-                            <i class="mdi mdi-refresh mr-1"></i>
-
-                            Afficher tout le stock
-
-                        </a>
-
-
-                    {% else %}
-
-
-                        <h4 class="mt-3">
-
-                            Aucun produit
-
-                        </h4>
-
-
-                        <p class="text-muted">
-
-                            Aucun produit n'est actuellement disponible
-                            dans le stock.
-
-                        </p>
-
-
+                      <a href="{% url 'stock' %}" class="btn btn-outline-secondary btn-rounded" title="Effacer la recherche"><i class="mdi mdi-close"></i></a>
                     {% endif %}
-
-
+                  </div>
                 </div>
-
-            </div>
-
+              </div>
+            </form>
+          </div>
         </div>
-
-
-        {% endfor %}
-
-
+      </div>
     </div>
 
+    <!--   ==========================================================
+     MESSAGE RECHERCHE
+==========================================================   -->
 
-    <!-- ==========================================================
-         PAGINATION
-    =========================================================== -->
-
-    {% if page_obj.has_other_pages %}
-
-
-    <div class="row">
-
+    {% if rech %}
+      <div class="row mb-3">
         <div class="col-12">
+          <div class="alert alert-info">
+            <i class="mdi mdi-information-outline mr-1"></i>
 
-            <div class="card">
+            Résultats de recherche pour :
 
-                <div class="card-body">
+            <strong>"{{ rech }}"</strong>
 
-
-                    <div
-                        class="d-flex justify-content-between align-items-center flex-wrap"
-                    >
-
-
-                        <!-- INFORMATIONS -->
-
-                        <div class="mb-2">
-
-                            <p class="text-muted mb-0">
-
-                                Page
-
-                                <strong>
-
-                                    {{ page_obj.number }}
-
-                                </strong>
-
-                                sur
-
-                                <strong>
-
-                                    {{ page_obj.paginator.num_pages }}
-
-                                </strong>
-
-                                — {{ page_obj.paginator.count }} produit(s)
-
-                            </p>
-
-                        </div>
-
-
-                        <!-- NAVIGATION -->
-
-                        <nav>
-
-                            <ul class="pagination pagination-sm mb-0">
-
-
-                                <!-- PREMIÈRE PAGE -->
-
-                                {% if page_obj.has_previous %}
-
-                                <li class="page-item">
-
-                                    <a
-                                        class="page-link"
-                                        href="?rech={{ rech|urlencode }}&page=1"
-                                        title="Première page"
-                                    >
-
-                                        <i class="mdi mdi-chevron-double-left"></i>
-
-                                    </a>
-
-                                </li>
-
-                                {% endif %}
-
-
-                                <!-- PAGE PRÉCÉDENTE -->
-
-                                {% if page_obj.has_previous %}
-
-                                <li class="page-item">
-
-                                    <a
-                                        class="page-link"
-                                        href="?rech={{ rech|urlencode }}&page={{ page_obj.previous_page_number }}"
-                                        title="Page précédente"
-                                    >
-
-                                        <i class="mdi mdi-chevron-left"></i>
-
-                                    </a>
-
-                                </li>
-
-                                {% endif %}
-
-
-                                <!-- NUMÉROS DE PAGES -->
-
-                                {% for num in page_obj.paginator.page_range %}
-
-
-                                    {% if num == page_obj.number %}
-
-
-                                    <li class="page-item active">
-
-                                        <span class="page-link">
-
-                                            {{ num }}
-
-                                        </span>
-
-                                    </li>
-
-
-                                    {% elif num >= page_obj.number|add:"-2" and num <= page_obj.number|add:"2" %}
-
-
-                                    <li class="page-item">
-
-                                        <a
-                                            class="page-link"
-                                            href="?rech={{ rech|urlencode }}&page={{ num }}"
-                                        >
-
-                                            {{ num }}
-
-                                        </a>
-
-                                    </li>
-
-
-                                    {% endif %}
-
-
-                                {% endfor %}
-
-
-                                <!-- PAGE SUIVANTE -->
-
-                                {% if page_obj.has_next %}
-
-                                <li class="page-item">
-
-                                    <a
-                                        class="page-link"
-                                        href="?rech={{ rech|urlencode }}&page={{ page_obj.next_page_number }}"
-                                        title="Page suivante"
-                                    >
-
-                                        <i class="mdi mdi-chevron-right"></i>
-
-                                    </a>
-
-                                </li>
-
-                                {% endif %}
-
-
-                                <!-- DERNIÈRE PAGE -->
-
-                                {% if page_obj.has_next %}
-
-                                <li class="page-item">
-
-                                    <a
-                                        class="page-link"
-                                        href="?rech={{ rech|urlencode }}&page={{ page_obj.paginator.num_pages }}"
-                                        title="Dernière page"
-                                    >
-
-                                        <i class="mdi mdi-chevron-double-right"></i>
-
-                                    </a>
-
-                                </li>
-
-                                {% endif %}
-
-
-                            </ul>
-
-                        </nav>
-
-
-                    </div>
-
-                </div>
-
-            </div>
-
+            <span class="ml-2">— {{ page_obj.paginator.count }} produit(s)</span>
+          </div>
         </div>
-
-    </div>
-
-
+      </div>
     {% endif %}
 
-
-    <!-- ==========================================================
-         LÉGENDE
-    =========================================================== -->
+    <!--   ==========================================================
+     STOCK
+==========================================================   -->
 
     <div class="row">
+      {% for item in donnees %}
+        <div class="col-xl-4 col-lg-6 col-md-6 grid-margin stretch-card">
+          <div class="card">
+            <div class="card-body">
+              <!--   ==================================================
+     PRODUIT
+===================================================   -->
 
-        <div class="col-12">
+              <div class="d-flex justify-content-between align-items-start">
+                <div>
+                  <h4 class="mb-1">{{ item.produit.nom }}</h4>
 
-            <div class="card">
-
-                <div class="card-body">
-
-
-                    <h5 class="card-title">
-
-                        Légende de péremption
-
-                    </h5>
-
-
-                    <div class="row">
-
-
-                        <!-- VERT -->
-
-                        <div class="col-md-3 mb-2">
-
-                            <span class="badge badge-success p-2">
-
-                                🟢 Normal
-
-                            </span>
-
-
-                            <small class="text-muted ml-2">
-
-                                Plus de 4 mois
-
-                            </small>
-
-                        </div>
-
-
-                        <!-- ORANGE -->
-
-                        <div class="col-md-3 mb-2">
-
-                            <span class="badge badge-warning p-2">
-
-                                🟠 Attention
-
-                            </span>
-
-
-                            <small class="text-muted ml-2">
-
-                                ≤ 4 mois
-
-                            </small>
-
-                        </div>
-
-
-                        <!-- ROUGE -->
-
-                        <div class="col-md-3 mb-2">
-
-                            <span class="badge badge-danger p-2">
-
-                                🔴 Urgent
-
-                            </span>
-
-
-                            <small class="text-muted ml-2">
-
-                                ≤ 3 mois
-
-                            </small>
-
-                        </div>
-
-
-                        <!-- PÉRIMÉ -->
-
-                        <div class="col-md-3 mb-2">
-
-                            <span class="badge badge-dark p-2">
-
-                                ⚫ Périmé
-
-                            </span>
-
-                        </div>
-
-
-                    </div>
-
+                  <p class="text-muted mb-0">{{ item.produit.appartement.nom }}</p>
                 </div>
 
+                <span class="badge badge-primary p-2 product-stock" data-product-id="{{ item.produit.id }}">{{ item.produit.quantite|floatformat:2 }}</span>
+              </div>
+
+              <hr />
+
+              <!--   ==================================================
+     SEUIL
+===================================================   -->
+
+              <div class="d-flex justify-content-between mb-3">
+                <span class="text-muted">Stock minimum</span>
+
+                <strong>{{ item.produit.stock_minimum|floatformat:2 }}</strong>
+              </div>
+
+              <!--   ==================================================
+     LOTS
+===================================================   -->
+
+              {% for lot_data in item.lots %}
+                {% with lot=lot_data.lot statut=lot_data.statut %}
+                  <div class="p-3 mb-2 rounded lot-container" data-lot-id="{{ lot.id }}" style="border:1px solid rgba(255,255,255,0.08);">
+                    <!--   ==================================================
+     LOT + STATUT + MODIFIER
+===================================================   -->
+
+                    <div class="d-flex justify-content-between align-items-center">
+                      <div>
+                        <strong class="lot-numero">
+                          {% if lot.numero %}
+                            {{ lot.numero }}
+                          {% else %}
+                            Lot #{{ lot.id }}
+                          {% endif %}
+                        </strong>
+                      </div>
+
+                      <div class="d-flex align-items-center">
+                        {% if statut == 'vert' %}
+                          <span class="badge badge-success mr-2">🟢 Normal</span>
+                        {% elif statut == 'orange' %}
+                          <span class="badge badge-warning mr-2">🟠 Attention</span>
+                        {% elif statut == 'rouge' %}
+                          <span class="badge badge-danger mr-2">🔴 Urgent</span>
+                        {% elif statut == 'perime' %}
+                          <span class="badge badge-dark mr-2">⚫ Périmé</span>
+                        {% endif %}
+
+                        <!--   ==================================================
+             BOUTON MODIFIER
+        ===================================================   -->
+
+                        <button type="button"
+                          class="btn btn-outline-primary btn-sm btn-modifier-lot"
+                          data-lot-id="{{ lot.id }}"
+                          data-lot-numero="{% if lot.numero %}
+                            {{ lot.numero|escapejs }}
+                          {% else %}
+                            
+                            Lot #{{ lot.id }}
+                          {% endif %}"
+                          data-lot-quantite="{{ lot.quantite }}"
+                          data-lot-date="{% if lot.date_peremption %}{{ lot.date_peremption|date:'Y-m-d' }}{% endif %}"
+                          data-url="{% url 'modifier_lot' lot.id %}"
+                          onclick="ouvrirModalModificationLot(this); return false;">
+                          <i class="mdi mdi-pencil"></i>
+                          Modifier
+                        </button>
+                      </div>
+                    </div>
+
+                    <!--   ==================================================
+     INFORMATIONS
+===================================================   -->
+
+                    <div class="row mt-3">
+                      <div class="col-6">
+                        <small class="text-muted d-block">Quantité</small>
+
+                        <strong class="lot-quantite">{{ lot.quantite|floatformat:2 }}</strong>
+                      </div>
+
+                      <div class="col-6">
+                        <small class="text-muted d-block">Péremption</small>
+
+                        {% if lot.date_peremption %}
+                          <strong class="lot-date">{{ lot.date_peremption|date:'d/m/Y' }}</strong>
+                        {% else %}
+                          <strong class="text-muted lot-date">Non définie</strong>
+                        {% endif %}
+                      </div>
+                    </div>
+                  </div>
+                {% endwith %}
+              {% empty %}
+                <!--   ==================================================
+     AUCUN LOT
+===================================================   -->
+
+                <div class="text-center py-3">
+                  <i class="mdi mdi-package-variant-closed" style="font-size:35px;"></i>
+
+                  <p class="text-muted mb-0">Aucun lot enregistré</p>
+                </div>
+              {% endfor %}
             </div>
-
+          </div>
         </div>
+      {% empty %}
+        <!--   ======================================================
+     AUCUN PRODUIT
+=======================================================   -->
 
+        <div class="col-12">
+          <div class="card">
+            <div class="card-body text-center py-5">
+              <i class="mdi mdi-package-variant-closed" style="font-size:60px;"></i>
+
+              {% if rech %}
+                <h4 class="mt-3">Aucun résultat</h4>
+
+                <p class="text-muted">
+                  Aucun produit ne correspond à la recherche
+
+                  <strong>"{{ rech }}"</strong>.
+                </p>
+
+                <a href="{% url 'stock' %}" class="btn btn-outline-primary btn-rounded">
+                  <i class="mdi mdi-refresh mr-1"></i>
+
+                  Afficher tout le stock
+                </a>
+              {% else %}
+                <h4 class="mt-3">Aucun produit</h4>
+
+                <p class="text-muted">Aucun produit n'est actuellement disponible dans le stock.</p>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      {% endfor %}
     </div>
 
+    <!--   ==========================================================
+     PAGINATION
+==========================================================   -->
 
-</div>
+    {% if page_obj.has_other_pages %}
+      <div class="row">
+        <div class="col-12">
+          <div class="card">
+            <div class="card-body">
+              <div class="d-flex justify-content-between align-items-center flex-wrap">
+                <div class="mb-2">
+                  <p class="text-muted mb-0">
+                    Page
 
+                    <strong>{{ page_obj.number }}</strong>
 
-{% endblock content %}
+                    sur
+
+                    <strong>{{ page_obj.paginator.num_pages }}</strong>
+
+                    — {{ page_obj.paginator.count }} produit(s)
+                  </p>
+                </div>
+
+                <nav>
+                  <ul class="pagination pagination-sm mb-0">
+                    {% if page_obj.has_previous %}
+                      <li class="page-item">
+                        <a class="page-link" href="?rech={{ rech|urlencode }}&page=1"><i class="mdi mdi-chevron-double-left"></i></a>
+                      </li>
+
+                      <li class="page-item">
+                        <a class="page-link" href="?rech={{ rech|urlencode }}&page={{ page_obj.previous_page_number }}"><i class="mdi mdi-chevron-left"></i></a>
+                      </li>
+                    {% endif %}
+
+                    {% for num in page_obj.paginator.page_range %}
+                      {% if num == page_obj.number %}
+                        <li class="page-item active">
+                          <span class="page-link">{{ num }}</span>
+                        </li>
+                      {% elif num >= page_obj.number|add:'-2' and num <= page_obj.number|add:'2' %}
+                        <li class="page-item">
+                          <a class="page-link" href="?rech={{ rech|urlencode }}&page={{ num }}">{{ num }}</a>
+                        </li>
+                      {% endif %}
+                    {% endfor %}
+
+                    {% if page_obj.has_next %}
+                      <li class="page-item">
+                        <a class="page-link" href="?rech={{ rech|urlencode }}&page={{ page_obj.next_page_number }}"><i class="mdi mdi-chevron-right"></i></a>
+                      </li>
+
+                      <li class="page-item">
+                        <a class="page-link" href="?rech={{ rech|urlencode }}&page={{ page_obj.paginator.num_pages }}"><i class="mdi mdi-chevron-double-right"></i></a>
+                      </li>
+                    {% endif %}
+                  </ul>
+                </nav>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    {% endif %}
+
+    <!--   ==========================================================
+     LÉGENDE
+==========================================================   -->
+
+    <div class="row">
+      <div class="col-12">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">Légende de péremption</h5>
+
+            <div class="row">
+              <div class="col-md-3 mb-2">
+                <span class="badge badge-success p-2">🟢 Normal</span>
+
+                <small class="text-muted ml-2">Plus de 4 mois</small>
+              </div>
+
+              <div class="col-md-3 mb-2">
+                <span class="badge badge-warning p-2">🟠 Attention</span>
+
+                <small class="text-muted ml-2">≤ 4 mois</small>
+              </div>
+
+              <div class="col-md-3 mb-2">
+                <span class="badge badge-danger p-2">🔴 Urgent</span>
+
+                <small class="text-muted ml-2">≤ 3 mois</small>
+              </div>
+
+              <div class="col-md-3 mb-2">
+                <span class="badge badge-dark p-2">⚫ Périmé</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!--   ==========================================================
+     MODAL MODIFICATION LOT
+==========================================================   -->
+
+  <div id="modalModifierLot" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="titreModalModifierLot">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <!--   ==================================================
+                 HEADER
+            ===================================================   -->
+
+        <div class="modal-header">
+          <h5 class="modal-title" id="titreModalModifierLot">
+            <i class="mdi mdi-pencil"></i>
+
+            Modifier le lot
+          </h5>
+
+          <button type="button" class="close" id="btnFermerModalLot" aria-label="Fermer"><span aria-hidden="true">&times;</span></button>
+        </div>
+
+        <!--   ==================================================
+                 FORMULAIRE
+            ===================================================   -->
+
+        <form id="formModifierLot" method="POST" autocomplete="off">
+          {% csrf_token %}
+
+          <div class="modal-body">
+            <!-- ID -->
+
+            <input type="hidden" id="modifierLotId" name="lot_id" />
+
+            <!-- NUMERO -->
+
+            <div class="form-group">
+              <label for="modifierLotNumero">Numéro du lot</label>
+
+              <input type="text" id="modifierLotNumero" class="form-control" readonly />
+            </div>
+
+            <!-- QUANTITE -->
+
+            <div class="form-group">
+              <label for="modifierLotQuantite">
+                Quantité
+
+                <span class="text-danger">*</span>
+              </label>
+
+              <input type="number" id="modifierLotQuantite" name="quantite" class="form-control" min="0" step="0.01" required autocomplete="off" />
+            </div>
+
+            <!-- DATE -->
+
+            <div class="form-group">
+              <label for="modifierLotDate">Date d'expiration</label>
+
+              <input type="date" id="modifierLotDate" name="date_expiration" class="form-control" autocomplete="off" />
+            </div>
+
+            <!-- MESSAGE -->
+
+            <div id="messageModificationLot" class="alert" role="alert"></div>
+          </div>
+
+          <!--   ==================================================
+                     FOOTER
+                ===================================================   -->
+
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" id="btnAnnulerModificationLot">
+              <i class="mdi mdi-close mr-1"></i>
+
+              Annuler
+            </button>
+
+            <button type="submit" id="btnEnregistrerLot" class="btn btn-primary">
+              <i class="mdi mdi-content-save mr-1"></i>
+
+              Enregistrer
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!--   ==========================================================
+     JAVASCRIPT
+==========================================================   -->
+
+  <script>
+    console.log('===== STOCK LOT : JAVASCRIPT CHARGÉ =====')
+    
+    /* ==========================================================
+       OUVRIR LE MODAL
+    ========================================================== */
+    
+    function ouvrirModalModificationLot(bouton) {
+      console.log('')
+      console.log('==========================================')
+      console.log('CLIC SUR MODIFIER')
+      console.log('==========================================')
+    
+      const modal = document.getElementById('modalModifierLot')
+    
+      if (!modal) {
+        console.error('ERREUR : modalModifierLot introuvable.')
+    
+        return false
+      }
+    
+      const lotId = bouton.getAttribute('data-lot-id') || ''
+    
+      const numero = bouton.getAttribute('data-lot-numero') || ''
+    
+      const quantite = bouton.getAttribute('data-lot-quantite') || ''
+    
+      const date = bouton.getAttribute('data-lot-date') || ''
+    
+      const url = bouton.getAttribute('data-url') || ''
+    
+      console.log('Lot ID :', lotId)
+      console.log('Numéro :', numero)
+      console.log('Quantité :', quantite)
+      console.log('Date :', date)
+      console.log('URL :', url)
+    
+      if (!lotId) {
+        console.error('ERREUR : ID du lot manquant.')
+    
+        return false
+      }
+    
+      if (!url) {
+        console.error('ERREUR : URL de modification manquante.')
+    
+        return false
+      }
+    
+      /* ======================================================
+           REMPLIR LE FORMULAIRE
+        ====================================================== */
+    
+      document.getElementById('modifierLotId').value = lotId
+    
+      document.getElementById('modifierLotNumero').value = numero
+    
+      document.getElementById('modifierLotQuantite').value = quantite
+    
+      document.getElementById('modifierLotDate').value = date
+    
+      /* ======================================================
+           STOCKER L'URL DANS LE FORMULAIRE
+        ====================================================== */
+    
+      const form = document.getElementById('formModifierLot')
+    
+      form.setAttribute('data-url', url)
+    
+      console.log('URL stockée dans le formulaire :', form.getAttribute('data-url'))
+    
+      /* ======================================================
+           RESET MESSAGE
+        ====================================================== */
+    
+      const message = document.getElementById('messageModificationLot')
+    
+      message.style.display = 'none'
+    
+      message.innerHTML = ''
+    
+      message.className = 'alert'
+    
+      /* ======================================================
+           OUVRIR
+        ====================================================== */
+    
+      modal.classList.add('modal-lot-visible')
+    
+      modal.setAttribute('aria-hidden', 'false')
+    
+      document.body.classList.add('modal-lot-open')
+    
+      /* ======================================================
+           FOCUS
+        ====================================================== */
+    
+      setTimeout(function () {
+        const input = document.getElementById('modifierLotQuantite')
+    
+        if (input) {
+          input.focus()
+    
+          input.select()
+        }
+      }, 100)
+    
+      return false
+    }
+    
+    /* ==========================================================
+       FERMER LE MODAL
+    ========================================================== */
+    
+    function fermerModalModificationLot() {
+      const modal = document.getElementById('modalModifierLot')
+    
+      if (!modal) {
+        return
+      }
+    
+      modal.classList.remove('modal-lot-visible')
+    
+      modal.setAttribute('aria-hidden', 'true')
+    
+      document.body.classList.remove('modal-lot-open')
+    }
+    
+    /* ==========================================================
+       DOCUMENT READY
+    ========================================================== */
+    
+    document.addEventListener('DOMContentLoaded', function () {
+      console.log('===== DOM STOCK LOT PRÊT =====')
+    
+      /* ==================================================
+               BOUTON X
+            ================================================== */
+    
+      const boutonFermer = document.getElementById('btnFermerModalLot')
+    
+      if (boutonFermer) {
+        boutonFermer.addEventListener('click', function () {
+          fermerModalModificationLot()
+        })
+      }
+    
+      /* ==================================================
+               BOUTON ANNULER
+            ================================================== */
+    
+      const boutonAnnuler = document.getElementById('btnAnnulerModificationLot')
+    
+      if (boutonAnnuler) {
+        boutonAnnuler.addEventListener('click', function () {
+          fermerModalModificationLot()
+        })
+      }
+    
+      /* ==================================================
+               CLIQUER SUR LE FOND DU MODAL
+            ================================================== */
+    
+      const modal = document.getElementById('modalModifierLot')
+    
+      if (modal) {
+        modal.addEventListener('click', function (event) {
+          if (event.target === modal) {
+            fermerModalModificationLot()
+          }
+        })
+      }
+    
+      /* ==================================================
+               TOUCHE ESCAPE
+            ================================================== */
+    
+      document.addEventListener('keydown', function (event) {
+        if (event.key === 'Escape') {
+          const modal = document.getElementById('modalModifierLot')
+    
+          if (modal && modal.classList.contains('modal-lot-visible')) {
+            fermerModalModificationLot()
+          }
+        }
+      })
+    
+      /* ==================================================
+               FORMULAIRE MODIFICATION LOT
+            ================================================== */
+    
+      const form = document.getElementById('formModifierLot')
+    
+      if (!form) {
+        console.error('ERREUR : formModifierLot introuvable.')
+    
+        return
+      }
+    
+      console.log('Formulaire modification lot trouvé.')
+    
+      /* ==================================================
+               SUBMIT AJAX
+            ================================================== */
+    
+      form.addEventListener('submit', function (event) {
+        /*
+         * TRÈS IMPORTANT :
+         *
+         * Empêche le navigateur de faire :
+         *
+         * POST /stock/
+         *
+         */
+    
+        event.preventDefault()
+    
+        event.stopPropagation()
+    
+        console.log('')
+        console.log('==========================================')
+        console.log('SUBMIT MODIFICATION LOT')
+        console.log('==========================================')
+    
+        /* ==========================================
+                       RÉCUPÉRER LES DONNÉES
+                    ========================================== */
+    
+        const lotId = document.getElementById('modifierLotId').value
+    
+        const quantite = document.getElementById('modifierLotQuantite').value
+    
+        const dateExpiration = document.getElementById('modifierLotDate').value
+    
+        const url = form.getAttribute('data-url')
+    
+        console.log('Lot ID :', lotId)
+    
+        console.log('Nouvelle quantité :', quantite)
+    
+        console.log('Nouvelle date :', dateExpiration)
+    
+        console.log('URL AJAX :', url)
+    
+        /* ==========================================
+                       VÉRIFICATIONS
+                    ========================================== */
+    
+        if (!lotId) {
+          console.error('ERREUR : lotId manquant.')
+    
+          return
+        }
+    
+        if (!url) {
+          console.error('ERREUR : URL AJAX manquante.')
+    
+          afficherMessageLot('danger', "L'URL de modification est introuvable.")
+    
+          return
+        }
+    
+        if (quantite === '' || parseFloat(quantite) < 0) {
+          afficherMessageLot('danger', 'Veuillez saisir une quantité valide.')
+    
+          return
+        }
+    
+        /* ==========================================
+                       BOUTON ENREGISTRER
+                    ========================================== */
+    
+        const bouton = document.getElementById('btnEnregistrerLot')
+    
+        bouton.disabled = true
+    
+        bouton.innerHTML = '<i class="mdi mdi-loading mdi-spin"></i> ' + 'Enregistrement...'
+    
+        /* ==========================================
+                       FORM DATA
+                    ========================================== */
+    
+        const formData = new FormData()
+    
+        formData.append('quantite', quantite)
+    
+        formData.append('date_expiration', dateExpiration)
+    
+        /* ==========================================
+                       CSRF
+                    ========================================== */
+    
+        const csrf = form.querySelector('input[name="csrfmiddlewaretoken"]')
+    
+        if (csrf) {
+          formData.append('csrfmiddlewaretoken', csrf.value)
+        } else {
+          console.error('ERREUR : token CSRF introuvable.')
+        }
+    
+        console.log('Données envoyées :', {
+          quantite: quantite,
+          date_expiration: dateExpiration
+        })
+    
+        /* ==========================================
+                       FETCH
+                    ========================================== */
+    
+        console.log('ENVOI AJAX VERS :', url)
+    
+        fetch(url, {
+          method: 'POST',
+    
+          body: formData,
+    
+          headers: {
+            'X-Requested-With': 'XMLHttpRequest'
+          }
+        })
+          /* ==========================================
+                       RÉPONSE SERVEUR
+                    ========================================== */
+    
+          .then(async function (response) {
+            console.log('STATUT HTTP :', response.status)
+    
+            const texte = await response.text()
+    
+            console.log('RÉPONSE BRUTE :', texte)
+    
+            let data
+    
+            try {
+              data = JSON.parse(texte)
+            } catch (error) {
+              throw new Error("Le serveur n'a pas retourné du JSON.")
+            }
+    
+            return {
+              response: response,
+              data: data
+            }
+          })
+    
+          /* ==========================================
+                       TRAITEMENT
+                    ========================================== */
+    
+          .then(function (result) {
+            const response = result.response
+    
+            const data = result.data
+    
+            console.log('RÉPONSE JSON :', data)
+    
+            if (!response.ok) {
+              throw new Error(data.message || 'Erreur serveur.')
+            }
+    
+            if (!data.success) {
+              throw new Error(data.message || 'La modification a échoué.')
+            }
+    
+            console.log('MODIFICATION RÉUSSIE')
+    
+            /* ==================================
+                               MISE À JOUR DU LOT
+                            ================================== */
+    
+            const lotContainer = document.querySelector('.lot-container[data-lot-id="' + lotId + '"]')
+    
+            if (lotContainer) {
+              console.log('Conteneur du lot trouvé.')
+    
+              const quantiteElement = lotContainer.querySelector('.lot-quantite')
+    
+              const dateElement = lotContainer.querySelector('.lot-date')
+    
+              /* ==============================
+                                   QUANTITÉ LOT
+                                ============================== */
+    
+              if (quantiteElement && data.lot) {
+                quantiteElement.textContent = parseFloat(data.lot.quantite).toFixed(2)
+    
+                console.log('Quantité affichée du lot mise à jour :', data.lot.quantite)
+              }
+    
+              /* ==============================
+                                   DATE LOT
+                                ============================== */
+    
+              if (dateElement && data.lot) {
+                if (data.lot.date_expiration) {
+                  const morceaux = data.lot.date_expiration.split('-')
+    
+                  if (morceaux.length === 3) {
+                    dateElement.textContent = morceaux[2] + '/' + morceaux[1] + '/' + morceaux[0]
+                  }
+                } else {
+                  dateElement.textContent = 'Non définie'
+    
+                  dateElement.classList.add('text-muted')
+                }
+    
+                console.log('Date affichée du lot mise à jour.')
+              }
+            } else {
+              console.warn('Conteneur du lot introuvable.')
+            }
+    
+            /* ==================================
+                               MISE À JOUR PRODUIT
+                            ================================== */
+    
+            if (data.produit && data.produit.id !== undefined) {
+              console.log('Produit reçu :', data.produit)
+    
+              const productStock = document.querySelector('.product-stock[data-product-id="' + data.produit.id + '"]')
+    
+              if (productStock) {
+                productStock.textContent = parseFloat(data.produit.quantite).toFixed(2)
+    
+                console.log('STOCK PRODUIT AFFICHÉ MIS À JOUR :', data.produit.quantite)
+              } else {
+                console.warn('Élément .product-stock introuvable pour le produit :', data.produit.id)
+              }
+            }
+    
+            /* ==================================
+                               MESSAGE SUCCÈS
+                            ================================== */
+    
+            afficherMessageLot('success', data.message || 'Le lot a été modifié avec succès.')
+    
+            /* ==================================
+                               RESTAURER BOUTON
+                            ================================== */
+    
+            bouton.disabled = false
+    
+            bouton.innerHTML = '<i class="mdi mdi-content-save mr-1"></i>' + ' Enregistrer'
+    
+            /* ==================================
+                               FERMETURE
+                            ================================== */
+    
+            setTimeout(function () {
+              fermerModalModificationLot()
+            }, 900)
+          })
+    
+          /* ==========================================
+                       ERREUR
+                    ========================================== */
+    
+          .catch(function (error) {
+            console.error('==========================================')
+    
+            console.error('ERREUR AJAX MODIFICATION LOT')
+    
+            console.error(error)
+    
+            console.error('==========================================')
+    
+            afficherMessageLot('danger', error.message || 'Une erreur est survenue.')
+    
+            bouton.disabled = false
+    
+            bouton.innerHTML = '<i class="mdi mdi-content-save mr-1"></i>' + ' Enregistrer'
+          })
+      })
+    })
+    
+    /* ==========================================================
+       AFFICHER MESSAGE
+    ========================================================== */
+    
+    function afficherMessageLot(type, texte) {
+      const message = document.getElementById('messageModificationLot')
+    
+      if (!message) {
+        return
+      }
+    
+      message.className = 'alert alert-' + type
+    
+      message.textContent = texte
+    
+      message.style.display = 'block'
+    }
+  </script>
+{% endblock %}

@@ -5,8 +5,9 @@ from django.core.paginator import Paginator
 import os
 import json
 import time
+from datetime import datetime as DateTime
 from django.conf import settings
-
+from django.views.decorators.http import require_POST
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login as auth_login, logout
 
@@ -44,6 +45,7 @@ from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 
 from app_facture.models import Detail_facture, Facture
+from django.db import transaction
 
 import pandas as pd
 
@@ -7749,3 +7751,439 @@ def deletedetailFacture(request, id):
             "compte": compte
         }
     )
+    
+
+
+
+
+
+@login_required(login_url="sign_in")
+@require_POST
+def modifier_lot(request, lot_id):
+
+    print("\n")
+    print("=" * 80)
+    print("========== DÉBUT MODIFICATION LOT ==========")
+    print("=" * 80)
+
+    try:
+
+        # ======================================================
+        # 1. INFORMATIONS REQUÊTE
+        # ======================================================
+
+        print("[1] Requête reçue")
+        print("    Méthode :", request.method)
+        print("    Utilisateur :", request.user)
+        print("    Lot ID reçu :", lot_id)
+        print("    POST complet :", request.POST)
+
+        # ======================================================
+        # 2. TRANSACTION
+        # ======================================================
+
+        with transaction.atomic():
+
+            print("[2] Transaction démarrée")
+
+            # ==================================================
+            # 3. RÉCUPÉRATION DU LOT
+            # ==================================================
+
+            print("[3] Recherche du lot...")
+
+            lot = get_object_or_404(
+                Lot.objects.select_for_update(),
+                id=lot_id
+            )
+
+            print("    Lot trouvé :", lot)
+            print("    Lot ID :", lot.id)
+            print("    Produit ID :", lot.produit_id)
+            print("    Ancienne quantité :", lot.quantite)
+            print("    Ancienne date :", lot.date_peremption)
+
+            # ==================================================
+            # 4. DONNÉES POST
+            # ==================================================
+
+            quantite_value = request.POST.get(
+                "quantite",
+                ""
+            ).strip()
+
+            date_expiration = request.POST.get(
+                "date_expiration",
+                ""
+            ).strip()
+
+            print("[4] Données reçues")
+            print("    quantite_value :", repr(quantite_value))
+            print("    date_expiration :", repr(date_expiration))
+
+            # ==================================================
+            # 5. VALIDATION QUANTITÉ
+            # ==================================================
+
+            if quantite_value == "":
+                print("[ERREUR 5] Quantité vide")
+
+                return JsonResponse({
+                    "success": False,
+                    "message": "La quantité est obligatoire."
+                }, status=400)
+
+            try:
+
+                nouvelle_quantite = Decimal(
+                    quantite_value.replace(",", ".")
+                )
+
+                print(
+                    "[5] Nouvelle quantité :",
+                    nouvelle_quantite
+                )
+
+            except (InvalidOperation, ValueError) as e:
+
+                print("[ERREUR 5] Quantité invalide")
+                print("    Exception :", repr(e))
+
+                return JsonResponse({
+                    "success": False,
+                    "message": "La quantité saisie est invalide."
+                }, status=400)
+
+            if nouvelle_quantite < 0:
+
+                print("[ERREUR 5] Quantité négative")
+
+                return JsonResponse({
+                    "success": False,
+                    "message": "La quantité ne peut pas être négative."
+                }, status=400)
+
+            # ==================================================
+            # 6. RÉCUPÉRATION DU PRODUIT
+            # ==================================================
+
+            print("[6] Récupération du produit...")
+
+            produit = lot.produit
+
+            print("    Produit :", produit)
+            print("    Produit ID :", produit.id)
+            print(
+                "    Produit.quantite AVANT :",
+                produit.quantite
+            )
+
+            # ==================================================
+            # 7. ANCIENNE QUANTITÉ
+            # ==================================================
+
+            ancienne_quantite = (
+                lot.quantite
+                if lot.quantite is not None
+                else Decimal("0")
+            )
+
+            print(
+                "[7] Ancienne quantité :",
+                ancienne_quantite
+            )
+
+            print(
+                "[7] Nouvelle quantité :",
+                nouvelle_quantite
+            )
+
+            # ==================================================
+            # 8. MODIFICATION DU LOT
+            # ==================================================
+
+            print("[8] Modification du lot en mémoire...")
+
+            lot.quantite = nouvelle_quantite
+
+            print(
+                "    lot.quantite maintenant :",
+                lot.quantite
+            )
+
+            # ==================================================
+            # 9. TRAITEMENT DATE D'EXPIRATION
+            # ==================================================
+
+            print("[9] Traitement de la date...")
+
+            if date_expiration:
+
+                print(
+                    "    Date reçue :",
+                    date_expiration
+                )
+
+                try:
+
+                    # IMPORTANT :
+                    # DateTime est la classe datetime,
+                    # donc aucun conflit avec le module datetime.
+
+                    lot.date_peremption = DateTime.strptime(
+                        date_expiration,
+                        "%Y-%m-%d"
+                    ).date()
+
+                    print(
+                        "    Date convertie :",
+                        lot.date_peremption
+                    )
+
+                except ValueError as e:
+
+                    print("[ERREUR 9] Date invalide")
+                    print("    Exception :", repr(e))
+
+                    return JsonResponse({
+                        "success": False,
+                        "message": (
+                            "La date d'expiration est invalide."
+                        )
+                    }, status=400)
+
+            else:
+
+                print("    Aucune date reçue")
+                print("    La date sera mise à NULL")
+
+                lot.date_peremption = None
+
+            # ==================================================
+            # 10. SAUVEGARDE DU LOT
+            # ==================================================
+
+            print("[10] Sauvegarde du lot...")
+
+            lot.save(
+                update_fields=[
+                    "quantite",
+                    "date_peremption"
+                ]
+            )
+
+            print("[10] LOT SAUVEGARDÉ")
+
+            # ==================================================
+            # 11. RELIRE LE LOT DEPUIS LA BDD
+            # ==================================================
+
+            lot.refresh_from_db()
+
+            print("[11] Vérification après sauvegarde")
+
+            print(
+                "    Lot ID :",
+                lot.id
+            )
+
+            print(
+                "    Quantité BDD :",
+                lot.quantite
+            )
+
+            print(
+                "    Date BDD :",
+                lot.date_peremption
+            )
+
+            # ==================================================
+            # 12. RECALCUL DU STOCK DU PRODUIT
+            # ==================================================
+
+            print("[12] Recalcul du stock produit...")
+
+            print(
+                "    Produit ID :",
+                produit.id
+            )
+
+            lots_produit = Lot.objects.filter(
+                produit_id=produit.id
+            )
+
+            nombre_lots = lots_produit.count()
+
+            print(
+                "    Nombre de lots :",
+                nombre_lots
+            )
+
+            print("    Détail des lots :")
+
+            for l in lots_produit:
+
+                print(
+                    "       Lot ID:",
+                    l.id,
+                    "| Quantité:",
+                    l.quantite
+                )
+
+            total_lots = (
+                lots_produit
+                .aggregate(
+                    total=Sum("quantite")
+                )
+                .get("total")
+            )
+
+            print(
+                "    TOTAL DES LOTS :",
+                total_lots
+            )
+
+            if total_lots is None:
+
+                print(
+                    "    Aucun total trouvé -> 0"
+                )
+
+                total_lots = Decimal("0")
+
+            # ==================================================
+            # 13. MISE À JOUR DU PRODUIT
+            # ==================================================
+
+            print("[13] Mise à jour du produit")
+
+            print(
+                "    Produit.quantite AVANT :",
+                produit.quantite
+            )
+
+            produit.quantite = total_lots
+
+            print(
+                "    Produit.quantite APRÈS :",
+                produit.quantite
+            )
+
+            produit.save(
+                update_fields=[
+                    "quantite"
+                ]
+            )
+
+            print("[13] PRODUIT SAUVEGARDÉ")
+
+            # ==================================================
+            # 14. RELIRE LE PRODUIT
+            # ==================================================
+
+            produit.refresh_from_db()
+
+            print(
+                "[14] Vérification produit après sauvegarde"
+            )
+
+            print(
+                "    Produit ID :",
+                produit.id
+            )
+
+            print(
+                "    Produit.quantite BDD :",
+                produit.quantite
+            )
+
+            # ==================================================
+            # 15. CONSTRUCTION RÉPONSE JSON
+            # ==================================================
+
+            response_data = {
+
+                "success": True,
+
+                "message":
+                    "Le lot a été modifié avec succès.",
+
+                "lot": {
+
+                    "id": lot.id,
+
+                    "ancienne_quantite":
+                        str(ancienne_quantite),
+
+                    "quantite":
+                        str(lot.quantite),
+
+                    "date_expiration":
+                        (
+                            lot.date_peremption.isoformat()
+                            if lot.date_peremption
+                            else ""
+                        )
+                },
+
+                "produit": {
+
+                    "id": produit.id,
+
+                    "quantite":
+                        str(produit.quantite)
+                }
+            }
+
+            # ==================================================
+            # 16. LOG RÉPONSE
+            # ==================================================
+
+            print("[15] RÉPONSE JSON")
+            print(response_data)
+
+            print("=" * 80)
+            print("========== FIN MODIFICATION LOT ==========")
+            print("=" * 80)
+            print("\n")
+
+            return JsonResponse(
+                response_data,
+                status=200
+            )
+
+    except Exception as e:
+
+        print("\n")
+        print("=" * 80)
+        print("========== ERREUR MODIFICATION LOT ==========")
+        print("=" * 80)
+
+        print(
+            "Exception :",
+            repr(e)
+        )
+
+        print(
+            "Type :",
+            type(e).__name__
+        )
+
+        import traceback
+
+        traceback.print_exc()
+
+        print("=" * 80)
+        print("\n")
+
+        return JsonResponse({
+
+            "success": False,
+
+            "message":
+                "Une erreur est survenue : " + str(e)
+
+        }, status=500)
+    
+    
+

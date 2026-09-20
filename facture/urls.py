@@ -167,6 +167,12 @@ path(
     views.supprimer_facture,
     name="supprimer_facture"
 ),
+
+path(
+    "stock/lot/<int:lot_id>/modifier/",
+    views.modifier_lot,
+    name="modifier_lot"
+),
     
      
 ]
